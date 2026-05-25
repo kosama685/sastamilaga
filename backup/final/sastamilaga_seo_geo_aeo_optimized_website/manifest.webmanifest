@@ -1,9 +1,0 @@
-{
-  "name": "Sastamilaga Commerce",
-  "short_name": "Sastamilaga",
-  "start_url": "/index.html",
-  "display": "standalone",
-  "background_color": "#070a13",
-  "theme_color": "#7c3aed",
-  "description": "SEO optimized ecommerce catalog"
-}
