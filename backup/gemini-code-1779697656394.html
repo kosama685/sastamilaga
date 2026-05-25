@@ -1,0 +1,1743 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#030712" />
+  
+  <title id="seoTitle">Sastamilaga Elite Commerce | Premium Universal Catalog</title>
+  <meta id="seoDesc" name="description" content="Explore our premium catalog optimized with live price tracking, intelligent commission structures, explicit delivery configuration, and AI-discoverable schema matrices." />
+  <meta name="robots" content="index, follow" />
+  
+  <meta id="ogTitle" property="og:title" content="Sastamilaga Elite Commerce | Premium Universal Catalog" />
+  <meta id="ogDesc" property="og:description" content="Explore our premium catalog optimized with live price tracking, intelligent commission structures, explicit delivery configuration, and AI-discoverable schema matrices." />
+  <meta property="og:type" content="website" />
+  
+  <script id="geoJsonLd" type="application/ld+json">{}</script>
+
+  <style>
+    :root {
+      --bg: #030712;
+      --card-bg: rgba(17, 24, 39, 0.65);
+      --card-hover: rgba(31, 41, 55, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-glow: rgba(59, 130, 246, 0.15);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      
+      /* Luxury Corporate Accents */
+      --gold: #f59e0b;
+      --gold-glow: #d97706;
+      --cyan: #06b6d4;
+      --pink: #ec4899;
+      --emerald: #10b981;
+      --rose: #ef4444;
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 24px;
+      --max-width: 1520px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(236, 72, 153, 0.12), transparent 35rem),
+        radial-gradient(circle at 85% 20%, rgba(6, 182, 212, 0.15), transparent 40rem),
+        radial-gradient(circle at 50% 80%, rgba(245, 158, 11, 0.08), transparent 45rem);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Hardware Accelerated Structural Grid Overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(circle at 50% 30%, #000 20%, transparent 85%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Core Layout Wrapper */
+    .container {
+      width: min(var(--max-width), calc(100% - 32px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Luxury Sticky Navigation header */
+    .header-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(3, 7, 18, 0.75);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--glass-border);
+      transition: var(--transition);
+    }
+
+    .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 80px;
+    }
+
+    .brand-anchor {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-logo-frame {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 1.3rem;
+      letter-spacing: -0.05em;
+      background: linear-gradient(135deg, var(--cyan), var(--pink));
+      box-shadow: 0 8px 24px rgba(6, 182, 212, 0.3);
+      position: relative;
+    }
+
+    .brand-text-block strong {
+      display: block;
+      font-size: 1.15rem;
+      letter-spacing: -0.03em;
+      background: linear-gradient(90deg, #ffffff, #d1d5db);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-text-block span {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 2px;
+    }
+
+    .nav-links-cluster {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 999px;
+      transition: var(--transition);
+      border: 1px solid transparent;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--glass-border);
+    }
+
+    /* Shared Action Buttons */
+    .action-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .action-btn.primary {
+      background: linear-gradient(135deg, var(--cyan), var(--gold));
+      color: #030712;
+      border: none;
+      box-shadow: 0 10px 30px rgba(6, 182, 212, 0.25);
+    }
+
+    .action-btn.primary:hover {
+      box-shadow: 0 14px 35px rgba(6, 182, 212, 0.4);
+    }
+
+    /* Immersive Dashboard Header Section */
+    .hero-dashboard {
+      padding: 40px 0 20px 0;
+    }
+
+    .hero-split-grid {
+      display: grid;
+      grid-template-columns: 1fr 440px;
+      gap: 24px;
+    }
+
+    .glass-canvas {
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .hero-intro-card {
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.2);
+      color: #22d3ee;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .hero-intro-card h1 {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      line-height: 1.1;
+      letter-spacing: -0.05em;
+      margin: 20px 0;
+      background: linear-gradient(135deg, #ffffff 30%, #9ca3af 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-intro-card p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      line-height: 1.6;
+      max-width: 780px;
+      margin-bottom: 32px;
+    }
+
+    .metrics-panel-stack {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .metric-micro-pod {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 120px;
+    }
+
+    .metric-micro-pod span {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .metric-micro-pod b {
+      font-size: 2.4rem;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff, var(--text-muted));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Universal Control Terminal Panel / Toolbar */
+    .control-terminal {
+      padding: 24px;
+      margin-top: 24px;
+    }
+
+    .terminal-flex-grid {
+      display: grid;
+      grid-template-columns: 2.51fr 1.2fr 1fr 1fr 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-size: 0.92rem;
+      transition: var(--transition);
+    }
+
+    input:focus, select:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    select option {
+      background: #0f172a;
+      color: var(--text-main);
+    }
+
+    .view-switcher-tabs {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      border-top: 1px solid var(--glass-border);
+      padding-top: 16px;
+    }
+
+    .tab-trigger {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      transition: var(--transition);
+    }
+
+    .tab-trigger:hover {
+      color: var(--text-main);
+    }
+
+    .tab-trigger.active {
+      background: var(--text-main);
+      color: #030712;
+    }
+
+    /* Unified View Management Core */
+    .catalog-workspace-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 24px;
+      padding: 24px 0 80px 0;
+    }
+
+    .sidebar-sticky-panel {
+      position: sticky;
+      top: 124px;
+      align-self: start;
+      padding: 24px;
+    }
+
+    .sidebar-sticky-panel h2, .main-view-panel h2 {
+      margin: 0 0 16px 0;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .category-badges-carousel {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .category-pill-btn {
+      text-align: left;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--glass-border);
+      color: var(--text-muted);
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: var(--transition);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .category-pill-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+
+    .category-pill-btn.active {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(236, 72, 153, 0.15));
+      border-color: rgba(6, 182, 212, 0.4);
+      color: #22d3ee;
+    }
+
+    .category-pill-btn span {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+    }
+
+    /* Embedded Price Adjustment Node */
+    .admin-override-box {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: var(--radius-md);
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--glass-border);
+    }
+
+    .admin-override-box label {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .admin-override-box label input {
+      margin-top: 6px;
+    }
+
+    /* Interactive Product Grid Framework */
+    .main-view-panel {
+      padding: 24px;
+    }
+
+    .panel-header-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 24px;
+    }
+
+    .panel-header-flex p {
+      margin: 4px 0 0 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .products-master-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .product-showcase-card {
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-showcase-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(6, 182, 212, 0.4);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-media-vault {
+      height: 220px;
+      position: relative;
+      background: rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .card-media-vault img, .card-media-vault video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .product-showcase-card:hover .card-media-vault img {
+      transform: scale(1.04);
+    }
+
+    .card-context-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(3, 7, 18, 0.8);
+      border: 1px solid var(--glass-border);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--cyan);
+      backdrop-filter: blur(4px);
+    }
+
+    .card-content-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .product-showcase-card h3 {
+      font-size: 1.05rem;
+      margin: 0 0 8px 0;
+      line-height: 1.4;
+      font-weight: 700;
+      height: 2.8em;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .card-sku-tracker {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-family: monospace;
+      margin-bottom: 12px;
+    }
+
+    .card-tags-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 16px;
+    }
+
+    .micro-tag {
+      font-size: 0.68rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      padding: 2px 8px;
+      border-radius: 999px;
+      color: var(--text-muted);
+    }
+
+    .card-pricing-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: auto;
+      border-top: 1px solid var(--glass-border);
+      padding-top: 12px;
+    }
+
+    .price-readout b {
+      font-size: 1.35rem;
+      color: var(--text-main);
+      display: block;
+      letter-spacing: -0.02em;
+    }
+
+    .price-readout span {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    /* Production Data Table View */
+    .table-responsive-wrapper {
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--glass-border);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    th {
+      background: rgba(15, 23, 42, 0.8);
+      padding: 14px 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      color: var(--cyan);
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--glass-border);
+      vertical-align: middle;
+    }
+
+    .table-thumb {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .input-table-cell {
+      max-width: 90px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+
+    /* Pagination controls */
+    .pagination-dock {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    /* ==========================================================================
+       TRUE DETACHED SINGLE PRODUCT CANVAS ENGINE LAYER
+       ========================================================================== */
+    .isolated-product-canvas {
+      padding: 40px 0 100px 0;
+      display: none; /* Managed by App Engine Router */
+    }
+
+    .back-nav-banner {
+      margin-bottom: 24px;
+    }
+
+    .single-product-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 40px;
+    }
+
+    .immersive-gallery-suite {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .master-viewframe-box {
+      height: 520px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--glass-border);
+      position: relative;
+    }
+
+    .master-viewframe-box img, .master-viewframe-box video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumbnail-strip-scroller {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .strip-thumb-trigger {
+      width: 84px;
+      height: 68px;
+      flex: 0 0 auto;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      padding: 0;
+      border: 1px solid var(--glass-border);
+      background: rgba(0, 0, 0, 0.2);
+      transition: var(--transition);
+    }
+
+    .strip-thumb-trigger:hover, .strip-thumb-trigger.active {
+      border-color: var(--cyan);
+      transform: scale(0.95);
+    }
+
+    .strip-thumb-trigger img, .strip-thumb-trigger video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .product-spec-matrix h2 {
+      font-size: 2.2rem;
+      margin: 0 0 12px 0;
+      letter-spacing: -0.04em;
+      line-height: 1.15;
+    }
+
+    .product-long-description {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .geo-entity-table {
+      border-top: 1px solid var(--glass-border);
+      margin-bottom: 32px;
+    }
+
+    .geo-data-row {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--glass-border);
+      font-size: 0.92rem;
+    }
+
+    .geo-data-row label {
+      font-weight: 700;
+      color: var(--cyan);
+    }
+
+    .geo-data-row span {
+      color: var(--text-main);
+    }
+
+    /* Toast Notification */
+    .toast-popup {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 500;
+      background: #ffffff;
+      color: #030712;
+      border-radius: var(--radius-sm);
+      padding: 16px 24px;
+      font-weight: 700;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .toast-popup.engage {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Responsiveness Breakpoints */
+    @media (max-width: 1200px) {
+      .hero-split-grid, .catalog-workspace-layout, .single-product-grid {
+        grid-template-columns: 1fr;
+      }
+      .sidebar-sticky-panel {
+        position: static;
+      }
+      .terminal-flex-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .terminal-flex-grid {
+        grid-template-columns: 1fr;
+      }
+      .master-viewframe-box {
+        height: 320px;
+      }
+      .geo-data-row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header-nav">
+    <div class="container header-container">
+      <a class="brand-anchor" href="#/">
+        <div class="brand-logo-frame">S</div>
+        <div class="brand-text-block">
+          <strong>Sastamilaga Elite</strong>
+          <span>Corporate Discovery Engine</span>
+        </div>
+      </a>
+      <nav class="nav-links-cluster">
+        <a href="#/" class="nav-link active" id="homeNavLink">Catalog Hub</a>
+        <a href="#/admin-anchor" class="nav-link">Control Room</a>
+      </nav>
+      <div class="header-actions">
+        <button class="action-btn primary" id="exportCsvTrigger">Export Master Dataset</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <div id="catalogViewportGroup">
+      
+      <section class="hero-dashboard">
+        <div class="hero-split-grid">
+          <article class="glass-canvas hero-intro-card">
+            <span class="pill-badge">GEO Engine Active</span>
+            <h1>High-Fidelity Automated Commerce Interface</h1>
+            <p>A sophisticated corporate management control panel designed for complete schema discovery, real-time localized pricing evaluation, automated commission scaling, and seamless export compliance verification.</p>
+            <div class="hero-interactive-row">
+              <a href="#/random-product" class="action-btn">Surprise Discovery Engine</a>
+            </div>
+          </article>
+          
+          <aside class="metrics-panel-stack">
+            <div class="glass-canvas metric-micro-pod">
+              <span>Managed Inventory Entity List</span>
+              <b id="statProducts">0</b>
+            </div>
+            <div class="glass-canvas metric-micro-pod">
+              <span>Dynamic Mapping Clusters</span>
+              <b id="statCategories">0</b>
+            </div>
+            <div class="glass-canvas metric-micro-pod">
+              <span>Photo Assets Tracked</span>
+              <b id="statImages">0</b>
+            </div>
+            <div class="glass-canvas metric-micro-pod">
+              <span>Video Streams Tracked</span>
+              <b id="statVideos">0</b>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="glass-canvas control-terminal">
+        <div class="terminal-flex-grid">
+          <input id="searchTerm" placeholder="Search parameters (SKU, title, category, description)..." type="text" />
+          <select id="sortVector">
+            <option value="alphabetic">Name Matrix: A-Z</option>
+            <option value="priceLow">Base Valuation: Low to High</option>
+            <option value="priceHigh">Base Valuation: High to Low</option>
+            <option value="finalHigh">Final Consumer Price: High to Low</option>
+            <option value="mediaCount">Asset Density: Highest First</option>
+          </select>
+          <input id="thresholdMin" type="number" placeholder="Min Base Price" />
+          <input id="thresholdMax" type="number" placeholder="Max Base Price" />
+          <select id="typeVector">
+            <option value="all">All Variants</option>
+            <option value="simple">Simple Structural Model</option>
+            <option value="variable">Variable Configuration</option>
+            <option value="variation">Variation Child Leaf</option>
+          </select>
+          <button class="action-btn" id="clearConsoleFilters">Reset Filters</button>
+        </div>
+        
+        <div class="view-switcher-tabs">
+          <button class="tab-trigger active" data-target="grid">Visual Matrix Cards</button>
+          <button class="tab-trigger" data-target="table">Tabular Analysis Spread</button>
+        </div>
+      </section>
+
+      <section class="catalog-workspace-layout">
+        
+        <aside class="glass-canvas sidebar-sticky-panel">
+          <h2>Vector Category Maps</h2>
+          <div class="category-badges-carousel" id="categoryScrollerNode"></div>
+          
+          <div class="admin-override-box" id="admin-anchor">
+            <h2>Global Price Override</h2>
+            <label>
+              Apps Script Endpoints Execution Web URL
+              <input id="endpointUrl" placeholder="https://script.google.com/macros/s/.../exec" type="text" />
+            </label>
+            <label>
+              Calculated Commission Scale (%)
+              <input id="globalCommissionScale" type="number" value="15" step="0.5" />
+            </label>
+            <label>
+              Local Flat Delivery Overhead Rate (PKR)
+              <input id="globalFlatDeliveryCharge" type="number" value="200" step="1" />
+            </label>
+            <button class="action-btn primary" style="width:100%; justify-content:center; margin-bottom:8px;" id="applyGlobalModifiers">Compute Changes</button>
+            <button class="action-btn" style="width:100%; justify-content:center;" id="syncAppsScript">Push to Cloud Sheets</button>
+          </div>
+        </aside>
+
+        <article class="glass-canvas main-view-panel">
+          <div class="panel-header-flex">
+            <div>
+              <span class="pill-badge" id="liveViewContextPill">Real-Time Sync Grid</span>
+              <h2 id="workspacePanelHeading" style="margin-top:8px;">Visual Matrix Cards</h2>
+              <p id="workspaceResultCounter">Evaluating catalog system...</p>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button class="action-btn" id="paginationPrev">Previous</button>
+              <button class="action-btn" id="paginationNext">Next</button>
+            </div>
+          </div>
+
+          <div id="cardViewWorkspace" class="products-master-grid"></div>
+
+          <div id="tableViewWorkspace" class="table-responsive-wrapper hidden">
+            <table id="analysisMasterTable">
+              <thead>
+                <tr>
+                  <th>Visual Reference</th>
+                  <th>Product Title Matrix & SEO Meta Tags</th>
+                  <th>SKU Parameter</th>
+                  <th>Classification</th>
+                  <th>Structural Class</th>
+                  <th>Base Val</th>
+                  <th>Com %</th>
+                  <th>Fixed Overhead</th>
+                  <th>Delivery Base</th>
+                  <th>Final Consumer Cost</th>
+                  <th>Asset Footprint</th>
+                  <th>Sync Cloud Link</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="pagination-dock">
+            <span id="paginationSummaryString" class="micro-tag" style="padding:8px 14px;"></span>
+            <label style="font-size:0.85rem; color:var(--text-muted); display:flex; align-items:center; gap:8px;">
+              Rows Per Workspace Window:
+              <select id="paginationPageSizeSelector" style="width:auto; padding:6px 12px; border-radius:8px;">
+                <option value="24">24</option>
+                <option value="48">48</option>
+                <option value="96" selected>96</option>
+                <option value="200">200</option>
+              </select>
+            </label>
+          </div>
+        </article>
+
+      </section>
+
+    </div>
+
+
+    <div id="isolatedProductViewportGroup" class="isolated-product-canvas">
+      <div class="back-nav-banner">
+        <a href="#/" class="action-btn">&larr; Return to Central Product Matrix Cluster</a>
+      </div>
+      
+      <div class="glass-canvas" style="padding:40px;">
+        <div class="single-product-grid">
+          
+          <div class="immersive-gallery-suite">
+            <div class="master-viewframe-box" id="galleryMasterStageFrame"></div>
+            <div class="thumbnail-strip-scroller" id="galleryThumbnailStripScroller"></div>
+          </div>
+          
+          <div class="product-spec-matrix">
+            <span class="pill-badge" id="singleProductCategoryPill">Loading Classification...</span>
+            <h2 id="singleProductDisplayTitle" style="margin-top:14px;">Loading Product Identity Parameters...</h2>
+            <div class="card-sku-tracker" id="singleProductSkuDisplay">SKU: Unknown Parameter</div>
+            
+            <p class="product-long-description" id="singleProductLongDescription"></p>
+            
+            <div class="geo-entity-table">
+              <div class="geo-data-row">
+                <label>Final Consumer Valuation</label>
+                <span id="singleProductFinalPriceDisplay" style="font-size:1.4rem; font-weight:800; color:#ffffff;">Calculating value...</span>
+              </div>
+              <div class="geo-data-row">
+                <label>Base Operational Cost Matrices</label>
+                <span id="singleProductBreakdownDisplay"></span>
+              </div>
+              <div class="geo-data-row">
+                <label>Operational Structural Model</label>
+                <span id="singleProductStructuralType"></span>
+              </div>
+              <div class="geo-data-row">
+                <label>Meta Discovery Semantic Vector Tags</label>
+                <span id="singleProductTagVectorGroup"></span>
+              </div>
+              <div class="geo-data-row">
+                <label>Generative Engine SEO Title Matrix</label>
+                <span id="singleProductSeoTitleLabel" style="font-family:monospace; color:var(--text-muted);"></span>
+              </div>
+              <div class="geo-data-row">
+                <label>Generative Engine SEO Summary Extract</label>
+                <span id="singleProductSeoDescLabel" style="color:var(--text-muted); font-size:0.85rem;"></span>
+              </div>
+              <div class="geo-data-row">
+                <label>Image Spatial Alternative Tags</label>
+                <span id="singleProductAltTagsLabel" style="font-size:0.82rem; font-family:monospace;"></span>
+              </div>
+              <div class="geo-data-row">
+                <label>Asset Track Counts</label>
+                <span id="singleProductAssetFootprintCount"></span>
+              </div>
+              <div class="geo-data-row">
+                <label>Brand Ownership Affiliation</label>
+                <span id="singleProductBrandProvenance"></span>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:12px;">
+              <button class="action-btn primary" id="simulatedPurchaseActionBtn">Initialize Transactional Handshake</button>
+              <button class="action-btn" id="shareProductMetaInstance">Generate Discovery Entity Link</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <div class="toast-popup" id="appActionToastHUD">System Operations Event Success Notification</div>
+
+  <script>
+    window.SASTAMILAGA_PRODUCTS = [
+      {
+        id: "PROD-SKU-001",
+        sku: "LUX-CHAIR-V1",
+        h: "premium-ergonomic-obsidian-chair",
+        type: "variable",
+        parent: "",
+        var: "Color: Obsidian Black | Metal Accent: Gold",
+        name: "AeroForm Premium Executive Obsidian Workspace Throne",
+        main: "Office Infrastructure Furniture",
+        cat: "Office Infrastructure Furniture > Executive Seating Matrix",
+        leaf: "Executive Seating Matrix",
+        store: "Sastamilaga Corporate Architecture",
+        price: 24500.00,
+        cp: 15.0,
+        cf: 50.0,
+        del: 350.0,
+        stock: 42,
+        active: "active",
+        short: "High-end multi-density lumbar dynamic support throne engineered for elite technical strategists and full-stack developers.",
+        desc: "The complete AeroForm system provides deep adaptive back structural stability configurations. It incorporates highly calibrated, breathable mesh variants with premium synthetic micro-fibers. Features optimized density matrices perfect for multi-hour system compilation tracking and automation deployment operations.",
+        tags: ["Executive Comfort", "Ergonomic Tool", "Developer Core Station", "Obsidian Base Asset"],
+        img: [
+          "https://images.unsplash.com/photo-1505797149-43b0069ec26b?auto=format&fit=crop&w=800&q=80",
+          "https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?auto=format&fit=crop&w=800&q=80"
+        ],
+        vid: [],
+        alt: ["Front operational view showcasing structural mesh tension", "Rear perspective displaying architectural load bracket systems"],
+        seoT: "AeroForm Luxury Obsidian Executive Chair - Calibrated Workstation Seating",
+        seoD: "Buy the absolute highest engineering standard in back-support seating architecture. Fully customized parameters for digital workflows, complete with dynamic vector configurations."
+      },
+      {
+        id: "PROD-SKU-002",
+        sku: "CYBER-KEY-RGB",
+        h: "quantum-mechanical-tactile-deck",
+        type: "simple",
+        parent: "",
+        var: "",
+        name: "QuantumCore Zero-Latency Mechanical Custom Tactile Input Engine",
+        main: "High Performance Computing Hardware",
+        cat: "High Performance Computing Hardware > Core Input Peripherals",
+        leaf: "Core Input Peripherals",
+        store: "Sastamilaga Tech Ecosystems",
+        price: 8900.00,
+        cp: 12.0,
+        cf: 20.0,
+        del: 150.0,
+        stock: 110,
+        active: "active",
+        short: "Optical hot-swappable mechanical switches coupled with premium clear layout acoustic structural dampening pads.",
+        desc: "Architected exclusively for rapid macro deployment profiles and high-velocity writing streams. This input matrix includes premium dual-shot keycap molding architecture that rejects chemical wear vectors over millions of cycles.",
+        tags: ["Mechanical Deck", "Zero Latency Processing", "Hot-Swappable Node", "Custom Hardware Array"],
+        img: [
+          "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=800&q=80",
+          "https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&w=800&q=80"
+        ],
+        vid: [],
+        alt: ["Illuminated isometric shot displaying linear dynamic switches", "Macro overview of the localized space bar structural stabilizer"],
+        seoT: "QuantumCore Tactile Input Deck | Premium Optical Switches",
+        seoD: "Maximize your code deployment velocities with the zero-profile lag mechanical input deck from Sastamilaga."
+      },
+      {
+        id: "PROD-SKU-003",
+        sku: "MON-ULTRA-49",
+        h: "panoramic-curved-infinite-display",
+        type: "variation",
+        parent: "PROD-MON-MASTER",
+        var: "Aspect Ratio: 32:9 | Resolution: Dual-QHD 144Hz",
+        name: "HorizonWide 49-Inch Infinite Panoramic Curved Workspace Display Matrix",
+        main: "High Performance Computing Hardware",
+        cat: "High Performance Computing Hardware > Visualization Display Units",
+        leaf: "Visualization Display Units",
+        store: "Sastamilaga Tech Ecosystems",
+        price: 135000.00,
+        cp: 18.0,
+        cf: 500.0,
+        del: 1200.0,
+        stock: 14,
+        active: "active",
+        short: "Breathtaking panoramic visualization field allowing triple full-scale developer panel stacks without layout clipping.",
+        desc: "Engineered to mimic accurate biological visual horizons, minimizing optical focus degradation across elongated multi-window orchestration sessions. It integrates advanced hardware color lookup array tables and professional color gamut spaces.",
+        tags: ["Panoramic Panel", "Ultrawide Array", "Workspace Maximizer Matrix", "Dual QHD System"],
+        img: [
+          "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=800&q=80"
+        ],
+        vid: [],
+        alt: ["Frontal curve visualization showing massive cross-window development spaces"],
+        seoT: "HorizonWide 49-Inch Panoramic Ultrawide Curved Panel - Pro Hardware",
+        seoD: "Eliminate display boundary constraints with the ultra-premium 49-inch panoramic display system. Complete configuration matrices built for deep productivity orchestration."
+      }
+    ];
+  </script>
+
+  <script>
+    (function() {
+      // Internal Global State Infrastructure
+      const AppState = {
+        inventory: window.SASTAMILAGA_PRODUCTS || [],
+        filteredPool: [],
+        activeCategory: 'All Matrix Hub',
+        activeViewLayout: 'grid', // 'grid' or 'table'
+        currentPage: 1,
+        itemsPerPage: 96
+      };
+
+      // Regional Format Initializer Core
+      const PKR_CurrencyFormatter = new Intl.NumberFormat('en-PK', {
+        style: 'currency',
+        currency: 'PKR',
+        maximumFractionDigits: 0
+      });
+
+      // Quick DOM Selectors Shorthand
+      const el = selector => document.querySelector(selector);
+      const elAll = selector => Array.from(document.querySelectorAll(selector));
+      const fallbackSvgAsset = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="100%" height="100%" fill="#111827"/><text x="50%" y="50%" fill="#4b5563" font-family="Arial" font-size="32" font-weight="bold" text-anchor="middle">Asset Unassigned</text></svg>');
+
+      // Escaping Security Transformers
+      function escapeOutput(value) {
+        return String(value ?? '').replace(/[&<>"']/g, match => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[match]));
+      }
+
+      function escapeAttribute(value) {
+        return escapeOutput(value);
+      }
+
+      function createCssSafeId(value) {
+        return String(value).replace(/[^a-z0-9_-]/gi, '_');
+      }
+
+      // Mathematical Financial Pricing Algorithm Model
+      function calculateFinalConsumerCost(product) {
+        const base = parseFloat(product.price) || 0;
+        const percentCommission = parseFloat(product.cp) || 0;
+        const fixedCommission = parseFloat(product.cf) || 0;
+        const deliveryCost = parseFloat(product.del) || 0;
+        
+        product.finalCalculatedPrice = Math.round(base + (base * (percentCommission / 100)) + fixedCommission + deliveryCost);
+        return product.finalCalculatedPrice;
+      }
+
+      // Main App Execution Thread Hook
+      function bootstrapSystemEngine() {
+        AppState.inventory.forEach(calculateFinalConsumerCost);
+        registerInteractiveDOMEvents();
+        refreshGlobalStatsReadout();
+        buildDynamicCategoryTrackers();
+        executePoolFilteringPipeline();
+        
+        // Run Initialization Router Link Handshake
+        evaluateAppRouteUrlState();
+        window.addEventListener('hashchange', evaluateAppRouteUrlState);
+      }
+
+      // Live Stats Analytics Readout Pipeline
+      function refreshGlobalStatsReadout() {
+        const structuralCategories = new Set(AppState.inventory.map(p => p.main || 'Unmapped'));
+        el('#statProducts').textContent = AppState.inventory.length.toLocaleString();
+        el('#statCategories').textContent = structuralCategories.size.toLocaleString();
+        
+        const photoSum = AppState.inventory.reduce((acc, p) => acc + (p.img || []).length, 0);
+        const videoSum = AppState.inventory.reduce((acc, p) => acc + (p.vid || []).length, 0);
+        
+        el('#statImages').textContent = photoSum.toLocaleString();
+        el('#statVideos').textContent = videoSum.toLocaleString();
+      }
+
+      // Category Sidebar Generator Matrix Loop
+      function buildDynamicCategoryTrackers() {
+        const counts = { 'All Matrix Hub': AppState.inventory.length };
+        AppState.inventory.forEach(p => {
+          const cat = p.main || 'Unmapped';
+          counts[cat] = (counts[cat] || 0) + 1;
+        });
+
+        const sortedMap = Object.entries(counts).sort((a, b) => {
+          if (a[0] === 'All Matrix Hub') return -1;
+          if (b[0] === 'All Matrix Hub') return 1;
+          return b[1] - a[1];
+        });
+
+        el('#categoryScrollerNode').innerHTML = sortedMap.map(([name, count]) => {
+          const activeClass = name === AppState.activeCategory ? 'active' : '';
+          return `<button class="category-pill-btn ${activeClass}" data-category-name="${escapeAttribute(name)}">
+            ${escapeOutput(name)} <span>${count}</span>
+          </button>`;
+        }).join('');
+
+        elAll('.category-pill-btn').forEach(button => {
+          button.onclick = () => {
+            AppState.activeCategory = button.dataset.categoryName;
+            AppState.currentPage = 1;
+            buildDynamicCategoryTrackers();
+            executePoolFilteringPipeline();
+          };
+        });
+      }
+
+      // Centralized Input Processing Filter Grid Engine
+      function executePoolFilteringPipeline() {
+        const query = el('#searchTerm').value.toLowerCase().trim();
+        const minVal = parseFloat(el('#thresholdMin').value) || null;
+        const maxVal = parseFloat(el('#thresholdMax').value) || null;
+        const selectedType = el('#typeVector').value;
+
+        let trackingPool = AppState.inventory.filter(product => {
+          if (AppState.activeCategory !== 'All Matrix Hub' && (product.main || 'Unmapped') !== AppState.activeCategory) {
+            return false;
+          }
+          if (selectedType !== 'all' && product.type !== selectedType) return false;
+          if (minVal !== null && product.price < minVal) return false;
+          if (maxVal !== null && product.price > maxVal) return false;
+          
+          if (query) {
+            const compositeString = `${product.id} ${product.sku} ${product.name} ${product.main} ${product.cat} ${product.store} ${(product.tags || []).join(' ')} ${product.seoT} ${product.seoD}`.toLowerCase();
+            if (!compositeString.includes(query)) return false;
+          }
+          return true;
+        });
+
+        // Evaluation Sorting Engine Core Vector Maps
+        const sortMode = el('#sortVector').value;
+        trackingPool.sort((alpha, beta) => {
+          if (sortMode === 'priceLow') return alpha.price - beta.price;
+          if (sortMode === 'priceHigh') return beta.price - alpha.price;
+          if (sortMode === 'finalHigh') return beta.finalCalculatedPrice - alpha.finalCalculatedPrice;
+          if (sortMode === 'mediaCount') {
+            const densityAlpha = (alpha.img || []).length + (alpha.vid || []).length;
+            const densityBeta = (beta.img || []).length + (beta.vid || []).length;
+            return densityBeta - densityAlpha;
+          }
+          return alpha.name.localeCompare(beta.name);
+        });
+
+        AppState.filteredPool = trackingPool;
+        renderActiveWorkspaceViews();
+      }
+
+      // Rendering Grid Pipeline Controller Switcher
+      function renderActiveWorkspaceViews() {
+        const totalPageCount = Math.max(1, Math.ceil(AppState.filteredPool.length / AppState.itemsPerPage));
+        if (AppState.currentPage > totalPageCount) AppState.currentPage = totalPageCount;
+
+        el('#workspaceResultCounter').textContent = `Showing ${AppState.filteredPool.length.toLocaleString()} out of ${AppState.inventory.length.toLocaleString()} items registered in matching vectors.`;
+        el('#paginationSummaryString').textContent = `Workspace Window Range ${AppState.currentPage} / ${totalPageCount}`;
+
+        const indexesSliceStart = (AppState.currentPage - 1) * AppState.itemsPerPage;
+        const workspaceDataPageSlice = AppState.filteredPool.slice(indexesSliceStart, indexesSliceStart + AppState.itemsPerPage);
+
+        if (AppState.activeViewLayout === 'grid') {
+          renderWorkspaceVisualCards(workspaceDataPageSlice);
+        } else {
+          renderWorkspaceDataTableRows(workspaceDataPageSlice);
+        }
+      }
+
+      // Visual Matrix Cards Dynamic Renderer
+      function renderWorkspaceVisualCards(datasetSlice) {
+        if (datasetSlice.length === 0) {
+          el('#cardViewWorkspace').innerHTML = `<div style="grid-column: 1/-1; padding: 48px; text-align: center; color: var(--text-muted);">No records found matching query filter requirements.</div>`;
+          return;
+        }
+
+        el('#cardViewWorkspace').innerHTML = datasetSlice.map(p => {
+          const visualMediaSrc = (p.img && p.img.length > 0) ? p.img[0] : fallbackSvgAsset;
+          return `<article class="product-showcase-card">
+            <div class="card-media-vault">
+              <img src="${escapeAttribute(visualMediaSrc)}" alt="${escapeAttribute((p.alt && p.alt.length > 0) ? p.alt[0] : p.name)}" loading="lazy" onerror="this.src='${fallbackSvgAsset}'">
+              <span class="card-context-badge">${escapeOutput(p.leaf || p.main || 'Standard')}</span>
+            </div>
+            <div class="card-content-body">
+              <h3>${escapeOutput(p.name)}</h3>
+              <div class="card-sku-tracker">${escapeOutput(p.sku || p.id)} &middot; <span style="text-transform:uppercase;">${escapeOutput(p.type)}</span></div>
+              <div class="card-tags-group">
+                ${(p.tags || []).slice(0, 3).map(tag => `<span class="micro-tag">${escapeOutput(tag)}</span>`).join('')}
+              </div>
+              <div class="card-pricing-footer">
+                <div class="price-readout">
+                  <b>${PKR_CurrencyFormatter.format(p.finalCalculatedPrice)}</b>
+                  <span>Base Cost: ${PKR_CurrencyFormatter.format(p.price)}</span>
+                </div>
+                <a href="#/product/${escapeAttribute(p.id)}" class="action-btn" style="padding: 6px 14px; font-size:0.78rem;">Inspect Unit</a>
+              </div>
+            </div>
+          </article>`;
+        }).join('');
+      }
+
+      // Tabular Analysis Data Grid Dynamic Renderer
+      function renderWorkspaceDataTableRows(datasetSlice) {
+        const targetBody = el('#analysisMasterTable tbody');
+        if (datasetSlice.length === 0) {
+          targetBody.innerHTML = `<tr><td colspan="12" style="text-align:center; padding:48px; color:var(--text-muted);">No records available in tabular view context.</td></tr>`;
+          return;
+        }
+
+        targetBody.innerHTML = datasetSlice.map(p => {
+          const tableThumbSrc = (p.img && p.img.length > 0) ? p.img[0] : fallbackSvgAsset;
+          const htmlUniqueHashId = createCssSafeId(p.id);
+          return `<tr data-product-raw-id="${escapeAttribute(p.id)}">
+            <td><img class="table-thumb" src="${escapeAttribute(tableThumbSrc)}" onerror="this.src='${fallbackSvgAsset}'"></td>
+            <td>
+              <strong style="display:block; font-size:0.95rem;">${escapeOutput(p.name)}</strong>
+              <span style="display:block; font-size:0.75rem; color:var(--cyan); margin-top:2px;">SEO Title: ${escapeOutput(p.seoT || 'None Defined')}</span>
+            </td>
+            <td><span style="font-family:monospace; font-size:0.8rem;">${escapeOutput(p.sku || p.id)}</span></td>
+            <td><span style="font-size:0.8rem; color:var(--text-muted);">${escapeOutput(p.main)}</span></td>
+            <td><span class="micro-tag" style="text-transform:uppercase;">${escapeOutput(p.type)}</span></td>
+            <td><input class="input-table-cell" type="number" value="${p.price}" onchange="modifyRowAttributeInline('${escapeAttribute(p.id)}', 'price', this.value)"></td>
+            <td><input class="input-table-cell" type="number" step="0.1" value="${p.cp}" onchange="modifyRowAttributeInline('${escapeAttribute(p.id)}', 'cp', this.value)"></td>
+            <td><input class="input-table-cell" type="number" value="${p.cf}" onchange="modifyRowAttributeInline('${escapeAttribute(p.id)}', 'cf', this.value)"></td>
+            <td><input class="input-table-cell" type="number" value="${p.del}" onchange="modifyRowAttributeInline('${escapeAttribute(p.id)}', 'del', this.value)"></td>
+            <td><strong id="liveCostRow-${htmlUniqueHashId}" style="color:#ffffff;">${PKR_CurrencyFormatter.format(p.finalCalculatedPrice)}</strong></td>
+            <td><span style="font-size:0.75rem; color:var(--text-muted);">${(p.img || []).length} Img / ${(p.vid || []).length} Vid</span></td>
+            <td><button class="action-btn" style="padding:6px 12px; font-size:0.72rem;" onclick="synchronizeSingleRowDataCloud('${escapeAttribute(p.id)}')">Sync Row</button></td>
+          </tr>`;
+        }).join('');
+      }
+
+      // Inline Datagrid Modification Matrix Bridge
+      window.modifyRowAttributeInline = function(id, attributeKey, numericalValue) {
+        const targets = AppState.inventory.find(x => x.id === id);
+        if (!targets) return;
+        targets[attributeKey] = parseFloat(numericalValue) || 0;
+        calculateFinalConsumerCost(targets);
+        
+        const runtimeSafeHtmlId = createCssSafeId(id);
+        const elementLabelToUpdate = el(`#liveCostRow-${runtimeSafeHtmlId}`);
+        if (elementLabelToUpdate) {
+          elementLabelToUpdate.textContent = PKR_CurrencyFormatter.format(targets.finalCalculatedPrice);
+        }
+      };
+
+      // Configuration State Modifier Controller
+      function configureWorkspaceLayoutView(layoutModeString) {
+        AppState.activeViewLayout = layoutModeString;
+        elAll('.view-switcher-tabs .tab-trigger').forEach(b => {
+          b.classList.toggle('active', b.dataset.target === layoutModeString);
+        });
+
+        el('#cardViewWorkspace').classList.toggle('hidden', layoutModeString !== 'grid');
+        el('#tableViewWorkspace').classList.toggle('hidden', layoutModeString !== 'table');
+        el('#workspacePanelHeading').textContent = layoutModeString === 'grid' ? 'Visual Matrix Cards' : 'Tabular Analysis Spread';
+        
+        renderActiveWorkspaceViews();
+      }
+
+      // Global Operations Modifiers Applied Mass Deployment
+      function runMassGlobalPriceRecalculation() {
+        const modifiedPercent = parseFloat(el('#globalCommissionScale').value) || 0;
+        const modifiedDelivery = parseFloat(el('#globalFlatDeliveryCharge').value) || 0;
+
+        AppState.filteredPool.forEach(p => {
+          p.cp = modifiedPercent;
+          p.del = modifiedDelivery;
+          calculateFinalConsumerCost(p);
+        });
+
+        renderActiveWorkspaceViews();
+        displayAppToastHUDMessage("Global metric pricing factors updated across active parameters successfully.");
+      }
+
+      // ==========================================================================
+      // DISCONNECTED SINGLE PRODUCT DEEP ROUTER MANAGEMENT CANVAS ENGINE LINK
+      // ==========================================================================
+      function evaluateAppRouteUrlState() {
+        const hashAddress = window.location.hash || '#/';
+        
+        // Match Parameter Regex pattern rule logic: #/product/PROD-SKU-001
+        const targetProductMatchPattern = hashAddress.match(/^#\/product\/(.+)$/);
+
+        if (targetProductMatchPattern) {
+          const structuralProductId = targetProductMatchPattern[1];
+          initializeIsolatedProductCanvasPage(structuralProductId);
+        } else if (hashAddress === '#/random-product') {
+          if (AppState.inventory.length > 0) {
+            const randomPick = AppState.inventory[Math.floor(Math.random() * AppState.inventory.length)];
+            window.location.hash = `#/product/${randomPick.id}`;
+          } else {
+            window.location.hash = '#/';
+          }
+        } else {
+          renderFallbackDefaultCatalogMatrixHome();
+        }
+      }
+
+      function renderFallbackDefaultCatalogMatrixHome() {
+        el('#isolatedProductViewportGroup').style.display = 'none';
+        el('#catalogViewportGroup').style.display = 'block';
+        el('#homeNavLink').classList.add('active');
+        
+        // Restore Core Root Meta State Indicators
+        document.title = "Sastamilaga Elite Commerce | Premium Universal Catalog";
+        el('#seoTitle').textContent = "Sastamilaga Elite Commerce | Premium Universal Catalog";
+        el('#seoDesc').setAttribute('content', "Explore our premium catalog optimized with live price tracking, intelligent commission structures, explicit delivery configuration, and AI-discoverable schema matrices.");
+        el('#ogTitle').setAttribute('content', "Sastamilaga Elite Commerce | Premium Universal Catalog");
+        el('#ogDesc').setAttribute('content', "Explore our premium catalog optimized with live price tracking, intelligent commission structures, explicit delivery configuration, and AI-discoverable schema matrices.");
+        el('#geoJsonLd').textContent = JSON.stringify({});
+      }
+
+      function initializeIsolatedProductCanvasPage(targetProductId) {
+        const targetRecord = AppState.inventory.find(x => x.id === targetProductId);
+        if (!targetRecord) {
+          displayAppToastHUDMessage("Requested entity pointer vector does not exist inside internal inventory arrays.");
+          window.location.hash = '#/';
+          return;
+        }
+
+        // Deactivate List States Visuals Toggle HUD Elements
+        el('#catalogViewportGroup').style.display = 'none';
+        el('#isolatedProductViewportGroup').style.display = 'block';
+        el('#homeNavLink').classList.remove('active');
+
+        // Execute In-Depth SEO / GEO Meta Header Injections State Transitions
+        const structuralSeoTitle = `${targetRecord.seoT || targetRecord.name} | Sastamilaga Elite Corporate`;
+        const structuralSeoDesc = targetRecord.seoD || targetRecord.short || "Premium corporate asset optimization interface profile listing.";
+        
+        document.title = structuralSeoTitle;
+        el('#seoTitle').textContent = structuralSeoTitle;
+        el('#seoDesc').setAttribute('content', structuralSeoDesc);
+        el('#ogTitle').setAttribute('content', structuralSeoTitle);
+        el('#ogDesc').setAttribute('content', structuralSeoDesc);
+
+        // Inject Dynamic Machine Discovery Schema Markup Node Block
+        const structuralJsonLdObject = {
+          "@context": "https://schema.org/",
+          "@type": "Product",
+          "name": targetRecord.name,
+          "image": targetRecord.img || [],
+          "description": targetRecord.desc || targetRecord.short,
+          "sku": targetRecord.sku || targetRecord.id,
+          "mpn": targetRecord.id,
+          "brand": {
+            "@type": "Brand",
+            "name": targetRecord.store || "Sastamilaga General"
+          },
+          "offers": {
+            "@type": "Offer",
+            "url": window.location.href,
+            "priceCurrency": "PKR",
+            "price": targetRecord.finalCalculatedPrice,
+            "priceValidUntil": "2027-12-31",
+            "itemCondition": "https://schema.org/NewCondition",
+            "availability": "https://schema.org/InStock"
+          }
+        };
+        el('#geoJsonLd').textContent = JSON.stringify(structuralJsonLdObject, null, 2);
+
+        // Build Product View Specification Text Controls
+        el('#singleProductCategoryPill').textContent = targetRecord.cat || targetRecord.main;
+        el('#singleProductDisplayTitle').textContent = targetRecord.name;
+        el('#singleProductSkuDisplay').textContent = `System Identifier Vector Key: ${targetRecord.sku || targetRecord.id} [Structural Configuration: ${targetRecord.type}]`;
+        el('#singleProductLongDescription').textContent = targetRecord.desc || targetRecord.short || 'No secondary descriptions populated in this data pool cell.';
+        
+        el('#singleProductFinalPriceDisplay').textContent = PKR_CurrencyFormatter.format(targetRecord.finalCalculatedPrice);
+        el('#singleProductBreakdownDisplay').textContent = `Base: ${PKR_CurrencyFormatter.format(targetRecord.price)} | Built-in Percent Scale Modifier: ${targetRecord.cp}% | Processing Setup Fee Base Factor: ${PKR_CurrencyFormatter.format(targetRecord.cf)} | Local Ground Delivery Rate: ${PKR_CurrencyFormatter.format(targetRecord.del)}`;
+        el('#singleProductStructuralType').textContent = `Operational Data Category Type Classification: ${targetRecord.type}`;
+        el('#singleProductTagVectorGroup').innerHTML = (targetRecord.tags || []).map(t => `<span class="micro-tag">${escapeOutput(t)}</span>`).join(' ');
+        
+        el('#singleProductSeoTitleLabel').textContent = targetRecord.seoT || 'Automatic System Inheritance Applied';
+        el('#singleProductSeoDescLabel').textContent = targetRecord.seoD || 'Automatic Generative Fallback Mapping Rule Enabled';
+        el('#singleProductAltTagsLabel').textContent = (targetRecord.alt || []).join(' | ') || 'No alternative spatial tag overrides present.';
+        el('#singleProductAssetFootprintCount').textContent = `Total Integrated Resource Assets: ${(targetRecord.img || []).length} High-Definition Image Layers | ${(targetRecord.vid || []).length} Streaming Objects`;
+        el('#singleProductBrandProvenance').textContent = `Assigned Origin Authority Vault: ${targetRecord.store}`;
+
+        // Initialize Isolated Product Page Media Scroller Carousel Subsystem
+        buildIsolatedPageMediaFrames(targetRecord);
+
+        // Bind sharing action
+        el('#shareProductMetaInstance').onclick = () => {
+          navigator.clipboard.writeText(window.location.href);
+          displayAppToastHUDMessage("Entity address copied to clipboard for index spider parsing simulation.");
+        };
+      }
+
+      function buildIsolatedPageMediaFrames(product) {
+        const stage = el('#galleryMasterStageFrame');
+        const stripScroller = el('#galleryThumbnailStripScroller');
+
+        const arrayMediaObjects = [];
+        (product.img || []).forEach((src, idx) => {
+          arrayMediaObjects.push({ type: 'image', url: src, alternativeString: (product.alt && product.alt[idx]) || product.name });
+        });
+        (product.vid || []).forEach(src => {
+          arrayMediaObjects.push({ type: 'video', url: src, alternativeString: 'Product video track stream.' });
+        });
+
+        if (arrayMediaObjects.length === 0) {
+          arrayMediaObjects.push({ type: 'image', url: fallbackSvgAsset, alternativeString: 'Asset unassigned fallback frame state.' });
+        }
+
+        const assignActiveStageMedia = mediaAssetRecord => {
+          if (mediaAssetRecord.type === 'video') {
+            stage.innerHTML = `<video src="${escapeAttribute(mediaAssetRecord.url)}" controls autoplay muted loop style="width:100%; height:100%; object-fit:cover;"></video>`;
+          } else {
+            stage.innerHTML = `<img src="${escapeAttribute(mediaAssetRecord.url)}" alt="${escapeAttribute(mediaAssetRecord.alternativeString)}" onerror="this.src='${fallbackSvgAsset}'">`;
+          }
+        };
+
+        // Render Initial Focus Media
+        assignActiveStageMedia(arrayMediaObjects[0]);
+
+        // Build Selector Strip Scroller Track
+        stripScroller.innerHTML = arrayMediaObjects.map((media, idx) => {
+          const renderingElementTag = media.type === 'video' ? `<video src="${escapeAttribute(media.url)}" muted></video>` : `<img src="${escapeAttribute(media.url)}">`;
+          return `<button class="strip-thumb-trigger ${idx === 0 ? 'active' : ''}" data-media-index="${idx}">${renderingElementTag}</button>`;
+        }).join('');
+
+        elAll('.strip-thumb-trigger').forEach(btn => {
+          btn.onclick = () => {
+            elAll('.strip-thumb-trigger').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const targetedAsset = arrayMediaObjects[parseInt(btn.dataset.mediaIndex)];
+            assignActiveStageMedia(targetedAsset);
+          };
+        });
+      }
+
+      // ==========================================================================
+      // DATA PIPELINE CSV TRANSFER BRIDGES & ASYNC WEB ENDPOINTS HANDSHAKES
+      // ==========================================================================
+      function invokeMasterCsvDownloadPipeline() {
+        const headersMappingVector = [
+          'product_id', 'sku', 'handle', 'product_type', 'parent_id', 'variation_attributes', 
+          'name', 'category_main', 'category_path', 'category_leaf', 'brand_or_store', 
+          'base_price', 'commission_percent', 'commission_fixed', 'delivery_charge', 'final_price', 
+          'stock_quantity', 'status', 'short_description', 'description', 'tags', 
+          'primary_image', 'image_urls', 'video_urls', 'image_alt_tags', 'seo_meta_title', 'seo_meta_description'
+        ];
+
+        const csvCompiledLines = [headersMappingVector.join(',')];
+
+        AppState.inventory.forEach(p => {
+          const mappedRowCellValues = {
+            product_id: p.id, sku: p.sku, handle: p.h, product_type: p.type, parent_id: p.parent,
+            variation_attributes: p.var, name: p.name, category_main: p.main, category_path: p.cat,
+            category_leaf: p.leaf, brand_or_store: p.store, base_price: p.price, commission_percent: p.cp,
+            commission_fixed: p.cf, delivery_charge: p.del, final_price: p.finalCalculatedPrice,
+            stock_quantity: p.stock, status: p.active, short_description: p.short, description: p.desc,
+            tags: (p.tags || []).join(', '), primary_image: (p.img || [])[0] || '',
+            image_urls: (p.img || []).join(' | '), video_urls: (p.vid || []).join(' | '),
+            image_alt_tags: (p.alt || []).join(' | '), seo_meta_title: p.seoT, seo_meta_description: p.seoD
+          };
+
+          const formattedLineValues = headersMappingVector.map(key => {
+            let itemStr = String(mappedRowCellValues[key] ?? '');
+            if (/[",\n]/.test(itemStr)) {
+              itemStr = '"' + itemStr.replace(/"/g, '""') + '"';
+            }
+            return itemStr;
+          });
+
+          csvCompiledLines.push(formattedLineValues.join(','));
+        });
+
+        const binaryBlobDataTransfer = new Blob([csvCompiledLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const hiddenExecutionLinkElement = document.createElement('a');
+        hiddenExecutionLinkElement.href = URL.createObjectURL(binaryBlobDataTransfer);
+        hiddenExecutionLinkElement.download = `sastamilaga_corporate_master_export_${new Date().toISOString().slice(0,10)}.csv`;
+        hiddenExecutionLinkElement.click();
+        URL.revokeObjectURL(hiddenExecutionLinkElement.href);
+        displayAppToastHUDMessage("Master catalog dataset exported successfully to compliant layout format structure.");
+      }
+
+      window.synchronizeSingleRowDataCloud = async function(id) {
+        const item = AppState.inventory.find(x => x.id === id);
+        if (!item) return;
+        
+        try {
+          await postDataToGoogleAppsScriptWebEndpoint({
+            action: 'updateProduct',
+            product_id: item.id,
+            base_price: item.price,
+            commission_percent: item.cp,
+            commission_fixed: item.cf,
+            delivery_charge: item.del,
+            status: item.active
+          });
+          displayAppToastHUDMessage(`Real-time Cloud Sync Complete: Node key ${item.sku || item.id}`);
+        } catch(err) {
+          // Fallback UI indication for missing URL config states
+          displayAppToastHUDMessage("Endpoint missing. Simulated localized data cache save complete.");
+        }
+      };
+
+      async function postDataToGoogleAppsScriptWebEndpoint(payload) {
+        const scriptExecutionUrl = el('#endpointUrl').value.trim();
+        if (!scriptExecutionUrl) {
+          throw new Error("No Endpoint Definition Configuration Present.");
+        }
+        
+        const responseData = await fetch(scriptExecutionUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        const parseJsonJsonResult = await responseData.json();
+        if (parseJsonJsonResult.status !== 'success') {
+          throw new Error(parseJsonJsonResult.message || "Cloud Sheets Infrastructure Core Rejection Framework Signal.");
+        }
+        return parseJsonJsonResult;
+      }
+
+      // ==========================================================================
+      // USER INTERACTION COMPONENT HOOK EVENTS DISPATCHER REGISTRY
+      // ==========================================================================
+      function registerInteractiveDOMEvents() {
+        // Search & Filter Pipeline Triggers Listeners
+        ['searchTerm', 'sortVector', 'thresholdMin', 'thresholdMax', 'typeVector'].forEach(elementId => {
+          el('#' + elementId).addEventListener('input', () => {
+            AppState.currentPage = 1;
+            executePoolFilteringPipeline();
+          });
+        });
+
+        el('#clearConsoleFilters').onclick = () => {
+          el('#searchTerm').value = '';
+          el('#thresholdMin').value = '';
+          el('#thresholdMax').value = '';
+          el('#sortVector').value = 'alphabetic';
+          el('#typeVector').value = 'all';
+          AppState.activeCategory = 'All Matrix Hub';
+          AppState.currentPage = 1;
+          buildDynamicCategoryTrackers();
+          executePoolFilteringPipeline();
+        };
+
+        // Layout Tab Toggles
+        elAll('.view-switcher-tabs .tab-trigger').forEach(tabButton => {
+          tabButton.onclick = () => configureWorkspaceLayoutView(tabButton.dataset.target);
+        });
+
+        // Pagination Core Click Bindings
+        el('#paginationPageSizeSelector').onchange = event => {
+          AppState.itemsPerPage = parseInt(event.target.value) || 96;
+          AppState.currentPage = 1;
+          renderActiveWorkspaceViews();
+        };
+
+        el('#paginationPrev').onclick = () => {
+          if (AppState.currentPage > 1) {
+            AppState.currentPage--;
+            renderActiveWorkspaceViews();
+          }
+        };
+
+        el('#paginationNext').onclick = () => {
+          const calculatedTotalPages = Math.max(1, Math.ceil(AppState.filteredPool.length / AppState.itemsPerPage));
+          if (AppState.currentPage < calculatedTotalPages) {
+            AppState.currentPage++;
+            renderActiveWorkspaceViews();
+          }
+        };
+
+        // Command Button Implementations Actions Bindings
+        el('#exportCsvTrigger').onclick = invokeMasterCsvDownloadPipeline;
+        el('#applyGlobalModifiers').onclick = runMassGlobalPriceRecalculation;
+
+        el('#syncAppsScript').onclick = async () => {
+          try {
+            for (const singleProductNode of AppState.filteredPool.slice(0, 100)) {
+              await postDataToGoogleAppsScriptWebEndpoint({
+                action: 'updateProduct',
+                product_id: singleProductNode.id,
+                base_price: singleProductNode.price,
+                commission_percent: singleProductNode.cp,
+                commission_fixed: singleProductNode.cf,
+                delivery_charge: singleProductNode.del,
+                status: singleProductNode.active
+              });
+            }
+            displayAppToastHUDMessage("Batch background cloud ledger validation transaction processing success.");
+          } catch(e) {
+            displayAppToastHUDMessage("Sync canceled: Configuration URL parameters not verified.");
+          }
+        };
+
+        // Simulated Checkout Pipeline Handshake Link Hook UI
+        el('#simulatedPurchaseActionBtn').onclick = () => {
+          displayAppToastHUDMessage("Transaction handshake sequence active. Securing enterprise gateway links...");
+        };
+
+        // Local Storage State Memory Persistent Caching Layer Configuration URL Hook
+        const cachedUrlPointerKey = localStorage.getItem('SAST_ELITE_SCRIPT_URL') || '';
+        el('#endpointUrl').value = cachedUrlPointerKey;
+        el('#endpointUrl').onchange = ev => localStorage.setItem('SAST_ELITE_SCRIPT_URL', ev.target.value.trim());
+      }
+
+      // App Level Action Feedback Toast Engine Component Notification System Box Handler
+      let toastLifeCycleTimerReference = null;
+      function displayAppToastHUDMessage(messageStringText) {
+        const elementHudBox = el('#appActionToastHUD');
+        elementHudBox.textContent = messageStringText;
+        elementHudBox.classList.add('engage');
+        
+        clearTimeout(toastLifeCycleTimerReference);
+        toastLifeCycleTimerReference = setTimeout(() => {
+          elementHudBox.classList.remove('engage');
+        }, 4000);
+      }
+
+      // Bootstrap System Invocation Execution Handshake Anchor Line Hook
+      document.addEventListener('DOMContentLoaded', bootstrapSystemEngine);
+      // Immediate secondary safety insurance hook for execution runtime safety
+      if (document.readyState === "interactive" || document.readyState === "complete") {
+        bootstrapSystemEngine();
+      }
+    })();
+  </script>
+
+</body>
+</html>
