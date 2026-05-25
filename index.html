@@ -1,6 +1,83 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050510">
+  <title>Sasta Milaga - Everything Milaga, Sasta Milaga</title>
+  <meta name="description" content="Sasta Milaga is a blastic image-first multi-category marketplace powered by CSV products, tags, search, cart, wishlist, and an AI-style catalog helper.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="noise"></div>
+  <header class="site-header">
+    <div class="nav-shell">
+      <a class="brand" href="#/home" aria-label="Sasta Milaga home">
+        <span class="brand-mark">SM</span>
+        <span>
+          <strong>Sasta Milaga</strong>
+          <small>Everything milaga. Sasta milaga.</small>
+        </span>
+      </a>
+
+      <button class="nav-pill mega-trigger" id="megaTrigger">Categories</button>
+
+      <form class="search-shell" id="topSearchForm">
+        <span>⌕</span>
+        <input id="topSearch" type="search" placeholder="Search fashion, cosmetics, mobile, groceries..." autocomplete="off">
+        <button type="submit">Search</button>
+      </form>
+
+      <nav class="desktop-actions">
+        <a href="#/deals">Deals</a>
+        <a href="#/wishlist">Wishlist <span id="wishCount">0</span></a>
+        <a href="#/cart">Cart <span id="cartCount">0</span></a>
+      </nav>
+
+      <button class="nav-pill chatbot-open" id="openBot">Ask AI</button>
+    </div>
+    <div class="mega-menu" id="megaMenu"></div>
+  </header>
+
+  <main id="app" class="app"></main>
+
+  <nav class="bottom-nav">
+    <a href="#/home">🏠<span>Home</span></a>
+    <a href="#/deals">⚡<span>Deals</span></a>
+    <button id="mobileSearchBtn">🔎<span>Search</span></button>
+    <a href="#/wishlist">💖<span>Wishlist</span></a>
+    <a href="#/cart">🛒<span>Cart</span></a>
+  </nav>
+
+  <div class="modal" id="quickModal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" data-close-modal>×</button>
+      <div id="quickModalBody"></div>
+    </div>
+  </div>
+
+  <aside class="chatbot" id="chatbot" aria-hidden="true">
+    <div class="chat-head">
+      <div>
+        <strong>Sasta AI Helper</strong>
+        <small>Catalog trained on your CSV products</small>
+      </div>
+      <button id="closeBot">×</button>
+    </div>
+    <div class="chat-log" id="chatLog"></div>
+    <form class="chat-form" id="chatForm">
+      <input id="chatInput" placeholder="Ask: mobile under 1000, beauty deals, car accessories...">
+      <button>Ask</button>
+    </form>
+  </aside>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="products.js"></script>
+  <script src="app.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#07111f" />

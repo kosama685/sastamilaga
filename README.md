@@ -1,145 +1,70 @@
-# NovaProcure Corporate Product Ordering Website
+# Sasta Milaga Blastic Marketplace
 
-A complete corporate product catalog website with Google Sheets + Apps Script order automation. It includes a polished frontend, a Google Apps Script backend, sample Excel product data, CSV import data, and deployment instructions.
+This ZIP contains a complete static HTML/CSS/JavaScript marketplace prototype built from your uploaded CSV.
 
-## What is included
+## Files
+
+- `index.html` - Main single-page website.
+- `styles.css` - Blastic animated dark/neon marketplace design.
+- `app.js` - Routing, product rendering, filters, search, cart, wishlist, PDP, checkout, mega menu, and CSV-trained catalog helper chatbot.
+- `products.js` - All 13,674 products converted from your CSV into browser-readable JavaScript.
+- `products.csv` - Original uploaded CSV copied into the project.
+- `Code.gs` - Your Google Apps Script backend file for Google Sheets integration.
+
+## How to run locally
+
+Because the catalog is embedded in `products.js`, you can open `index.html` directly in a browser.
+
+For best results, use a local server:
+
+```bash
+python -m http.server 8000
+```
+
+Then open:
 
 ```text
-product_order_suite/
-├── index.html
-├── assets/
-│   ├── css/styles.css
-│   └── js/app.js
-├── apps-script/
-│   └── Code.gs
-└── data/
-    ├── products_template.xlsx
-    └── products_template.csv
+http://localhost:8000
 ```
 
-## Main features
+## Main pages inside the SPA
 
-- Corporate responsive product catalog design.
-- Category-wise product browsing.
-- Search by product name, product ID, brand, SKU, tags, and description.
-- Voice search using the browser Web Speech API.
-- Featured-only, in-stock-only, price range, sorting, and category filters.
-- Product order modal with auto-detected Product ID.
-- Backend verifies product ID, price, stock, and status from Google Sheets.
-- New orders are appended to `All_Orders`.
-- Daily sheets are created automatically, for example `Orders_2026-05-24`.
-- `setup()` can create all required sheets and seed sample products.
+- `#/home`
+- `#/category/fashion-and-apparel`
+- `#/tag/cosmetics`
+- `#/search?q=mobile`
+- `#/deals`
+- `#/product/<product-handle>`
+- `#/cart`
+- `#/wishlist`
+- `#/checkout`
+- `#/store/<store-name>`
 
-## Google Sheet setup
+## CSV fields used
 
-Your provided spreadsheet ID is already placed in `apps-script/Code.gs`:
+The website uses:
+`product_id`, `sku`, `handle`, `product_type`, `name`, `category_main`, `category_path`, `category_leaf`, `brand_or_store`, `source_price`, `base_price`, `final_price`, `stock_quantity`, `in_stock`, `published`, `status`, `short_description`, `description`, `tags`, `primary_image`, `image_urls`, `video_urls`, `image_alt_tags`, `seo_meta_title`, `seo_meta_description`, and `last_updated`.
 
-```js
-const SPREADSHEET_ID = '1zlupdxEyaOhuurdvYi5DhRduXVszY5plN7UFqEfO0X4';
-```
+## Chatbot
 
-Open your Google Sheet and create or import a sheet named `Products` with these columns:
+The "Sasta AI Helper" is a local JavaScript catalog assistant. It does not call an external AI API. It searches and ranks your CSV products by category, tags, text, stock, video availability, price, and discount.
 
-```text
-Product ID, Product Name, Category, Brand, SKU, Price, Stock, Status, Featured, Image URL, Description, Tags, Created At, Updated At
-```
+Try:
+- `mobile under 1000`
+- `cosmetics deals`
+- `fashion with video`
+- `home decor`
+- `car accessories in stock`
 
-You can import `data/products_template.xlsx` or `data/products_template.csv` into Google Sheets.
+## Google Sheets backend
 
-## Apps Script deployment
+To connect Google Sheets:
 
-1. Open your Google Sheet.
-2. Go to **Extensions > Apps Script**.
-3. Paste the full content of `apps-script/Code.gs`.
-4. Confirm `SPREADSHEET_ID` matches your sheet.
-5. Run `setup()` once from the Apps Script editor and approve permissions.
-6. Click **Deploy > New deployment**.
-7. Select **Web app**.
-8. Set **Execute as** to **Me**.
-9. Set **Who has access** to **Anyone** or **Anyone with the link**.
-10. Deploy and copy the Web App URL.
+1. Open Google Sheets.
+2. Import `products.csv` into a tab named `Products`.
+3. Open Extensions > Apps Script.
+4. Paste `Code.gs`.
+5. Deploy as Web App.
+6. Add frontend fetch/order logic as needed for live order submission.
 
-Your uploaded starter HTML already contained this Apps Script URL, so I kept it as the current default in `assets/js/app.js`:
-
-```js
-GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyFmP_-KqHaGnNr79Vf2K0sYEKKCkHxco6rwZ9bO7qDLuon6fzGIO0O_VfvNlCnFx5kkw/exec'
-```
-
-After deploying a new version, replace that value with your new Web App URL.
-
-## Website deployment
-
-The frontend uses only HTML, CSS, and JavaScript. You can deploy it to:
-
-- Netlify
-- Vercel static hosting
-- GitHub Pages
-- Any cPanel/static hosting
-- Apps Script HTML service if you later want same-origin hosting
-
-For local testing, open `index.html` in a browser or use any simple local server. Voice search usually requires Chrome and HTTPS when hosted online.
-
-## How ordering works
-
-1. The frontend loads products from Apps Script using `?action=products`.
-2. When a user clicks **Buy now**, the selected product is stored in the hidden order fields.
-3. The form sends only the order request plus the detected `productId`.
-4. Apps Script looks up the product in the `Products` sheet.
-5. Apps Script calculates the final price from the sheet, not the browser.
-6. Apps Script appends the order to:
-   - `All_Orders`
-   - the daily sheet, such as `Orders_2026-05-24`
-
-## Optional stock deduction
-
-By default, the script does not reduce stock automatically:
-
-```js
-const AUTO_DEDUCT_STOCK = false;
-```
-
-Change it to `true` if every successful order should reduce stock in the `Products` sheet.
-
-## Troubleshooting
-
-### Products do not load
-
-Check these first:
-
-- Apps Script Web App is deployed.
-- Access is set to Anyone / Anyone with link.
-- `GOOGLE_SCRIPT_URL` in `assets/js/app.js` is the `/exec` URL, not `/dev`.
-- `setup()` has been run once.
-- Product sheet is named exactly `Products`.
-
-### Orders do not appear
-
-Check:
-
-- Required fields are filled.
-- Product ID exists in `Products`.
-- Product `Status` is `Active`.
-- Requested quantity is not greater than `Stock`.
-- Apps Script permissions were approved.
-
-### Voice search does not work
-
-Use Chrome or Edge and host over HTTPS. Some browsers do not support the Web Speech API.
-
-## Customization
-
-Brand colors are defined in `assets/css/styles.css` under `:root`. Change these variables:
-
-```css
---brand: #2563eb;
---accent: #14b8a6;
---ink: #0f172a;
-```
-
-Currency is set in `assets/js/app.js`:
-
-```js
-CURRENCY: 'USD'
-```
-
-Change it to `PKR`, `AED`, `GBP`, etc. as needed.
+The current website works fully as a static frontend demo using localStorage for cart and wishlist.
