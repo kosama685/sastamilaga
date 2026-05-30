@@ -1,5 +1,5 @@
 /* ============================================================
-   SASTA MILAGA – app.js  v2.1 (Formspree Integration)
+   SASTA MILAGA – app.js v2.1 (Formspree Integration)
    Features: Routing · Products · Cart · Wishlist · Chatbot
              Dynamic SEO · JSON-LD Schema · Social Share
              Category Pages · PWA · Performance Optimised
@@ -213,6 +213,7 @@ function categoryLdJson(cat) {
     ]
   };
 }
+
 function returnPolicyLdJson() {
   return {
     '@context': 'https://schema.org',
@@ -489,6 +490,7 @@ function renderReturnPolicy() {
     </section>
   `);
 }
+
 /* ============================================================
    MEGA MENU
    ============================================================ */
@@ -1622,12 +1624,20 @@ function renderAbout() {
 /* ============================================================
    BLOG PAGE
    ============================================================ */
+/* ============================================================
+   UPDATED BLOG PAGE (WITH BLOGGER API & PAGINATION)
+   ============================================================ */
+let blogStartIndex = 1;
+const BLOG_LIMIT = 9;
+
 function renderBlog() {
   setSEO({
     title: 'Blog – Tips, Trends & Shopping Guides',
     description: 'Read our latest blog posts on fashion trends, tech reviews, beauty tips, and smart shopping hacks for Pakistan.',
     url: `${SITE_URL}/#/blog`
   });
+
+  // 1. Initial Render with a loading state
   renderApp(`
     <section class="section">
       <div class="section-head" style="text-align:center">
@@ -1635,26 +1645,108 @@ function renderBlog() {
         <h1>Sasta Milaga Blog</h1>
         <p>Tips, trends, and shopping guides for smart shoppers.</p>
       </div>
-      <div class="about-grid" style="margin: 24px 0">
-        <div class="about-card">
-          <h3 style="color:var(--gold2)">📱 Tech Guides</h3>
-          <p style="color:var(--muted2);margin-top:8px">Discover the latest gadgets and smartphones at unbeatable prices. Read detailed reviews before you buy.</p>
-        </div>
-        <div class="about-card">
-          <h3 style="color:var(--gold2)">👗 Fashion Trends</h3>
-          <p style="color:var(--muted2);margin-top:8px">Stay updated with the latest fashion trends in Pakistan. Style tips and seasonal collections.</p>
-        </div>
-        <div class="about-card">
-          <h3 style="color:var(--gold2)">💄 Beauty Tips</h3>
-          <p style="color:var(--muted2);margin-top:8px">Expert beauty advice, product recommendations, and skincare routines for Pakistani weather.</p>
+
+      <!-- Dynamic Blog Grid Container -->
+      <div id="blogGrid" class="card-grid" style="margin: 24px 0;">
+        <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--muted2);">
+          Fetching latest articles...
         </div>
       </div>
-      <div style="text-align:center;padding:40px 20px;color:var(--muted2)">
-        <p>Blog content is being updated. Check back soon for articles, guides, and shopping tips!</p>
+
+      <!-- Pagination / Load More Button -->
+      <div class="load-more-wrap" style="text-align:center; margin-top:32px;">
+        <button class="ghost-btn" id="loadMoreBlog" style="display:none;" onclick="loadBloggerPosts()">Load More Articles ↓</button>
       </div>
     </section>
   `);
+
+  blogStartIndex = 1; // Reset index on fresh navigation
+  loadBloggerPosts();
 }
+
+window.loadBloggerPosts = function() {
+  const loadBtn = document.getElementById('loadMoreBlog');
+  const grid = document.getElementById('blogGrid');
+  if (loadBtn) loadBtn.textContent = 'Loading...';
+
+  // 2. Fetch posts from your site's native Blogger Feed API
+  fetch('/feeds/posts/default?alt=json&max-results=' + BLOG_LIMIT + '&start-index=' + blogStartIndex)
+    .then(res => res.json())
+    .then(data => {
+      if (blogStartIndex === 1) grid.innerHTML = ''; // Clear loading text
+
+      const entries = data.feed.entry || [];
+
+      // Handle Empty State
+      if (entries.length === 0 && blogStartIndex === 1) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><h2>No Articles Yet</h2><p>Blog content is currently being updated. Check back soon!</p></div>';
+        if (loadBtn) loadBtn.style.display = 'none';
+        return;
+      }
+
+      // 3. Build HTML for Posts using corporate card design
+      const postsHtml = entries.map(entry => {
+        const title = entry.title.$t;
+        
+        // Find the correct URL for the post
+        const linkObj = entry.link.find(l => l.rel === 'alternate');
+        const link = linkObj ? linkObj.href : '#';
+
+        // Extract high-quality image or use your existing fallbackImg
+        let imgUrl = window.fallbackImg;
+        if (entry.media$thumbnail) {
+          imgUrl = entry.media$thumbnail.url.replace(/\/s\d+-c/, '/w600-h400-c'); // Scale up resolution
+        } else if (entry.content && entry.content.$t.includes('<img')) {
+          const match = entry.content.$t.match(/src="([^"]+)"/);
+          if (match) imgUrl = match[1];
+        }
+
+        // Extract a clean text snippet safely
+        let snippet = '';
+        if (entry.summary) {
+          snippet = entry.summary.$t;
+        } else if (entry.content) {
+          snippet = entry.content.$t.replace(/<[^>]+>/g, '').substring(0, 110) + '...';
+        }
+
+        // Output utilizing your pre-existing CSS classes for a premium look
+        return `
+          <a class="product-card" href="${link}" style="display:flex; flex-direction:column; text-decoration:none;">
+            <div class="product-media" style="height:220px; overflow:hidden; border-bottom: 1px solid rgba(0,0,0,0.05);">
+              <img src="${imgUrl}" alt="${title}" loading="lazy" style="width:100%; height:100%; object-fit:cover;" onerror="this.src=window.fallbackImg">
+            </div>
+            <div class="product-body" style="flex:1; display:flex; flex-direction:column; justify-content:space-between; padding:20px;">
+              <div>
+                <b style="font-size:1.15rem; color:var(--text); line-height:1.4; display:block; margin-bottom:10px;">${title}</b>
+                <p style="color:var(--muted2); font-size:0.9rem; line-height:1.6; margin:0;">${snippet}</p>
+              </div>
+              <span style="color:var(--gold2); font-size:0.85rem; font-weight:700; margin-top:20px; display:inline-block; text-transform:uppercase; letter-spacing:0.5px;">Read Article →</span>
+            </div>
+          </a>
+        `;
+      }).join('');
+
+      grid.insertAdjacentHTML('beforeend', postsHtml);
+
+      // 4. Pagination Logic
+      const totalPosts = parseInt(data.feed.openSearch$totalResults.$t, 10);
+      blogStartIndex += entries.length;
+
+      // Toggle "Load More" visibility based on remaining posts
+      if (loadBtn) {
+        if (blogStartIndex <= totalPosts) {
+          loadBtn.style.display = 'inline-flex';
+          loadBtn.textContent = 'Load More Articles ↓';
+        } else {
+          loadBtn.style.display = 'none';
+        }
+      }
+    })
+    .catch(err => {
+      console.error('Failed to load blog posts:', err);
+      if (loadBtn) loadBtn.textContent = 'Error Loading Articles';
+    });
+};
 
 /* ============================================================
    CAREERS PAGE
