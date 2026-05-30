@@ -359,6 +359,11 @@ function renderMega(){
     </div>`;
   }
   draw(state.activeMega);
+  $$('.mega-tab').forEach(btn=>btn.addEventListener('mouseenter',()=>{
+    $$('.mega-tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    draw(btn.dataset.mega);
+  }));
 }
 
 function renderApp(html){
@@ -368,12 +373,6 @@ function renderApp(html){
     return;
   }
   app.innerHTML = html;
-}
-  $$('.mega-tab').forEach(btn=>btn.addEventListener('mouseenter',()=>{
-    $$('.mega-tab').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    draw(btn.dataset.mega);
-  }));
 }
 
 /* ============================================================
@@ -401,72 +400,79 @@ function renderHome(){
   const flash = getDeals().slice(0,8);
   const heroProducts = flash.slice(0,3);
   const deal = flash[0] || products[0];
-  renderApp(`
-    <section class="hero">
-      <div class="hero-content">
-        <span class="eyebrow">🇵🇰 Pakistan's #1 Affordable Marketplace</span>
-        <h1>Everything <span class="gradient-text">Milaga.</span><br>Sasta <span class="gradient-text">Milaga.</span></h1>
-        <p>Discover ${products.length.toLocaleString()} products across ${categories.length} categories. Shop fashion, electronics, beauty, groceries and more – all at the lowest prices in Pakistan.</p>
-        <div class="hero-actions">
-          <a class="primary-btn" href="#/deals">⚡ Shop Flash Deals</a>
-          <a class="ghost-btn" href="#/category/${categories[0]?.slug||''}">Browse Categories</a>
-          <button class="ghost-btn" onclick="document.querySelector('#openBot').click()">🤖 Ask Sasta AI</button>
-        </div>
-      </div>
-      <div class="hero-float-grid" aria-hidden="true">
-        ${heroProducts.map(p=>`<a class="float-card" href="#/product/${p._slug}"><img src="${esc(img(p))}" onerror="this.src=fallbackImg" alt="${esc(p.n)}" loading="lazy"><b>${esc(p.n)}</b></a>`).join('')}
-      </div>
-      <div class="blast-badge" aria-hidden="true">Best Price<br>Blast ⚡</div>
-    </section>
+  const heroCards = heroProducts.map(p => `<a class="float-card" href="#/product/${p._slug}"><img src="${esc(img(p))}" onerror="this.src=fallbackImg" alt="${esc(p.n)}" loading="lazy"><b>${esc(p.n)}</b></a>`).join('');
+  const trendingTags = topTags.slice(0,32).map(t => `<a class="tag-chip" href="#/tag/${t.slug}">#${esc(t.name)} <small>${t.count}</small></a>`).join('');
+  const masonryItems = shuffle(products).slice(0,48).map(masonryCard).join('');
+  const dealTags = (deal.tags||[]).slice(0,8).map(tagLink).join('');
 
-    <section class="section">
-      <div class="section-head">
-        <div><h2>Shop by Category</h2><p>${categories.length} categories auto-generated from your product catalog.</p></div>
-        <a class="ghost-btn" href="#/search?q=">View all →</a>
-      </div>
-      <div class="card-grid">
-        ${categories.slice(0,15).map(categoryCard).join('')}
-      </div>
-    </section>
+  const homeHtml = [
+    '<section class="hero">',
+      '<div class="hero-content">',
+        '<span class="eyebrow">🇵🇰 Pakistan\'s #1 Affordable Marketplace</span>',
+        '<h1>Everything <span class="gradient-text">Milaga.</span><br>Sasta <span class="gradient-text">Milaga.</span></h1>',
+        `<p>Discover ${products.length.toLocaleString()} products across ${categories.length} categories. Shop fashion, electronics, beauty, groceries and more – all at the lowest prices in Pakistan.</p>`,
+        '<div class="hero-actions">',
+          '<a class="primary-btn" href="#/deals">⚡ Shop Flash Deals</a>',
+          `<a class="ghost-btn" href="#/category/${categories[0]?.slug||''}">Browse Categories</a>`,
+          '<button class="ghost-btn" onclick="document.querySelector(\'#openBot\').click()">🤖 Ask Sasta AI</button>',
+        '</div>',
+      '</div>',
+      '<div class="hero-float-grid" aria-hidden="true">',
+        heroCards,
+      '</div>',
+      '<div class="blast-badge" aria-hidden="true">Best Price<br>Blast ⚡</div>',
+    '</section>',
 
-    <section class="section">
-      <div class="section-head">
-        <div><h2>⚡ Flash Sales</h2><p>Biggest discounts, in-stock products with quick-cart actions.</p></div>
-        <span class="eyebrow" id="countdown">Sale refreshes soon</span>
-      </div>
-      <div class="products-row">${flash.slice(0,4).map(productCard).join('')}</div>
-    </section>
+    '<section class="section">',
+      '<div class="section-head">',
+        `<div><h2>Shop by Category</h2><p>${categories.length} categories auto-generated from your product catalog.</p></div>`,
+        '<a class="ghost-btn" href="#/search?q=">View all →</a>',
+      '</div>',
+      '<div class="card-grid">',
+        categories.slice(0,15).map(categoryCard).join(''),
+      '</div>',
+    '</section>',
 
-    <section class="section">
-      <div class="deal-layout">
-        <div class="detail-panel" style="padding:24px">
-          <span class="eyebrow">Deal of the Day 🔥</span>
-          <h2>${esc(deal.n)}</h2>
-          <p>${esc(deal.sd || deal.seoD || 'A hot pick from the Sasta Milaga catalog.')}</p>
-          <div class="tags-wrap">${(deal.tags||[]).slice(0,8).map(tagLink).join('')}</div>
-          <div style="display:flex;align-items:flex-end;gap:14px;margin:18px 0">
-            <span class="big-price">${PKR.format(price(deal))}</span>
-            ${oldPrice(deal)>price(deal)?`<span class="old-price">${PKR.format(oldPrice(deal))}</span>`:''}
-          </div>
-          <a class="primary-btn" href="#/product/${deal._slug}">Open Product →</a>
-        </div>
-        <a class="category-card" style="min-height:420px" href="#/product/${deal._slug}">
-          <img src="${esc(img(deal))}" alt="${esc(deal.n)}" onerror="this.src=fallbackImg" loading="lazy">
-          <div><b>${discount(deal) || 'Hot'}% Off Today</b><small>${esc(deal.m)} · ${esc(deal.leaf)}</small></div>
-        </a>
-      </div>
-    </section>
+    '<section class="section">',
+      '<div class="section-head">',
+        '<div><h2>⚡ Flash Sales</h2><p>Biggest discounts, in-stock products with quick-cart actions.</p></div>',
+        '<span class="eyebrow" id="countdown">Sale refreshes soon</span>',
+      '</div>',
+      `<div class="products-row">${flash.slice(0,4).map(productCard).join('')}</div>`,
+    '</section>',
 
-    <section class="section">
-      <div class="section-head"><div><h2>Trending Tags</h2><p>Tag-based discovery routes for faster browsing.</p></div></div>
-      <div class="visual-strip">${topTags.slice(0,32).map(t=>`<a class="tag-chip" href="#/tag/${t.slug}">#${esc(t.name)} <small>${t.count}</small></a>`).join('')}</div>
-    </section>
+    '<section class="section">',
+      '<div class="deal-layout">',
+        '<div class="detail-panel" style="padding:24px">',
+          '<span class="eyebrow">Deal of the Day 🔥</span>',
+          `<h2>${esc(deal.n)}</h2>`,
+          `<p>${esc(deal.sd || deal.seoD || 'A hot pick from the Sasta Milaga catalog.')}</p>`,
+          `<div class="tags-wrap">${dealTags}</div>`,
+          '<div style="display:flex;align-items:flex-end;gap:14px;margin:18px 0">',
+            `<span class="big-price">${PKR.format(price(deal))}</span>`,
+            `${oldPrice(deal)>price(deal)?`<span class="old-price">${PKR.format(oldPrice(deal))}</span>`:''}`,
+          '</div>',
+          `<a class="primary-btn" href="#/product/${deal._slug}">Open Product →</a>`,
+        '</div>',
+        `<a class="category-card" style="min-height:420px" href="#/product/${deal._slug}">`,
+          `<img src="${esc(img(deal))}" alt="${esc(deal.n)}" onerror="this.src=fallbackImg" loading="lazy">`,
+          `<div><b>${discount(deal) || 'Hot'}% Off Today</b><small>${esc(deal.m)} · ${esc(deal.leaf)}</small></div>`,
+        '</a>',
+      '</div>',
+    '</section>',
 
-    <section class="section">
-      <div class="section-head"><div><h2>Discover More Products</h2><p>Pinterest-style visual discovery feed.</p></div></div>
-      <div class="masonry">${shuffle(products).slice(0,48).map(masonryCard).join('')}</div>
-    </section>
-  `;
+    '<section class="section">',
+      '<div class="section-head"><div><h2>Trending Tags</h2><p>Tag-based discovery routes for faster browsing.</p></div></div>',
+      `<div class="visual-strip">${trendingTags}</div>`,
+    '</section>',
+
+    '<section class="section">',
+      '<div class="section-head"><div><h2>Discover More Products</h2><p>Pinterest-style visual discovery feed.</p></div></div>',
+      `<div class="masonry">${masonryItems}</div>`,
+    '</section>'
+  ].join('');
+
+  renderApp(homeHtml);
   startCountdown();
 }
 
@@ -549,76 +555,84 @@ function renderListing(type, val, qs=''){
   const heroImg = img(base.find(p=>img(p)) || products[0]);
 
   // Category leaf filter chips
+  const leafTagItems = (cat && cat.leaves && cat.leaves.length > 1)
+    ? cat.leaves.slice(0,20).map(l => `<a class="tag-chip ${slug(l)===leafFromUrl?'active':''}" href="#/category/${val}?leaf=${encodeURIComponent(slug(l))}" style="${slug(l)===leafFromUrl?'background:rgba(200,169,110,.22);border-color:rgba(200,169,110,.5)':''}">${esc(l)}</a>`).join('')
+    : '';
   const leafChips = (cat && cat.leaves && cat.leaves.length > 1)
     ? `<div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
         <a class="tag-chip ${!leafFromUrl?'active':''}" href="#/category/${val}" style="${!leafFromUrl?'background:rgba(200,169,110,.22);border-color:rgba(200,169,110,.5)':''}">All</a>
-        ${cat.leaves.slice(0,20).map(l=>`<a class="tag-chip ${slug(l)===leafFromUrl?'active':''}" href="#/category/${val}?leaf=${encodeURIComponent(slug(l))}" style="${slug(l)===leafFromUrl?'background:rgba(200,169,110,.22);border-color:rgba(200,169,110,.5)':''}">${esc(l)}</a>`).join('')}
-       </div>` : '';
+        ${leafTagItems}
+       </div>`
+    : '';
 
-  renderApp(`
-    <section class="hero" style="min-height:320px">
-      <div class="hero-content">
-        <span class="eyebrow">${type==='tag'?'Tag discovery':'type'==='category'?'Category':'Catalog'} ${type==='tag'?'page':type==='category'?'page':'search'}</span>
-        <h1>${esc(title)}</h1>
-        <p>${esc(subtitle)}. Filter by price, brand, stock and layout.</p>
-        ${leafChips}
-      </div>
-      <div class="blast-badge" aria-hidden="true">${base.length.toLocaleString()}<br>Items</div>
-      <div class="hero-float-grid" aria-hidden="true"><span class="float-card" style="right:80px;top:40px"><img src="${esc(heroImg)}" onerror="this.src=fallbackImg" alt="${esc(title)}"><b>${esc(title)}</b></span></div>
-    </section>
-    <section class="section listing-shell">
-      <aside class="filter-panel" aria-label="Product filters">
-        <h2 style="margin:0 0 8px;font-size:1.3rem">🎛️ Filters</h2>
-        <p style="color:var(--muted2);margin:0 0 14px;font-size:.82rem">Filter by price, tags, brand, stock &amp; video.</p>
-        <div class="filter-group">
-          <label for="filterQ">Search inside results</label>
-          <input id="filterQ" value="${esc(state.filters.q)}" placeholder="Search products..." aria-label="Search within results">
-        </div>
-        <div class="filter-group">
-          <label>Price range (PKR)</label>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            <input id="minP" type="number" placeholder="Min" aria-label="Minimum price">
-            <input id="maxP" type="number" placeholder="Max" aria-label="Maximum price">
-          </div>
-        </div>
-        <div class="filter-group">
-          <label for="sortBy">Sort by</label>
-          <select id="sortBy" aria-label="Sort products">
-            <option value="relevant">Most Relevant</option>
-            <option value="low">Lowest Price</option>
-            <option value="high">Highest Price</option>
-            <option value="discount">Biggest Discount</option>
-            <option value="new">Newest</option>
-            <option value="media">Most Visual</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label>Popular Tags</label>
-          <div class="chip-cloud" id="filterTags"></div>
-        </div>
-        <div class="filter-group">
-          <label for="storeFilter">Store / Brand</label>
-          <select id="storeFilter" aria-label="Filter by store"><option value="">All Stores</option></select>
-        </div>
-        <div class="filter-group">
-          <label><input id="stockOnly" type="checkbox" style="width:auto;margin-right:6px"> In stock only</label>
-          <label style="margin-top:8px;display:block"><input id="videoOnly" type="checkbox" style="width:auto;margin-right:6px"> Video available</label>
-        </div>
-        <button class="primary-btn" id="applyFilters" style="width:100%;margin-top:16px">Apply Filters</button>
-      </aside>
-      <div class="content-panel">
-        <div class="listing-tools">
-          <div><h2 id="resultTitle" style="font-size:1.4rem;margin:0">${esc(title)}</h2><p id="resultCount" style="margin:.3rem 0 0;color:var(--muted2)">Loading…</p></div>
-          <div class="view-toggle">
-            <button class="ghost-btn active" data-view="grid" aria-label="Grid view">⊞ Grid</button>
-            <button class="ghost-btn" data-view="list" aria-label="List view">≡ List</button>
-          </div>
-        </div>
-        <div id="resultGrid" class="products-row"></div>
-        <div class="load-more-wrap"><button class="ghost-btn" id="loadMore">Load more products ↓</button></div>
-      </div>
-    </section>
-  `;
+  const listingHtml = [
+    '<section class="hero" style="min-height:320px">',
+      '<div class="hero-content">',
+        `<span class="eyebrow">${type==='tag'?'Tag discovery':type==='category'?'Category':'Catalog'} ${type==='tag'?'page':type==='category'?'page':'search'}</span>`,
+        `<h1>${esc(title)}</h1>`,
+        `<p>${esc(subtitle)}. Filter by price, brand, stock and layout.</p>`,
+        leafChips,
+      '</div>',
+      `<div class="blast-badge" aria-hidden="true">${base.length.toLocaleString()}<br>Items</div>`,
+      '<div class="hero-float-grid" aria-hidden="true"><span class="float-card" style="right:80px;top:40px">',
+        `<img src="${esc(heroImg)}" onerror="this.src=fallbackImg" alt="${esc(title)}">`,
+        `<b>${esc(title)}</b>`,
+      '</span></div>',
+    '</section>',
+    '<section class="section listing-shell">',
+      '<aside class="filter-panel" aria-label="Product filters">',
+        '<h2 style="margin:0 0 8px;font-size:1.3rem">🎛️ Filters</h2>',
+        '<p style="color:var(--muted2);margin:0 0 14px;font-size:.82rem">Filter by price, tags, brand, stock &amp; video.</p>',
+        '<div class="filter-group">',
+          '<label for="filterQ">Search inside results</label>',
+          `<input id="filterQ" value="${esc(state.filters.q)}" placeholder="Search products..." aria-label="Search within results">`,
+        '</div>',
+        '<div class="filter-group">',
+          '<label>Price range (PKR)</label>',
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">',
+            '<input id="minP" type="number" placeholder="Min" aria-label="Minimum price">',
+            '<input id="maxP" type="number" placeholder="Max" aria-label="Maximum price">',
+          '</div>',
+        '</div>',
+        '<div class="filter-group">',
+          '<label for="sortBy">Sort by</label>',
+          '<select id="sortBy" aria-label="Sort products">',
+            '<option value="relevant">Most Relevant</option>',
+            '<option value="low">Lowest Price</option>',
+            '<option value="high">Highest Price</option>',
+            '<option value="discount">Biggest Discount</option>',
+            '<option value="new">Newest</option>',
+            '<option value="media">Most Visual</option>',
+          '</select>',
+        '</div>',
+        '<div class="filter-group">',
+          '<label>Popular Tags</label>',
+          '<div class="chip-cloud" id="filterTags"></div>',
+        '</div>',
+        '<div class="filter-group">',
+          '<label for="storeFilter">Store / Brand</label>',
+          '<select id="storeFilter" aria-label="Filter by store"><option value="">All Stores</option></select>',
+        '</div>',
+        '<div class="filter-group">',
+          '<label><input id="stockOnly" type="checkbox" style="width:auto;margin-right:6px"> In stock only</label>',
+          '<label style="margin-top:8px;display:block"><input id="videoOnly" type="checkbox" style="width:auto;margin-right:6px"> Video available</label>',
+        '</div>',
+        '<button class="primary-btn" id="applyFilters" style="width:100%;margin-top:16px">Apply Filters</button>',
+      '</aside>',
+      '<div class="content-panel">',
+        '<div class="listing-tools">',
+          `<div><h2 id="resultTitle" style="font-size:1.4rem;margin:0">${esc(title)}</h2><p id="resultCount" style="margin:.3rem 0 0;color:var(--muted2)">Loading…</p></div>`,
+          '<div class="view-toggle">',
+            '<button class="ghost-btn active" data-view="grid" aria-label="Grid view">⊞ Grid</button>',
+            '<button class="ghost-btn" data-view="list" aria-label="List view">≡ List</button>',
+          '</div>',
+        '</div>',
+        '<div id="resultGrid" class="products-row"></div>',
+        '<div class="load-more-wrap"><button class="ghost-btn" id="loadMore">Load more products ↓</button></div>',
+      '</div>',
+    '</section>'
+  ].join('');
+  renderApp(listingHtml);
   buildFilterControls(base);
   bindListingControls();
   drawResults();
@@ -720,62 +734,68 @@ function renderPDP(handle){
     <span>${esc(p.n)}</span>
   </div>`;
 
-  renderApp(`
-    <section class="pdp" aria-label="Product detail">
-      <div>
-        <div class="gallery-panel">
-          <div class="gallery-main" id="galleryMain">${mediaElement(first.u, first.type, p.n)}</div>
-          <div class="gallery-thumbs" role="list" aria-label="Product images">
-            ${media.map((m,i)=>`<button data-gallery="${esc(m.u)}" data-type="${m.type}" aria-label="View image ${i+1}" class="${i===0?'active':''}">${mediaElement(m.u,m.type,p.n)}</button>`).join('')}
-          </div>
-        </div>
+  const productMediaButtons = media.map((m,i) => `<button data-gallery="${esc(m.u)}" data-type="${m.type}" aria-label="View image ${i+1}" class="${i===0?'active':''}">${mediaElement(m.u,m.type,p.n)}</button>`).join('');
+  const productTagsHtml = (p.tags||[]).length ? `<h3 style="font-size:1rem;margin:14px 0 8px;color:var(--muted2)">Tags</h3><div class="tags-wrap">${(p.tags||[]).map(tagLink).join('')}</div>` : '';
+  const productSkuHtml = p.sku ? `<p style="margin-top:14px;color:var(--muted);font-size:.82rem">SKU: <code>${esc(p.sku)}</code> &nbsp;|&nbsp; ID: <code>${esc(p.id)}</code></p>` : '';
+  const productPriceHtml = `${oldPrice(p)>price(p)?` <span class="old-price">${PKR.format(oldPrice(p))}</span>`:''}${discount(p)?` <span class="discount" style="position:static;display:inline-block;margin-left:8px">-${discount(p)}%</span>`:''}`;
+  const productAvailabilityHtml = `${discount(p)?`<span class="tag-chip" style="background:rgba(200,169,110,.2);border-color:rgba(200,169,110,.4)">💰 ${discount(p)}% Off</span>`:''}<span class="tag-chip">${p.in || num(p.stock)>0 ? '✅ In Stock' : '⚠️ Check Availability'}</span>${(p.vids||[]).length?'<span class="tag-chip">🎬 Video Available</span>':''}`;
+  const relatedHtml = related.map(productCard).join('');
+  const shareBarHtml = buildShareBar(p);
 
-        <div class="detail-panel">
-          ${breadcrumbHtml}
-          <h2 style="margin-top:14px">Product Details</h2>
-          <p style="line-height:1.7;color:var(--muted2)">${esc(p.d || p.sd || p.seoD || 'Full product details available at Sasta Milaga.')}</p>
-          ${(p.tags||[]).length ? `<h3 style="font-size:1rem;margin:14px 0 8px;color:var(--muted2)">Tags</h3><div class="tags-wrap">${(p.tags||[]).map(tagLink).join('')}</div>` : ''}
-          ${p.sku ? `<p style="margin-top:14px;color:var(--muted);font-size:.82rem">SKU: <code>${esc(p.sku)}</code> &nbsp;|&nbsp; ID: <code>${esc(p.id)}</code></p>` : ''}
-        </div>
-      </div>
+  const pdpHtml = [
+    '<section class="pdp" aria-label="Product detail">',
+      '<div>',
+        '<div class="gallery-panel">',
+          `<div class="gallery-main" id="galleryMain">${mediaElement(first.u, first.type, p.n)}</div>`,
+          '<div class="gallery-thumbs" role="list" aria-label="Product images">',
+            productMediaButtons,
+          '</div>',
+        '</div>',
 
-      <aside class="buy-panel" aria-label="Purchase options">
-        <span class="eyebrow">${esc(p.m)} ${p.leaf?'› '+esc(p.leaf):''}</span>
-        <h1>${esc(p.n)}</h1>
-        <p class="product-meta">
-          Sold by: <a href="#/store/${p._storeSlug}" style="color:var(--gold2)">${esc(p.store || SITE_NAME)}</a>
-          ${p.sku ? `· SKU: ${esc(p.sku)}` : ''}
-        </p>
-        <div style="margin:12px 0">
-          <span class="big-price">${PKR.format(price(p))}</span>
-          ${oldPrice(p)>price(p)?` <span class="old-price">${PKR.format(oldPrice(p))}</span>`:''}
-          ${discount(p)?` <span class="discount" style="position:static;display:inline-block;margin-left:8px">-${discount(p)}%</span>`:''}
-        </div>
-        <div class="tags-wrap" style="margin:10px 0">
-          ${discount(p)?`<span class="tag-chip" style="background:rgba(200,169,110,.2);border-color:rgba(200,169,110,.4)">💰 ${discount(p)}% Off</span>`:''}
-          <span class="tag-chip">${p.in || num(p.stock)>0 ? '✅ In Stock' : '⚠️ Check Availability'}</span>
-          ${(p.vids||[]).length?'<span class="tag-chip">🎬 Video Available</span>':''}
-        </div>
-        <div class="qty" aria-label="Quantity selector">
-          <button onclick="changeQty(-1)" aria-label="Decrease quantity">−</button>
-          <b id="qty" aria-live="polite">1</b>
-          <button onclick="changeQty(1)" aria-label="Increase quantity">+</button>
-        </div>
-        <div class="buy-actions">
-          <button class="primary-btn" data-add-cart="${esc(p.id)}" aria-label="Add to cart">🛒 Add to Cart</button>
-          <a class="ghost-btn" href="#/checkout" onclick="addToCart('${esc(p.id)}',Number(document.querySelector('#qty')?.textContent||1))" aria-label="Buy now">⚡ Buy Now</a>
-        </div>
-        <button class="ghost-btn" style="width:100%;margin-top:8px" data-wish="${esc(p.id)}" aria-label="Save to wishlist">♡ Save to Wishlist</button>
+        '<div class="detail-panel">',
+          breadcrumbHtml,
+          '<h2 style="margin-top:14px">Product Details</h2>',
+          `<p style="line-height:1.7;color:var(--muted2)">${esc(p.d || p.sd || p.seoD || 'Full product details available at Sasta Milaga.')}</p>`,
+          productTagsHtml,
+          productSkuHtml,
+        '</div>',
+      '</div>',
 
-        ${buildShareBar(p)}
-      </aside>
-    </section>
+      '<aside class="buy-panel" aria-label="Purchase options">',
+        `<span class="eyebrow">${esc(p.m)} ${p.leaf?'› '+esc(p.leaf):''}</span>`,
+        `<h1>${esc(p.n)}</h1>`,
+        '<p class="product-meta">',
+          `Sold by: <a href="#/store/${p._storeSlug}" style="color:var(--gold2)">${esc(p.store || SITE_NAME)}</a>`,
+          `${p.sku ? `· SKU: ${esc(p.sku)}` : ''}`,
+        '</p>',
+        '<div style="margin:12px 0">',
+          `<span class="big-price">${PKR.format(price(p))}</span>`,
+          productPriceHtml,
+        '</div>',
+        `<div class="tags-wrap" style="margin:10px 0">${productAvailabilityHtml}</div>`,
+        '<div class="qty" aria-label="Quantity selector">',
+          '<button onclick="changeQty(-1)" aria-label="Decrease quantity">−</button>',
+          '<b id="qty" aria-live="polite">1</b>',
+          '<button onclick="changeQty(1)" aria-label="Increase quantity">+</button>',
+        '</div>',
+        '<div class="buy-actions">',
+          `<button class="primary-btn" data-add-cart="${esc(p.id)}" aria-label="Add to cart">🛒 Add to Cart</button>`,
+          `<a class="ghost-btn" href="#/checkout" onclick="addToCart('${esc(p.id)}',Number(document.querySelector('#qty')?.textContent||1))" aria-label="Buy now">⚡ Buy Now</a>`,
+        '</div>',
+        `<button class="ghost-btn" style="width:100%;margin-top:8px" data-wish="${esc(p.id)}" aria-label="Save to wishlist">♡ Save to Wishlist</button>`,
+        shareBarHtml,
+      '</aside>',
+    '</section>',
 
-    <section class="section">
-      <div class="section-head"><div><h2>${crossTitle(p)}</h2><p>More products from the same category and tags.</p></div></div>
-      <div class="products-row">${related.map(productCard).join('')}</div>
-    </section>
-  `;
+    '<section class="section">',
+      '<div class="section-head"><div><h2>',
+        `${crossTitle(p)}`,
+        '</h2><p>More products from the same category and tags.</p></div></div>',
+      `<div class="products-row">${relatedHtml}</div>`,
+    '</section>'
+  ].join('');
+
+  renderApp(pdpHtml);
 }
 
 function crossTitle(p){
@@ -982,7 +1002,7 @@ function renderCheckout(){
       </form>
       ${summaryBox(sub)}
     </div>
-  </section>`;
+  </section>`);
 }
 
 function empty(title, cta, href){ return `<div class="empty-state"><h2>${esc(title)}</h2><p>Everything is searchable and image-led at Sasta Milaga.</p><a class="primary-btn" href="${href}">${esc(cta)}</a></div>`; }
@@ -1089,10 +1109,10 @@ function answerBot(q){
   }
 
   addBotMessage(`<div>Found <b>${arr.length}</b> matches. Tap to view:</div>
-    <div class="chat-products">${arr.map(p=>`<a class="chat-product" href="#/product/${p._slug}">
-      <img src="${esc(img(p))}" onerror="this.src=fallbackImg" alt="${esc(p.n)}" loading="lazy">
-      <span><b>${esc(p.n)}</b><br><small style="color:var(--gold2)">${PKR.format(price(p))} · ${esc(p.m)}</small></span>
-    </a>`).join('')}</div>`);
+    <div class="chat-products">${arr.map(p=>'<a class="chat-product" href="#/product/'+p._slug+'">' +
+      '<img src="'+esc(img(p))+'" onerror="this.src=fallbackImg" alt="'+esc(p.n)+'" loading="lazy">' +
+      '<span><b>'+esc(p.n)+'</b><br><small style="color:var(--gold2)">'+PKR.format(price(p))+' · '+esc(p.m)+'</small></span>' +
+    '</a>').join('')}</div>`);
 }
 
 /* ============================================================
