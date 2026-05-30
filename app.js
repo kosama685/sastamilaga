@@ -1,11 +1,10 @@
-/* ============================================================
-   SASTA MILAGA – app.js  v2.0 (Fixed + Enhanced)
-   Features: Routing · Products · Cart · Wishlist · Chatbot
-             Dynamic SEO · JSON-LD Schema · Social Share
-             Category Pages · PWA · Performance Optimised
-   ============================================================ */
+
 
 'use strict';
+
+/* ── CONFIGURATION ── */
+const FORMSPREE_ID = 'xwvzzjdl'; // Sign up at formspree.io, create a form, and paste your ID here.
+const ADMIN_EMAIL  = 'kosama685@gmail.com';
 
 /* ── Safety guard: ensure SASTA_PRODUCTS is always an array ── */
 const PRODUCTS_RAW = (typeof window !== 'undefined' && Array.isArray(window.SASTA_PRODUCTS))
@@ -13,7 +12,7 @@ const PRODUCTS_RAW = (typeof window !== 'undefined' && Array.isArray(window.SAST
   : [];
 
 const PKR       = new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', maximumFractionDigits: 0 });
-const SITE_URL  = 'https://sastamilaga.com';
+const SITE_URL  = 'https://sastamilaga.com'; // Ensure this matches your actual domain
 const SITE_NAME = 'Sasta Milaga';
 
 /* ── Fallback SVG image ── */
@@ -164,7 +163,14 @@ function productLdJson(p) {
       'priceValidUntil' : new Date(Date.now() + 30 * 24 * 3600000).toISOString().slice(0, 10),
       'availability'    : (p.in || num(p.stock) > 0) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       'itemCondition'   : 'https://schema.org/NewCondition',
-      'seller'          : { '@type': 'Organization', 'name': SITE_NAME }
+      'seller'          : { '@type': 'Organization', 'name': SITE_NAME },
+      'hasMerchantReturnPolicy': {
+        '@type': 'MerchantReturnPolicy',
+        'returnPolicyCategory': 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        'merchantReturnDays': 7,
+        'returnMethod': 'https://schema.org/ReturnByMail',
+        'returnFees': 'https://schema.org/RestockingFees'
+      }
     }
   };
   if (oldPrice(p) > pPrice) {
@@ -184,24 +190,18 @@ function productLdJson(p) {
   return { '@context': 'https://schema.org', '@graph': [schema, breadcrumb] };
 }
 
-function categoryLdJson(cat) {
+function returnPolicyLdJson() {
   return {
     '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type'      : 'CollectionPage',
-        'name'       : `${cat.name} – ${SITE_NAME}`,
-        'description': `Browse ${cat.count} ${cat.name} products at best prices in Pakistan.`,
-        'url'        : `${SITE_URL}/#/category/${cat.slug}`
-      },
-      {
-        '@type': 'BreadcrumbList',
-        'itemListElement': [
-          { '@type': 'ListItem', 'position': 1, 'name': 'Home',     'item': SITE_URL },
-          { '@type': 'ListItem', 'position': 2, 'name': cat.name, 'item': `${SITE_URL}/#/category/${cat.slug}` }
-        ]
-      }
-    ]
+    '@type': 'MerchantReturnPolicy',
+    'name': 'Sasta Milaga 7-Day Return Policy',
+    'applicableCountry': 'PK',
+    'returnPolicyCategory': 'https://schema.org/MerchantReturnFiniteReturnWindow',
+    'merchantReturnDays': 7,
+    'returnMethod': 'https://schema.org/ReturnByMail',
+    'returnFees': 'Customers bear return shipping costs (PKR 250) unless item is defective.',
+    'refundType': 'https://schema.org/FullRefund',
+    'itemCondition': ['https://schema.org/NewCondition', 'https://schema.org/DamagedCondition']
   };
 }
 
@@ -223,14 +223,6 @@ function buildShareBar(p) {
     <a class="share-btn facebook" href="https://www.facebook.com/sharer/sharer.php?u=${url}" target="_blank" rel="noopener" aria-label="Share on Facebook">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
       <span>Facebook</span>
-    </a>
-    <a class="share-btn twitter" href="https://twitter.com/intent/tweet?text=${title}&url=${url}&hashtags=SastaMilaga,PakistanShopping" target="_blank" rel="noopener" aria-label="Share on X">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-      <span>X / Twitter</span>
-    </a>
-    <a class="share-btn pinterest" href="https://pinterest.com/pin/create/button/?url=${url}&media=${img_url}&description=${title}" target="_blank" rel="noopener" aria-label="Save on Pinterest">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
-      <span>Pinterest</span>
     </a>
     <button class="share-btn copy-link" onclick="copyProductLink('${esc(p._slug)}')" aria-label="Copy product link" title="Copy link">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
@@ -267,15 +259,11 @@ function init() {
   bindEvents();
   renderMega();
   drawChatChips();
-  if (!location.hash) location.hash = '#/home';
-  route();
-  addBotMessage(
-    `Hi! 👋 I can help you find products from <b>${products.length.toLocaleString()}</b> items. ` +
-    `Try: <i>"mobile under 5000"</i>, <i>"cosmetics deals"</i>, <i>"fashion with video"</i>, or ask about delivery, payments &amp; returns.`
-  );
+  
+  // Handle initial load (Support both Hash and Path)
+  handleRoute();
 }
 
-/* Ensure #app div exists for Blogger (Blogger uses b:section, not a plain div) */
 function ensureAppRoot() {
   if (!$('#app')) {
     const div = document.createElement('div');
@@ -286,7 +274,7 @@ function ensureAppRoot() {
 }
 
 function bindEvents() {
-  window.addEventListener('hashchange', route);
+  window.addEventListener('popstate', handleRoute); // Back/Forward button support
 
   /* Search form */
   const searchForm = $('#topSearchForm');
@@ -294,7 +282,7 @@ function bindEvents() {
     searchForm.addEventListener('submit', e => {
       e.preventDefault();
       const q = ($('#topSearch') || {}).value || '';
-      location.hash = '#/search?q=' + encodeURIComponent(q.trim());
+      navigateTo('search', '', `q=${encodeURIComponent(q.trim())}`);
     });
   }
 
@@ -314,14 +302,20 @@ function bindEvents() {
     });
   }
 
-  /* Mobile search */
-  const mobileSearchBtn = $('#mobileSearchBtn');
-  if (mobileSearchBtn) {
-    mobileSearchBtn.addEventListener('click', () => {
-      if ($('#topSearch')) $('#topSearch').focus();
-      scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  }
+  /* Intercept ALL clicks for Clean URL navigation */
+  document.body.addEventListener('click', e => {
+    const link = e.target.closest('a');
+    if (!link) return;
+
+    // Check if it's an internal hash link or data-link
+    const href = link.getAttribute('href');
+    if (href && href.startsWith('#/')) {
+      e.preventDefault();
+      const path = href.substring(2); // remove '#/'
+      const [routePart, queryPart] = path.split('?');
+      navigateTo(routePart, '', queryPart || '');
+    }
+  });
 
   /* Chatbot */
   const openBot  = $('#openBot');
@@ -344,7 +338,7 @@ function bindEvents() {
     });
   }
 
-  /* Delegated body events */
+  /* Modal & Cart Delegates */
   document.body.addEventListener('click', e => {
     if (e.target.closest('[data-close-modal]')) { closeModal(); return; }
     const quick = e.target.closest('[data-quick]');
@@ -356,21 +350,46 @@ function bindEvents() {
     const thumb = e.target.closest('[data-gallery]');
     if (thumb) { setGallery(thumb.dataset.gallery, thumb.dataset.type); return; }
   });
-
-  /* Keyboard: Escape closes modal */
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 }
 
 /* ============================================================
-   ROUTER
+   ROUTER & NAVIGATION (CLEAN URL LOGIC)
    ============================================================ */
-function route() {
-  const megaMenu = $('#megaMenu');
-  if (megaMenu) megaMenu.classList.remove('open');
+function navigateTo(route, sub = '', qs = '') {
+  let hash = '';
+  let path = '';
 
-  const raw   = location.hash.replace(/^#\/?/, '') || 'home';
-  const [path, qs] = raw.split('?');
-  const parts = path.split('/').filter(Boolean);
+  if (route === 'home') {
+    path = '/'; 
+    hash = '#/home';
+  } else {
+    path = `/${route}${sub ? '/' + sub : ''}${qs ? '?' + qs : ''}`;
+    hash = `#/${route}${sub ? '/' + sub : ''}${qs ? '?' + qs : ''}`;
+  }
+
+  // 1. Update visual URL bar (Clean URL)
+  history.pushState({ route, sub, qs }, '', path);
+  
+  // 2. Update internal state
+  window.location.hash = hash; // Keep hash for Blogger refresh safety
+  
+  // 3. Render
+  route();
+}
+
+function handleRoute() {
+  // Logic to determine current route from either Path or Hash
+  // Fallback to hash if path is just "/" on load (Blogger default)
+  const pathParts = window.location.pathname.replace(/^\//, '').split('/');
+  const hashParts = window.location.hash.replace(/^#\//, '').split('?');
+  
+  let raw = pathParts[0] || hashParts[0] || 'home';
+  
+  // Safety fallback for Blogger root
+  if (raw === '' || raw === 'p' || raw.includes('.html')) raw = 'home';
+
+  const qs = hashParts[1] || window.location.search.substring(1);
+  const parts = raw.split('/').filter(Boolean);
 
   state.limit = 60;
   state.view  = 'grid';
@@ -387,7 +406,151 @@ function route() {
   else if (parts[0] === 'checkout') renderCheckout();
   else if (parts[0] === 'faq')      renderFAQ();
   else if (parts[0] === 'about')    renderAbout();
+  else if (parts[0] === 'return-policy') renderReturnPolicy(); // NEW ROUTE
+  else if (parts[0] === 'contact')  renderContact();            // NEW ROUTE
   else renderHome();
+}
+
+// Alias for the original function to maintain compatibility
+function route() { handleRoute(); }
+
+/* ============================================================
+   RETURN POLICY PAGE (NEW)
+   ============================================================ */
+function renderReturnPolicy() {
+  setSEO({
+    title: 'Return & Refund Policy – 7 Day Easy Returns',
+    description: 'Sasta Milaga Pakistan Return Policy. 7-day return window. Flat PKR 250 return fee. Free returns for defective items.',
+    url: `${SITE_URL}/#/return-policy`,
+    ldJson: returnPolicyLdJson()
+  });
+
+  renderApp(`
+    <section class="section">
+      <div class="section-head" style="text-align:center">
+        <span class="eyebrow">Customer Care</span>
+        <h1>Return & Refund Policy</h1>
+        <p>Hassle-free returns within 7 days of delivery.</p>
+      </div>
+
+      <div class="about-grid" style="margin: 24px 0">
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">7-Day Window</h3>
+          <p style="color:var(--muted2);margin-top:8px">You have 7 days from the date of delivery to initiate a return request.</p>
+        </div>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">Return Cost</h3>
+          <p style="color:var(--muted2);margin-top:8px">Standard return shipping is <b>PKR 250</b>. Returns are free if the item is defective or damaged.</p>
+        </div>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">Refund Method</h3>
+          <p style="color:var(--muted2);margin-top:8px">Refunds are processed to your original payment method (Bank Transfer/EasyPaisa) within 7-10 business days.</p>
+        </div>
+      </div>
+
+      <div class="faq-accordion">
+        <div class="faq-item">
+          <button class="faq-title" onclick="toggleFaq(this)">What is the return window? <span>+</span></button>
+          <div class="faq-content">
+            You can return any item within <b>7 days</b> of receiving your order. The item must be unused, in original packaging, and with tags attached.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-title" onclick="toggleFaq(this)">Who pays for return shipping? <span>+</span></button>
+          <div class="faq-content">
+            For "Change of Mind" returns, the customer bears the shipping cost of <b>PKR 250</b>. If the item is defective, damaged, or incorrect, Sasta Milaga covers the return shipping cost.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-title" onclick="toggleFaq(this)">How do I initiate a return? <span>+</span></button>
+          <div class="faq-content">
+            Simply contact our WhatsApp support at <b>+92 300 0000000</b> or email us at <b>${ADMIN_EMAIL}</b> with your Order ID. We will guide you through the process.
+          </div>
+        </div>
+         <div class="faq-item">
+          <button class="faq-title" onclick="toggleFaq(this)">Can I get a refund to my Bank Account? <span>+</span></button>
+          <div class="faq-content">
+            Yes. Once we receive the returned item, we will process the refund to your Bank Account, JazzCash, or EasyPaisa within 7-10 working days.
+          </div>
+        </div>
+      </div>
+    </section>
+  `);
+}
+
+/* ============================================================
+   CONTACT PAGE (NEW) - FORMSPREE INTEGRATION
+   ============================================================ */
+function renderContact() {
+  setSEO({
+    title: 'Contact Us – Customer Support',
+    description: 'Get in touch with Sasta Milaga Pakistan. WhatsApp, Email, and Contact Form available.',
+    url: `${SITE_URL}/#/contact`
+  });
+
+  renderApp(`
+    <section class="section">
+      <div class="section-head">
+        <div><h1>Contact Us</h1><p>We are here to help you 24/7.</p></div>
+      </div>
+      
+      <div class="cart-layout">
+        <div class="detail-panel" style="padding:24px">
+          <h2 style="margin:0 0 16px">Send us a message</h2>
+          <form id="contactForm" action="https://formspree.io/f/${FORMSPREE_ID}" method="POST" class="form-grid">
+            <input type="text" name="name" placeholder="Your Name" required>
+            <input type="email" name="email" placeholder="Your Email" required>
+            <input type="tel" name="phone" placeholder="Phone Number">
+            <input type="text" name="subject" placeholder="Subject" required style="grid-column:1/-1">
+            <textarea name="message" placeholder="How can we help?" rows="5" required style="grid-column:1/-1"></textarea>
+            
+            <input type="hidden" name="_subject" value="New Contact from Sasta Milaga">
+            <input type="hidden" name="_captcha" value="false">
+            
+            <button type="submit" class="primary-btn" style="grid-column:1/-1">Send Message 🚀</button>
+          </form>
+        </div>
+        
+        <aside class="summary-box">
+          <h3>Other Channels</h3>
+          <div style="margin-top:16px;display:flex;flex-direction:column;gap:12px">
+            <a href="https://wa.me/923000000000" target="_blank" class="ghost-btn" style="justify-content:center">
+              💬 Chat on WhatsApp
+            </a>
+            <a href="mailto:${ADMIN_EMAIL}" class="ghost-btn" style="justify-content:center">
+              📧 Email: ${ADMIN_EMAIL}
+            </a>
+          </div>
+          <div style="margin-top:24px;color:var(--muted2);font-size:.9rem">
+            <p><b>Office Hours:</b><br>Mon - Sat: 9:00 AM - 9:00 PM</p>
+            <p style="margin-top:8px"><b>Address:</b><br>Lahore, Pakistan</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  `);
+
+  // Form handling logic
+  const form = $('#contactForm');
+  if (form) {
+    form.addEventListener('submit', function(ev) {
+      ev.preventDefault();
+      const data = new FormData(form);
+      const xhr = new XMLHttpRequest();
+      xhr.open(form.method, form.action);
+      xhr.setRequestHeader("Accept", "application/json");
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState !== XMLHttpRequest.DONE) return;
+        if (xhr.status === 200) {
+          form.reset();
+          toast("Message sent! We'll reply shortly.");
+        } else {
+          toast("Oops! There was a problem.");
+        }
+      };
+      xhr.send(data);
+    });
+  }
 }
 
 /* ============================================================
@@ -1148,28 +1311,54 @@ function renderCheckout() {
     </div>
     <div class="checkout-layout">
       <div class="detail-panel form-grid" style="padding:20px">
-        <input required placeholder="Full name" aria-label="Full name">
-        <input required placeholder="Phone number" type="tel" aria-label="Phone number">
-        <input placeholder="Email (optional)" type="email" aria-label="Email">
-        <select aria-label="Payment method">
-          <option>Cash on Delivery (COD)</option>
-          <option>Bank Transfer</option>
-          <option>EasyPaisa / JazzCash</option>
-          <option>Credit / Debit Card</option>
-        </select>
-        <textarea required placeholder="Complete delivery address" aria-label="Delivery address"></textarea>
-        <textarea placeholder="Order notes (optional)" aria-label="Order notes"></textarea>
-        <button class="primary-btn" style="grid-column:1/-1;padding:16px" onclick="placeOrder(event)">🚀 Place Order</button>
+        <!-- Updated form to send to Formspree -->
+        <form id="checkoutForm" action="https://formspree.io/f/${FORMSPREE_ID}" method="POST" class="form-grid" style="display:contents">
+            <input required name="name" placeholder="Full name" aria-label="Full name">
+            <input required name="phone" placeholder="Phone number" type="tel" aria-label="Phone number">
+            <input placeholder="Email (optional)" type="email" name="email" aria-label="Email">
+            <select aria-label="Payment method" name="payment">
+              <option>Cash on Delivery (COD)</option>
+              <option>Bank Transfer</option>
+              <option>EasyPaisa / JazzCash</option>
+            </select>
+            <textarea required name="address" placeholder="Complete delivery address" aria-label="Delivery address"></textarea>
+            <textarea placeholder="Order notes (optional)" name="notes" aria-label="Order notes"></textarea>
+            
+            <!-- Hidden fields for order data -->
+            <input type="hidden" name="order_total" value="${sub}">
+            <input type="hidden" name="_subject" value="New Order from Sasta Milaga">
+            
+            <button type="submit" class="primary-btn" style="grid-column:1/-1;padding:16px">🚀 Place Order</button>
+        </form>
       </div>
       ${summaryBox(sub)}
     </div>
   </section>`);
+  
+  // Bind Checkout Form Logic
+  const form = $('#checkoutForm');
+  if (form) {
+      form.addEventListener('submit', function(ev) {
+      ev.preventDefault();
+      const data = new FormData(form);
+      const xhr = new XMLHttpRequest();
+      xhr.open(form.method, form.action);
+      xhr.setRequestHeader("Accept", "application/json");
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState !== XMLHttpRequest.DONE) return;
+        if (xhr.status === 200) {
+          form.reset();
+          localStorage.removeItem('sm_cart');
+          updateCounts();
+          renderApp('<section class="section"><div class="empty-state"><h2>✅ Order Placed!</h2><p>Thank you for shopping with Sasta Milaga. We will contact you shortly.</p><a class="primary-btn" href="#/home">Continue Shopping</a></div>');
+        } else {
+          toast("Oops! There was a problem submitting your order.");
+        }
+      };
+      xhr.send(data);
+    });
+  }
 }
-
-window.placeOrder = function (e) {
-  e.preventDefault();
-  toast('✅ Order placed! Our team will contact you shortly.');
-};
 
 function empty(title, cta, href) {
   return `<div class="empty-state"><h2>${esc(title)}</h2><p>Everything is searchable and image-led at Sasta Milaga.</p><a class="primary-btn" href="${esc(href)}">${esc(cta)}</a></div>`;
@@ -1223,7 +1412,6 @@ function addBotMessage(html, user) {
 function answerBot(q) {
   const l = q.toLowerCase().trim();
 
-  /* FAQ / Customer support answers */
   if (l.includes('delivery') || l.includes('shipping') || l.includes('cities') || l.includes('delivery fee')) {
     addBotMessage(`📦 <b>Delivery Info:</b><br>• Flat fee: <b>PKR 250</b> across Pakistan.<br>• <b>Free shipping</b> on orders above PKR 5,000.<br>• Major cities: 2–4 working days. Other areas: 3–6 days.`);
     return;
@@ -1241,24 +1429,21 @@ function answerBot(q) {
     return;
   }
   if (l.includes('contact') || l.includes('whatsapp') || l.includes('support') || l.includes('helpline')) {
-    addBotMessage(`📞 <b>Customer Support:</b><br>• WhatsApp: <a href="https://wa.me/923000000000" target="_blank" style="color:var(--gold2)">+92 300 0000000</a><br>• Hours: 9 AM – 9 PM (Mon–Sat)`);
+    addBotMessage(`📞 <b>Customer Support:</b><br>• WhatsApp: <a href="https://wa.me/923000000000" target="_blank" style="color:var(--gold2)">+92 300 0000000</a><br>• Email: ${ADMIN_EMAIL}<br>• Hours: 9 AM – 9 PM (Mon–Sat)`);
     return;
   }
 
-  /* Synonym expansion */
   let queryTerms = l;
   if (l.includes('phone') || l.includes('smartphone'))           queryTerms += ' mobile';
   if (l.includes('makeup') || l.includes('lip') || l.includes('cream')) queryTerms += ' beauty cosmetics';
   if (l.includes('clothes') || l.includes('dress') || l.includes('shirt')) queryTerms += ' fashion';
   if (l.includes('home') || l.includes('decor') || l.includes('kitchen')) queryTerms += ' home-decor';
 
-  /* Price extraction */
   const maxMatch = l.match(/under\s*(?:rs\.?|pkr)?\s*(\d+)/i);
   const minMatch = l.match(/over\s*(?:rs\.?|pkr)?\s*(\d+)/i);
   const maxP = maxMatch ? Number(maxMatch[1]) : 0;
   const minP = minMatch ? Number(minMatch[1]) : 0;
 
-  /* Catalog search */
   let arr = products.filter(p =>
     p._search.includes(queryTerms) || queryTerms.split(/\s+/).some(w => w.length > 2 && p._search.includes(w))
   );
@@ -1297,7 +1482,7 @@ function answerBot(q) {
 }
 
 /* ============================================================
-   FAQ PAGE — FIXED (renderApp called correctly)
+   FAQ PAGE
    ============================================================ */
 function renderFAQ() {
   setSEO({
@@ -1327,76 +1512,12 @@ function renderFAQ() {
       '</div>' +
 
       '<div class="faq-accordion">' +
-
-        '<div class="faq-item">' +
-          '<button class="faq-title" onclick="toggleFaq(this)">' +
-            'What is the shipping cost and delivery area? <span>+</span>' +
-          '</button>' +
-          '<div class="faq-content">' +
-            'We deliver to all major cities and small towns across Pakistan. ' +
-            'Flat shipping fee of <b>PKR 250</b> for all orders. ' +
-            '<b>Free shipping</b> on orders above <b>PKR 5,000</b>.' +
-          '</div>' +
-        '</div>' +
-
-        '<div class="faq-item">' +
-          '<button class="faq-title" onclick="toggleFaq(this)">' +
-            'How long does delivery take? <span>+</span>' +
-          '</button>' +
-          '<div class="faq-content">' +
-            '<ul>' +
-              '<li><b>2–4 working days</b> for major cities: Karachi, Lahore, Islamabad, Rawalpindi, Peshawar, Faisalabad, Multan.</li>' +
-              '<li><b>3–6 working days</b> for other towns and rural areas.</li>' +
-            '</ul>' +
-          '</div>' +
-        '</div>' +
-
-        '<div class="faq-item">' +
-          '<button class="faq-title" onclick="toggleFaq(this)">' +
-            'What payment methods do you accept? <span>+</span>' +
-          '</button>' +
-          '<div class="faq-content">' +
-            '<ul>' +
-              '<li><b>Cash on Delivery (COD)</b> – Pay at your doorstep.</li>' +
-              '<li><b>EasyPaisa / JazzCash</b> – Mobile wallet.</li>' +
-              '<li><b>Bank Transfer</b> – Direct online transfer.</li>' +
-              '<li><b>Credit / Debit Card</b> – Secure online payment.</li>' +
-            '</ul>' +
-          '</div>' +
-        '</div>' +
-
-        '<div class="faq-item">' +
-          '<button class="faq-title" onclick="toggleFaq(this)">' +
-            'What is your return and refund policy? <span>+</span>' +
-          '</button>' +
-          '<div class="faq-content">' +
-            '<b>7-day return and exchange policy</b> across Pakistan. ' +
-            'Damaged, defective, or incorrect items returned free of charge. ' +
-            'Other returns: PKR 250 return shipping fee. ' +
-            'Contact us on WhatsApp (+92 300 0000000) to start a return.' +
-          '</div>' +
-        '</div>' +
-
-        '<div class="faq-item">' +
-          '<button class="faq-title" onclick="toggleFaq(this)">' +
-            'How do I track my order? <span>+</span>' +
-          '</button>' +
-          '<div class="faq-content">' +
-            'You will receive a tracking link via SMS once your order is shipped. ' +
-            'You can also contact WhatsApp support at any time with your order number for live updates.' +
-          '</div>' +
-        '</div>' +
-
-        '<div class="faq-item">' +
-          '<button class="faq-title" onclick="toggleFaq(this)">' +
-            'Is Cash on Delivery (COD) available everywhere? <span>+</span>' +
-          '</button>' +
-          '<div class="faq-content">' +
-            'Yes! COD is available across all of Pakistan, including small towns and rural areas. ' +
-            'Pay the courier when your parcel arrives – no advance payment needed.' +
-          '</div>' +
-        '</div>' +
-
+        '<div class="faq-item"><button class="faq-title" onclick="toggleFaq(this)">What is the shipping cost and delivery area? <span>+</span></button><div class="faq-content">We deliver to all major cities and small towns across Pakistan. Flat shipping fee of <b>PKR 250</b> for all orders. <b>Free shipping</b> on orders above <b>PKR 5,000</b>.</div></div>' +
+        '<div class="faq-item"><button class="faq-title" onclick="toggleFaq(this)">How long does delivery take? <span>+</span></button><div class="faq-content"><ul><li><b>2–4 working days</b> for major cities: Karachi, Lahore, Islamabad, Rawalpindi, Peshawar, Faisalabad, Multan.</li><li><b>3–6 working days</b> for other towns and rural areas.</li></ul></div></div>' +
+        '<div class="faq-item"><button class="faq-title" onclick="toggleFaq(this)">What payment methods do you accept? <span>+</span></button><div class="faq-content"><ul><li><b>Cash on Delivery (COD)</b> – Pay at your doorstep.</li><li><b>EasyPaisa / JazzCash</b> – Mobile wallet.</li><li><b>Bank Transfer</b> – Direct online transfer.</li><li><b>Credit / Debit Card</b> – Secure online payment.</li></ul></div></div>' +
+        '<div class="faq-item"><button class="faq-title" onclick="toggleFaq(this)">What is your return and refund policy? <span>+</span></button><div class="faq-content"><b>7-day return and exchange policy</b> across Pakistan. Damaged, defective, or incorrect items returned free of charge. Other returns: PKR 250 return shipping fee. Contact us on WhatsApp (+92 300 0000000) to start a return.</div></div>' +
+        '<div class="faq-item"><button class="faq-title" onclick="toggleFaq(this)">How do I track my order? <span>+</span></button><div class="faq-content">You will receive a tracking link via SMS once your order is shipped. You can also contact WhatsApp support at any time with your order number for live updates.</div></div>' +
+        '<div class="faq-item"><button class="faq-title" onclick="toggleFaq(this)">Is Cash on Delivery (COD) available everywhere? <span>+</span></button><div class="faq-content">Yes! COD is available across all of Pakistan, including small towns and rural areas. Pay the courier when your parcel arrives – no advance payment needed.</div></div>' +
       '</div>' +
     '</section>'
   );
@@ -1409,7 +1530,7 @@ window.toggleFaq = function (btn) {
 };
 
 /* ============================================================
-   ABOUT PAGE — FIXED (renderApp called correctly)
+   ABOUT PAGE
    ============================================================ */
 function renderAbout() {
   setSEO({
@@ -1428,53 +1549,29 @@ function renderAbout() {
 
   renderApp(
     '<section class="section">' +
-
       '<div class="about-hero">' +
         '<span class="eyebrow">About Sasta Milaga</span>' +
         '<h1>Pakistan\'s Affordable Online Hub</h1>' +
-        '<p style="max-width:700px;margin:12px auto;color:var(--muted2);line-height:1.7">' +
-          'Sasta Milaga is built with a singular vision: to make high-quality everyday products affordable and accessible ' +
-          'to every household in Pakistan. With over 13,000 products, we link buyers to the best deals directly.' +
-        '</p>' +
+        '<p style="max-width:700px;margin:12px auto;color:var(--muted2);line-height:1.7">Sasta Milaga is built with a singular vision: to make high-quality everyday products affordable and accessible to every household in Pakistan. With over 13,000 products, we link buyers to the best deals directly.</p>' +
       '</div>' +
-
       '<div class="about-metrics">' +
         '<div class="metric-box"><span class="metric-number">13,000+</span><span class="metric-label">Products in Stock</span></div>' +
         '<div class="metric-box"><span class="metric-number">100%</span><span class="metric-label">COD Supported</span></div>' +
         '<div class="metric-box"><span class="metric-number">7 Days</span><span class="metric-label">Easy Returns</span></div>' +
         '<div class="metric-box"><span class="metric-number">24/7</span><span class="metric-label">WhatsApp Helpline</span></div>' +
       '</div>' +
-
       '<div class="about-grid">' +
-        '<div class="about-card">' +
-          '<h3>🇵🇰 Nationwide Delivery</h3>' +
-          '<p style="line-height:1.6;color:var(--muted)">We deliver to every corner of Pakistan, covering major cities, districts, and rural towns with reliable shipping networks.</p>' +
-        '</div>' +
-        '<div class="about-card">' +
-          '<h3>💰 Best Price Guarantee</h3>' +
-          '<p style="line-height:1.6;color:var(--muted)">"Sasta Milaga" means "You will get it cheaper". We match or beat local store prices on every product.</p>' +
-        '</div>' +
-        '<div class="about-card">' +
-          '<h3>⭐ Premium Customer Care</h3>' +
-          '<p style="line-height:1.6;color:var(--muted)">Instant WhatsApp helpline assistance for orders, returns, tracking, and custom requests.</p>' +
-        '</div>' +
+        '<div class="about-card"><h3>🇵🇰 Nationwide Delivery</h3><p style="line-height:1.6;color:var(--muted)">We deliver to every corner of Pakistan, covering major cities, districts, and rural towns with reliable shipping networks.</p></div>' +
+        '<div class="about-card"><h3>💰 Best Price Guarantee</h3><p style="line-height:1.6;color:var(--muted)">"Sasta Milaga" means "You will get it cheaper". We match or beat local store prices on every product.</p></div>' +
+        '<div class="about-card"><h3>⭐ Premium Customer Care</h3><p style="line-height:1.6;color:var(--muted)">Instant WhatsApp helpline assistance for orders, returns, tracking, and custom requests.</p></div>' +
       '</div>' +
-
-      '<div class="about-card" style="margin-top:24px">' +
-        '<h3>📍 Cities We Service</h3>' +
-        '<p style="color:var(--muted2)">Primary cities with fast Cash on Delivery:</p>' +
-        '<div class="cities-grid">' +
-          ['Lahore','Karachi','Islamabad','Rawalpindi','Faisalabad','Multan','Peshawar','Quetta','Gujranwala','Sialkot','Hyderabad','Sargodha']
-          .map(c => `<div class="city-tag">${esc(c)}</div>`).join('') +
-        '</div>' +
-      '</div>' +
-
+      '<div class="about-card" style="margin-top:24px"><h3>📍 Cities We Service</h3><p style="color:var(--muted2)">Primary cities with fast Cash on Delivery:</p><div class="cities-grid">' + ['Lahore','Karachi','Islamabad','Rawalpindi','Faisalabad','Multan','Peshawar','Quetta','Gujranwala','Sialkot','Hyderabad','Sargodha'].map(c => `<div class="city-tag">${esc(c)}</div>`).join('') + '</div></div>' +
     '</section>'
   );
 }
 
 /* ============================================================
-   EXPOSE TO GLOBAL SCOPE (for Blogger / inline HTML handlers)
+   EXPOSE TO GLOBAL SCOPE
    ============================================================ */
 window.fallbackImg = fallbackImg;
 
