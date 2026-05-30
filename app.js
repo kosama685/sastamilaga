@@ -1030,7 +1030,7 @@ function answerBot(q){
     return;
   }
   if (l.includes("return") || l.includes("refund") || l.includes("exchange")) {
-    addBotMessage(`🔄 <b>7-Day Easy Returns:</b><br>We offer a hassle-free 7-day return policy. If you receive a damaged or incorrect product, contact us via WhatsApp with your order details to initiate a refund or exchange.`);
+    addBotMessage(`🔄 <b>7-Day Easy Returns in Pakistan:</b><br>- Return window: Request a return within 7 days of delivery.<br>- Return cost: Damaged or incorrect items are returned free of charge; other returns carry a standard return shipping fee of PKR 250.<br>Please contact us on WhatsApp with your order details to start the refund or exchange process.`);
     return;
   }
   if (l.includes("order") || l.includes("how to buy") || l.includes("purchase")) {
@@ -1150,7 +1150,7 @@ function renderFAQ() {
             What is your return and refund policy? <span>+</span>
           </button>
           <div class="faq-content">
-            We offer an easy <b>7-day return and exchange policy</b>. If you receive a damaged, defective, or incorrect product, please reach out to our WhatsApp helpline (+92 300 0000000) within 7 days. Once verified, we will process your replacement or full refund.
+            We offer an easy <b>7-day return and exchange policy</b> across Pakistan. Return requests must be made within 7 days of delivery. Damaged, defective, or incorrect items are returned free of charge. For other returns, a standard return shipping fee of PKR 250 applies. Please reach out to our WhatsApp helpline (+92 300 0000000) to initiate a replacement or refund.
           </div>
         </div>
 
