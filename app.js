@@ -1,8 +1,8 @@
 /* ============================================================
-   SASTA MILAGA – app.js  v2.0 (Fixed + Enhanced)
+   SASTA MILAGA – app.js  v2.1 (Formspree Contact Integration)
    Features: Routing · Products · Cart · Wishlist · Chatbot
              Dynamic SEO · JSON-LD Schema · Social Share
-             Category Pages · PWA · Performance Optimised
+             Category Pages · PWA · Formspree contact forms
    ============================================================ */
 
 'use strict';
@@ -15,6 +15,9 @@ const PRODUCTS_RAW = (typeof window !== 'undefined' && Array.isArray(window.SAST
 const PKR       = new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', maximumFractionDigits: 0 });
 const SITE_URL  = 'https://sastamilaga.com';
 const SITE_NAME = 'Sasta Milaga';
+
+/* ── Formspree endpoint ── */
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xwvzzjdl';
 
 /* ── Fallback SVG image ── */
 const fallbackImg = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
@@ -259,6 +262,61 @@ function fallbackCopy(text) {
 }
 
 /* ============================================================
+   FORMSPREE CONTACT MODAL (Product Inquiry)
+   ============================================================ */
+function openContactForm(product) {
+  if (!product) return;
+  // Build modal HTML with hidden product title field
+  const modalHtml = `
+    <div id="contactModal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Contact seller about ${esc(product.n)}">
+      <div class="modal-container" style="max-width:500px;background:var(--card-bg);border-radius:1.5rem;box-shadow:0 20px 35px rgba(0,0,0,0.4);">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:1px solid rgba(200,169,110,0.2);">
+          <h3 style="margin:0">📬 Ask about this product</h3>
+          <button class="ghost-btn" data-close-modal="true" style="padding:0;font-size:1.5rem;">✕</button>
+        </div>
+        <form action="${FORMSPREE_ENDPOINT}" method="POST" style="padding:1.5rem;display:flex;flex-direction:column;gap:1rem;">
+          <!-- Hidden product title (critical for Formspree) -->
+          <input type="hidden" name="product_title" value="${esc(product.n)}">
+          
+          <label style="font-weight:500;">Your name *</label>
+          <input type="text" name="name" required placeholder="Ali Raza" style="padding:0.75rem;border-radius:0.75rem;border:1px solid var(--border);background:var(--bg);">
+          
+          <label style="font-weight:500;">Email *</label>
+          <input type="email" name="email" required placeholder="ali@example.com" style="padding:0.75rem;border-radius:0.75rem;border:1px solid var(--border);background:var(--bg);">
+          
+          <label style="font-weight:500;">Phone (optional)</label>
+          <input type="tel" name="phone" placeholder="03xx 1234567" style="padding:0.75rem;border-radius:0.75rem;border:1px solid var(--border);background:var(--bg);">
+          
+          <label style="font-weight:500;">Your message *</label>
+          <textarea name="message" rows="4" required placeholder="I'm interested in this product. Is it available for COD in Lahore? ..." style="padding:0.75rem;border-radius:0.75rem;border:1px solid var(--border);background:var(--bg);"></textarea>
+          
+          <button type="submit" class="primary-btn" style="margin-top:0.5rem;">Send Inquiry ✉️</button>
+          <p style="font-size:0.75rem;color:var(--muted2);text-align:center;margin:0;">We’ll reply within 24 hours via email/WhatsApp.</p>
+        </form>
+      </div>
+    </div>
+  `;
+  // Remove existing modal if any
+  const existing = $('#contactModal');
+  if (existing) existing.remove();
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  document.body.classList.add('lock');
+  // Close modal handler
+  const modal = $('#contactModal');
+  modal.querySelector('[data-close-modal]').addEventListener('click', () => {
+    modal.remove();
+    document.body.classList.remove('lock');
+  });
+  // Click outside to close
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.remove();
+      document.body.classList.remove('lock');
+    }
+  });
+}
+
+/* ============================================================
    INIT
    ============================================================ */
 function init() {
@@ -355,6 +413,13 @@ function bindEvents() {
     if (wish) { toggleWish(wish.dataset.wish); return; }
     const thumb = e.target.closest('[data-gallery]');
     if (thumb) { setGallery(thumb.dataset.gallery, thumb.dataset.type); return; }
+    const contactBtn = e.target.closest('[data-contact-product]');
+    if (contactBtn) {
+      const productId = contactBtn.dataset.contactProduct;
+      const product = products.find(p => p.id === productId);
+      if (product) openContactForm(product);
+      return;
+    }
   });
 
   /* Keyboard: Escape closes modal */
@@ -826,7 +891,7 @@ function drawResults() {
 }
 
 /* ============================================================
-   PRODUCT DETAIL PAGE (PDP)
+   PRODUCT DETAIL PAGE (PDP) with Formspree contact button
    ============================================================ */
 function renderPDP(handle) {
   const p = byHandle.get(slug(handle)) || products[0];
@@ -903,6 +968,8 @@ function renderPDP(handle) {
           `<a class="ghost-btn" href="#/checkout" onclick="addToCart('${esc(p.id)}',Number((document.getElementById('qty')||{}).textContent||1))" aria-label="Buy now">⚡ Buy Now</a>`,
         '</div>',
         `<button class="ghost-btn" style="width:100%;margin-top:8px" data-wish="${esc(p.id)}" aria-label="Save to wishlist">♡ Save to Wishlist</button>`,
+        /* NEW: Formspree contact button */
+        `<button class="ghost-btn" style="width:100%;margin-top:8px" data-contact-product="${esc(p.id)}" aria-label="Ask about this product">📬 Ask about this product</button>`,
         buildShareBar(p),
       '</aside>',
     '</section>',
@@ -1297,7 +1364,7 @@ function answerBot(q) {
 }
 
 /* ============================================================
-   FAQ PAGE — FIXED (renderApp called correctly)
+   FAQ PAGE
    ============================================================ */
 function renderFAQ() {
   setSEO({
@@ -1409,7 +1476,7 @@ window.toggleFaq = function (btn) {
 };
 
 /* ============================================================
-   ABOUT PAGE — FIXED (renderApp called correctly)
+   ABOUT PAGE
    ============================================================ */
 function renderAbout() {
   setSEO({
@@ -1474,7 +1541,7 @@ function renderAbout() {
 }
 
 /* ============================================================
-   EXPOSE TO GLOBAL SCOPE (for Blogger / inline HTML handlers)
+   EXPOSE TO GLOBAL SCOPE
    ============================================================ */
 window.fallbackImg = fallbackImg;
 
