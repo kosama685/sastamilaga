@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Sasta Milaga</title>
+  <script type="text/javascript">
+    // SPA routing redirect workaround for GitHub Pages
+    // Preserves path and search parameters.
+    var pathSegmentsToKeep = 1; // '/sastamilaga' has 1 subdirectory segment
+    var l = window.location;
+    var path = l.pathname;
+    var segments = path.split('/');
+    var basePath = segments.slice(0, 1 + pathSegmentsToKeep).join('/');
+    var route = segments.slice(1 + pathSegmentsToKeep).join('/');
+    var query = l.search ? '&q=' + encodeURIComponent(l.search.slice(1)) : '';
+    
+    l.replace(
+      l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+      basePath + '/?p=' + encodeURIComponent('/' + route) + query + l.hash
+    );
+  </script>
+</head>
+<body>
+</body>
+</html>
