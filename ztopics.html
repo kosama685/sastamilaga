@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sasta Milaga - SEO Content Strategy & Topic Generator</title>
+    <style>
+        :root {
+            --primary: #008060; /* Budget Green */
+            --secondary: #1a5c2a; /* Deep Green */
+            --accent: #c8a96e; /* Gold */
+            --bg: #f4f6f8;
+            --text: #333;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: var(--white);
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        header h1 { margin: 0; font-size: 2.5rem; }
+        header p { opacity: 0.9; margin-top: 10px; font-size: 1.1rem; }
+
+        .container {
+            max-width: 1200px;
+            margin: -30px auto 40px;
+            padding: 0 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-align: center;
+            border-top: 4px solid var(--accent);
+        }
+
+        .stat-card h3 { margin: 0; color: var(--secondary); font-size: 2rem; }
+        .stat-card p { color: #666; margin: 5px 0 0; }
+
+        .section {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .section h2 {
+            color: var(--secondary);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: var(--secondary);
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        tr:hover { background-color: #f9f9f9; }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .high-volume { background-color: #e74c3c; }
+        .low-competition { background-color: #27ae60; }
+        .geo-friendly { background-color: #8e44ad; }
+
+        .btn-print {
+            background: var(--accent);
+            color: var(--text);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            float: right;
+        }
+
+        @media print {
+            body { background: white; }
+            header, .btn-print, .stats-grid { display: none; }
+            .container { margin: 0; }
+            .section { box-shadow: none; border: 1px solid #ddd; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Sasta Milaga Blog Strategy</h1>
+    <p>Pakistan Market • SEO & GEO Optimized • Competitor Beating Topics</p>
+</header>
+
+<div class="container">
+    
+    <button class="btn-print" onclick="window.print()">🖨 Print List</button>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>100+</h3>
+            <p>Target Topics</p>
+        </div>
+        <div class="stat-card">
+            <h3>PK</h3>
+            <p>Pakistan Focus</p>
+        </div>
+        <div class="stat-card">
+            <h3>AEO</h3>
+            <p>Snippet Ready</p>
+        </div>
+        <div class="stat-card">
+            <h3>Budget</h3>
+            <p>Low Price Intent</p>
+        </div>
+    </div>
+
+    <!-- ELECTRONICS SECTION -->
+    <div class="section">
+        <h2>📱 Electronics & Mobiles</h2>
+        <p><em>Strategy: Focus on "Under 30k/50k" keywords and direct comparisons. Target students and budget buyers.</em></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Blog Topic Title</th>
+                    <th>Target Keyword</th>
+                    <th>Difficulty</th>
+                    <th>Strategy Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Best Mobile Phones Under 30,000 PKR in Pakistan (2024)</td>
+                    <td>mobile under 30000 in pakistan</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>Create a comparison table with battery, camera, and price. Use FAQ schema.</td>
+                </tr>
+                <tr>
+                    <td>Infinix Hot 40 vs Redmi 13C: Budget King?</td>
+                    <td>infinix hot 40 vs redmi 13c</td>
+                    <td><span class="tag low-competition">Low Comp</span></td>
+                    <td>Direct spec comparison. Perfect for AI Overviews (GEO).</td>
+                </tr>
+                <tr>
+                    <td>Top 5 Best Gaming Laptops Under 100k for Students</td>
+                    <td>gaming laptop under 100k in pakistan</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>Focus on GTX 1650/RTX 2050 options available in local market.</td>
+                </tr>
+                <tr>
+                    <td>Cheap Bluetooth Earbuds in Pakistan (Under 2000)</td>
+                    <td>bluetooth earbuds under 2000</td>
+                    <td><span class="tag low-competition">Low Comp</span></td>
+                    <td>List QCY, Audionic, and Xiaomi clones.</td>
+                </tr>
+                <tr>
+                    <td>Best Power Banks for Load Shedding in Pakistan</td>
+                    <td>best power bank in pakistan</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>Target 20000mAh options. Solve a local pain point.</td>
+                </tr>
+                <tr>
+                    <td>Is Buying Refurbished Phones in Pakistan Safe?</td>
+                    <td>refurbished mobile price in pakistan</td>
+                    <td><span class="tag geo-friendly">AEO Target</span></td>
+                    <td>Answer "Yes/No" immediately in the first paragraph.</td>
+                </tr>
+                <tr>
+                    <td>Complete Guide to Buying Used Smartphones in Lahore</td>
+                    <td>used mobile market in lahore</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>Local SEO tip. Mention Hall Road specifics.</td>
+                </tr>
+                <tr>
+                    <td>Smart Watch vs Fitness Band: What Do You Need?</td>
+                    <td>smart watch vs fitness band</td>
+                    <td><span class="tag low-competition">Low Comp</span></td>
+                    <td>Comparison guide for health-conscious budget buyers.</td>
+                </tr>
+                <tr>
+                    <td>Best LED TVs Under 50,000 PKR for Home</td>
+                    <td>led tv price in pakistan 50k</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>Focus on Changhong, Haier, and Panasonic budget models.</td>
+                </tr>
+                <tr>
+                    <td>How to Check if a Samsung Phone is Original in Pakistan</td>
+                    <td>check samsung original pakistan</td>
+                    <td><span class="tag geo-friendly">AEO Target</span></td>
+                    <td>Step-by-step guide with IMEI check codes.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- FASHION SECTION -->
+    <div class="section">
+        <h2>👗 Fashion & Beauty</h2>
+        <p><em>Strategy: Seasonal content (Lawn/Winter) and "Unstitched" vs "Ready Made" comparisons.</em></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Blog Topic Title</th>
+                    <th>Target Keyword</th>
+                    <th>Difficulty</th>
+                    <th>Strategy Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>10 Cheapest Lawn Brands in Pakistan for Summer 2024</td>
+                    <td>cheap lawn brands in pakistan</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>Competitors ignore "cheap". List Khaadi, Gul, and local brands side-by-side.</td>
+                </tr>
+                <tr>
+                    <td>Unstitched vs Ready Made: Which is Better Value?</td>
+                    <td>unstitched vs ready made</td>
+                    <td><span class="tag low-competition">Low Comp</span></td>
+                    <td>Cost analysis per yard.</td>
+                </tr>
+                <tr>
+                    <td>Best Men's Kurta Brands Under 1500 PKR</td>
+                    <td>mens kurta brands in pakistan</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>Focus on Eid and casual wear. Breakdown price vs quality.</td>
+                </tr>
+                <tr>
+                    <td>Online Makeup Shopping in Pakistan: Authentic or Fake?</td>
+                    <td>online makeup shopping pakistan</td>
+                    <td><span class="tag geo-friendly">AEO Target</span></td>
+                    <td>Build trust. Discuss expiry dates and import duties.</td>
+                </tr>
+                <tr>
+                    <td>How to Style a Simple Shawl for Winter (5 Ways)</td>
+                    <td>how to style shawl</td>
+                    <td><span class="tag geo-friendly">GEO Target</span></td>
+                    <td>Image-rich post. Target Pinterest traffic too.</td>
+                </tr>
+                <tr>
+                    <td>Affordable Wedding Gift Ideas Under 5000 PKR</td>
+                    <td>wedding gift ideas pakistan</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>Seasonal spike. Kitchenware and bed sheet sets.</td>
+                </tr>
+                <tr>
+                    <td>Best Sneakers for Men in Pakistan Under 4000</td>
+                    <td>sneakers for men under 4000</td>
+                    <td><span class="tag low-competition">Low Comp</span></td>
+                    <td>Focus on Service, Outfitters, and local brands.</td>
+                </tr>
+                <tr>
+                    <td>Kurti Trends 2024: What's Hot in Pakistani Streets</td>
+                    <td>kurti trends 2024</td>
+                    <td><span class="tag low-competition">Low Comp</span></td>
+                    <td>Trend jacking. Target Instagram traffic.</td>
+                </tr>
+                <tr>
+                    <td>Guide to Buying Kids Clothes Online in Bulk</td>
+                    <td>kids clothes online pakistan</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>Target mothers buying for school uniforms.</td>
+                </tr>
+                <tr>
+                    <td>Best Skincare Routine for Pakistani Men (Budget Friendly)</td>
+                    <td>skincare routine for men</td>
+                    <td><span class="tag geo-friendly">AEO Target</span></td>
+                    <td>Localized climate focus (Humidity/Heat).</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- HOME & LIVING SECTION -->
+    <div class="section">
+        <h2>🏠 Home & Living</h2>
+        <p><em>Strategy: Focus on appliances that save electricity (inflation context) and space-saving furniture.</em></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Blog Topic Title</th>
+                    <th>Target Keyword</th>
+                    <th>Difficulty</th>
+                    <th>Strategy Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Best Inverter ACs in Pakistan for Low Electricity Bills</td>
+                    <td>best inverter ac in pakistan</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>Explain "Inverter Technology" simply. High commercial intent.</td>
+                </tr>
+                <tr>
+                    <td>Dining Table Sets in Pakistan: 4 Seater vs 6 Seater</td>
+                    <td>dining table set price in pakistan</td>
+                    <td><span class="tag low-competition">Low Comp</span></td>
+                    <td>Size guide for small apartments in Karachi/Lahore.</td>
+                </tr>
+                <tr>
+                    <td>Top 7 Mattress Brands in Pakistan for Back Pain</td>
+                    <td>best mattress for back pain</td>
+                    <td><span class="tag geo-friendly">AEO Target</span></td>
+                    <td>Health focus. Mention foam vs spring.</td>
+                </tr>
+                <tr>
+                    <td>Curtains Price Guide: Ready Made vs Tailored</td>
+                    <td>curtain price in pakistan</td>
+                    <td><span class="tag low-competition">Low Comp</span></td>
+                    <td>Interior design budget tips.</td>
+                </tr>
+                <tr>
+                    <td>Best Air Fryers Under 10,000 PKR Reviewed</td>
+                    <td>air fryer under 10000</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>Healthy eating trend. Video reviews embedded.</td>
+                </tr>
+                <tr>
+                    <td>Cleaning Essentials for Moving into a New Home</td>
+                    <td>moving house checklist pakistan</td>
+                    <td><span class="tag geo-friendly">GEO Target</span></td>
+                    <td>Checklist format. Very shareable.</td>
+                </tr>
+                <tr>
+                    <td>Sofa Cum Bed: Is It Worth Buying?</td>
+                    <td>sofa cum bed price in pakistan</td>
+                    <td><span class="tag low-competition">Low Comp</span></td>
+                    <td>Practicality analysis for guest rooms.</td>
+                </tr>
+                <tr>
+                    <td>Best Geysers for Winter in Pakistan (Gas vs Electric)</td>
+                    <td>best geyser in pakistan</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>Seasonal spike. Compare gas load shedding issues.</td>
+                </tr>
+                <tr>
+                    <td>Affordable Home Decor Ideas for Renters</td>
+                    <td>home decor ideas for renters</td>
+                    <td><span class="tag low-competition">Low Comp</span></td>
+                    <td>DIY and removable decor.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- GROCERY & LIFESTYLE SECTION -->
+    <div class="section">
+        <h2>🛒 Grocery & Lifestyle</h2>
+        <p><em>Strategy: Sasta Milaga's unique selling point (USP). Competitors rarely blog about groceries.</em></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Blog Topic Title</th>
+                    <th>Target Keyword</th>
+                    <th>Difficulty</th>
+                    <th>Strategy Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Online Grocery Shopping vs Supermarket: Which is Cheaper?</td>
+                    <td>online grocery vs supermarket</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>Price comparison. Build trust in your pricing.</td>
+                </tr>
+                <tr>
+                    <td>Top 10 Healthy Snacks for Office in Pakistan</td>
+                    <td>healthy snacks in pakistan</td>
+                    <td><span class="tag low-competition">Low Comp</span></td>
+                    <td>List Multan Sohan Halwa, nuts, etc.</td>
+                </tr>
+                <tr>
+                    <td>Best Dry Fruits to Buy in Winter (Price List)</td>
+                    <td>dry fruits price in pakistan</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>Seasonal. List cashew, almond, walnut rates.</td>
+                </tr>
+                <tr>
+                    <td>How to Save Money on Monthly Grocery in Pakistan</td>
+                    <td>save money on groceries</td>
+                    <td><span class="tag geo-friendly">GEO Target</span></td>
+                    <td>Inflation busters tips. High social sharing potential.</td>
+                </tr>
+                <tr>
+                    <td>Best Tea Brands in Pakistan for Chai Lovers</td>
+                    <td>best tea brands in pakistan</td>
+                    <td><span class="tag low-competition">Low Comp</span></td>
+                    <td>Vital Viral, Tapal Danedar, etc. Taste test.</td>
+                </tr>
+                <tr>
+                    <td>Diwali / Eid Decoration Ideas on a Budget</td>
+                    <td>eid decoration ideas at home</td>
+                    <td><span class="tag geo-friendly">GEO Target</span></td>
+                    <td>Visuals and specific product links.</td>
+                </tr>
+                <tr>
+                    <td>Guide to Buying Imported Biscuits and Chocolates Online</td>
+                    <td>imported chocolates pakistan</td>
+                    <td><span class="tag low-competition">Low Comp</span></td>
+                    <td>Niche luxury. High margin items.</td>
+                </tr>
+                <tr>
+                    <td>Best Baby Diapers in Pakistan (Price vs Absorbency)</td>
+                    <td>best diapers in pakistan</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>Parental advice. Canopy, Pampers, local brands.</td>
+                </tr>
+                <tr>
+                    <td>Back to School Supplies Checklist 2024</td>
+                    <td>school supplies list</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>August/September spike.</td>
+                </tr>
+                <tr>
+                    <td>Car Accessories Must-Haves for Pakistani Roads</td>
+                    <td>car accessories pakistan</td>
+                    <td><span class="tag low-competition">Low Comp</span></td>
+                    <td>Mobile holders, dash cams, polish.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- TECH HELP SECTION -->
+    <div class="section">
+        <h2>💻 Tech Help & Guides</h2>
+        <p><em>Strategy: Pure AEO. Answer "How to" questions to capture snippets.</em></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Blog Topic Title</th>
+                    <th>Target Keyword</th>
+                    <th>Difficulty</th>
+                    <th>Strategy Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>How to Pay with JazzCash on Daraz/Sasta Milaga</td>
+                    <td>how to pay with jazzcash</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>Step-by-step screenshots.</td>
+                </tr>
+                <tr>
+                    <td>How to Track Your Order on Cash on Delivery</td>
+                    <td>track cod order pakistan</td>
+                    <td><span class="tag low-competition">Low Comp</span></td>
+                    <td>Solve customer anxiety about online ordering.</td>
+                </tr>
+                <tr>
+                    <td>What is Warranty? A Guide for Pakistani Consumers</td>
+                    <td>what is product warranty</td>
+                    <td><span class="tag geo-friendly">AEO Target</span></td>
+                    <td>Educational. Explain Local vs International warranty.</td>
+                </tr>
+                <tr>
+                    <td>Best Internet Packages for Home in 2024</td>
+                    <td>best internet packages pakistan</td>
+                    <td><span class="tag high-volume">High Vol</span></td>
+                    <td>PTCL, StormFiber, Transworld comparisons.</td>
+                </tr>
+                <tr>
+                    <td>How to Identify Fake Cosmetics in Pakistan</td>
+                    <td>identify fake cosmetics</td>
+                    <td><span class="tag geo-friendly">GEO Target</span></td>
+                    <td>Protective consumer advice. High trust builder.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>
