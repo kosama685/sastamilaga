@@ -476,7 +476,7 @@ function renderReturnPolicy() {
         <div class="faq-item">
           <button class="faq-title" onclick="toggleFaq(this)">How do I initiate a return? <span>+</span></button>
           <div class="faq-content">
-            Simply contact our WhatsApp support at <b>+92 300 0000000</b> or email us at <b>${ADMIN_EMAIL}</b> with your Order ID. We will guide you through the process.
+            Simply contact our WhatsApp support at <b>+92 311 2632287</b> or email us at <b>${ADMIN_EMAIL}</b> with your Order ID. We will guide you through the process.
           </div>
         </div>
          <div class="faq-item">
@@ -1387,7 +1387,7 @@ function answerBot(q) {
     return;
   }
   if (l.includes('contact') || l.includes('whatsapp') || l.includes('support') || l.includes('helpline')) {
-    addBotMessage(`📞 <b>Customer Support:</b><br>• WhatsApp: <a href="https://wa.me/923000000000" target="_blank" style="color:var(--gold2)">+92 300 0000000</a><br>• Hours: 9 AM – 9 PM (Mon–Sat)`);
+    addBotMessage(`📞 <b>Customer Support:</b><br>• WhatsApp: <a href="https://wa.me/923112632287" target="_blank" style="color:var(--gold2)">+92 311 2632287</a><br>• Hours: 9 AM – 9 PM (Mon–Sat)`);
     return;
   }
 
@@ -1519,7 +1519,7 @@ function renderFAQ() {
             '<b>7-day return and exchange policy</b> across Pakistan. ' +
             'Damaged, defective, or incorrect items returned free of charge. ' +
             'Other returns: PKR 250 return shipping fee. ' +
-            'Contact us on WhatsApp (+92 300 0000000) to start a return.' +
+            'Contact us on WhatsApp (+92 311 2632287) to start a return.' +
           '</div>' +
         '</div>' +
 
@@ -1747,9 +1747,9 @@ function renderContact() {
         <p>We're here to help. Reach out anytime.</p>
       </div>
       <div class="about-grid" style="margin: 40px 0">
-        <a href="https://wa.me/923000000000" target="_blank" rel="noopener" class="about-card" style="cursor:pointer;text-decoration:none">
+        <a href="https://wa.me/923112632287" target="_blank" rel="noopener" class="about-card" style="cursor:pointer;text-decoration:none">
           <h3 style="color:var(--gold2)">💬 WhatsApp</h3>
-          <p style="color:var(--muted2);margin-top:8px"><b>+92 300 0000000</b></p>
+          <p style="color:var(--muted2);margin-top:8px"><b>+92 311 2632287</b></p>
           <p style="color:var(--muted2);font-size:0.9em">Available: 9 AM – 9 PM (Mon–Sat)</p>
         </a>
         <a href="mailto:${ADMIN_EMAIL}" class="about-card" style="cursor:pointer;text-decoration:none">
@@ -1798,7 +1798,7 @@ function renderReturns() {
         </div>
       </div>
       <div style="text-align:center;padding:40px 20px">
-        <p style="color:var(--muted2);margin-bottom:20px">To initiate a return, contact us on WhatsApp: <b>+92 300 0000000</b></p>
+        <p style="color:var(--muted2);margin-bottom:20px">To initiate a return, contact us on WhatsApp: <b>+92 311 2632287</b></p>
       </div>
     </section>
   `);
