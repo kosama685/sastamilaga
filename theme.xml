@@ -297,7 +297,9 @@ a{color:inherit;text-decoration:none}
   <header class='sm-top'>
     <div class='sm-wrap sm-nav'>
       <a class='sm-brand' expr:href='data:blog.homepageUrl'>
-        <span class='sm-mark'>SM</span>
+        <span class='sm-mark'>
+          <img alt='Sasta Milaga Logo' src='sasta-milaga-logo-final.png' width='52' height='52'/>
+        </span>
         <span><strong>Sasta Milaga</strong><br/><small>Everything milaga. Sasta milaga.</small></span>
       </a>
       <nav class='sm-menu'>
