@@ -13,9 +13,10 @@ const PRODUCTS_RAW = (typeof window !== 'undefined' && Array.isArray(window.SAST
   ? window.SASTA_PRODUCTS
   : [];
 
-const PKR       = new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', maximumFractionDigits: 0 });
-const SITE_URL  = 'https://sastamilaga.com';
-const SITE_NAME = 'Sasta Milaga';
+const PKR        = new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', maximumFractionDigits: 0 });
+const SITE_URL   = 'https://sastamilaga.com';
+const SITE_NAME  = 'Sasta Milaga';
+const ADMIN_EMAIL = 'kosama685@gmail.com';
 
 /* ── Fallback SVG image ── */
 const fallbackImg = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
@@ -165,7 +166,14 @@ function productLdJson(p) {
       'priceValidUntil' : new Date(Date.now() + 30 * 24 * 3600000).toISOString().slice(0, 10),
       'availability'    : (p.in || num(p.stock) > 0) ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       'itemCondition'   : 'https://schema.org/NewCondition',
-      'seller'          : { '@type': 'Organization', 'name': SITE_NAME }
+      'seller'          : { '@type': 'Organization', 'name': SITE_NAME },
+      'hasMerchantReturnPolicy': {
+        '@type': 'MerchantReturnPolicy',
+        'returnPolicyCategory': 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        'merchantReturnDays': 7,
+        'returnMethod': 'https://schema.org/ReturnByMail',
+        'returnFees': 'https://schema.org/RestockingFees'
+      }
     }
   };
   if (oldPrice(p) > pPrice) {
@@ -203,6 +211,20 @@ function categoryLdJson(cat) {
         ]
       }
     ]
+  };
+}
+function returnPolicyLdJson() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'MerchantReturnPolicy',
+    'name': 'Sasta Milaga 7-Day Return Policy',
+    'applicableCountry': 'PK',
+    'returnPolicyCategory': 'https://schema.org/MerchantReturnFiniteReturnWindow',
+    'merchantReturnDays': 7,
+    'returnMethod': 'https://schema.org/ReturnByMail',
+    'returnFees': 'Customers bear return shipping costs (PKR 250) unless item is defective.',
+    'refundType': 'https://schema.org/FullRefund',
+    'itemCondition': ['https://schema.org/NewCondition', 'https://schema.org/DamagedCondition']
   };
 }
 
@@ -388,9 +410,73 @@ function route() {
   else if (parts[0] === 'checkout') renderCheckout();
   else if (parts[0] === 'faq')      renderFAQ();
   else if (parts[0] === 'about')    renderAbout();
+  else if (parts[0] === 'return-policy') renderReturnPolicy(); // This was correct
   else renderHome();
 }
 
+/* ============================================================
+   RETURN POLICY PAGE (NEW)
+   ============================================================ */
+function renderReturnPolicy() {
+  setSEO({
+    title: 'Return & Refund Policy – 7 Day Easy Returns',
+    description: 'Sasta Milaga Pakistan Return Policy. 7-day return window. Flat PKR 250 return fee. Free returns for defective items.',
+    url: `${SITE_URL}/#/return-policy`,
+    ldJson: returnPolicyLdJson()
+  });
+
+  renderApp(`
+    <section class="section">
+      <div class="section-head" style="text-align:center">
+        <span class="eyebrow">Customer Care</span>
+        <h1>Return & Refund Policy</h1>
+        <p>Hassle-free returns within 7 days of delivery.</p>
+      </div>
+
+      <div class="about-grid" style="margin: 24px 0">
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">7-Day Window</h3>
+          <p style="color:var(--muted2);margin-top:8px">You have 7 days from the date of delivery to initiate a return request.</p>
+        </div>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">Return Cost</h3>
+          <p style="color:var(--muted2);margin-top:8px">Standard return shipping is <b>PKR 250</b>. Returns are free if the item is defective or damaged.</p>
+        </div>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">Refund Method</h3>
+          <p style="color:var(--muted2);margin-top:8px">Refunds are processed to your original payment method (Bank Transfer/EasyPaisa) within 7-10 business days.</p>
+        </div>
+      </div>
+
+      <div class="faq-accordion">
+        <div class="faq-item">
+          <button class="faq-title" onclick="toggleFaq(this)">What is the return window? <span>+</span></button>
+          <div class="faq-content">
+            You can return any item within <b>7 days</b> of receiving your order. The item must be unused, in original packaging, and with tags attached.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-title" onclick="toggleFaq(this)">Who pays for return shipping? <span>+</span></button>
+          <div class="faq-content">
+            For "Change of Mind" returns, the customer bears the shipping cost of <b>PKR 250</b>. If the item is defective, damaged, or incorrect, Sasta Milaga covers the return shipping cost.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-title" onclick="toggleFaq(this)">How do I initiate a return? <span>+</span></button>
+          <div class="faq-content">
+            Simply contact our WhatsApp support at <b>+92 300 0000000</b> or email us at <b>${ADMIN_EMAIL}</b> with your Order ID. We will guide you through the process.
+          </div>
+        </div>
+         <div class="faq-item">
+          <button class="faq-title" onclick="toggleFaq(this)">Can I get a refund to my Bank Account? <span>+</span></button>
+          <div class="faq-content">
+            Yes. Once we receive the returned item, we will process the refund to your Bank Account, JazzCash, or EasyPaisa within 7-10 working days.
+          </div>
+        </div>
+      </div>
+    </section>
+  `);
+}
 /* ============================================================
    MEGA MENU
    ============================================================ */
