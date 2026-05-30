@@ -36,6 +36,7 @@
   /* ── UI ── */
   --line:rgba(200,169,110,.18);
   --line2:rgba(200,169,110,.30);
+  --border:rgba(200,169,110,.18);
   --glass:rgba(26,92,42,.18);
   --glass2:rgba(26,92,42,.28);
   --shadow:0 30px 90px rgba(0,0,0,.40);
@@ -725,6 +726,61 @@ img,video{max-width:100%;display:block}
 }
 .bottom-nav a:hover,.bottom-nav button:hover{color:var(--gold2)}
 .bottom-nav span{font-size:.68rem;font-weight:900;color:var(--muted)}
+
+/* ════════════════════════════════
+   FOOTER
+════════════════════════════════ */
+.footer{
+  margin: 60px clamp(18px, 4vw, 56px) 0;
+  padding: 40px clamp(18px, 4vw, 56px);
+  border: 1px solid var(--line);
+  border-radius: 32px;
+  background: rgba(11, 26, 14, 0.8);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+}
+.footer-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 32px;
+  max-width: var(--max);
+  margin: 0 auto 40px;
+  width: 100%;
+}
+.footer-col{
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.footer-col h4{
+  color: var(--gold2);
+  font-size: 0.95rem;
+  font-weight: 900;
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.footer-col ul{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.footer-col a{
+  color: var(--muted2);
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: 0.18s ease;
+  display: inline-block;
+}
+.footer-col a:hover{
+  color: var(--gold2);
+  transform: translateX(4px);
+}
 
 /* ════════════════════════════════
    SCHEMA / SEO helpers (hidden)

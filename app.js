@@ -410,7 +410,19 @@ function route() {
   else if (parts[0] === 'checkout') renderCheckout();
   else if (parts[0] === 'faq')      renderFAQ();
   else if (parts[0] === 'about')    renderAbout();
-  else if (parts[0] === 'return-policy') renderReturnPolicy(); // This was correct
+  else if (parts[0] === 'return-policy') renderReturnPolicy();
+  else if (parts[0] === 'blog')     renderBlog();
+  else if (parts[0] === 'careers')  renderCareers();
+  else if (parts[0] === 'press')    renderPress();
+  else if (parts[0] === 'contact')  renderContact();
+  else if (parts[0] === 'returns')  renderReturns();
+  else if (parts[0] === 'shipping') renderShipping();
+  else if (parts[0] === 'track')    renderTrackOrder();
+  else if (parts[0] === 'seller')   renderSeller();
+  else if (parts[0] === 'privacy')  renderPrivacy();
+  else if (parts[0] === 'terms')    renderTerms();
+  else if (parts[0] === 'cookies')  renderCookies();
+  else if (parts[0] === 'sitemap')  renderSitemap();
   else renderHome();
 }
 
@@ -1605,6 +1617,492 @@ function renderAbout() {
 
     '</section>'
   );
+}
+
+/* ============================================================
+   BLOG PAGE
+   ============================================================ */
+function renderBlog() {
+  setSEO({
+    title: 'Blog – Tips, Trends & Shopping Guides',
+    description: 'Read our latest blog posts on fashion trends, tech reviews, beauty tips, and smart shopping hacks for Pakistan.',
+    url: `${SITE_URL}/#/blog`
+  });
+  renderApp(`
+    <section class="section">
+      <div class="section-head" style="text-align:center">
+        <span class="eyebrow">Learn & Explore</span>
+        <h1>Sasta Milaga Blog</h1>
+        <p>Tips, trends, and shopping guides for smart shoppers.</p>
+      </div>
+      <div class="about-grid" style="margin: 24px 0">
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">📱 Tech Guides</h3>
+          <p style="color:var(--muted2);margin-top:8px">Discover the latest gadgets and smartphones at unbeatable prices. Read detailed reviews before you buy.</p>
+        </div>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">👗 Fashion Trends</h3>
+          <p style="color:var(--muted2);margin-top:8px">Stay updated with the latest fashion trends in Pakistan. Style tips and seasonal collections.</p>
+        </div>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">💄 Beauty Tips</h3>
+          <p style="color:var(--muted2);margin-top:8px">Expert beauty advice, product recommendations, and skincare routines for Pakistani weather.</p>
+        </div>
+      </div>
+      <div style="text-align:center;padding:40px 20px;color:var(--muted2)">
+        <p>Blog content is being updated. Check back soon for articles, guides, and shopping tips!</p>
+      </div>
+    </section>
+  `);
+}
+
+/* ============================================================
+   CAREERS PAGE
+   ============================================================ */
+function renderCareers() {
+  setSEO({
+    title: 'Careers – Join Our Team',
+    description: 'Explore exciting career opportunities at Sasta Milaga. Join Pakistan\'s fastest-growing e-commerce platform.',
+    url: `${SITE_URL}/#/careers`
+  });
+  renderApp(`
+    <section class="section">
+      <div class="section-head" style="text-align:center">
+        <span class="eyebrow">We're Hiring</span>
+        <h1>Join Sasta Milaga</h1>
+        <p>Be part of Pakistan's most affordable marketplace.</p>
+      </div>
+      <div class="about-grid" style="margin: 24px 0">
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">🚀 Growth</h3>
+          <p style="color:var(--muted2);margin-top:8px">Work with a fast-growing team revolutionizing e-commerce in Pakistan.</p>
+        </div>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">💡 Innovation</h3>
+          <p style="color:var(--muted2);margin-top:8px">Contribute to innovative solutions and cutting-edge technology.</p>
+        </div>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">🎯 Impact</h3>
+          <p style="color:var(--muted2);margin-top:8px">Make a real impact on millions of customers across Pakistan.</p>
+        </div>
+      </div>
+      <div style="text-align:center;padding:40px 20px">
+        <p style="color:var(--muted2);margin-bottom:20px">For current job openings and to submit your CV, contact us at <b>${ADMIN_EMAIL}</b></p>
+      </div>
+    </section>
+  `);
+}
+
+/* ============================================================
+   PRESS PAGE
+   ============================================================ */
+function renderPress() {
+  setSEO({
+    title: 'Press – Media & News',
+    description: 'Media kit, press releases, and news about Sasta Milaga.',
+    url: `${SITE_URL}/#/press`
+  });
+  renderApp(`
+    <section class="section">
+      <div class="section-head" style="text-align:center">
+        <span class="eyebrow">Media</span>
+        <h1>Press Center</h1>
+        <p>News, press releases, and media information about Sasta Milaga.</p>
+      </div>
+      <div class="about-grid" style="margin: 24px 0">
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">📰 Press Releases</h3>
+          <p style="color:var(--muted2);margin-top:8px">Latest announcements and company updates from Sasta Milaga.</p>
+        </div>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">📸 Media Kit</h3>
+          <p style="color:var(--muted2);margin-top:8px">Download logos, brand assets, and company information for media use.</p>
+        </div>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">📧 Contact</h3>
+          <p style="color:var(--muted2);margin-top:8px">For press inquiries, reach out to our media team.</p>
+        </div>
+      </div>
+      <div style="text-align:center;padding:40px 20px">
+        <p style="color:var(--muted2)">For press inquiries: <b>${ADMIN_EMAIL}</b></p>
+      </div>
+    </section>
+  `);
+}
+
+/* ============================================================
+   CONTACT PAGE
+   ============================================================ */
+function renderContact() {
+  setSEO({
+    title: 'Contact Us – Get in Touch',
+    description: 'Contact Sasta Milaga customer support via WhatsApp, email, or our contact form.',
+    url: `${SITE_URL}/#/contact`
+  });
+  renderApp(`
+    <section class="section">
+      <div class="section-head" style="text-align:center">
+        <span class="eyebrow">Get In Touch</span>
+        <h1>Contact Us</h1>
+        <p>We're here to help. Reach out anytime.</p>
+      </div>
+      <div class="about-grid" style="margin: 40px 0">
+        <a href="https://wa.me/923000000000" target="_blank" rel="noopener" class="about-card" style="cursor:pointer;text-decoration:none">
+          <h3 style="color:var(--gold2)">💬 WhatsApp</h3>
+          <p style="color:var(--muted2);margin-top:8px"><b>+92 300 0000000</b></p>
+          <p style="color:var(--muted2);font-size:0.9em">Available: 9 AM – 9 PM (Mon–Sat)</p>
+        </a>
+        <a href="mailto:${ADMIN_EMAIL}" class="about-card" style="cursor:pointer;text-decoration:none">
+          <h3 style="color:var(--gold2)">📧 Email</h3>
+          <p style="color:var(--muted2);margin-top:8px"><b>${ADMIN_EMAIL}</b></p>
+          <p style="color:var(--muted2);font-size:0.9em">Response within 24 hours</p>
+        </a>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">📍 Address</h3>
+          <p style="color:var(--muted2);margin-top:8px">Lahore, Pakistan</p>
+          <p style="color:var(--muted2);font-size:0.9em">Serving all of Pakistan</p>
+        </div>
+      </div>
+    </section>
+  `);
+}
+
+/* ============================================================
+   RETURNS / REFUNDS PAGE
+   ============================================================ */
+function renderReturns() {
+  setSEO({
+    title: 'Returns & Refunds – Hassle-Free Policy',
+    description: 'Easy returns and refunds within 7 days. Free returns for defective items.',
+    url: `${SITE_URL}/#/returns`
+  });
+  renderApp(`
+    <section class="section">
+      <div class="section-head" style="text-align:center">
+        <span class="eyebrow">Easy Returns</span>
+        <h1>Returns & Refunds</h1>
+        <p>7-day hassle-free returns on all orders.</p>
+      </div>
+      <div class="about-grid" style="margin: 24px 0">
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">⏰ 7-Day Window</h3>
+          <p style="color:var(--muted2);margin-top:8px">Return any item within 7 days of delivery.</p>
+        </div>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">📦 Free Returns</h3>
+          <p style="color:var(--muted2);margin-top:8px">Defective or damaged items returned for free.</p>
+        </div>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">💰 Full Refund</h3>
+          <p style="color:var(--muted2);margin-top:8px">Get your money back within 7-10 business days.</p>
+        </div>
+      </div>
+      <div style="text-align:center;padding:40px 20px">
+        <p style="color:var(--muted2);margin-bottom:20px">To initiate a return, contact us on WhatsApp: <b>+92 300 0000000</b></p>
+      </div>
+    </section>
+  `);
+}
+
+/* ============================================================
+   SHIPPING POLICY PAGE
+   ============================================================ */
+function renderShipping() {
+  setSEO({
+    title: 'Shipping Policy – Fast Delivery Across Pakistan',
+    description: 'Free shipping on orders above PKR 5,000. Delivery to all cities in Pakistan within 2-6 working days.',
+    url: `${SITE_URL}/#/shipping`
+  });
+  renderApp(`
+    <section class="section">
+      <div class="section-head" style="text-align:center">
+        <span class="eyebrow">Delivery Info</span>
+        <h1>Shipping & Delivery</h1>
+        <p>Fast, reliable delivery across all of Pakistan.</p>
+      </div>
+      <div class="about-grid" style="margin: 24px 0">
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">🚚 Shipping Fee</h3>
+          <p style="color:var(--muted2);margin-top:8px">Flat PKR 250 on all orders. <b>FREE</b> on orders above PKR 5,000.</p>
+        </div>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">⏱️ Delivery Time</h3>
+          <p style="color:var(--muted2);margin-top:8px">Major cities: 2-4 days. Other areas: 3-6 days.</p>
+        </div>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">📍 Coverage</h3>
+          <p style="color:var(--muted2);margin-top:8px">Deliver to all cities and towns across Pakistan.</p>
+        </div>
+      </div>
+      <div class="faq-accordion" style="margin-top:40px">
+        <div class="faq-item">
+          <button class="faq-title" onclick="toggleFaq(this)">Which cities do you deliver to? <span>+</span></button>
+          <div class="faq-content">
+            We deliver to all major cities: Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Multan, Peshawar, and all other towns and rural areas across Pakistan.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-title" onclick="toggleFaq(this)">How can I track my order? <span>+</span></button>
+          <div class="faq-content">
+            You'll receive a tracking link via SMS once your order is shipped. You can also contact our WhatsApp support for live order updates.
+          </div>
+        </div>
+      </div>
+    </section>
+  `);
+}
+
+/* ============================================================
+   TRACK ORDER PAGE
+   ============================================================ */
+function renderTrackOrder() {
+  setSEO({
+    title: 'Track Your Order',
+    description: 'Track your Sasta Milaga order status and delivery information.',
+    url: `${SITE_URL}/#/track`
+  });
+  renderApp(`
+    <section class="section">
+      <div class="section-head" style="text-align:center">
+        <span class="eyebrow">Order Tracking</span>
+        <h1>Track Your Order</h1>
+        <p>Check the status and location of your delivery.</p>
+      </div>
+      <div style="max-width:600px;margin:40px auto;padding:0 20px">
+        <form style="display:flex;gap:10px;margin-bottom:30px">
+          <input type="text" placeholder="Enter your Order ID or Phone Number" style="flex:1;padding:12px;border:1px solid var(--border);border-radius:8px;font-size:16px" required>
+          <button type="submit" style="padding:12px 24px;background:var(--gold2);border:none;border-radius:8px;color:var(--ink);font-weight:bold;cursor:pointer">Track</button>
+        </form>
+        <div style="background:var(--bg2);padding:24px;border-radius:12px;text-align:center">
+          <p style="color:var(--muted2);margin-bottom:16px">Don't have your Order ID? Contact us on WhatsApp:</p>
+          <a href="https://wa.me/923000000000" target="_blank" rel="noopener" style="display:inline-block;background:var(--accent);color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">📱 WhatsApp Support</a>
+        </div>
+      </div>
+    </section>
+  `);
+}
+
+/* ============================================================
+   SELL ON SASTA PAGE
+   ============================================================ */
+function renderSeller() {
+  setSEO({
+    title: 'Sell on Sasta Milaga – Become a Seller',
+    description: 'Join thousands of sellers on Sasta Milaga. Start selling your products today.',
+    url: `${SITE_URL}/#/seller`
+  });
+  renderApp(`
+    <section class="section">
+      <div class="section-head" style="text-align:center">
+        <span class="eyebrow">Seller Program</span>
+        <h1>Sell on Sasta Milaga</h1>
+        <p>Reach millions of customers and grow your business.</p>
+      </div>
+      <div class="about-grid" style="margin: 24px 0">
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">📈 Grow Sales</h3>
+          <p style="color:var(--muted2);margin-top:8px">Access millions of customers across Pakistan.</p>
+        </div>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">🛠️ Easy Setup</h3>
+          <p style="color:var(--muted2);margin-top:8px">Simple process to list your products and start selling.</p>
+        </div>
+        <div class="about-card">
+          <h3 style="color:var(--gold2)">💳 Fast Payouts</h3>
+          <p style="color:var(--muted2);margin-top:8px">Regular payments and transparent commission structure.</p>
+        </div>
+      </div>
+      <div style="text-align:center;padding:40px 20px">
+        <p style="color:var(--muted2);margin-bottom:20px">Interested in becoming a seller?</p>
+        <a href="mailto:${ADMIN_EMAIL}" class="primary-btn">Contact Us to Get Started</a>
+      </div>
+    </section>
+  `);
+}
+
+/* ============================================================
+   PRIVACY POLICY PAGE
+   ============================================================ */
+function renderPrivacy() {
+  setSEO({
+    title: 'Privacy Policy – Your Data is Safe',
+    description: 'Sasta Milaga privacy policy. Learn how we protect your personal information.',
+    url: `${SITE_URL}/#/privacy`
+  });
+  renderApp(`
+    <section class="section">
+      <div class="section-head" style="text-align:center">
+        <span class="eyebrow">Legal</span>
+        <h1>Privacy Policy</h1>
+        <p>How we protect your data and personal information.</p>
+      </div>
+      <div style="max-width:900px;margin:40px auto;padding:0 20px;color:var(--muted2);line-height:1.8">
+        <h3 style="color:var(--ink);margin-top:24px">Information We Collect</h3>
+        <p>We collect information you provide directly to us (name, email, phone number, address) and information about your browsing and purchase activity on our website.</p>
+        
+        <h3 style="color:var(--ink);margin-top:24px">How We Use Your Information</h3>
+        <p>We use your information to process orders, provide customer support, improve our website and services, and send promotional updates (with your consent).</p>
+        
+        <h3 style="color:var(--ink);margin-top:24px">Data Protection</h3>
+        <p>We implement security measures to protect your personal information. However, no transmission over the internet is 100% secure.</p>
+        
+        <h3 style="color:var(--ink);margin-top:24px">Third-Party Sharing</h3>
+        <p>We do not sell your personal information. We may share data with payment processors and shipping partners necessary to fulfill your orders.</p>
+        
+        <h3 style="color:var(--ink);margin-top:24px">Contact Us</h3>
+        <p>For privacy inquiries, contact us at <b>${ADMIN_EMAIL}</b></p>
+      </div>
+    </section>
+  `);
+}
+
+/* ============================================================
+   TERMS OF USE PAGE
+   ============================================================ */
+function renderTerms() {
+  setSEO({
+    title: 'Terms of Use – User Agreement',
+    description: 'Sasta Milaga terms of use and conditions of service.',
+    url: `${SITE_URL}/#/terms`
+  });
+  renderApp(`
+    <section class="section">
+      <div class="section-head" style="text-align:center">
+        <span class="eyebrow">Legal</span>
+        <h1>Terms of Use</h1>
+        <p>Please read these terms carefully before using our website.</p>
+      </div>
+      <div style="max-width:900px;margin:40px auto;padding:0 20px;color:var(--muted2);line-height:1.8">
+        <h3 style="color:var(--ink);margin-top:24px">Acceptance of Terms</h3>
+        <p>By accessing and using the Sasta Milaga website, you accept and agree to be bound by these terms and our privacy policy.</p>
+        
+        <h3 style="color:var(--ink);margin-top:24px">User Responsibilities</h3>
+        <p>You agree not to use the website for illegal purposes, to not violate any laws, and to respect intellectual property rights.</p>
+        
+        <h3 style="color:var(--ink);margin-top:24px">Product Information</h3>
+        <p>We strive to provide accurate product descriptions and pricing. However, we do not guarantee the accuracy of all product information.</p>
+        
+        <h3 style="color:var(--ink);margin-top:24px">Limitation of Liability</h3>
+        <p>Sasta Milaga shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the website.</p>
+        
+        <h3 style="color:var(--ink);margin-top:24px">Changes to Terms</h3>
+        <p>We reserve the right to modify these terms at any time. Continued use of the website implies acceptance of updated terms.</p>
+        
+        <h3 style="color:var(--ink);margin-top:24px">Contact Us</h3>
+        <p>For questions about these terms, contact us at <b>${ADMIN_EMAIL}</b></p>
+      </div>
+    </section>
+  `);
+}
+
+/* ============================================================
+   COOKIE POLICY PAGE
+   ============================================================ */
+function renderCookies() {
+  setSEO({
+    title: 'Cookie Policy – How We Use Cookies',
+    description: 'Sasta Milaga cookie policy. Learn about cookies and tracking technologies used on our website.',
+    url: `${SITE_URL}/#/cookies`
+  });
+  renderApp(`
+    <section class="section">
+      <div class="section-head" style="text-align:center">
+        <span class="eyebrow">Legal</span>
+        <h1>Cookie Policy</h1>
+        <p>Information about cookies and similar technologies we use.</p>
+      </div>
+      <div style="max-width:900px;margin:40px auto;padding:0 20px;color:var(--muted2);line-height:1.8">
+        <h3 style="color:var(--ink);margin-top:24px">What Are Cookies?</h3>
+        <p>Cookies are small files stored on your device that help us remember your preferences and improve your browsing experience.</p>
+        
+        <h3 style="color:var(--ink);margin-top:24px">Types of Cookies We Use</h3>
+        <ul style="margin:12px 0 12px 20px">
+          <li><b>Essential Cookies:</b> Necessary for website functionality (login, cart, checkout)</li>
+          <li><b>Performance Cookies:</b> Help us understand how visitors use our website</li>
+          <li><b>Marketing Cookies:</b> Used to display relevant advertisements</li>
+          <li><b>Analytics Cookies:</b> Measure website traffic and user behavior</li>
+        </ul>
+        
+        <h3 style="color:var(--ink);margin-top:24px">Managing Cookies</h3>
+        <p>You can control cookies through your browser settings. Note that disabling some cookies may affect website functionality.</p>
+        
+        <h3 style="color:var(--ink);margin-top:24px">Third-Party Cookies</h3>
+        <p>We may use third-party services (analytics, payment processors) that set their own cookies.</p>
+        
+        <h3 style="color:var(--ink);margin-top:24px">Contact Us</h3>
+        <p>Questions about cookies? Contact us at <b>${ADMIN_EMAIL}</b></p>
+      </div>
+    </section>
+  `);
+}
+
+/* ============================================================
+   SITEMAP PAGE
+   ============================================================ */
+function renderSitemap() {
+  setSEO({
+    title: 'Sitemap – Site Navigation',
+    description: 'Complete sitemap of Sasta Milaga. Browse all pages and categories.',
+    url: `${SITE_URL}/#/sitemap`
+  });
+  renderApp(`
+    <section class="section">
+      <div class="section-head" style="text-align:center">
+        <span class="eyebrow">Navigation</span>
+        <h1>Site Map</h1>
+        <p>Complete guide to all pages and categories on Sasta Milaga.</p>
+      </div>
+      <div style="max-width:900px;margin:40px auto;padding:0 20px">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:30px;margin:30px 0">
+          <div>
+            <h3 style="color:var(--gold2);margin-bottom:12px">🛍️ Shop</h3>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px">
+              <li><a href="#/category/fashion" style="color:var(--muted2)">Fashion</a></li>
+              <li><a href="#/category/beauty" style="color:var(--muted2)">Beauty</a></li>
+              <li><a href="#/category/electronics" style="color:var(--muted2)">Electronics</a></li>
+              <li><a href="#/category/home" style="color:var(--muted2)">Home & Living</a></li>
+              <li><a href="#/category/groceries" style="color:var(--muted2)">Groceries</a></li>
+              <li><a href="#/category/automotive" style="color:var(--muted2)">Automotive</a></li>
+              <li><a href="#/deals" style="color:var(--muted2)">Today's Deals</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="color:var(--gold2);margin-bottom:12px">ℹ️ Info</h3>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px">
+              <li><a href="#/about" style="color:var(--muted2)">About Us</a></li>
+              <li><a href="#/blog" style="color:var(--muted2)">Blog</a></li>
+              <li><a href="#/faq" style="color:var(--muted2)">FAQ</a></li>
+              <li><a href="#/careers" style="color:var(--muted2)">Careers</a></li>
+              <li><a href="#/press" style="color:var(--muted2)">Press</a></li>
+              <li><a href="#/home" style="color:var(--muted2)">Home</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="color:var(--gold2);margin-bottom:12px">💬 Support</h3>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px">
+              <li><a href="#/contact" style="color:var(--muted2)">Contact Us</a></li>
+              <li><a href="#/returns" style="color:var(--muted2)">Returns</a></li>
+              <li><a href="#/return-policy" style="color:var(--muted2)">Return Policy</a></li>
+              <li><a href="#/shipping" style="color:var(--muted2)">Shipping Policy</a></li>
+              <li><a href="#/track" style="color:var(--muted2)">Track Order</a></li>
+              <li><a href="#/seller" style="color:var(--muted2)">Sell on Sasta</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="color:var(--gold2);margin-bottom:12px">⚖️ Legal</h3>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px">
+              <li><a href="#/privacy" style="color:var(--muted2)">Privacy Policy</a></li>
+              <li><a href="#/terms" style="color:var(--muted2)">Terms of Use</a></li>
+              <li><a href="#/cookies" style="color:var(--muted2)">Cookie Policy</a></li>
+              <li><a href="#/checkout" style="color:var(--muted2)">Checkout</a></li>
+              <li><a href="#/cart" style="color:var(--muted2)">Cart</a></li>
+              <li><a href="#/wishlist" style="color:var(--muted2)">Wishlist</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  `);
 }
 
 /* ============================================================
