@@ -359,6 +359,16 @@ function renderMega(){
     </div>`;
   }
   draw(state.activeMega);
+}
+
+function renderApp(html){
+  const app = $('#app');
+  if(!app){
+    console.warn('App root "#app" not found. Skipping render.');
+    return;
+  }
+  app.innerHTML = html;
+}
   $$('.mega-tab').forEach(btn=>btn.addEventListener('mouseenter',()=>{
     $$('.mega-tab').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
@@ -391,7 +401,7 @@ function renderHome(){
   const flash = getDeals().slice(0,8);
   const heroProducts = flash.slice(0,3);
   const deal = flash[0] || products[0];
-  $('#app').innerHTML = `
+  renderApp(`
     <section class="hero">
       <div class="hero-content">
         <span class="eyebrow">🇵🇰 Pakistan's #1 Affordable Marketplace</span>
@@ -545,7 +555,7 @@ function renderListing(type, val, qs=''){
         ${cat.leaves.slice(0,20).map(l=>`<a class="tag-chip ${slug(l)===leafFromUrl?'active':''}" href="#/category/${val}?leaf=${encodeURIComponent(slug(l))}" style="${slug(l)===leafFromUrl?'background:rgba(200,169,110,.22);border-color:rgba(200,169,110,.5)':''}">${esc(l)}</a>`).join('')}
        </div>` : '';
 
-  $('#app').innerHTML = `
+  renderApp(`
     <section class="hero" style="min-height:320px">
       <div class="hero-content">
         <span class="eyebrow">${type==='tag'?'Tag discovery':'type'==='category'?'Category':'Catalog'} ${type==='tag'?'page':type==='category'?'page':'search'}</span>
@@ -710,7 +720,7 @@ function renderPDP(handle){
     <span>${esc(p.n)}</span>
   </div>`;
 
-  $('#app').innerHTML = `
+  renderApp(`
     <section class="pdp" aria-label="Product detail">
       <div>
         <div class="gallery-panel">
@@ -914,9 +924,9 @@ function renderCart(){
   const cart = getCart();
   const rows = cart.map(x=>({item:products.find(p=>p.id===x.id),qty:x.qty})).filter(x=>x.item);
   const sub = rows.reduce((a,x)=>a+price(x.item)*x.qty,0);
-  $('#app').innerHTML = `<section class="section"><div class="section-head"><div><h2>🛒 Your Cart</h2><p>Review items and proceed to checkout.</p></div></div>
+  renderApp(`<section class="section"><div class="section-head"><div><h2>🛒 Your Cart</h2><p>Review items and proceed to checkout.</p></div></div>
     ${rows.length ? `<div class="cart-layout"><div>${rows.map(({item,qty})=>cartLine(item,qty)).join('')}</div>${summaryBox(sub)}</div>` : empty('Your cart is empty','Shop Flash Deals','#/deals')}
-  </section>`;
+  </section>`);
 }
 
 function cartLine(p,qty){
@@ -949,16 +959,16 @@ function renderWishlist(){
   setSEO({ title: 'My Wishlist', description: 'Your saved products at Sasta Milaga Pakistan.', url:`${SITE_URL}/#/wishlist` });
   const ids = getWish();
   const list = products.filter(p=>ids.includes(p.id));
-  $('#app').innerHTML = `<section class="section"><div class="section-head"><div><h2>♡ Wishlist</h2><p>Saved products for later.</p></div></div>
+  renderApp(`<section class="section"><div class="section-head"><div><h2>♡ Wishlist</h2><p>Saved products for later.</p></div></div>
   ${list.length ? `<div class="products-row">${list.map(productCard).join('')}</div>` : empty('Wishlist is empty','Explore Categories','#/home')}
-  </section>`;
+  </section>`);
 }
 
 function renderCheckout(){
   setSEO({ title: 'Checkout – Sasta Milaga Pakistan', description: 'Complete your order at Sasta Milaga. Fast, secure checkout with Cash on Delivery available.', url:`${SITE_URL}/#/checkout` });
   const rows = getCart().map(x=>({item:products.find(p=>p.id===x.id),qty:x.qty})).filter(x=>x.item);
   const sub = rows.reduce((a,x)=>a+price(x.item)*x.qty,0);
-  $('#app').innerHTML = `<section class="section">
+  renderApp(`<section class="section">
     <div class="section-head"><div><span class="eyebrow">Cart → Details → Payment → Confirm</span><h2>Fast Checkout</h2><p>Secure checkout with Cash on Delivery, bank transfer or wallet.</p></div></div>
     <div class="checkout-layout">
       <form class="detail-panel form-grid" style="padding:20px" onsubmit="event.preventDefault(); toast('✅ Order captured! Connect Code.gs to Google Sheets for live orders.');">
@@ -1095,7 +1105,7 @@ function renderFAQ() {
     url: `${SITE_URL}/#/faq`
   });
 
-  $('#app').innerHTML = `
+  renderApp(`
     <section class="section">
       <div class="section-head" style="text-align:center;margin-bottom:30px">
         <div>
@@ -1180,7 +1190,7 @@ function renderAbout() {
     url: `${SITE_URL}/#/about`
   });
 
-  $('#app').innerHTML = `
+  renderApp(`
     <section class="section">
       <div class="about-hero">
         <span class="eyebrow">About Sasta Milaga</span>

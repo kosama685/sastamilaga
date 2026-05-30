@@ -7,12 +7,13 @@
   <title><data:blog.pageTitle/></title>
   <meta content='Sasta Milaga Pakistan ecommerce marketplace for fashion, beauty, home, electronics, groceries, automotive, deals and best-price online shopping.' name='description'/>
   
-  <!-- ═══ PWA Manifest & GEO / Local SEO ═══ -->
-  <link rel="manifest" href="/manifest.json"/>
-  <meta name="geo.region" content="PK" />
-  <meta name="geo.placename" content="Lahore, Karachi, Islamabad, Peshawar, Rawalpindi" />
-  <meta name="geo.position" content="30.3753;69.3451" />
-  <meta name="ICBM" content="30.3753, 69.3451" />
+  <!-- &#9552;&#9552;&#9552; PWA Manifest & GEO / Local SEO &#9552;&#9552;&#9552; -->
+  <link href='https://kosama685.github.io/sastamilaga/manifest.json' rel='manifest'/>
+    <link href='https://kosama685.github.io/sastamilaga/styles.css' rel='stylesheet'/>
+  <meta content='PK' name='geo.region'/>
+  <meta content='Lahore, Karachi, Islamabad, Peshawar, Rawalpindi' name='geo.placename'/>
+  <meta content='30.3753;69.3451' name='geo.position'/>
+  <meta content='30.3753, 69.3451' name='ICBM'/>
 
   <b:skin><![CDATA[
 :root{
@@ -294,111 +295,103 @@ a{color:inherit;text-decoration:none}
 ]]></b:skin>
 </head>
 <body>
-  <div class="noise"></div>
+  <div class='noise'/>
 
-  <!-- ═══════════════════════════════
+  <!-- &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;
        HEADER
-  ════════════════════════════════ -->
-  <header class="site-header">
-    <div class="nav-shell">
+  &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; -->
+  <header class='site-header'>
+    <div class='nav-shell'>
 
       <!-- Brand Logo -->
-      <a class="brand" href="#/home" aria-label="Sasta Milaga – Pakistan's Affordable Marketplace">
-        <div class="brand-mark" aria-hidden="true">
-          <img src="sasta-milaga-logo-final.png" alt="Sasta Milaga Logo" width="52" height="52">
+      <a aria-label='Sasta Milaga – Pakistan&apos;s Affordable Marketplace' class='brand' href='#/home'>
+        <div aria-hidden='true' class='brand-mark'>
+          <img alt='Sasta Milaga Logo' height='52' src='https://kosama685.github.io/sastamilaga/sasta-milaga-logo-final.png' width='252'/>
         </div>
-        <span>
-          <strong>Sasta Milaga</strong>
-          <small>Pakistan's affordable marketplace</small>
-        </span>
+    
       </a>
 
-      <button class="nav-pill mega-trigger" id="megaTrigger" aria-label="Browse categories" aria-expanded="false">
-        ☰ Categories
+      <button aria-expanded='false' aria-label='Browse categories' class='nav-pill mega-trigger' id='megaTrigger'>
+        &#9776; Categories
       </button>
 
-      <form class="search-shell" id="topSearchForm" role="search" aria-label="Search products">
-        <span aria-hidden="true">⌕</span>
-        <input id="topSearch" type="search"
-          placeholder="Search fashion, electronics, beauty, groceries..."
-          autocomplete="off"
-          aria-label="Search products">
-        <button type="submit" aria-label="Search">Search</button>
+      <form aria-label='Search products' class='search-shell' id='topSearchForm' role='search'>
+        <span aria-hidden='true'>&#8981;</span>
+        <input aria-label='Search products' autocomplete='off' id='topSearch' placeholder='Search fashion, electronics, beauty, groceries...' type='search'/>
+        <button aria-label='Search' type='submit'>Search</button>
       </form>
 
-      <nav class="desktop-actions" aria-label="Account navigation">
-        <a href="#/deals" id="nav-deals">⚡ Deals</a>
-        <a href="#/wishlist" id="nav-wishlist" aria-label="Wishlist">♡ Wishlist <span id="wishCount" aria-live="polite">0</span></a>
-        <a href="#/cart" id="nav-cart" aria-label="Shopping cart">🛒 Cart <span id="cartCount" aria-live="polite">0</span></a>
-        <a href="#/faq" id="nav-faq">❓ FAQ</a>
-        <a href="#/about" id="nav-about">ℹ️ About Us</a>
+      <nav aria-label='Account navigation' class='desktop-actions'>
+        <a href='#/deals' id='nav-deals'>&#9889; Deals</a>
+        <a aria-label='Wishlist' href='#/wishlist' id='nav-wishlist'>&#9825; Wishlist <span aria-live='polite' id='wishCount'>0</span></a>
+        <a aria-label='Shopping cart' href='#/cart' id='nav-cart'>🛒 Cart <span aria-live='polite' id='cartCount'>0</span></a>
+        <a href='#/faq' id='nav-faq'>&#10067; FAQ</a>
+        <a href='#/about' id='nav-about'>ℹ&#65039; About Us</a>
         <!-- <a href="merchant-feed.html" target="_blank" id="nav-merchant" title="Google Merchant Feed">📦 Merchant Feed</a> -->
-        <!-- <a href="sitemap.html" target="_blank" id="nav-sitemap" title="Sitemap">🗺️ Sitemap</a> -->
+        <!-- <a href="sitemap.html" target="_blank" id="nav-sitemap" title="Sitemap">🗺&#65039; Sitemap</a> -->
       </nav>
 
-      <button class="nav-pill chatbot-open" id="openBot" aria-label="Open AI assistant">🤖 Ask AI</button>
+      <button aria-label='Open AI assistant' class='nav-pill chatbot-open' id='openBot'>🤖 Ask AI</button>
     </div>
 
     <!-- Mega menu (populated by app.js) -->
-    <div class="mega-menu" id="megaMenu" role="navigation" aria-label="Category mega menu"></div>
+    <div aria-label='Category mega menu' class='mega-menu' id='megaMenu' role='navigation'/>
   </header>
 
-  <!-- ═══════════════════════════════
+  <!-- &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;
        MAIN APP
-  ════════════════════════════════ -->
-  <main id="app" class="app" aria-live="polite" aria-label="Main content"></main>
+  &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; -->
+  <b:section class='main' id='main' showaddelement='yes'/>
 
-  <!-- ═══════════════════════════════
+  <!-- &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;
        BOTTOM NAV (Mobile)
-  ════════════════════════════════ -->
-  <nav class="bottom-nav" aria-label="Mobile navigation">
-    <a href="#/home" aria-label="Home">🏠<span>Home</span></a>
-    <a href="#/deals" aria-label="Deals">⚡<span>Deals</span></a>
-    <button id="mobileSearchBtn" aria-label="Search">🔎<span>Search</span></button>
-    <a href="#/wishlist" aria-label="Wishlist">♡<span>Wishlist</span></a>
-    <a href="#/cart" aria-label="Cart">🛒<span>Cart</span></a>
+  &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; -->
+  <nav aria-label='Mobile navigation' class='bottom-nav'>
+    <a aria-label='Home' href='#/home'>🏠<span>Home</span></a>
+    <a aria-label='Deals' href='#/deals'>&#9889;<span>Deals</span></a>
+    <button aria-label='Search' id='mobileSearchBtn'>🔎<span>Search</span></button>
+    <a aria-label='Wishlist' href='#/wishlist'>&#9825;<span>Wishlist</span></a>
+    <a aria-label='Cart' href='#/cart'>🛒<span>Cart</span></a>
   </nav>
 
-  <!-- ═══════════════════════════════
+  <!-- &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;
        QUICK VIEW MODAL
-  ════════════════════════════════ -->
-  <div class="modal" id="quickModal" aria-hidden="true" role="dialog" aria-label="Quick product view">
-    <div class="modal-card">
-      <button class="modal-close" data-close-modal aria-label="Close">×</button>
-      <div id="quickModalBody"></div>
+  &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; -->
+  <div aria-hidden='true' aria-label='Quick product view' class='modal' id='quickModal' role='dialog'>
+    <div class='modal-card'>
+      <button aria-label='Close' class='modal-close' data-close-modal='true'>&#215;</button>
+      <div id='quickModalBody'/>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════
+  <!-- &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;
        AI CHATBOT
-  ════════════════════════════════ -->
-  <aside class="chatbot" id="chatbot" aria-hidden="true" aria-label="Sasta AI product helper">
-    <div class="chat-head">
+  &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; -->
+  <aside aria-hidden='true' aria-label='Sasta AI product helper' class='chatbot' id='chatbot'>
+    <div class='chat-head'>
       <div>
         <strong>Sasta AI Helper 🤖</strong>
         <small>Trained on 13,000+ products from your catalog</small>
       </div>
-      <button id="closeBot" aria-label="Close chat">×</button>
+      <button aria-label='Close chat' id='closeBot'>&#215;</button>
     </div>
-    <div class="chat-log" id="chatLog" role="log" aria-live="polite"></div>
-    <div class="chat-chips" id="chatChips" role="group" aria-label="Suggested chatbot queries"></div>
-    <form class="chat-form" id="chatForm" aria-label="Chat input">
-      <input id="chatInput"
-        placeholder="Ask: mobile under 1000, beauty deals, car accessories..."
-        aria-label="Ask the AI assistant">
-      <button type="submit" aria-label="Send message">Ask</button>
+    <div aria-live='polite' class='chat-log' id='chatLog' role='log'/>
+    <div aria-label='Suggested chatbot queries' class='chat-chips' id='chatChips' role='group'/>
+    <form aria-label='Chat input' class='chat-form' id='chatForm'>
+      <input aria-label='Ask the AI assistant' id='chatInput' placeholder='Ask: mobile under 1000, beauty deals, car accessories...'/>
+      <button aria-label='Send message' type='submit'>Ask</button>
     </form>
   </aside>
 
-  <!-- ═══════════════════════════════
+  <!-- &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;
        TOAST NOTIFICATION
-  ════════════════════════════════ -->
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; -->
+  <div aria-live='polite' class='toast' id='toast' role='status'/>
 
-  <!-- ═══════════════════════════════
+  <!-- &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;
        SCRIPTS
-  ════════════════════════════════ -->
-  <script src="products.js"></script>
-  <script src="app.js"></script>
+  &#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552;&#9552; -->
+  <script src='https://kosama685.github.io/sastamilaga/products.js'/>
+  <script src='https://kosama685.github.io/sastamilaga/app.js'/>
 </body>
 </html>
