@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>XML Sitemap Generator – Sasta Milaga</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="sasta-milaga-logo-final.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#050f07;--bg2:#0b1a0e;
+      --ink:#f0faf3;--muted:#8ab89a;--muted2:#b0ccb8;
+      --green:#1a5c2a;--green2:#2d7a3a;--green3:#4caf73;
+      --gold:#c8a96e;--gold2:#e8c98a;--gold3:#f0d9a8;
+      --line:rgba(200,169,110,.18);--line2:rgba(200,169,110,.30);
+      --shadow:0 20px 60px rgba(0,0,0,.4);
+      --grad-brand:linear-gradient(135deg,#1a5c2a,#2d7a3a 45%,#c8a96e);
+      --grad-gold:linear-gradient(135deg,#c8a96e,#e8c98a 60%,#f0d9a8);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:Inter,system-ui,sans-serif;
+      background:linear-gradient(160deg,#050f07,#0b1a0e 52%,#0f150b);
+      color:var(--ink);min-height:100vh;padding:24px;
+    }
+    .header{
+      display:flex;align-items:center;gap:16px;
+      background:rgba(26,92,42,.15);border:1px solid var(--line2);
+      border-radius:24px;padding:20px 24px;margin-bottom:24px;
+      backdrop-filter:blur(14px);
+    }
+    .header img{height:52px;width:auto;filter:drop-shadow(0 4px 12px rgba(200,169,110,.3))}
+    .header h1{font-size:1.6rem;letter-spacing:-.05em;color:var(--gold2)}
+    .header p{color:var(--muted2);font-size:.88rem;margin-top:4px}
+    .back-link{
+      display:inline-flex;align-items:center;gap:8px;
+      border:1px solid var(--line);border-radius:999px;
+      padding:9px 16px;font-weight:900;font-size:.86rem;
+      color:var(--ink);background:rgba(26,92,42,.14);
+      text-decoration:none;transition:.2s;margin-left:auto;
+    }
+    .back-link:hover{background:rgba(200,169,110,.18);border-color:rgba(200,169,110,.5);color:var(--gold2)}
+
+    .controls{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:14px;margin-bottom:24px;
+    }
+    .ctrl-card{
+      background:rgba(26,92,42,.12);border:1px solid var(--line);
+      border-radius:20px;padding:18px;
+    }
+    .ctrl-card label{display:block;color:var(--muted2);font-size:.8rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+    .ctrl-card input,.ctrl-card select{
+      width:100%;border:1px solid var(--line);border-radius:12px;
+      background:rgba(26,92,42,.2);color:var(--ink);
+      padding:11px;outline:0;font:inherit;
+    }
+    .ctrl-card input:focus{border-color:rgba(200,169,110,.5)}
+    .ctrl-card option{color:#050f07}
+
+    .stats-bar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+    .stat{
+      background:rgba(26,92,42,.15);border:1px solid var(--line);
+      border-radius:16px;padding:14px 20px;
+    }
+    .stat b{display:block;font-size:1.5rem;font-weight:1000;color:var(--gold2)}
+    .stat span{font-size:.78rem;color:var(--muted2);font-weight:700}
+
+    .btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+    .btn{
+      display:inline-flex;align-items:center;gap:9px;
+      border-radius:999px;padding:13px 22px;
+      font-weight:900;font-size:.9rem;cursor:pointer;
+      border:1px solid transparent;transition:.2s;
+    }
+    .btn-primary{background:var(--grad-brand);color:#fff;box-shadow:0 12px 35px rgba(26,92,42,.4)}
+    .btn-primary:hover{filter:brightness(1.1);transform:translateY(-2px)}
+    .btn-gold{background:var(--grad-gold);color:#050f07;box-shadow:0 12px 35px rgba(200,169,110,.3)}
+    .btn-gold:hover{filter:brightness(1.05);transform:translateY(-2px)}
+    .btn-ghost{background:rgba(26,92,42,.14);color:var(--ink);border-color:var(--line)}
+    .btn-ghost:hover{background:rgba(200,169,110,.18);border-color:rgba(200,169,110,.4);color:var(--gold2)}
+
+    .progress-wrap{
+      background:rgba(26,92,42,.1);border:1px solid var(--line);
+      border-radius:16px;padding:16px;margin-bottom:20px;display:none;
+    }
+    .progress-wrap.show{display:block}
+    .progress-bar-outer{height:10px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:10px 0}
+    .progress-bar-inner{height:100%;background:var(--grad-brand);border-radius:99px;transition:width .3s ease}
+    .progress-text{font-size:.84rem;color:var(--muted2)}
+
+    /* Visual sitemap sections */
+    .sitemap-visual{margin-top:24px}
+    .sitemap-visual h2{font-size:1.4rem;letter-spacing:-.05em;color:var(--gold2);margin-bottom:16px}
+    .sitemap-section{
+      background:rgba(26,92,42,.1);border:1px solid var(--line);
+      border-radius:20px;padding:18px;margin-bottom:16px;
+    }
+    .sitemap-section h3{
+      font-size:1rem;color:var(--gold3);margin-bottom:12px;
+      display:flex;align-items:center;gap:8px;
+    }
+    .url-grid{
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+      gap:8px;max-height:360px;overflow:auto;
+    }
+    .url-item{
+      display:flex;align-items:center;gap:8px;
+      background:rgba(26,92,42,.15);border:1px solid var(--line);
+      border-radius:12px;padding:9px 12px;font-size:.78rem;
+    }
+    .url-item a{color:var(--green3);word-break:break-all;text-decoration:none;flex:1}
+    .url-item a:hover{color:var(--gold2)}
+    .url-item .pri{
+      min-width:36px;text-align:center;font-size:.68rem;font-weight:900;
+      background:rgba(200,169,110,.2);border-radius:6px;padding:2px 6px;color:var(--gold2);
+    }
+    .count-badge{
+      display:inline-block;background:rgba(200,169,110,.2);
+      border-radius:999px;padding:3px 10px;font-size:.72rem;font-weight:900;color:var(--gold2);
+      margin-left:8px;
+    }
+    .instructions{
+      background:rgba(26,92,42,.1);border:1px solid var(--line2);
+      border-radius:20px;padding:20px;margin-top:24px;
+    }
+    .instructions h3{color:var(--gold2);margin-bottom:12px;font-size:1.1rem}
+    .instructions ol{padding-left:18px;color:var(--muted2);line-height:2}
+    .instructions a{color:var(--green3)}
+    .instructions code{
+      background:rgba(26,92,42,.3);border-radius:6px;
+      padding:2px 8px;font-size:.82rem;color:var(--gold3);
+    }
+    @media(max-width:600px){
+      body{padding:14px}
+      .header{flex-wrap:wrap}
+      .back-link{margin-left:0}
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <img src="sasta-milaga-logo-final.png" alt="Sasta Milaga Logo">
+  <div>
+    <h1>🗺️ XML Sitemap Generator</h1>
+    <p>Generate and download a full XML sitemap for all products, categories, and tags – submit to Google Search Console</p>
+  </div>
+  <a href="index.html" class="back-link">← Back to Store</a>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="ctrl-card">
+    <label>Your Store URL</label>
+    <input type="url" id="siteUrl" value="https://sastamilaga.com" placeholder="https://yourdomain.com">
+  </div>
+  <div class="ctrl-card">
+    <label>Include Sections</label>
+    <select id="includeMode">
+      <option value="all" selected>All (products + categories + tags)</option>
+      <option value="products">Products only</option>
+      <option value="categories">Categories + Tags only</option>
+    </select>
+  </div>
+  <div class="ctrl-card">
+    <label>Change Frequency</label>
+    <select id="changefreq">
+      <option value="daily" selected>daily</option>
+      <option value="weekly">weekly</option>
+      <option value="monthly">monthly</option>
+    </select>
+  </div>
+  <div class="ctrl-card">
+    <label>Product Priority</label>
+    <select id="priority">
+      <option value="0.8">0.8 (High)</option>
+      <option value="0.6" selected>0.6 (Medium)</option>
+      <option value="0.4">0.4 (Low)</option>
+    </select>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar" id="statsBar">
+  <div class="stat"><b id="statProducts">–</b><span>Products</span></div>
+  <div class="stat"><b id="statCategories">–</b><span>Categories</span></div>
+  <div class="stat"><b id="statTags">–</b><span>Tags</span></div>
+  <div class="stat"><b id="statTotal">–</b><span>Total URLs</span></div>
+</div>
+
+<!-- BUTTONS -->
+<div class="btn-row">
+  <button class="btn btn-primary" onclick="downloadSitemap()">⬇️ Download XML Sitemap</button>
+  <button class="btn btn-gold" onclick="downloadHtmlSitemap()">⬇️ Download HTML Sitemap</button>
+  <button class="btn btn-ghost" onclick="renderVisualSitemap()">👁 View Visual Sitemap</button>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-text" id="progressText">Generating sitemap…</div>
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar" style="width:0%"></div></div>
+</div>
+
+<!-- VISUAL SITEMAP (rendered on demand) -->
+<div class="sitemap-visual" id="visualSitemap"></div>
+
+<!-- INSTRUCTIONS -->
+<div class="instructions">
+  <h3>📋 How to Submit Sitemap to Google</h3>
+  <ol>
+    <li>Download the XML sitemap above</li>
+    <li>Upload it to your web server root: <code>https://sastamilaga.com/sitemap.xml</code></li>
+    <li>Go to <a href="https://search.google.com/search-console" target="_blank">Google Search Console</a></li>
+    <li>Select your property → <strong>Sitemaps</strong> (left menu)</li>
+    <li>Enter <code>sitemap.xml</code> and click <strong>Submit</strong></li>
+    <li>Google will crawl your sitemap within 24–72 hours</li>
+    <li>Also add to <code>robots.txt</code>: <code>Sitemap: https://sastamilaga.com/sitemap.xml</code></li>
+    <li>Re-submit whenever you add new products</li>
+  </ol>
+
+  <div style="margin-top:16px">
+    <strong style="color:var(--gold2)">💡 Pro Tip:</strong>
+    <span style="color:var(--muted2)"> Since this is a static SPA, also consider using <a href="https://prerender.io" target="_blank" style="color:var(--green3)">prerender.io</a> or <a href="https://nextjs.org" target="_blank" style="color:var(--green3)">Next.js</a> for full server-side rendering so Google can index each product page directly.</span>
+  </div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="products.js"></script>
+<script>
+const PKR = new Intl.NumberFormat('en-PK',{style:'currency',currency:'PKR',maximumFractionDigits:0});
+
+function $(id){ return document.getElementById(id); }
+function slug(s){ return String(s||'').toLowerCase().trim().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+function num(v){ return Number.isFinite(Number(v)) ? Number(v) : 0; }
+function price(p){ return num(p.fp || p.bp || p.sp); }
+function isPublished(p){ return p.status !== 'draft' && p.status !== 'trash' && p.pub !== false; }
+function esc(s){ return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[m])); }
+
+const ALL = (window.SASTA_PRODUCTS||[]).filter(isPublished);
+
+const categories = [...new Set(ALL.map(p=>p.m).filter(Boolean))];
+const tagCounts = {};
+ALL.forEach(p=>(p.tags||[]).forEach(t=>{ if(t&&t.length>1) tagCounts[t]=(tagCounts[t]||0)+1; }));
+const topTags = Object.entries(tagCounts).sort((a,b)=>b[1]-a[1]).slice(0,100).map(([t])=>t);
+
+// Static pages
+const staticPages = [
+  {url:'/', priority:'1.0', freq:'daily', label:'Home'},
+  {url:'/#/deals', priority:'0.9', freq:'daily', label:'Deals'},
+  {url:'/#/cart', priority:'0.5', freq:'monthly', label:'Cart'},
+  {url:'/#/wishlist', priority:'0.5', freq:'monthly', label:'Wishlist'},
+  {url:'/#/faq', priority:'0.8', freq:'weekly', label:'FAQ'},
+  {url:'/#/about', priority:'0.8', freq:'monthly', label:'About Us'},
+];
+
+window.addEventListener('load', updateStats);
+
+function updateStats(){
+  $('statProducts').textContent = ALL.length.toLocaleString();
+  $('statCategories').textContent = categories.length.toLocaleString();
+  $('statTags').textContent = topTags.length.toLocaleString();
+  updateTotal();
+}
+
+function updateTotal(){
+  const mode = $('includeMode').value;
+  let total = staticPages.length + categories.length + topTags.length;
+  if(mode !== 'categories') total += ALL.length;
+  $('statTotal').textContent = total.toLocaleString();
+}
+$('includeMode').addEventListener('change', updateTotal);
+
+async function buildSitemapUrls(){
+  const siteUrl = $('siteUrl').value.replace(/\/$/,'');
+  const mode = $('includeMode').value;
+  const freq = $('changefreq').value;
+  const pri = $('priority').value;
+  const today = new Date().toISOString().slice(0,10);
+  const urls = [];
+
+  // Static pages
+  for(const pg of staticPages){
+    urls.push({ loc:`${siteUrl}${pg.url}`, lastmod:today, changefreq:pg.freq, priority:pg.priority });
+  }
+
+  // Categories
+  for(const cat of categories){
+    urls.push({ loc:`${siteUrl}/#/category/${slug(cat)}`, lastmod:today, changefreq:'daily', priority:'0.9' });
+  }
+
+  // Tags
+  for(const tag of topTags){
+    urls.push({ loc:`${siteUrl}/#/tag/${slug(tag)}`, lastmod:today, changefreq:'weekly', priority:'0.7' });
+  }
+
+  // Products
+  if(mode !== 'categories'){
+    const CHUNK = 500;
+    for(let i=0; i<ALL.length; i+=CHUNK){
+      const chunk = ALL.slice(i, i+CHUNK);
+      for(const p of chunk){
+        const pSlug = slug(p.h || p.n || p.id);
+        urls.push({ loc:`${siteUrl}/#/product/${pSlug}`, lastmod:(p.updated||today).slice(0,10), changefreq:freq, priority:pri });
+      }
+      const pct = Math.min(90, Math.round((i+CHUNK)/ALL.length*80));
+      $('progressBar').style.width = pct+'%';
+      $('progressText').textContent = `Processing ${Math.min(i+CHUNK,ALL.length).toLocaleString()} / ${ALL.length.toLocaleString()} products…`;
+      await new Promise(r=>setTimeout(r,0));
+    }
+  }
+  return urls;
+}
+
+async function downloadSitemap(){
+  $('progressWrap').classList.add('show');
+  $('progressBar').style.width = '0%';
+  $('progressText').textContent = 'Building sitemap…';
+
+  const urls = await buildSitemapUrls();
+
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+  xml += `<!-- Sasta Milaga XML Sitemap – Generated ${new Date().toISOString()} -->\n`;
+  xml += `<!-- Total URLs: ${urls.length.toLocaleString()} -->\n`;
+  xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n`;
+  xml += `        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n\n`;
+
+  const CHUNK = 500;
+  for(let i=0; i<urls.length; i+=CHUNK){
+    for(const u of urls.slice(i, i+CHUNK)){
+      xml += `  <url>\n`;
+      xml += `    <loc>${esc(u.loc)}</loc>\n`;
+      xml += `    <lastmod>${u.lastmod}</lastmod>\n`;
+      xml += `    <changefreq>${u.changefreq}</changefreq>\n`;
+      xml += `    <priority>${u.priority}</priority>\n`;
+      xml += `  </url>\n`;
+    }
+    const pct = 90 + Math.round((i+CHUNK)/urls.length*10);
+    $('progressBar').style.width = Math.min(100,pct)+'%';
+    await new Promise(r=>setTimeout(r,0));
+  }
+  xml += `\n</urlset>`;
+
+  $('progressBar').style.width = '100%';
+  $('progressText').textContent = `✅ Sitemap ready! ${urls.length.toLocaleString()} URLs exported.`;
+
+  const date = new Date().toISOString().slice(0,10);
+  const blob = new Blob([xml], {type:'application/xml;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `sasta-milaga-sitemap-${date}.xml`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+async function downloadHtmlSitemap(){
+  $('progressWrap').classList.add('show');
+  $('progressBar').style.width = '0%';
+  $('progressText').textContent = 'Building HTML sitemap…';
+
+  const siteUrl = $('siteUrl').value.replace(/\/$/,'');
+  const urls = await buildSitemapUrls();
+
+  let html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Sitemap – Sasta Milaga</title>`;
+  html += `<style>body{font-family:Arial,sans-serif;padding:24px;max-width:1200px;margin:0 auto}`;
+  html += `h1{color:#1a5c2a}h2{color:#2d7a3a;margin-top:24px}`;
+  html += `ul{column-count:3;column-gap:20px;padding-left:18px}`;
+  html += `li{margin-bottom:8px;break-inside:avoid}`;
+  html += `a{color:#1a5c2a;text-decoration:none}a:hover{text-decoration:underline}`;
+  html += `@media(max-width:700px){ul{column-count:1}}</style></head><body>`;
+  html += `<h1>🗺️ Sasta Milaga – Full Sitemap</h1>`;
+  html += `<p>Total: ${urls.length.toLocaleString()} pages | Generated: ${new Date().toLocaleDateString()}</p>`;
+
+  html += `<h2>🏠 Main Pages</h2><ul>`;
+  for(const pg of staticPages){
+    html += `<li><a href="${siteUrl}${pg.url}">${pg.label}</a></li>`;
+  }
+  html += `</ul>`;
+
+  html += `<h2>📦 Categories (${categories.length})</h2><ul>`;
+  for(const cat of categories){
+    html += `<li><a href="${siteUrl}/#/category/${slug(cat)}">${cat}</a></li>`;
+  }
+  html += `</ul>`;
+
+  html += `<h2>🏷️ Tags (${topTags.length})</h2><ul>`;
+  for(const tag of topTags){
+    html += `<li><a href="${siteUrl}/#/tag/${slug(tag)}">#${tag}</a></li>`;
+  }
+  html += `</ul>`;
+
+  if($('includeMode').value !== 'categories'){
+    html += `<h2>🛍️ Products (${ALL.length.toLocaleString()})</h2><ul>`;
+    for(const p of ALL){
+      const pSlug = slug(p.h||p.n||p.id);
+      html += `<li><a href="${siteUrl}/#/product/${pSlug}">${p.n||p.id}</a></li>`;
+    }
+    html += `</ul>`;
+  }
+
+  html += `</body></html>`;
+
+  $('progressBar').style.width = '100%';
+  $('progressText').textContent = `✅ HTML sitemap ready!`;
+
+  const date = new Date().toISOString().slice(0,10);
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `sasta-milaga-sitemap-${date}.html`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function renderVisualSitemap(){
+  const siteUrl = $('siteUrl').value.replace(/\/$/,'');
+  const container = $('visualSitemap');
+  container.innerHTML = `<h2>🗺️ Visual Sitemap</h2>`;
+
+  // Static pages
+  let html = `<div class="sitemap-section"><h3>🏠 Main Pages <span class="count-badge">${staticPages.length}</span></h3><div class="url-grid">`;
+  for(const pg of staticPages){
+    html += `<div class="url-item"><span class="pri">${pg.priority}</span><a href="${siteUrl}${pg.url}" target="_blank">${pg.url||'/'}</a></div>`;
+  }
+  html += `</div></div>`;
+
+  // Categories
+  html += `<div class="sitemap-section"><h3>📦 Product Categories <span class="count-badge">${categories.length}</span></h3><div class="url-grid">`;
+  for(const cat of categories){
+    const catSlug = slug(cat);
+    const count = ALL.filter(p=>p.m===cat).length;
+    html += `<div class="url-item"><span class="pri">0.9</span><a href="${siteUrl}/#/category/${catSlug}" target="_blank">/${catSlug} <small style="color:var(--muted)">(${count})</small></a></div>`;
+  }
+  html += `</div></div>`;
+
+  // Tags
+  html += `<div class="sitemap-section"><h3>🏷️ Tag Pages <span class="count-badge">${topTags.length}</span></h3><div class="url-grid">`;
+  for(const tag of topTags){
+    html += `<div class="url-item"><span class="pri">0.7</span><a href="${siteUrl}/#/tag/${slug(tag)}" target="_blank">#${tag}</a></div>`;
+  }
+  html += `</div></div>`;
+
+  // Products (show first 100)
+  if($('includeMode').value !== 'categories'){
+    const sample = ALL.slice(0,100);
+    html += `<div class="sitemap-section">
+      <h3>🛍️ Product Pages <span class="count-badge">${ALL.length.toLocaleString()} total</span> <small style="color:var(--muted);font-size:.78rem;margin-left:4px">(showing first 100)</small></h3>
+      <div class="url-grid">`;
+    for(const p of sample){
+      const pSlug = slug(p.h||p.n||p.id);
+      html += `<div class="url-item"><span class="pri">0.6</span><a href="${siteUrl}/#/product/${pSlug}" target="_blank">${p.n||p.id}</a></div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  container.innerHTML = `<h2 style="margin-bottom:16px;color:var(--gold2)">🗺️ Visual Sitemap <small style="font-size:.75em;color:var(--muted2)">(${ALL.length.toLocaleString()} products · ${categories.length} categories · ${topTags.length} tags)</small></h2>` + html;
+  container.scrollIntoView({behavior:'smooth'});
+}
+</script>
+</body>
+</html>

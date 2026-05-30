@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Google Merchant Center Feed – Sasta Milaga</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="sasta-milaga-logo-final.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#050f07; --bg2:#0b1a0e;
+      --ink:#f0faf3; --muted:#8ab89a; --muted2:#b0ccb8;
+      --green:#1a5c2a; --green2:#2d7a3a; --green3:#4caf73;
+      --gold:#c8a96e; --gold2:#e8c98a; --gold3:#f0d9a8;
+      --line:rgba(200,169,110,.18); --line2:rgba(200,169,110,.30);
+      --glass:rgba(26,92,42,.18);
+      --shadow:0 20px 60px rgba(0,0,0,.4);
+      --grad-brand:linear-gradient(135deg,#1a5c2a,#2d7a3a 45%,#c8a96e);
+      --grad-gold:linear-gradient(135deg,#c8a96e,#e8c98a 60%,#f0d9a8);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:Inter,system-ui,sans-serif;
+      background:linear-gradient(160deg,#050f07,#0b1a0e 52%,#0f150b);
+      color:var(--ink);min-height:100vh;padding:24px;
+    }
+    .header{
+      display:flex;align-items:center;gap:16px;
+      background:rgba(26,92,42,.15);border:1px solid var(--line2);
+      border-radius:24px;padding:20px 24px;margin-bottom:24px;
+      backdrop-filter:blur(14px);
+    }
+    .header img{height:52px;width:auto;filter:drop-shadow(0 4px 12px rgba(200,169,110,.3))}
+    .header h1{font-size:1.6rem;letter-spacing:-.05em;color:var(--gold2)}
+    .header p{color:var(--muted2);font-size:.88rem;margin-top:4px}
+    .back-link{
+      display:inline-flex;align-items:center;gap:8px;
+      border:1px solid var(--line);border-radius:999px;
+      padding:9px 16px;font-weight:900;font-size:.86rem;
+      color:var(--ink);background:rgba(26,92,42,.14);
+      text-decoration:none;transition:.2s;margin-left:auto;
+    }
+    .back-link:hover{background:rgba(200,169,110,.18);border-color:rgba(200,169,110,.5);color:var(--gold2)}
+
+    .controls{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;
+      margin-bottom:24px;
+    }
+    .ctrl-card{
+      background:rgba(26,92,42,.12);border:1px solid var(--line);
+      border-radius:20px;padding:18px;
+    }
+    .ctrl-card label{display:block;color:var(--muted2);font-size:.8rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+    .ctrl-card input,.ctrl-card select{
+      width:100%;border:1px solid var(--line);border-radius:12px;
+      background:rgba(26,92,42,.2);color:var(--ink);
+      padding:11px;outline:0;font:inherit;
+    }
+    .ctrl-card input:focus,.ctrl-card select:focus{border-color:rgba(200,169,110,.5)}
+    .ctrl-card option{color:#050f07}
+
+    .stats-bar{
+      display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;
+    }
+    .stat{
+      background:rgba(26,92,42,.15);border:1px solid var(--line);
+      border-radius:16px;padding:14px 20px;
+    }
+    .stat b{display:block;font-size:1.5rem;font-weight:1000;color:var(--gold2)}
+    .stat span{font-size:.78rem;color:var(--muted2);font-weight:700}
+
+    .btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+    .btn{
+      display:inline-flex;align-items:center;gap:9px;
+      border-radius:999px;padding:13px 22px;
+      font-weight:900;font-size:.9rem;cursor:pointer;
+      border:1px solid transparent;transition:.2s;
+    }
+    .btn-primary{background:var(--grad-brand);color:#fff;box-shadow:0 12px 35px rgba(26,92,42,.4)}
+    .btn-primary:hover{filter:brightness(1.1);transform:translateY(-2px)}
+    .btn-gold{background:var(--grad-gold);color:#050f07;box-shadow:0 12px 35px rgba(200,169,110,.3)}
+    .btn-gold:hover{filter:brightness(1.05);transform:translateY(-2px)}
+    .btn-ghost{background:rgba(26,92,42,.14);color:var(--ink);border-color:var(--line)}
+    .btn-ghost:hover{background:rgba(200,169,110,.18);border-color:rgba(200,169,110,.4);color:var(--gold2)}
+
+    .progress-wrap{
+      background:rgba(26,92,42,.1);border:1px solid var(--line);
+      border-radius:16px;padding:16px;margin-bottom:20px;
+      display:none;
+    }
+    .progress-wrap.show{display:block}
+    .progress-bar-outer{height:10px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:10px 0}
+    .progress-bar-inner{height:100%;background:var(--grad-brand);border-radius:99px;transition:width .3s ease}
+    .progress-text{font-size:.84rem;color:var(--muted2)}
+
+    .preview-box{
+      background:rgba(5,10,6,.6);border:1px solid var(--line);
+      border-radius:20px;padding:16px;margin-bottom:20px;
+      max-height:400px;overflow:auto;display:none;
+    }
+    .preview-box.show{display:block}
+    pre{font-family:'Courier New',monospace;font-size:.75rem;color:#8eff9c;line-height:1.6;white-space:pre-wrap;word-break:break-all}
+
+    .instructions{
+      background:rgba(26,92,42,.1);border:1px solid var(--line2);
+      border-radius:20px;padding:20px;margin-top:24px;
+    }
+    .instructions h3{color:var(--gold2);margin-bottom:12px;font-size:1.1rem}
+    .instructions ol{padding-left:18px;color:var(--muted2);line-height:2}
+    .instructions a{color:var(--green3)}
+    .instructions code{
+      background:rgba(26,92,42,.3);border-radius:6px;
+      padding:2px 8px;font-size:.82rem;color:var(--gold3);
+    }
+    .tag{
+      display:inline-block;border-radius:999px;padding:4px 12px;
+      font-size:.72rem;font-weight:900;
+      background:rgba(200,169,110,.2);border:1px solid rgba(200,169,110,.35);
+      color:var(--gold2);
+    }
+    @media(max-width:600px){
+      body{padding:14px}
+      .header{flex-wrap:wrap}
+      .back-link{margin-left:0}
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <img src="sasta-milaga-logo-final.png" alt="Sasta Milaga Logo">
+  <div>
+    <h1>📦 Google Merchant Center Feed</h1>
+    <p>Generate XML or CSV product feed to upload to <strong>Google Merchant Center</strong> for Google Shopping ads</p>
+  </div>
+  <a href="index.html" class="back-link">← Back to Store</a>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="ctrl-card">
+    <label>Your Store URL</label>
+    <input type="url" id="storeUrl" value="https://sastamilaga.com" placeholder="https://yourdomain.com">
+  </div>
+  <div class="ctrl-card">
+    <label>Max Products to Export</label>
+    <select id="maxProducts">
+      <option value="500">500 products</option>
+      <option value="1000">1,000 products</option>
+      <option value="2000">2,000 products</option>
+      <option value="5000">5,000 products</option>
+      <option value="9999999" selected>All products</option>
+    </select>
+  </div>
+  <div class="ctrl-card">
+    <label>In-Stock Only</label>
+    <select id="stockFilter">
+      <option value="all">All products</option>
+      <option value="stock" selected>In-stock only (recommended)</option>
+    </select>
+  </div>
+  <div class="ctrl-card">
+    <label>Minimum Price (PKR)</label>
+    <input type="number" id="minPrice" value="0" placeholder="0">
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar" id="statsBar">
+  <div class="stat"><b id="statTotal">–</b><span>Total Products</span></div>
+  <div class="stat"><b id="statFiltered">–</b><span>Will Be Exported</span></div>
+  <div class="stat"><b id="statCategories">–</b><span>Categories</span></div>
+  <div class="stat"><b id="statInStock">–</b><span>In Stock</span></div>
+</div>
+
+<!-- BUTTONS -->
+<div class="btn-row">
+  <button class="btn btn-primary" onclick="generateFeed('xml')">⬇️ Download XML Feed (Google Shopping)</button>
+  <button class="btn btn-gold" onclick="generateFeed('csv')">⬇️ Download CSV Feed (Google Merchant)</button>
+  <button class="btn btn-ghost" onclick="previewFeed()">👁 Preview Feed (first 5 items)</button>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-text" id="progressText">Generating feed…</div>
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar" style="width:0%"></div></div>
+</div>
+
+<!-- PREVIEW -->
+<div class="preview-box" id="previewBox">
+  <pre id="previewContent"></pre>
+</div>
+
+<!-- INSTRUCTIONS -->
+<div class="instructions">
+  <h3>📋 How to Upload to Google Merchant Center</h3>
+  <ol>
+    <li>Go to <a href="https://merchants.google.com" target="_blank">merchants.google.com</a> and sign in (or create a free account)</li>
+    <li>Verify your website: <code>sastamilaga.com</code></li>
+    <li>In the left menu, click <strong>Products → Feeds → Add Feed (+)</strong></li>
+    <li>Choose <strong>Pakistan</strong> as country, <strong>English</strong> as language</li>
+    <li>Select <strong>"Scheduled fetch"</strong> or <strong>"Upload"</strong> as input method</li>
+    <li>Upload the <strong>XML file</strong> you downloaded above (or schedule fetch from your hosted URL)</li>
+    <li>Wait 1–3 days for Google to approve products for Google Shopping</li>
+    <li>Set up a free <strong>Surface Across Google</strong> listing (free product ads!)</li>
+  </ol>
+
+  <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+    <span class="tag">✅ Free Google Shopping Listings Available</span>
+    <span class="tag">🔄 Re-upload weekly for fresh prices</span>
+    <span class="tag">📊 Track via Google Search Console</span>
+  </div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="products.js"></script>
+<script>
+const PKR = new Intl.NumberFormat('en-PK',{style:'currency',currency:'PKR',maximumFractionDigits:0});
+
+function num(v){ return Number.isFinite(Number(v)) ? Number(v) : 0; }
+function price(p){ return num(p.fp || p.bp || p.sp); }
+function oldPrice(p){ return Math.max(num(p.sp), num(p.bp), price(p)); }
+function img(p){ return p.img || (p.imgs && p.imgs[0]) || ''; }
+function isPublished(p){ return p.status !== 'draft' && p.status !== 'trash' && p.pub !== false; }
+function slug(s){ return String(s||'').toLowerCase().trim().replace(/&/g,'and').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+function esc(s){ return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[m])); }
+function escCsv(s){ const str=String(s??'').replace(/"/g,'""'); return str.includes(',') || str.includes('"') || str.includes('\n') ? `"${str}"` : str; }
+function truncate(s,n){ return String(s||'').length>n ? String(s).slice(0,n-1)+'…':String(s||''); }
+
+const ALL = (window.SASTA_PRODUCTS||[]).filter(isPublished);
+
+// Google product category map
+const CAT_MAP = {
+  'fashion':'Apparel & Accessories',
+  'apparel':'Apparel & Accessories',
+  'clothing':'Apparel & Accessories',
+  'beauty':'Health & Beauty',
+  'cosmetics':'Health & Beauty',
+  'electronics':'Electronics',
+  'mobile':'Electronics > Communications > Phones',
+  'phone':'Electronics > Communications > Phones',
+  'home':'Home & Garden',
+  'grocery':'Food, Beverages & Tobacco',
+  'food':'Food, Beverages & Tobacco',
+  'automotive':'Vehicles & Parts',
+  'car':'Vehicles & Parts',
+  'toys':'Toys & Games',
+  'sports':'Sporting Goods',
+  'books':'Media > Books',
+};
+
+function getGoogleCat(p){
+  const m = (p.m||'').toLowerCase();
+  for(const [k,v] of Object.entries(CAT_MAP)){
+    if(m.includes(k)) return v;
+  }
+  return 'Shopping';
+}
+
+function getFilteredProducts(){
+  const maxP = Number($('maxProducts').value);
+  const stockOnly = $('stockFilter').value === 'stock';
+  const minPr = Number($('minPrice').value) || 0;
+  const storeUrl = $('storeUrl').value.replace(/\/$/,'');
+
+  let arr = [...ALL];
+  if(stockOnly) arr = arr.filter(p => p.in || num(p.stock) > 0);
+  if(minPr) arr = arr.filter(p => price(p) >= minPr);
+  arr = arr.filter(p => img(p) && price(p) > 0);
+  arr = arr.slice(0, maxP);
+  return { arr, storeUrl };
+}
+
+function $(id){ return document.getElementById(id); }
+
+// Update stats on load
+window.addEventListener('load', ()=>{
+  try{
+    const inStock = ALL.filter(p=>p.in||num(p.stock)>0).length;
+    const cats = new Set(ALL.map(p=>p.m).filter(Boolean)).size;
+    $('statTotal').textContent = ALL.length.toLocaleString();
+    $('statFiltered').textContent = ALL.filter(p=>img(p)&&price(p)>0&&(p.in||num(p.stock)>0)).length.toLocaleString();
+    $('statCategories').textContent = cats.toLocaleString();
+    $('statInStock').textContent = inStock.toLocaleString();
+  }catch(e){}
+});
+
+['maxProducts','stockFilter','minPrice'].forEach(id=>{
+  $(id)?.addEventListener('change', ()=>{
+    const {arr} = getFilteredProducts();
+    $('statFiltered').textContent = arr.length.toLocaleString();
+  });
+});
+
+async function generateFeed(format){
+  const {arr, storeUrl} = getFilteredProducts();
+  if(!arr.length){ alert('No products match your filters!'); return; }
+
+  $('progressWrap').classList.add('show');
+  $('progressBar').style.width = '0%';
+  $('progressText').textContent = `Building ${format.toUpperCase()} feed for ${arr.length.toLocaleString()} products…`;
+
+  // Yield to browser every 500 items
+  let content = '';
+  const CHUNK = 500;
+
+  if(format === 'xml'){
+    content = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    content += `<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">\n<channel>\n`;
+    content += `  <title>Sasta Milaga – Pakistan's Affordable Marketplace</title>\n`;
+    content += `  <link>${storeUrl}</link>\n`;
+    content += `  <description>Google Shopping feed for Sasta Milaga – ${arr.length} products</description>\n\n`;
+
+    for(let i=0; i<arr.length; i+=CHUNK){
+      const chunk = arr.slice(i, i+CHUNK);
+      for(const p of chunk){
+        const pUrl = `${storeUrl}/#/product/${slug(p.h||p.n||p.id)}`;
+        const pImg = img(p);
+        const pPrice = price(p);
+        const pOld = oldPrice(p);
+        const inStock = (p.in || num(p.stock) > 0) ? 'in stock' : 'out of stock';
+        const gCat = getGoogleCat(p);
+        const brand = p.store || 'Sasta Milaga';
+        const desc = truncate(p.d || p.sd || p.seoD || `${p.n} – available at Sasta Milaga Pakistan`, 5000);
+        const title = truncate(p.seoT || p.n, 150);
+        const tags = (p.tags||[]).slice(0,3).join(', ');
+
+        content += `  <item>\n`;
+        content += `    <g:id>${esc(p.id)}</g:id>\n`;
+        content += `    <g:title>${esc(title)}</g:title>\n`;
+        content += `    <g:description>${esc(desc)}</g:description>\n`;
+        content += `    <g:link>${esc(pUrl)}</g:link>\n`;
+        if(pImg) content += `    <g:image_link>${esc(pImg)}</g:image_link>\n`;
+        if(p.imgs && p.imgs[1]) content += `    <g:additional_image_link>${esc(p.imgs[1])}</g:additional_image_link>\n`;
+        content += `    <g:price>${pPrice.toFixed(2)} PKR</g:price>\n`;
+        if(pOld > pPrice) content += `    <g:sale_price>${pPrice.toFixed(2)} PKR</g:sale_price>\n`;
+        content += `    <g:availability>${inStock}</g:availability>\n`;
+        content += `    <g:condition>new</g:condition>\n`;
+        content += `    <g:brand>${esc(brand)}</g:brand>\n`;
+        content += `    <g:google_product_category>${esc(gCat)}</g:google_product_category>\n`;
+        content += `    <g:product_type>${esc(p.m || '')} &gt; ${esc(p.leaf || '')}</g:product_type>\n`;
+        if(p.sku) content += `    <g:mpn>${esc(p.sku)}</g:mpn>\n`;
+        if(tags) content += `    <g:custom_label_0>${esc(tags)}</g:custom_label_0>\n`;
+        content += `    <g:shipping>\n`;
+        content += `      <g:country>PK</g:country>\n`;
+        content += `      <g:service>Standard</g:service>\n`;
+        content += `      <g:price>${pPrice >= 5000 ? '0.00' : '250.00'} PKR</g:price>\n`;
+        content += `    </g:shipping>\n`;
+        content += `    <g:identifier_exists>no</g:identifier_exists>\n`;
+        content += `  </item>\n`;
+      }
+      const pct = Math.min(95, Math.round((i+CHUNK)/arr.length*100));
+      $('progressBar').style.width = pct+'%';
+      $('progressText').textContent = `Processing ${Math.min(i+CHUNK,arr.length).toLocaleString()} / ${arr.length.toLocaleString()} products…`;
+      await new Promise(r=>setTimeout(r,0));
+    }
+    content += `</channel>\n</rss>`;
+
+  } else {
+    // CSV format
+    const headers = ['id','title','description','link','image_link','additional_image_link',
+      'price','sale_price','availability','condition','brand','google_product_category',
+      'product_type','mpn','custom_label_0','shipping'];
+    content = headers.join(',') + '\n';
+
+    for(let i=0; i<arr.length; i+=CHUNK){
+      const chunk = arr.slice(i, i+CHUNK);
+      for(const p of chunk){
+        const pUrl = `${storeUrl}/#/product/${slug(p.h||p.n||p.id)}`;
+        const pImg = img(p);
+        const pPrice = price(p);
+        const pOld = oldPrice(p);
+        const inStock = (p.in || num(p.stock) > 0) ? 'in stock' : 'out of stock';
+        const gCat = getGoogleCat(p);
+        const brand = p.store || 'Sasta Milaga';
+        const desc = truncate(p.d || p.sd || p.seoD || `${p.n} – available at Sasta Milaga Pakistan`, 5000);
+        const title = truncate(p.seoT || p.n, 150);
+        const tags = (p.tags||[]).slice(0,3).join('; ');
+        const shipping = `PK:::${pPrice >= 5000 ? '0.00' : '250.00'} PKR`;
+
+        const row = [
+          p.id, title, desc, pUrl, pImg,
+          (p.imgs && p.imgs[1]) || '',
+          `${pPrice.toFixed(2)} PKR`,
+          pOld > pPrice ? `${pPrice.toFixed(2)} PKR` : '',
+          inStock, 'new', brand, gCat,
+          `${p.m||''} > ${p.leaf||''}`,
+          p.sku || '',
+          tags,
+          shipping
+        ].map(escCsv);
+        content += row.join(',') + '\n';
+      }
+      const pct = Math.min(95, Math.round((i+CHUNK)/arr.length*100));
+      $('progressBar').style.width = pct+'%';
+      $('progressText').textContent = `Processing ${Math.min(i+CHUNK,arr.length).toLocaleString()} / ${arr.length.toLocaleString()} products…`;
+      await new Promise(r=>setTimeout(r,0));
+    }
+  }
+
+  $('progressBar').style.width = '100%';
+  $('progressText').textContent = `✅ Feed generated! ${arr.length.toLocaleString()} products ready.`;
+
+  // Download
+  const mime = format==='xml' ? 'application/xml' : 'text/csv';
+  const ext  = format==='xml' ? 'xml' : 'csv';
+  const date = new Date().toISOString().slice(0,10);
+  const blob = new Blob([content], {type:`${mime};charset=utf-8`});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `sasta-milaga-merchant-feed-${date}.${ext}`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+async function previewFeed(){
+  const {arr, storeUrl} = getFilteredProducts();
+  const sample = arr.slice(0,5);
+  let preview = `<!-- SASTA MILAGA – GOOGLE MERCHANT XML FEED (Preview: 5 of ${arr.length} products) -->\n\n`;
+  for(const p of sample){
+    const pUrl = `${storeUrl}/#/product/${slug(p.h||p.n||p.id)}`;
+    preview += `<item>\n`;
+    preview += `  <g:id>${p.id}</g:id>\n`;
+    preview += `  <g:title>${truncate(p.seoT||p.n,80)}</g:title>\n`;
+    preview += `  <g:price>${price(p).toFixed(2)} PKR</g:price>\n`;
+    preview += `  <g:availability>${(p.in||num(p.stock)>0)?'in stock':'out of stock'}</g:availability>\n`;
+    preview += `  <g:condition>new</g:condition>\n`;
+    preview += `  <g:brand>${p.store||'Sasta Milaga'}</g:brand>\n`;
+    preview += `  <g:google_product_category>${getGoogleCat(p)}</g:google_product_category>\n`;
+    preview += `  <g:link>${pUrl}</g:link>\n`;
+    if(img(p)) preview += `  <g:image_link>${img(p)}</g:image_link>\n`;
+    preview += `</item>\n\n`;
+  }
+  $('previewContent').textContent = preview;
+  $('previewBox').classList.add('show');
+  $('previewBox').scrollIntoView({behavior:'smooth'});
+}
+</script>
+</body>
+</html>

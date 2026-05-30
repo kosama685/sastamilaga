@@ -1,0 +1,30 @@
+User-agent: *
+Allow: /
+Disallow: /checkout
+Disallow: /cart
+Disallow: /backup/
+Disallow: /private/
+
+# XML Sitemaps
+Sitemap: https://sastamilaga.com/sitemap.xml
+
+# LLM Crawler Agents (AEO Optimization)
+User-agent: GPTBot
+Allow: /
+Disallow: /checkout
+Disallow: /cart
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /

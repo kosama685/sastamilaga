@@ -3,79 +3,209 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#050510">
-  <title>Sasta Milaga - Everything Milaga, Sasta Milaga</title>
-  <meta name="description" content="Sasta Milaga is a blastic image-first multi-category marketplace powered by CSV products, tags, search, cart, wishlist, and an AI-style catalog helper.">
+  <meta name="theme-color" content="#1a5c2a">
+
+  <!-- ═══ PWA Manifest ═══ -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- ═══ Geographic & Local SEO (GEO Meta Tags) ═══ -->
+  <meta name="geo.region" content="PK" />
+  <meta name="geo.placename" content="Lahore, Karachi, Islamabad, Peshawar, Rawalpindi" />
+  <meta name="geo.position" content="30.3753;69.3451" />
+  <meta name="ICBM" content="30.3753, 69.3451" />
+
+  <!-- ═══ Primary SEO ═══ -->
+  <title>Sasta Milaga – Pakistan's Affordable Marketplace | Best Prices on Fashion, Electronics, Beauty & More</title>
+  <meta name="description" content="Sasta Milaga is Pakistan's go-to affordable marketplace. Shop 13,000+ products across fashion, electronics, beauty, home decor, and groceries at the lowest prices. Free delivery on orders above PKR 5,000.">
+  <meta name="keywords" content="sasta milaga, pakistan marketplace, affordable shopping, cheap prices pakistan, online shopping pakistan, fashion pakistan, electronics pakistan, beauty products pakistan, sasta online store, lahore shopping, karachi shopping">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://sastamilaga.com/">
+
+  <!-- ═══ Open Graph / Facebook ═══ -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Sasta Milaga">
+  <meta property="og:title" id="og-title" content="Sasta Milaga – Pakistan's Affordable Marketplace">
+  <meta property="og:description" id="og-desc" content="Shop 13,000+ products at the best prices in Pakistan. Fashion, Electronics, Beauty & more.">
+  <meta property="og:image" id="og-image" content="https://sastamilaga.com/sasta-milaga-logo-final.png">
+  <meta property="og:url" id="og-url" content="https://sastamilaga.com/">
+  <meta property="og:locale" content="en_PK">
+
+  <!-- ═══ Twitter / X Card ═══ -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@SastaMilaga">
+  <meta name="twitter:title" id="tw-title" content="Sasta Milaga – Pakistan's Affordable Marketplace">
+  <meta name="twitter:description" id="tw-desc" content="Shop 13,000+ products at the best prices in Pakistan.">
+  <meta name="twitter:image" id="tw-image" content="https://sastamilaga.com/sasta-milaga-logo-final.png">
+
+  <!-- ═══ Favicon ═══ -->
+  <link rel="icon" type="image/png" href="sasta-milaga-logo-final.png">
+  <link rel="apple-touch-icon" href="sasta-milaga-logo-final.png">
+
+  <!-- ═══ Fonts ═══ -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+
+  <!-- ═══ JSON-LD: Organization Schema ═══ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Sasta Milaga",
+    "alternateName": "Sasta Milaga Marketplace",
+    "url": "https://sastamilaga.com",
+    "logo": "https://sastamilaga.com/sasta-milaga-logo-final.png",
+    "description": "Pakistan's affordable online marketplace offering 13,000+ products across fashion, electronics, beauty, home decor and more.",
+    "foundingDate": "2024",
+    "areaServed": "PK",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "availableLanguage": ["English", "Urdu"],
+      "areaServed": "PK"
+    },
+    "sameAs": [
+      "https://www.facebook.com/SastaMilaga",
+      "https://www.instagram.com/SastaMilaga",
+      "https://twitter.com/SastaMilaga",
+      "https://wa.me/923000000000"
+    ]
+  }
+  </script>
+
+  <!-- ═══ JSON-LD: WebSite + SearchAction ═══ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Sasta Milaga",
+    "url": "https://sastamilaga.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://sastamilaga.com/#/search?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- ═══ Dynamic JSON-LD placeholder (filled per route by app.js) ═══ -->
+  <script type="application/ld+json" id="ld-dynamic">
+  {}
+  </script>
+
+  <!-- ═══ Google Merchant / Pinterest Verification (add your codes here) ═══ -->
+  <!-- <meta name="google-site-verification" content="YOUR_CODE_HERE"> -->
+  <!-- <meta name="p:domain_verify" content="YOUR_PINTEREST_CODE_HERE"> -->
 </head>
 <body>
   <div class="noise"></div>
+
+  <!-- ═══════════════════════════════
+       HEADER
+  ════════════════════════════════ -->
   <header class="site-header">
     <div class="nav-shell">
-      <a class="brand" href="#/home" aria-label="Sasta Milaga home">
-        <span class="brand-mark">SM</span>
+
+      <!-- Brand Logo -->
+      <a class="brand" href="#/home" aria-label="Sasta Milaga – Pakistan's Affordable Marketplace">
+        <div class="brand-mark" aria-hidden="true">
+          <img src="sasta-milaga-logo-final.png" alt="Sasta Milaga Logo" width="52" height="52">
+        </div>
         <span>
           <strong>Sasta Milaga</strong>
-          <small>Everything milaga. Sasta milaga.</small>
+          <small>Pakistan's affordable marketplace</small>
         </span>
       </a>
 
-      <button class="nav-pill mega-trigger" id="megaTrigger">Categories</button>
+      <button class="nav-pill mega-trigger" id="megaTrigger" aria-label="Browse categories" aria-expanded="false">
+        ☰ Categories
+      </button>
 
-      <form class="search-shell" id="topSearchForm">
-        <span>⌕</span>
-        <input id="topSearch" type="search" placeholder="Search fashion, cosmetics, mobile, groceries..." autocomplete="off">
-        <button type="submit">Search</button>
+      <form class="search-shell" id="topSearchForm" role="search" aria-label="Search products">
+        <span aria-hidden="true">⌕</span>
+        <input id="topSearch" type="search"
+          placeholder="Search fashion, electronics, beauty, groceries..."
+          autocomplete="off"
+          aria-label="Search products">
+        <button type="submit" aria-label="Search">Search</button>
       </form>
 
-      <nav class="desktop-actions">
-        <a href="#/deals">Deals</a>
-        <a href="#/wishlist">Wishlist <span id="wishCount">0</span></a>
-        <a href="#/cart">Cart <span id="cartCount">0</span></a>
+      <nav class="desktop-actions" aria-label="Account navigation">
+        <a href="#/deals" id="nav-deals">⚡ Deals</a>
+        <a href="#/wishlist" id="nav-wishlist" aria-label="Wishlist">♡ Wishlist <span id="wishCount" aria-live="polite">0</span></a>
+        <a href="#/cart" id="nav-cart" aria-label="Shopping cart">🛒 Cart <span id="cartCount" aria-live="polite">0</span></a>
+        <a href="#/faq" id="nav-faq">❓ FAQ</a>
+        <a href="#/about" id="nav-about">ℹ️ About Us</a>
+        <a href="merchant-feed.html" target="_blank" id="nav-merchant" title="Google Merchant Feed">📦 Merchant Feed</a>
+        <a href="sitemap.html" target="_blank" id="nav-sitemap" title="Sitemap">🗺️ Sitemap</a>
       </nav>
 
-      <button class="nav-pill chatbot-open" id="openBot">Ask AI</button>
+      <button class="nav-pill chatbot-open" id="openBot" aria-label="Open AI assistant">🤖 Ask AI</button>
     </div>
-    <div class="mega-menu" id="megaMenu"></div>
+
+    <!-- Mega menu (populated by app.js) -->
+    <div class="mega-menu" id="megaMenu" role="navigation" aria-label="Category mega menu"></div>
   </header>
 
-  <main id="app" class="app"></main>
+  <!-- ═══════════════════════════════
+       MAIN APP
+  ════════════════════════════════ -->
+  <main id="app" class="app" aria-live="polite" aria-label="Main content"></main>
 
-  <nav class="bottom-nav">
-    <a href="#/home">🏠<span>Home</span></a>
-    <a href="#/deals">⚡<span>Deals</span></a>
-    <button id="mobileSearchBtn">🔎<span>Search</span></button>
-    <a href="#/wishlist">💖<span>Wishlist</span></a>
-    <a href="#/cart">🛒<span>Cart</span></a>
+  <!-- ═══════════════════════════════
+       BOTTOM NAV (Mobile)
+  ════════════════════════════════ -->
+  <nav class="bottom-nav" aria-label="Mobile navigation">
+    <a href="#/home" aria-label="Home">🏠<span>Home</span></a>
+    <a href="#/deals" aria-label="Deals">⚡<span>Deals</span></a>
+    <button id="mobileSearchBtn" aria-label="Search">🔎<span>Search</span></button>
+    <a href="#/wishlist" aria-label="Wishlist">♡<span>Wishlist</span></a>
+    <a href="#/cart" aria-label="Cart">🛒<span>Cart</span></a>
   </nav>
 
-  <div class="modal" id="quickModal" aria-hidden="true">
+  <!-- ═══════════════════════════════
+       QUICK VIEW MODAL
+  ════════════════════════════════ -->
+  <div class="modal" id="quickModal" aria-hidden="true" role="dialog" aria-label="Quick product view">
     <div class="modal-card">
-      <button class="modal-close" data-close-modal>×</button>
+      <button class="modal-close" data-close-modal aria-label="Close">×</button>
       <div id="quickModalBody"></div>
     </div>
   </div>
 
-  <aside class="chatbot" id="chatbot" aria-hidden="true">
+  <!-- ═══════════════════════════════
+       AI CHATBOT
+  ════════════════════════════════ -->
+  <aside class="chatbot" id="chatbot" aria-hidden="true" aria-label="Sasta AI product helper">
     <div class="chat-head">
       <div>
-        <strong>Sasta AI Helper</strong>
-        <small>Catalog trained on your CSV products</small>
+        <strong>Sasta AI Helper 🤖</strong>
+        <small>Trained on 13,000+ products from your catalog</small>
       </div>
-      <button id="closeBot">×</button>
+      <button id="closeBot" aria-label="Close chat">×</button>
     </div>
-    <div class="chat-log" id="chatLog"></div>
-    <form class="chat-form" id="chatForm">
-      <input id="chatInput" placeholder="Ask: mobile under 1000, beauty deals, car accessories...">
-      <button>Ask</button>
+    <div class="chat-log" id="chatLog" role="log" aria-live="polite"></div>
+    <div class="chat-chips" id="chatChips" role="group" aria-label="Suggested chatbot queries"></div>
+    <form class="chat-form" id="chatForm" aria-label="Chat input">
+      <input id="chatInput"
+        placeholder="Ask: mobile under 1000, beauty deals, car accessories..."
+        aria-label="Ask the AI assistant">
+      <button type="submit" aria-label="Send message">Ask</button>
     </form>
   </aside>
 
-  <div class="toast" id="toast"></div>
+  <!-- ═══════════════════════════════
+       TOAST NOTIFICATION
+  ════════════════════════════════ -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <!-- ═══════════════════════════════
+       SCRIPTS
+  ════════════════════════════════ -->
   <script src="products.js"></script>
   <script src="app.js"></script>
 </body>
