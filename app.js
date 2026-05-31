@@ -293,6 +293,10 @@ function init() {
   drawChatChips();
   if (!location.hash) location.hash = '#/home';
   route();
+  
+  // Fire Meta Pixel Purchase event if order was just placed
+  fireMetaPixelPurchase();
+  
   addBotMessage(
     `Hi! 👋 I can help you find products from <b>${products.length.toLocaleString()}</b> items. ` +
     `Try: <i>"mobile under 5000"</i>, <i>"cosmetics deals"</i>, <i>"fashion with video"</i>, or ask about delivery, payments &amp; returns.`
@@ -409,6 +413,7 @@ function route() {
   else if (parts[0] === 'cart')     renderCart();
   else if (parts[0] === 'wishlist') renderWishlist();
   else if (parts[0] === 'checkout') renderCheckout();
+  else if (parts[0] === 'thank-you') renderThankYou();
   else if (parts[0] === 'faq')      renderFAQ();
   else if (parts[0] === 'about')    renderAbout();
   else if (parts[0] === 'return-policy') renderReturnPolicy();
@@ -425,6 +430,9 @@ function route() {
   else if (parts[0] === 'cookies')  renderCookies();
   else if (parts[0] === 'sitemap')  renderSitemap();
   else renderHome();
+
+  // Fire once after route change if an order was just placed
+  fireMetaPixelPurchase();
 }
 
 /* ============================================================
@@ -1244,9 +1252,10 @@ function renderCheckout() {
   const rows = getCart().map(x => ({ item: products.find(p => p.id === x.id), qty: x.qty })).filter(x => x.item);
   const sub  = rows.reduce((a, x) => a + price(x.item) * x.qty, 0);
 
-  // Generate Product Summary for Hidden Field
+  // Generate Product Summary for Hidden Field and Meta Pixel data
   const productSummary = rows.map(({item, qty}) => `${item.n} (x${qty})`).join(', ');
-  const totalAmount    = sub;
+  const productIds = rows.map(({item}) => item.id);
+  const totalAmount = sub;
 
   renderApp(`<section class="section">
     <div class="section-head">
@@ -1259,6 +1268,10 @@ function renderCheckout() {
         <input type="hidden" name="subject" value="New Order from Sasta Milaga">
         <input type="hidden" name="products" value="${esc(productSummary)}">
         <input type="hidden" name="total_amount" value="${totalAmount}">
+        
+        <!-- Hidden Inputs for Meta Pixel Tracking -->
+        <input type="hidden" id="metaProductIds" value="${esc(JSON.stringify(productIds))}">
+        <input type="hidden" id="metaOrderTotal" value="${totalAmount}">
 
         <!-- User Inputs (Added 'name' attributes) -->
         <input name="full_name" required placeholder="Full name" aria-label="Full name">
@@ -1280,10 +1293,33 @@ function renderCheckout() {
   </section>`);
 }
 
+function renderThankYou() {
+  setSEO({
+    title: 'Thank You for Your Order',
+    description: 'Your order is confirmed. We will contact you soon with delivery details.',
+    url: `${SITE_URL}/#/thank-you`
+  });
+
+  renderApp(`
+    <section class="section">
+      <div class="section-head"><div><h2>🎉 Thank You!</h2><p>Your order has been received and is being processed.</p></div></div>
+      <div class="thank-you-card">
+        <p>We appreciate your purchase. Our team will contact you shortly with payment and delivery details.</p>
+        <a class="primary-btn" href="#/home">Continue Shopping</a>
+      </div>
+    </section>`);
+}
+
 window.placeOrder = function (e) {
   e.preventDefault();
   const form = document.getElementById('checkoutForm');
   const data = new FormData(form);
+  
+  // Capture Meta Pixel data BEFORE form submission
+  const metaProductIdsEl = document.getElementById('metaProductIds');
+  const metaOrderTotalEl = document.getElementById('metaOrderTotal');
+  const productIds = metaProductIdsEl ? JSON.parse(metaProductIdsEl.value) : [];
+  const orderTotal = metaOrderTotalEl ? parseFloat(metaOrderTotalEl.value) : 0;
   
   const btn = form.querySelector('button[type="submit"]');
   const originalText = btn.innerText;
@@ -1297,9 +1333,22 @@ window.placeOrder = function (e) {
   })
   .then(response => {
     if (response.ok) {
+      // ═══ SAVE ORDER DATA TO LOCALSTORAGE FOR META PIXEL TRACKING ═══
+      const orderData = {
+        total: orderTotal,
+        currency: 'PKR',
+        itemIds: productIds,
+        timestamp: Date.now()
+      };
+      try {
+        localStorage.setItem('latestOrder', JSON.stringify(orderData));
+      } catch(e) {
+        console.error('Failed to save order data:', e);
+      }
+      
       toast('✅ Order placed! Our team will contact you shortly.');
       setCart([]); // Clear cart
-      location.hash = '#/home'; // Redirect home
+      location.hash = '#/thank-you'; // Redirect to thank-you page
     } else {
       response.json().then(data => {
         if (Object.hasOwn(data, 'errors')) {
@@ -2195,6 +2244,60 @@ function renderSitemap() {
       </div>
     </section>
   `);
+}
+
+/* ============================================================
+   META PIXEL – PURCHASE CONVERSION TRACKING
+   Fires when a user lands on any page after successful order placement
+   ============================================================ */
+function fireMetaPixelPurchase() {
+  // Only fire if Meta Pixel is loaded
+  if (typeof fbq !== 'function') {
+    console.warn('Meta Pixel (fbq) not yet loaded.');
+    return;
+  }
+
+  // Retrieve saved order data
+  try {
+    const orderDataJson = localStorage.getItem('latestOrder');
+    if (!orderDataJson) return; // No pending order
+
+    const orderData = JSON.parse(orderDataJson);
+
+    // Validate data structure
+    if (!orderData.total || !Array.isArray(orderData.itemIds)) {
+      localStorage.removeItem('latestOrder');
+      return;
+    }
+
+    // Safeguard: only fire if data was saved within last 2 minutes to prevent old data reactivation
+    const timeDiff = Date.now() - (orderData.timestamp || 0);
+    if (timeDiff > 2 * 60 * 1000) {
+      localStorage.removeItem('latestOrder');
+      return;
+    }
+
+    // Fire Meta Pixel Purchase event with proper data types
+    fbq('track', 'Purchase', {
+      value: parseFloat(orderData.total),
+      currency: orderData.currency || 'PKR',
+      content_ids: orderData.itemIds,
+      content_type: 'product'
+    });
+
+    console.log('✅ Meta Pixel Purchase tracked:', {
+      value: orderData.total,
+      currency: orderData.currency || 'PKR',
+      items: orderData.itemIds.length
+    });
+
+    // Clear immediately to prevent duplicate events on refresh
+    localStorage.removeItem('latestOrder');
+  } catch (e) {
+    console.error('Error firing Meta Pixel Purchase:', e);
+    // Clean up corrupted data
+    try { localStorage.removeItem('latestOrder'); } catch(e2) {}
+  }
 }
 
 /* ============================================================
