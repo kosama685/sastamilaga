@@ -294,9 +294,6 @@ function init() {
   if (!location.hash) location.hash = '#/home';
   route();
   
-  // Fire Meta Pixel Purchase event if order was just placed
-  fireMetaPixelPurchase();
-  
   addBotMessage(
     `Hi! 👋 I can help you find products from <b>${products.length.toLocaleString()}</b> items. ` +
     `Try: <i>"mobile under 5000"</i>, <i>"cosmetics deals"</i>, <i>"fashion with video"</i>, or ask about delivery, payments &amp; returns.`
@@ -404,6 +401,16 @@ function route() {
   state.view  = 'grid';
   window.scrollTo({ top: 0 });
 
+  // ── Push virtual page view to GTM dataLayer for SPA navigation tracking ──
+  // GTM needs this so History Change triggers and page view tags fire
+  // on every hash-based route change (since the page never fully reloads).
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event      : 'virtual_page_view',
+    page_path  : '/' + (location.hash || '#/home'),
+    page_title : document.title
+  });
+
   if      (parts[0] === 'category') renderListing('category', parts[1] || '', qs);
   else if (parts[0] === 'tag')      renderListing('tag',      parts[1] || '', qs);
   else if (parts[0] === 'search')   renderListing('search',   '',             qs);
@@ -413,7 +420,7 @@ function route() {
   else if (parts[0] === 'cart')     renderCart();
   else if (parts[0] === 'wishlist') renderWishlist();
   else if (parts[0] === 'checkout') renderCheckout();
-  else if (parts[0] === 'thank-you') renderThankYou();
+  else if (parts[0] === 'thank-you') renderThankYou(); // firePurchaseConversions() called inside
   else if (parts[0] === 'faq')      renderFAQ();
   else if (parts[0] === 'about')    renderAbout();
   else if (parts[0] === 'return-policy') renderReturnPolicy();
@@ -430,9 +437,6 @@ function route() {
   else if (parts[0] === 'cookies')  renderCookies();
   else if (parts[0] === 'sitemap')  renderSitemap();
   else renderHome();
-
-  // Fire once after route change if an order was just placed
-  fireMetaPixelPurchase();
 }
 
 /* ============================================================
@@ -1295,17 +1299,40 @@ function renderCheckout() {
 
 function renderThankYou() {
   setSEO({
-    title: 'Thank You for Your Order',
+    title: 'Thank You for Your Order – Sasta Milaga',
     description: 'Your order is confirmed. We will contact you soon with delivery details.',
     url: `${SITE_URL}/#/thank-you`
   });
 
+  // ── Fire all purchase conversions (GTM, Google Ads, Meta Pixel) ──────────
+  // Must be called BEFORE renderApp so GTM can fire immediately when the
+  // thank-you route is reached.
+  firePurchaseConversions();
+
   renderApp(`
     <section class="section">
-      <div class="section-head"><div><h2>🎉 Thank You!</h2><p>Your order has been received and is being processed.</p></div></div>
-      <div class="thank-you-card">
-        <p>We appreciate your purchase. Our team will contact you shortly with payment and delivery details.</p>
-        <a class="primary-btn" href="#/home">Continue Shopping</a>
+      <div class="section-head" style="text-align:center">
+        <div>
+          <span class="eyebrow">Order Confirmed</span>
+          <h2>🎉 Thank You for Your Order!</h2>
+          <p>Your order has been received and is being processed.</p>
+        </div>
+      </div>
+      <div class="thank-you-card" style="max-width:600px;margin:40px auto;padding:40px;background:var(--bg2);border-radius:16px;text-align:center;border:1px solid var(--border)">
+        <div style="font-size:4rem;margin-bottom:20px">✅</div>
+        <h3 style="color:var(--primary);margin-bottom:16px">Order Placed Successfully!</h3>
+        <p style="color:var(--muted2);line-height:1.7;margin-bottom:24px">
+          We appreciate your purchase. Our team will contact you shortly via <strong>phone or WhatsApp</strong> 
+          to confirm payment and delivery details.
+        </p>
+        <div style="background:var(--bg3);border-radius:12px;padding:20px;margin-bottom:24px">
+          <p style="color:var(--muted2);font-size:0.9em;margin:0">Need help? Contact us on WhatsApp:</p>
+          <a href="https://wa.me/923112632287" target="_blank" rel="noopener" 
+             style="color:var(--primary);font-weight:700;font-size:1.1rem;text-decoration:none">
+            +92 311 2632287
+          </a>
+        </div>
+        <a class="primary-btn" href="#/home" style="display:inline-flex;margin:0 auto">Continue Shopping →</a>
       </div>
     </section>`);
 }
@@ -1338,6 +1365,7 @@ window.placeOrder = function (e) {
         total: orderTotal,
         currency: 'PKR',
         itemIds: productIds,
+        transactionId: 'SM-' + Date.now(),
         timestamp: Date.now()
       };
       try {
@@ -2247,56 +2275,80 @@ function renderSitemap() {
 }
 
 /* ============================================================
-   META PIXEL – PURCHASE CONVERSION TRACKING
-   Fires when a user lands on any page after successful order placement
+   UNIFIED PURCHASE CONVERSION TRACKING
+   Fires GTM dataLayer purchase event + Google Ads gtag conversion
+   + Meta Pixel Purchase — all from one place, ONLY on the
+   thank-you page, ONLY when a fresh order exists in localStorage.
    ============================================================ */
-function fireMetaPixelPurchase() {
-  // Only fire if Meta Pixel is loaded
-  if (typeof fbq !== 'function') {
-    console.warn('Meta Pixel (fbq) not yet loaded.');
-    return;
-  }
-
-  // Retrieve saved order data
+function firePurchaseConversions() {
   try {
     const orderDataJson = localStorage.getItem('latestOrder');
-    if (!orderDataJson) return; // No pending order
+    if (!orderDataJson) return; // Nothing to fire
 
     const orderData = JSON.parse(orderDataJson);
 
-    // Validate data structure
+    // Validate required fields
     if (!orderData.total || !Array.isArray(orderData.itemIds)) {
       localStorage.removeItem('latestOrder');
       return;
     }
 
-    // Safeguard: only fire if data was saved within last 2 minutes to prevent old data reactivation
+    // Safety window: only fire if order was placed within the last 10 minutes
     const timeDiff = Date.now() - (orderData.timestamp || 0);
-    if (timeDiff > 2 * 60 * 1000) {
+    if (timeDiff > 10 * 60 * 1000) {
       localStorage.removeItem('latestOrder');
       return;
     }
 
-    // Fire Meta Pixel Purchase event with proper data types
-    fbq('track', 'Purchase', {
-      value: parseFloat(orderData.total),
-      currency: orderData.currency || 'PKR',
-      content_ids: orderData.itemIds,
-      content_type: 'product'
-    });
+    const orderTotal     = parseFloat(orderData.total);
+    const currency       = orderData.currency || 'PKR';
+    const transactionId  = orderData.transactionId || ('SM-' + Date.now());
+    const itemIds        = orderData.itemIds;
 
-    console.log('✅ Meta Pixel Purchase tracked:', {
-      value: orderData.total,
-      currency: orderData.currency || 'PKR',
-      items: orderData.itemIds.length
+    // ── 1. GTM dataLayer — fires GTM purchase trigger ──────────────────────
+    // This is what GTM's guided setup detects. The GTM container fires its
+    // own Google Ads conversion tag when it sees this event.
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ ecommerce: null }); // clear previous ecommerce data
+    window.dataLayer.push({
+      event: 'purchase',
+      ecommerce: {
+        transaction_id : transactionId,
+        value          : orderTotal,
+        currency       : currency,
+        items          : itemIds.map((id, i) => ({ item_id: id, index: i }))
+      }
     });
+    console.log('✅ GTM dataLayer purchase pushed:', { transactionId, value: orderTotal, currency });
 
-    // Clear immediately to prevent duplicate events on refresh
+    // ── 2. Google Ads direct gtag conversion (fallback / belt-and-suspenders) ──
+    if (typeof gtag === 'function') {
+      gtag('event', 'conversion', {
+        send_to        : 'AW-18208860867/p8r5CO2RhLgcEMPV1OpD',
+        value          : orderTotal,
+        currency       : currency,
+        transaction_id : transactionId
+      });
+      console.log('✅ Google Ads conversion fired:', { transactionId, value: orderTotal });
+    }
+
+    // ── 3. Meta Pixel Purchase ─────────────────────────────────────────────
+    if (typeof fbq === 'function') {
+      fbq('track', 'Purchase', {
+        value        : orderTotal,
+        currency     : currency,
+        content_ids  : itemIds,
+        content_type : 'product'
+      });
+      console.log('✅ Meta Pixel Purchase fired:', { value: orderTotal });
+    }
+
+    // ── 4. Clear localStorage immediately — prevents duplicate fires on refresh ──
     localStorage.removeItem('latestOrder');
+
   } catch (e) {
-    console.error('Error firing Meta Pixel Purchase:', e);
-    // Clean up corrupted data
-    try { localStorage.removeItem('latestOrder'); } catch(e2) {}
+    console.error('❌ Error firing purchase conversions:', e);
+    try { localStorage.removeItem('latestOrder'); } catch (e2) { /* ignore */ }
   }
 }
 
