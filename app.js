@@ -818,6 +818,24 @@ function renderHome() {
   fillHome();
 }
 
+/* Home: global shop groups with their real counts from data/cj/manifest.js (all 451,812 CJ products), shown under the local categories. */
+function fillGlobalCats(localList) {
+  const render = m => {
+    if (document.getElementById('sm-home-global')) return;
+    const total = products.length + m.total;
+    const grid = m.groups.map(g => {
+      const c = m.cats.filter(x => x.g === g.n).sort((a, b) => b.c - a.c)[0] || {};
+      return `<li><a class="sm-cat" href="#/global/g/${esc(g.s)}"><span class="sm-cat__img"><img src="${esc(c.img || '')}" alt="${esc(g.n)} – global shop" width="300" height="300" loading="lazy" decoding="async" onerror="this.src=window.fallbackImg"></span><span class="sm-cat__name">${esc(g.n)}</span><span class="sm-cat__count">${g.c.toLocaleString()} global products</span></a></li>`;
+    }).join('');
+    localList.insertAdjacentHTML('afterend', `<p class="sm-cat-total">${products.length.toLocaleString()} local products in ${categories.length} categories, plus ${m.total.toLocaleString()} global products: ${total.toLocaleString()} in total.</p>
+      <div id="sm-home-global" class="sm-home-global"><div class="sm-home-global__head"><h3>Global shop by category</h3><a href="#/global">View all ${m.cats.length} global categories</a></div>
+      <ul class="${esc(localList.className)}" role="list">${grid}</ul></div>`);
+  };
+  if (window.SM_CJ) return render(window.SM_CJ);
+  const s = document.createElement('script'); s.src = 'data/cj/manifest.js'; s.async = true;
+  s.onload = () => window.SM_CJ && render(window.SM_CJ); document.head.appendChild(s);
+}
+
 /* Fill the live home sections (hero stack, videos, categories, rails) from products.js, once. */
 function fillHome() {
   const home = $('#home-view');
@@ -843,6 +861,7 @@ function fillHome() {
   const cats = home.querySelector('[data-fill="cats"]');
   if (cats) cats.innerHTML = categories.slice(0, 16).map(c =>
     `<li><a class="sm-cat" href="#/category/${c.slug}"><span class="sm-cat__img"><img src="${esc(c.image)}" alt="${esc(c.name)} category" width="300" height="300" loading="lazy" decoding="async" onerror="this.src=window.fallbackImg"></span><span class="sm-cat__name">${esc(c.name)}</span><span class="sm-cat__count">${c.count.toLocaleString()} products</span></a></li>`).join('');
+  if (cats) fillGlobalCats(cats);
   const fresh = home.querySelector('[data-fill="fresh"]');
   if (fresh) fresh.innerHTML = newest.slice(0, 12).map(productCard).join('');
   const homeRail = home.querySelector('[data-fill="home"]');
