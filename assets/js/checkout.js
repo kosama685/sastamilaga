@@ -6,7 +6,11 @@
 (function () {
   'use strict';
   const A = window.SMApp, C = window.SM_CONFIG || {};
-  if (!A || !C.paypalClientId) return;
+  /* Both are required: the public Client ID for the buttons and the Worker that creates, captures and verifies orders. */
+  if (!A || !C.paypalClientId || !C.paypalWorker) return;
+  const W = C.paypalWorker.replace(/\/$/, '');
+  const post = (path, body) => fetch(W + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+    .then(r => r.json().then(j => { if (!r.ok) throw new Error(j.error || 'Payment service error'); return j; }));
   let sdk = null, rate = null;
 
   function loadSdk() {
@@ -55,20 +59,19 @@
         paypal.Buttons({
           style: { layout: 'vertical', shape: 'pill', label: 'pay' },
           onClick: (data, actions) => form.reportValidity() ? actions.resolve() : actions.reject(),
-          createOrder: (data, actions) => actions.order.create({
-            purchase_units: [{ description: `Sasta Milaga order (${t.rows.length} item${t.rows.length > 1 ? 's' : ''})`, amount: { currency_code: C.paypalCurrency || 'USD', value: usd } }],
-            application_context: { shipping_preference: 'NO_SHIPPING', brand_name: 'Sasta Milaga' }
+          // The Worker prices the cart from the published price list and creates the PayPal order.
+          createOrder: () => post('/api/paypal/orders', { items: A.getCart().map(x => ({ id: x.id, qty: x.qty })) }).then(o => {
+            fx.textContent = `You pay US$${o.usd} (Rs ${Number(o.pkr).toLocaleString()} including delivery, at today's rate of 1 PKR = ${o.rate} USD).`;
+            return o.id;
           }),
-          onApprove: (data, actions) => actions.order.capture().then(details => {
-            const fd = new FormData(form);
-            fd.set('payment_method', 'PayPal (paid)'); fd.append('paypal_order_id', details.id); fd.append('paypal_status', details.status);
-            fd.append('paid_amount', `${usd} ${C.paypalCurrency || 'USD'}`); fd.append('pkr_total', String(t.total));
-            fd.append('payer_email', (details.payer && details.payer.email_address) || '');
-            return fetch(C.orderEndpoint, { method: 'POST', body: fd, headers: { Accept: 'application/json' } }).catch(() => null).then(() => {
-              try { localStorage.setItem('latestOrder', JSON.stringify({ total: t.total, currency: 'PKR', transactionId: details.id, timestamp: Date.now() })); } catch (e) { }
+          // The Worker captures the payment, checks it with PayPal and records the order.
+          onApprove: data => {
+            const form_ = Object.fromEntries(new FormData(form)); form_.payment_method = 'PayPal';
+            return post(`/api/paypal/orders/${data.orderID}/capture`, { form: form_ }).then(res => {
+              try { localStorage.setItem('latestOrder', JSON.stringify({ total: t.total, currency: 'PKR', transactionId: res.id, timestamp: Date.now() })); } catch (e) { }
               A.setCart([]); A.toast('Payment received. We will confirm your delivery shortly.'); location.hash = '#/thank-you';
-            });
-          }),
+            }).catch(err => { fx.textContent = `${err.message}. If money was taken, contact us on WhatsApp with PayPal order ${data.orderID}.`; });
+          },
           onError: () => { fx.textContent = 'PayPal could not complete the payment. No money was taken. Try again or choose cash on delivery.'; }
         }).render('#smPaypalButtons');
       } catch (e) {

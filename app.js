@@ -458,7 +458,7 @@ function renderCatalogTools() {
 }
 
 /* Shared helpers for assets/js/global.js, blog.js and checkout.js (loaded after app.js). */
-window.SMApp = { esc, slug, renderApp, setSEO, toast, waLink, pageHead, showView, getCart, setCart, price, products, PKR, SITE_URL, LIVE_URL, WA_NUMBER, route: () => route() };
+window.SMApp = { productCard, esc, slug, renderApp, setSEO, toast, waLink, pageHead, showView, getCart, setCart, price, products, PKR, SITE_URL, LIVE_URL, WA_NUMBER, route: () => route() };
 
 /* Hooks used by the live video quick-view modal and other theme scripts. */
 window.smStatic = {

@@ -1,0 +1,14 @@
+# Public settings only. Secrets are set with `wrangler secret put` and never committed.
+name = "sastamilaga-paypal"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+PAYPAL_ENV = "sandbox"            # change to "live" after sandbox testing
+PAYPAL_CURRENCY = "USD"
+SITE_ORIGIN = "https://kosama685.github.io/sastamilaga"
+ALLOWED_ORIGINS = "https://kosama685.github.io"
+ORDER_ENDPOINT = "https://formspree.io/f/xwvzzjdl"
+# PAYPAL_CLIENT_ID     -> wrangler secret put PAYPAL_CLIENT_ID
+# PAYPAL_CLIENT_SECRET -> wrangler secret put PAYPAL_CLIENT_SECRET
+# PAYPAL_WEBHOOK_ID    -> wrangler secret put PAYPAL_WEBHOOK_ID

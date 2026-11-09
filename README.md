@@ -10,8 +10,8 @@ files, and crawlable HTML pages are generated ahead of time and committed.
 
 | Data | Files | Count |
 |---|---|---|
-| Local products (WooCommerce export, with SEO title and description) | `products.js`, `products.csv`, `p/*.html` | 20,063 |
-| Local category pages | `c/*.html` | 217 |
+| Local products (WooCommerce export, with SEO title and description) | `products.js`, `products.csv`, `p/*.html` | 20,165 |
+| Local category pages | `c/*.html` | 218 |
 | Global (CJ) supplier products | `data/cj/manifest.js` + `data/cj/c/<category>.js` (loaded on demand) | 451,812 in 572 categories |
 | Global category pages | `c/global/*.html` | 573 |
 | Global product videos | `data/cj/videos.js` | 5,804 |

@@ -7,6 +7,9 @@
 window.SM_CONFIG = {
   paypalClientId: '',
   paypalCurrency: 'USD',
+  /* URL of the deployed PayPal Worker (workers/paypal), e.g. 'https://sastamilaga-paypal.<account>.workers.dev'.
+     PayPal stays hidden until both paypalClientId and paypalWorker are set. */
+  paypalWorker: '',
   orderEndpoint: 'https://formspree.io/f/xwvzzjdl',
   whatsapp: '966510451995',
   deliveryFee: 250,

@@ -48,4 +48,6 @@
     } catch (e) {}
     var site = document.createElement('script'); site.src = prefix + 'assets/js/site.min.js'; document.body.appendChild(site);
   }).catch(function () { /* the fallback logo header stays */ });
+  /* WhatsApp order button on every product and video card */
+  var wa = document.createElement('script'); wa.src = prefix + 'assets/js/wa-cards.js'; wa.defer = true; document.head.appendChild(wa);
 })();

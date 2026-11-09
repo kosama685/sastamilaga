@@ -59,14 +59,38 @@
   }
 
   function timed(input, init, ms) {
-    var c = new AbortController(), t = setTimeout(function () { c.abort(); }, ms);
+    var c = new AbortController(), t = setTimeout(function () { c.abort(); }, ms), outer = init && init.signal;
+    if (outer) { if (outer.aborted) c.abort(); else outer.addEventListener('abort', function () { c.abort(); }, { once: true }); }
     return realFetch(input, Object.assign({}, init, { signal: c.signal })).finally(function () { clearTimeout(t); });
   }
+
+  /* Hotel city search depends on the booking partner's city IDs (live API). When it is unavailable, offer a
+     WhatsApp hotel request with the typed city instead of inventing a city code. */
+  function hotelNote(city) {
+    var field = document.querySelector('.sm-hotel-suggest'); if (!field) return;
+    var note = field.parentNode.querySelector('.sm-hotel-fallback');
+    if (!city) { if (note) note.remove(); return; }
+    if (!note) { note = document.createElement('p'); note.className = 'sm-hotel-fallback'; note.setAttribute('role', 'status'); field.insertAdjacentElement('afterend', note); }
+    var form = field.closest('form'), val = function (n) { var e = form && form.querySelector('[name="' + n + '"]'); return e && e.value ? e.value : ''; };
+    var msg = 'Assalam o Alaikum! I need a hotel.\nCity: ' + city + (val('checkin') ? '\nCheck-in: ' + val('checkin') : '') + (val('checkout') ? '\nCheck-out: ' + val('checkout') : '') + (val('adults') ? '\nAdults: ' + val('adults') : '');
+    var num = (window.SM_CONFIG && window.SM_CONFIG.whatsapp) || '966510451995';
+    note.innerHTML = 'City search is not responding right now. <a target="_blank" rel="noopener">Send your hotel request for “' + city.replace(/[<>&"]/g, '') + '” on WhatsApp</a> and we will reply with options.';
+    note.querySelector('a').href = 'https://wa.me/' + num + '?text=' + encodeURIComponent(msg);
+  }
+  var hcss = document.createElement('style');
+  hcss.textContent = '.sm-hotel-fallback{margin:6px 0 0;font-size:13px;line-height:1.5;color:#4b5563}.sm-hotel-fallback a{color:#128c4a;font-weight:600}.sm-hotel-fallback a:focus-visible{outline:2px solid #128c4a;outline-offset:2px}';
+  document.head.appendChild(hcss);
 
   window.fetch = function (input, init) {
     var url = typeof input === 'string' ? input : (input && input.url) || '';
     var u; try { u = new URL(url, location.href); } catch (e) { return realFetch(input, init); }
     if (/\/wp-json\/sm-travel\/v1\/suggest\/?$/.test(u.pathname)) return airports(u.searchParams.get('q') || '').then(json);
+    if (/\/wp-json\/sm-travel\/v1\/hotel-suggest\/?$/.test(u.pathname)) {
+      var city = u.searchParams.get('q') || '';
+      hotelNote(null);
+      return timed(input, init, 15000).then(function (r) { if (!r.ok) throw new Error(r.status); return r; })
+        .catch(function (e) { if (init && init.signal && init.signal.aborted) throw e; hotelNote(city); return json([]); });
+    }
     var tvLocal = window.SM_CONFIG && window.SM_CONFIG.liveTvSnapshot;
     if (tvLocal && /\/wp-json\/sltv\/v1\/(channels|facets)\/?$/.test(u.pathname)) {
       if (u.searchParams.get('_refresh')) {

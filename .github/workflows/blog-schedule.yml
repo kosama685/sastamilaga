@@ -34,7 +34,7 @@ jobs:
         run: |
           git config user.name "sasta-milaga-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add b sitemap-blog.xml sitemap.xml
+          git add -A b sitemap-blog.xml sitemap.xml b-published.txt
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
@@ -54,3 +54,14 @@ jobs:
         if: steps.commit.outputs.changed == 'true'
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify every published post is live
+        run: |
+          sleep 30
+          fail=0
+          while read -r url; do
+            [ -z "$url" ] && continue
+            code=$(curl -s -o /dev/null -w '%{http_code}' "$url")
+            echo "$code $url"; [ "$code" = "200" ] || fail=1
+          done < b-published.txt
+          curl -s https://kosama685.github.io/sastamilaga/sitemap-blog.xml | grep -c '<url>'
+          exit $fail

@@ -95,7 +95,6 @@
 .listing-shell { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: var(--sm-gap); align-items: start; }
 .filter-panel { position: sticky; top: 140px; background: #fff; border: 1px solid var(--sm-line); border-radius: var(--sm-radius); padding: 20px; box-shadow: var(--sm-shadow); }
 .filter-panel h2 { font-size: 1.15rem !important; }
-.filter-panel h2::first-letter { font-size: 0; }
 .filter-panel p { color: var(--sm-muted) !important; }
 .filter-group { margin-top: 16px; }
 .filter-group > label { display: block; font-weight: 600; font-size: .88rem; margin-bottom: 6px; color: var(--sm-green-ink); }

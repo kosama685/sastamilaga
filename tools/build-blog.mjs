@@ -10,7 +10,24 @@ const SITE = 'https://kosama685.github.io/sastamilaga';
 const today = new Date(Date.now() + 5 * 3600e3).toISOString().slice(0, 10);
 const ctx = { window: {} };
 vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'assets/data/blog.js'), 'utf8'), ctx);
+// Validation: unique slugs and titles, real ISO dates. A bad entry stops the build instead of publishing duplicates.
+{
+  const all = ctx.window.SM_BLOG || [], seen = new Set(), titles = new Set(), bad = [];
+  for (const p of all) {
+    if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(p.slug || '')) bad.push(`invalid slug: ${p.slug}`);
+    if (seen.has(p.slug)) bad.push(`duplicate slug: ${p.slug}`); seen.add(p.slug);
+    if (titles.has(p.title)) bad.push(`duplicate title: ${p.title}`); titles.add(p.title);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(p.publish || '') || isNaN(Date.parse(p.publish + 'T00:00:00Z')) || new Date(p.publish + 'T00:00:00Z').toISOString().slice(0, 10) !== p.publish) bad.push(`invalid publish date: ${p.slug} ${p.publish}`);
+  }
+  if (bad.length) { console.error(bad.join('\n')); process.exit(1); }
+}
 const posts = (ctx.window.SM_BLOG || []).filter(p => p.publish <= today).sort((a, b) => b.publish.localeCompare(a.publish));
+// Remove pages of posts that are no longer due or no longer listed (e.g. a date moved later), so nothing is published early.
+{
+  const dir = path.join(ROOT, 'b'), keep = new Set(['index.html', ...posts.map(p => `${p.slug}.html`)]);
+  if (fs.existsSync(dir)) for (const f of fs.readdirSync(dir)) if (f.endsWith('.html') && !keep.has(f)) fs.unlinkSync(path.join(dir, f));
+}
+fs.writeFileSync(path.join(ROOT, 'b-published.txt'), posts.map(p => `${SITE}/b/${p.slug}.html`).join('\n') + '\n');
 const e = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmt = d => new Date(d + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 const ld = o => `<script type="application/ld+json">${JSON.stringify(o).replace(/</g, '\\u003c')}</script>`;

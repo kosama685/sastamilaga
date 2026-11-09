@@ -1,6 +1,6 @@
 # Sasta Milaga
 
-> Sasta Milaga is an online store and travel desk for Pakistan and Pakistanis abroad. It sells 20,063 local products priced in Pakistani rupees (PKR) with cash on delivery across Pakistan, lists 451,812 global products that ship worldwide (prices are USD estimates confirmed before payment), takes flight, hotel, Umrah and visa requests, and offers a Live TV page with reviewed channels.
+> Sasta Milaga is an online store and travel desk for Pakistan and Pakistanis abroad. It sells 20,165 local products priced in Pakistani rupees (PKR) with cash on delivery across Pakistan, lists 451,812 global products that ship worldwide (prices are USD estimates confirmed before payment), takes flight, hotel, Umrah and visa requests, and offers a Live TV page with reviewed channels.
 
 Key facts:
 - Local delivery in Pakistan: Rs 250 per order, free above Rs 5,000. Cash on delivery available for local products.
@@ -10,7 +10,7 @@ Key facts:
 - Contact: WhatsApp +966510451995, info@sastamilaga.com. Main store: https://sastamilaga.com/
 
 ## Shop
-- [All local products](https://kosama685.github.io/sastamilaga/#/shop): 20,063 products in 63 categories
+- [All local products](https://kosama685.github.io/sastamilaga/#/shop): 20,165 products in 64 categories
 - [Home & Living](https://kosama685.github.io/sastamilaga/c/home-and-living.html): 4,933 products
 - [Fashion & Apparel](https://kosama685.github.io/sastamilaga/c/fashion-and-apparel.html): 4,486 products
 - [Health & Beauty](https://kosama685.github.io/sastamilaga/c/health-and-beauty.html): 4,445 products
