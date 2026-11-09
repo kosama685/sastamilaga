@@ -45,10 +45,16 @@
 	retryButton.disabled = liveButton.disabled = true;
 
 	function original(ch) { return ch.orig || ch.src; }
+	var dashP = null;
+	function loadDash() {
+		if (window.dashjs) return Promise.resolve();
+		return dashP || (dashP = new Promise(function (ok, fail) { var s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.7.4/dash.all.min.js'; s.onload = ok; s.onerror = function () { dashP = null; fail(); }; document.head.appendChild(s); }));
+	}
 	function clearTimers() { clearTimeout(recoveryTimer); clearTimeout(startupTimer); }
 	function stop() {
 		playRun++; clearTimers(); state.active = false;
 		if (state.hls) { state.hls.destroy(); state.hls = null; }
+		if (state.dash) { try { state.dash.reset(); } catch (e) {} state.dash = null; }
 		video.pause(); video.removeAttribute('src'); video.load(); video.hidden = false;
 		frame.innerHTML = ''; frame.hidden = true; live.hidden = true; logo.hidden = true; player.dataset.state = 'idle';
 		quality.hidden = true; quality.innerHTML = ''; liveButton.disabled = true;
@@ -77,7 +83,8 @@
 		var acts = el('div', 'sltv-ext__a'), note = el('small', 'sltv-ext__n');
 		function btn(label, href, dl) { var a = el('a', 'sltv-btn sltv-btn--ghost', label); a.href = href; if (dl) a.download = dl; else a.rel = 'nofollow noopener'; acts.appendChild(a); return a; }
 		var retry = el('button', 'sltv-btn', 'Try browser again'); retry.type = 'button'; retry.addEventListener('click', retryCurrent); acts.appendChild(retry);
-		var source = original(ch), m3uUrl = cfg.api + 'm3u?id=' + ch.id;
+		// Playlist file made in the browser (no server needed): opens in VLC, MX Player, Kodi or any IPTV app.
+		var source = original(ch), m3uUrl = URL.createObjectURL(new Blob(['#EXTM3U\n#EXTINF:-1 tvg-logo="' + (ch.logo || '') + '",' + ch.name + '\n' + source + '\n'], { type: 'audio/x-mpegurl' }));
 		var file = ch.name.replace(/[^\w\- ]+/g, '').trim() + '.m3u';
 		var direct = /iPhone|iPad|iPod/.test(ua) ? 'vlc-x-callback://x-callback-url/stream?url=' + encodeURIComponent(source)
 			: /Android/.test(ua) ? 'intent:' + source.replace(/^https?:/, '') + '#Intent;scheme=' + (/^https:/i.test(source) ? 'https' : 'http') + ';package=org.videolan.vlc;type=application/x-mpegURL;end'
@@ -128,6 +135,17 @@
 		}
 		armTimeout(run);
 		if (ch.type === 'mp4') video.src = ch.src;
+		else if (ch.type === 'dash') {
+			// MPEG-DASH (.mpd): dash.js, loaded on first use.
+			loadDash().then(function () {
+				if (run !== playRun) return;
+				var d = window.dashjs.MediaPlayer().create(); state.dash = d;
+				d.updateSettings({ streaming: { delay: { liveDelayFragmentCount: 3 } } });
+				d.on(window.dashjs.MediaPlayer.events.ERROR, function (e) { if (run === playRun) failure('The broadcaster could not deliver this stream (it may be protected or region-locked).'); });
+				d.initialize(video, ch.src, true);
+			}).catch(function () { if (run === playRun) failure('The DASH player could not load. Check your connection and try again.'); });
+			return;
+		}
 		else if (window.Hls && window.Hls.isSupported()) {
 			var h = new window.Hls({ maxBufferLength: 20, backBufferLength: 30, enableWorker: true });
 			state.hls = h;

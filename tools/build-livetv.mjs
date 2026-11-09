@@ -24,9 +24,19 @@ for (let i = 0; i < lines.length; i++) {
   const marks = (raw.match(/[ⒼⓎⓈⓉ]/g) || []).join('');
   const name = raw.replace(/[ⒼⓎⓈⓉ]/g, '').replace(/\s+/g, ' ').trim() || attr(l, 'tvg-name');
   let cc = (attr(l, 'tvg-country').split(/[;,\s]/)[0] || '').toUpperCase(); if (!/^[A-Z]{2}$/.test(cc) || cc === 'UK') cc = cc === 'UK' ? 'GB' : '';
-  const yt = /youtu\.?be/.test(url), hls = /\.m3u8(\?|$)/i.test(url) && url.startsWith('https://');
+  // Player type: HLS (hls.js), DASH (dash.js), MP4 (native), YouTube / Twitch / Dailymotion (official embeds).
+  // http:// (blocked on https pages), rtsp:// and web pages stay "external": VLC app, .m3u download or copy link.
+  const https = url.startsWith('https://');
+  const twitch = url.match(/twitch\.tv\/([\w-]+)/i), dm = url.match(/dailymotion\.com\/video\/([\w]+)/i);
+  let type = 'hls', src = url, ext = true;
+  if (/youtu\.?be/.test(url)) { type = 'youtube'; ext = false; }
+  else if (twitch) { type = 'iframe'; src = `https://player.twitch.tv/?channel=${twitch[1]}&parent=kosama685.github.io&parent=localhost&muted=false`; ext = false; }
+  else if (dm) { type = 'iframe'; src = `https://www.dailymotion.com/embed/video/${dm[1]}?autoplay=1`; ext = false; }
+  else if (https && /\.m3u8(\?|$)/i.test(url)) { type = 'hls'; ext = false; }
+  else if (https && /\.mpd(\?|$)/i.test(url)) { type = 'dash'; ext = false; }
+  else if (https && /\.mp4(\?|$)/i.test(url)) { type = 'mp4'; ext = false; }
   const cat = (CATS.find(([, re]) => re.test(name)) || ['General'])[0];
-  items.push({ id: ++id, name, logo: attr(l, 'tvg-logo'), cc, cat, type: yt ? 'youtube' : 'hls', src: url, ext: !(hls || yt),
+  items.push({ id: ++id, name, logo: attr(l, 'tvg-logo'), cc, cat, type, src, ext, ...(src !== url ? { page: url } : {}),
     ...(marks.includes('Ⓖ') ? { geo: true } : {}), ...(marks.includes('Ⓢ') ? { part: true } : {}), group: attr(l, 'group-title') });
 }
 const count = key => Object.entries(items.reduce((a, c) => (c[key] && (a[c[key]] = (a[c[key]] || 0) + 1), a), {})).map(([k, n]) => ({ k, n })).sort((a, b) => b.n - a.n);
@@ -35,4 +45,4 @@ const db = { source: SRC, license: 'Free-TV/IPTV playlist (free-to-air channels 
 fs.mkdirSync(path.join(ROOT, 'data/livetv'), { recursive: true });
 fs.writeFileSync(path.join(ROOT, 'data/livetv/channels.js'), '/* Live TV channels from the Free-TV/IPTV playlist (github.com/Free-TV/IPTV), rebuilt by tools/build-livetv.mjs. Do not edit by hand. */\nwindow.SM_LIVETV=' + JSON.stringify(db) + ';\n');
 const by = t => items.filter(t).length;
-console.log(`${items.length} channels · ${db.facets.countries.length} countries · HLS ${by(c => c.type === 'hls' && !c.ext)} · YouTube ${by(c => c.type === 'youtube')} · external ${by(c => c.ext)} · geo-blocked ${by(c => c.geo)}`);
+console.log(`${items.length} channels · ${db.facets.countries.length} countries · HLS ${by(c => c.type === 'hls' && !c.ext)} · DASH ${by(c => c.type === 'dash')} · MP4 ${by(c => c.type === 'mp4')} · YouTube ${by(c => c.type === 'youtube')} · Twitch/Dailymotion ${by(c => c.type === 'iframe')} · external (VLC/app) ${by(c => c.ext)} · geo-blocked ${by(c => c.geo)}`);

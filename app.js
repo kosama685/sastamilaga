@@ -336,7 +336,7 @@ function renderLiveTV() {
   });
   if (window.__sltvLoaded) return;
   window.__sltvLoaded = true;
-  window.SLTV_CFG = { api: 'https://sastamilaga.com/wp-json/sltv/v1/', frames: ['www.youtube-nocookie.com', 'player.vimeo.com'] };
+  window.SLTV_CFG = { api: 'https://sastamilaga.com/wp-json/sltv/v1/', frames: ['www.youtube-nocookie.com', 'player.vimeo.com', 'player.twitch.tv', 'www.dailymotion.com'] };
   const hls = document.createElement('script');
   hls.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js';
   hls.onload = hls.onerror = () => { const s = document.createElement('script'); s.src = 'assets/js/live-tv-hub.js'; document.body.appendChild(s); };
