@@ -7,6 +7,9 @@
 window.SM_CONFIG = {
   paypalClientId: '',
   paypalCurrency: 'USD',
+  /* PayPal payment-link checkout (works on GitHub Pages, no API keys): buyers pay this PayPal account by PayPal
+     or debit/credit card. Orders are recorded first; check the payment in PayPal before dispatch. */
+  paypalEmail: 'osamakhancv@gmail.com',
   /* URL of the deployed PayPal Worker (workers/paypal), e.g. 'https://sastamilaga-paypal.<account>.workers.dev'.
      PayPal stays hidden until both paypalClientId and paypalWorker are set. */
   paypalWorker: '',

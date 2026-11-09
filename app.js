@@ -1504,7 +1504,7 @@ function renderCheckout() {
           <option>Cash on Delivery (COD)</option>
           <option>Bank Transfer</option>
           <option>EasyPaisa / JazzCash</option>
-          <option>Credit / Debit Card</option>
+          ${(window.SM_CONFIG || {}).paypalEmail ? '<option value="PayPal / Card">PayPal or debit/credit card (pay now in US$)</option>' : ''}
         </select>
         <textarea name="address" required placeholder="Complete delivery address" aria-label="Delivery address"></textarea>
         <textarea name="notes" placeholder="Order notes (optional)" aria-label="Order notes"></textarea>
@@ -1572,12 +1572,39 @@ window.placeOrder = function (e) {
   btn.disabled = true;
   btn.innerText = 'Processing...';
 
-  fetch('https://formspree.io/f/xwvzzjdl', {
-    method: 'POST',
-    body: data,
-    headers: { 'Accept': 'application/json' }
+  // Order contents: the order email must list what was bought.
+  const C = window.SM_CONFIG || {};
+  const orderId = 'SM-' + Date.now().toString(36).toUpperCase();
+  const lines = getCart().map(x => ({ p: products.find(p => p.id === x.id), qty: x.qty })).filter(x => x.p);
+  const sub = lines.reduce((a, x) => a + price(x.p) * x.qty, 0);
+  const delivery = sub > (C.freeDeliveryFrom || 5000) ? 0 : (C.deliveryFee || 250);
+  const totalPkr = sub + delivery;
+  data.set('order_id', orderId);
+  data.set('order_items', lines.map(x => `${x.qty} x ${x.p.n} (SKU ${x.p.sku || x.p.id}) @ ${PKR.format(price(x.p))} = ${PKR.format(price(x.p) * x.qty)}\n${pageUrl(x.p)}`).join('\n\n'));
+  data.set('order_subtotal', PKR.format(sub));
+  data.set('order_delivery', delivery ? PKR.format(delivery) : 'Free');
+  data.set('order_total', PKR.format(totalPkr));
+  const payPal = data.get('payment_method') === 'PayPal / Card' && C.paypalEmail;
+
+  // PayPal / card: get today's PKR→USD rate first, record it with the order, then open PayPal.
+  const rateP = payPal ? fetch('https://open.er-api.com/v6/latest/PKR').then(r => r.json()).then(j => j.rates.USD) : Promise.resolve(null);
+  rateP.then(rate => {
+    let usd = null;
+    if (payPal) {
+      if (!rate) throw new Error('rate');
+      usd = Math.max(0.01, Math.round(totalPkr * rate * 100) / 100).toFixed(2);
+      data.set('payment_status', `Awaiting PayPal payment of US$${usd} (1 PKR = ${rate} USD). Confirm receipt in PayPal before dispatch.`);
+    }
+    return fetch(C.orderEndpoint || 'https://formspree.io/f/xwvzzjdl', { method: 'POST', body: data, headers: { 'Accept': 'application/json' } })
+      .then(response => { response.usd = usd; return response; });
   })
   .then(response => {
+    if (response.ok && response.usd) {
+      try { localStorage.setItem('latestOrder', JSON.stringify({ total: orderTotal, currency: 'PKR', itemIds: productIds, transactionId: orderId, timestamp: Date.now(), paypal: response.usd })); } catch (e) { }
+      setCart([]);
+      location.href = paypalLink({ email: C.paypalEmail, usd: response.usd, orderId, items: lines.length });
+      return;
+    }
     if (response.ok) {
       // ═══ SAVE ORDER DATA TO LOCALSTORAGE FOR META PIXEL TRACKING ═══
       const orderData = {
@@ -1607,13 +1634,27 @@ window.placeOrder = function (e) {
     }
   })
   .catch(error => {
-    toast('❌ Error submitting form');
+    toast(error && error.message === 'rate' ? 'Could not get today\'s exchange rate for PayPal. Try again, or choose cash on delivery.' : 'Your order could not be sent. Check your connection and try again.');
   })
   .finally(() => {
     btn.disabled = false;
     btn.innerText = originalText;
   });
 };
+
+/* PayPal payment link (PayPal Payments Standard, the same format as paypal-link-generator). It needs only the
+   receiving PayPal email, which is public by design. On PayPal's page the buyer pays with a PayPal account or a
+   debit/credit card (guest checkout, where PayPal offers it in the buyer's country). The link sets the amount, so the
+   team checks the received amount in PayPal against the order email before dispatch. */
+function paypalLink({ email, usd, orderId, items }) {
+  const q = new URLSearchParams({
+    cmd: '_xclick', business: email, item_name: `Sasta Milaga order ${orderId} (${items} item${items > 1 ? 's' : ''})`,
+    item_number: orderId, invoice: orderId, amount: usd, currency_code: 'USD', quantity: '1', no_shipping: '1', no_note: '1',
+    charset: 'utf-8', return: `${SITE_URL}/#/thank-you`, cancel_return: `${SITE_URL}/#/cart`, rm: '1', landing_page: 'billing'
+  });
+  return 'https://www.paypal.com/cgi-bin/webscr?' + q.toString();
+}
+window.SMApp && (window.SMApp.paypalLink = paypalLink);
 
 function empty(title, cta, href) {
   return `<div class="empty-state"><h2>${esc(title)}</h2><p>Everything is searchable and image-led at Sasta Milaga.</p><a class="primary-btn" href="${esc(href)}">${esc(cta)}</a></div>`;
