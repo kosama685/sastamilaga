@@ -1758,6 +1758,14 @@ body.lock { overflow: hidden; }
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
 
+/* Home: totals line and global category grid */
+.sm-cat-total { margin: 16px 0 0; color: #4b5563; font-size: 15px; line-height: 1.7; }
+.sm-home-global { margin-top: 32px; }
+.sm-home-global__head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 16px; margin-bottom: 16px; }
+.sm-home-global__head h3 { margin: 0; font-size: clamp(20px, 2.4vw, 26px); letter-spacing: -0.02em; }
+.sm-home-global__head a { color: #1a5c2a; font-weight: 600; }
+.sm-home-global__head a:focus-visible { outline: 2px solid #1a5c2a; outline-offset: 2px; }
+
 /* static page extras */
 .sm-fallback-head{padding:12px clamp(16px,3vw,48px);border-bottom:1px solid #E2E8E4}
 .sm-static-thumbs img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid #E2E8E4;flex:none}
