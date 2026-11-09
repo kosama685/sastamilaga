@@ -1,0 +1,4 @@
+.sm-lang.gdl-header-preferences{gap:5px;background:transparent;border:0;flex-shrink:0}
+.sm-lang.gdl-header-preferences a{display:inline-flex!important;align-items:center;gap:5px;border:1px solid #dce8e0;border-radius:22px;padding:7px 10px;white-space:nowrap;background:#f5faf7;color:#06432a;font-size:12px;text-decoration:none}
+.sm-lang.gdl-header-preferences a:hover{background:#e4f6eb}.sm-lang.gdl-header-preferences a:focus-visible{outline:3px solid #f58a00;outline-offset:2px}
+@media(max-width:480px){.sm-lang.gdl-header-preferences{gap:3px}.sm-lang.gdl-header-preferences a{padding:5px 7px;font-size:11px}}

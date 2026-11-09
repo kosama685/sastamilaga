@@ -1,0 +1,124 @@
+/**
+ * The little the plugin shows a customer: a supplier's name under a product,
+ * and the note explaining that an order ships in more than one parcel.
+ *
+ * The rule here is that the store's theme wins. Fonts, colours and sizes are
+ * inherited or expressed relative to whatever the theme already set — no
+ * hard-coded family, no fixed pixel size, no colour picked out of the air.
+ * A shop running a dark theme, a large-type theme or a brand palette gets
+ * something that belongs to it, not a grey box borrowed from wp-admin.
+ *
+ * (These classes used to be styled only in the admin stylesheet, which is not
+ * loaded on the storefront — so on the shop side they rendered unstyled.)
+ */
+
+.hhc-supplier-label {
+    font-size: 0.8em;       /* relative to the theme's own body size */
+    line-height: inherit;
+    color: inherit;
+    opacity: 0.7;           /* quieter than the product title, same hue */
+    margin: 0.25em 0 0.5em;
+    text-align: inherit;    /* classic themes centre the whole card */
+}
+
+.hhc-supplier-label span {
+    font-weight: 600;
+    opacity: 1;
+}
+
+/*
+ * Alignment has to follow the product title, whatever the theme decided.
+ *
+ * Classic themes centre the card and `inherit` above is enough. Block themes
+ * (Twenty Twenty-Five and friends) align each block on its own — the title
+ * carries `has-text-align-center` while the card itself stays left — so a
+ * label that only inherits ends up flush left under a centred title. These
+ * rules read the alignment off the title next to it and match it, which means
+ * the label lands wherever the shop's own theme put the title and the price.
+ */
+:is(li.product, li.wc-block-product, .wc-block-grid__product, .wp-block-post, .product):has(> .has-text-align-center) .hhc-supplier-label,
+.wc-block-components-product-title.has-text-align-center ~ .hhc-supplier-label {
+    text-align: center;
+}
+
+:is(li.product, li.wc-block-product, .wc-block-grid__product, .wp-block-post, .product):has(> .has-text-align-right) .hhc-supplier-label,
+.wc-block-components-product-title.has-text-align-right ~ .hhc-supplier-label {
+    text-align: right;
+}
+
+:is(li.product, li.wc-block-product, .wc-block-grid__product, .wp-block-post, .product):has(> .has-text-align-left) .hhc-supplier-label,
+.wc-block-components-product-title.has-text-align-left ~ .hhc-supplier-label {
+    text-align: left;
+}
+
+/*
+ * The shop's own answer, when it wants one. Chosen in Settings → "Show supplier
+ * name on the storefront", and last in the file on purpose: whatever the store
+ * owner picked beats anything worked out from the theme above.
+ */
+.hhc-supplier-label.hhc-align-left   { text-align: left; }
+.hhc-supplier-label.hhc-align-center { text-align: center; }
+.hhc-supplier-label.hhc-align-right  { text-align: right; }
+
+/*
+ * The split-delivery notice. Built out of the theme's own colours: currentColor
+ * for the border and text, and a barely-there tint of it for the background, so
+ * it reads as part of the page in light and dark themes alike.
+ */
+.hhc-split-delivery-notice {
+    border: 1px solid currentColor;
+    border-radius: 0.5em;
+    padding: 0.9em 1.1em;
+    margin: 0 0 1.2em;
+    font-size: 0.95em;
+    line-height: inherit;
+    color: inherit;
+    background: color-mix(in srgb, currentColor 6%, transparent);
+}
+
+.hhc-split-delivery-notice > strong {
+    display: block;
+    font-size: 1em;
+}
+
+.hhc-split-delivery-notice p {
+    margin: 0.4em 0 0.6em;
+}
+
+.hhc-split-delivery-notice ul {
+    margin: 0;
+    padding-inline-start: 1.2em;
+    list-style: disc;
+}
+
+.hhc-split-delivery-notice li + li {
+    margin-top: 0.25em;
+}
+
+/*
+ * The two tags on a parcel line: which one carries the main delivery, and what
+ * each extra one costs. Outlined rather than filled, again in the theme's own
+ * colour, so no palette is imposed on the shop.
+ */
+.hhc-split-main,
+.hhc-split-extra {
+    display: inline-block;
+    font-size: 0.8em;
+    padding: 0.05em 0.6em;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    margin-inline-start: 0.4em;
+    white-space: nowrap;
+    opacity: 0.8;
+}
+
+.hhc-split-main {
+    opacity: 0.6;
+}
+
+/* Themes that put the notice inside a narrow cart column. */
+@media (max-width: 480px) {
+    .hhc-split-delivery-notice {
+        padding: 0.8em 0.9em;
+    }
+}

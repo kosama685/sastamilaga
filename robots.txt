@@ -1,30 +1,8 @@
+# Sasta Milaga static store (GitHub Pages project site).
+# Note: crawlers read robots.txt only at a host root; submit https://kosama685.github.io/sastamilaga/sitemap.xml in Search Console.
 User-agent: *
 Allow: /
-Disallow: /checkout
-Disallow: /cart
 Disallow: /backup/
-Disallow: /private/
+Disallow: /partials/
 
-# XML Sitemaps
-Sitemap: https://sastamilaga.com/sitemap.xml
-
-# LLM Crawler Agents (AEO Optimization)
-User-agent: GPTBot
-Allow: /
-Disallow: /checkout
-Disallow: /cart
-
-User-agent: ChatGPT-User
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: OAI-SearchBot
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
+Sitemap: https://kosama685.github.io/sastamilaga/sitemap.xml
