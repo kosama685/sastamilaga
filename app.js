@@ -818,6 +818,18 @@ function renderHome() {
   fillHome();
 }
 
+/* "All products" switch: local catalogue (products.js) vs global catalogue (data/cj/c/*.js, 572 category files).
+   GLOBAL_TOTAL matches data/cj/manifest.js; the global page reads the live number from the manifest. */
+const GLOBAL_TOTAL = 451812;
+function catalogueSwitch(active) {
+  const all = (products.length + GLOBAL_TOTAL).toLocaleString();
+  return `<div class="sm-catswitch" role="tablist" aria-label="Catalogue">
+    <a role="tab" href="#/shop" aria-selected="${active === 'local'}" class="${active === 'local' ? 'is-on' : ''}"><b>Local products</b><small>${products.length.toLocaleString()} · PKR · cash on delivery</small></a>
+    <a role="tab" href="#/global/all" aria-selected="${active === 'global'}" class="${active === 'global' ? 'is-on' : ''}"><b>Global products</b><small>${GLOBAL_TOTAL.toLocaleString()} · worldwide · US$ estimates</small></a>
+  </div><p class="sm-catswitch__total">${all} products in total.</p>`;
+}
+window.SMCatalogueSwitch = catalogueSwitch;
+
 /* Home: global shop groups with their real counts from data/cj/manifest.js (all 451,812 CJ products), shown under the local categories. */
 function fillGlobalCats(localList) {
   const render = m => {
@@ -973,6 +985,7 @@ function renderListing(type, val, qs) {
         `<span class="eyebrow">${type === 'tag' ? 'Tag page' : type === 'category' ? 'Category page' : 'Results'}</span>`,
         `<h1>${esc(title)}</h1>`,
         `<p>${esc(subtitle)}. Filter by price, brand, stock and layout.</p>`,
+        type === 'shop' ? catalogueSwitch('local') : '',
         leafChips,
       '</div>',
       `<div class="blast-badge" aria-hidden="true">${base.length.toLocaleString()}<br>Items</div>`,

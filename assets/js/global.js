@@ -204,6 +204,39 @@
     draw();
   }
 
+  /* Every global product, page by page (60 per page) in manifest category order. A page loads only the 1–2 category
+     files that contain it, so all 451,812 products are reachable without downloading the whole catalogue. */
+  async function all(qs) {
+    const m = await manifest(), PER = 60, pages = Math.ceil(m.total / PER);
+    const page = Math.min(pages, Math.max(1, parseInt(new URLSearchParams(qs || '').get('page'), 10) || 1));
+    setSEO({ title: `All ${m.total.toLocaleString()} global products${page > 1 ? ` – page ${page}` : ''}`, description: `Browse all ${m.total.toLocaleString()} global products in ${m.cats.length} categories with worldwide delivery. Prices are US$ estimates confirmed before you pay.`, url: `${A.SITE_URL}/#/global/all${page > 1 ? '?page=' + page : ''}` });
+    const sw = window.SMCatalogueSwitch ? window.SMCatalogueSwitch('global') : '';
+    renderApp(`<section class="sm-page sm-page--wide">${pageHead('All global products', `${m.total.toLocaleString()} products in ${m.cats.length} categories, from ${m.csvFiles || 452} supplier files. Page ${page.toLocaleString()} of ${pages.toLocaleString()}.`, ['<a href="#/global">Global shop</a>'])}
+      ${sw}${globalNote()}<p id="gcount" class="sm-gcount" role="status">Loading products…</p><div id="ggrid" class="products-row"></div>
+      <nav class="sm-gpager" aria-label="Pages">${pager(page, pages)}</nav></section>`);
+    let start = (page - 1) * PER, need = PER; const out = []; let acc = 0;
+    for (const c of m.cats) {
+      if (need <= 0) break;
+      if (start >= acc + c.c) { acc += c.c; continue; }
+      const rows = await shard(c.s), from = Math.max(0, start - acc), take = rows.slice(from, from + need);
+      take.forEach(r => out.push([c.s, r])); need -= take.length; start += take.length; acc += c.c;
+    }
+    const first = (page - 1) * PER + 1;
+    document.getElementById('gcount').textContent = `Showing ${first.toLocaleString()}–${(first + out.length - 1).toLocaleString()} of ${m.total.toLocaleString()} global products`;
+    document.getElementById('ggrid').innerHTML = out.map(([s, r]) => card(s, r)).join('');
+    const jump = document.getElementById('gjump');
+    if (jump) jump.addEventListener('submit', e => { e.preventDefault(); const n = Math.min(pages, Math.max(1, parseInt(e.target.p.value, 10) || 1)); location.hash = `#/global/all?page=${n}`; });
+    window.scrollTo(0, 0);
+  }
+  function pager(page, pages) {
+    const link = (n, label, rel) => `<a href="#/global/all?page=${n}"${rel ? ` rel="${rel}"` : ''}${n === page ? ' aria-current="page" class="is-on"' : ''}>${label}</a>`;
+    const nums = [...new Set([1, page - 2, page - 1, page, page + 1, page + 2, pages])].filter(n => n >= 1 && n <= pages).sort((a, b) => a - b);
+    let html = page > 1 ? link(page - 1, '‹ Previous', 'prev') : '';
+    nums.forEach((n, i) => { if (i && n - nums[i - 1] > 1) html += '<span aria-hidden="true">…</span>'; html += link(n, n.toLocaleString()); });
+    if (page < pages) html += link(page + 1, 'Next ›', 'next');
+    return html + `<form id="gjump" class="sm-gpager__jump"><label for="gjump-p">Go to page</label><input id="gjump-p" name="p" type="number" min="1" max="${pages}" value="${page}"><button type="submit" class="sm-btn sm-btn--ghost">Go</button></form>`;
+  }
+
   window.SMGlobal = {
     route(parts, qs) {
       searchToken++;
@@ -213,6 +246,7 @@
       if (a === 'p' && b && c) return product(b, decodeURIComponent(c));
       if (a === 'search') return search(qs);
       if (a === 'videos') return videos();
+      if (a === 'all') return all(qs);
       return home();
     },
     manifest
