@@ -1,0 +1,42 @@
+# Sasta Milaga
+
+> Sasta Milaga is an online store and travel desk for Pakistan and Pakistanis abroad. It sells 20,063 local products priced in Pakistani rupees (PKR) with cash on delivery across Pakistan, lists 451,812 global products that ship worldwide (prices are USD estimates confirmed before payment), takes flight, hotel, Umrah and visa requests, and offers a Live TV page with reviewed channels.
+
+Key facts:
+- Local delivery in Pakistan: Rs 250 per order, free above Rs 5,000. Cash on delivery available for local products.
+- Returns: send a photo on WhatsApp within 7 days if an item is damaged or wrong.
+- Global items: stock, options, shipping and final total are confirmed with the customer before payment.
+- Travel: customers send route and dates through the travel search; the team replies on WhatsApp with options; the customer confirms the final price before paying.
+- Contact: WhatsApp +966510451995, info@sastamilaga.com. Main store: https://sastamilaga.com/
+
+## Shop
+- [All local products](https://kosama685.github.io/sastamilaga/#/shop): 20,063 products in 63 categories
+- [Home & Living](https://kosama685.github.io/sastamilaga/c/home-and-living.html): 4,933 products
+- [Fashion & Apparel](https://kosama685.github.io/sastamilaga/c/fashion-and-apparel.html): 4,486 products
+- [Health & Beauty](https://kosama685.github.io/sastamilaga/c/health-and-beauty.html): 4,445 products
+- [Electronics & Appliances](https://kosama685.github.io/sastamilaga/c/electronics-and-appliances.html): 2,064 products
+- [Automotive](https://kosama685.github.io/sastamilaga/c/automotive.html): 938 products
+- [Travel & Outdoor](https://kosama685.github.io/sastamilaga/c/travel-and-outdoor.html): 413 products
+- [Books & Stationery](https://kosama685.github.io/sastamilaga/c/books-and-stationery.html): 392 products
+- [Tools & DIY](https://kosama685.github.io/sastamilaga/c/tools-and-diy.html): 294 products
+- [Events & Gifting](https://kosama685.github.io/sastamilaga/c/events-and-gifting.html): 285 products
+- [Personal Care & Beauty](https://kosama685.github.io/sastamilaga/c/personal-care-and-beauty.html): 272 products
+- [Home](https://kosama685.github.io/sastamilaga/c/home.html): 191 products
+- [Toys & Games](https://kosama685.github.io/sastamilaga/c/toys-and-games.html): 177 products
+- [Global shop](https://kosama685.github.io/sastamilaga/c/global/index.html): 451,812 products in 572 categories
+
+## Help
+- [How to order](https://kosama685.github.io/sastamilaga/#/how-to-order)
+- [Shipping & delivery](https://kosama685.github.io/sastamilaga/#/shipping)
+- [Returns & refunds](https://kosama685.github.io/sastamilaga/#/returns)
+- [Track your order](https://kosama685.github.io/sastamilaga/#/track)
+- [Contact](https://kosama685.github.io/sastamilaga/#/contact)
+
+## Travel and media
+- [Flights, hotels, Umrah and visas](https://kosama685.github.io/sastamilaga/#/travel)
+- [Live TV](https://kosama685.github.io/sastamilaga/#/live-tv)
+- [Blog and guides](https://kosama685.github.io/sastamilaga/b/index.html)
+
+## Data
+- [Sitemap index](https://kosama685.github.io/sastamilaga/sitemap.xml)
+- [Product catalogue CSV](https://kosama685.github.io/sastamilaga/products.csv)

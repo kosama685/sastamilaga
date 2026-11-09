@@ -1,0 +1,1 @@
+SM_CJ_SHARD("women-s-sweatpants",[["2093638654767030273","CJWS3109092","2026 New Style Women's Clothing Casual Solid Color Hooded Drawstring Long Sleeved Women's Shirt Velvet Sweatshirt",9.72,9.72,"https://cj-product-center.oss-accelerate.aliyuncs.com/supplier/1688/b104bbcc-0447-40d2-a455-8e374db760be.jpg",""]]);

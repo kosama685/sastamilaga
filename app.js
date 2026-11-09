@@ -457,6 +457,9 @@ function renderCatalogTools() {
   };
 }
 
+/* Shared helpers for assets/js/global.js, blog.js and checkout.js (loaded after app.js). */
+window.SMApp = { esc, slug, renderApp, setSEO, toast, waLink, pageHead, showView, getCart, setCart, price, products, PKR, SITE_URL, LIVE_URL, WA_NUMBER, route: () => route() };
+
 /* Hooks used by the live video quick-view modal and other theme scripts. */
 window.smStatic = {
   addToCart(id, qty, silent) { if (products.some(p => p.id === id)) { addToCart(id, qty || 1); if (silent) return; } }
@@ -627,7 +630,7 @@ function route() {
   else if (parts[0] === 'faq')      renderFAQ();
   else if (parts[0] === 'about')    renderAbout();
   else if (parts[0] === 'return-policy') renderReturnPolicy();
-  else if (parts[0] === 'blog')     renderBlog();
+  else if (parts[0] === 'blog')     { if (window.SMBlog) window.SMBlog.route(parts[1]); else renderBlog(); }
   else if (parts[0] === 'careers')  renderCareers();
   else if (parts[0] === 'press')    renderPress();
   else if (parts[0] === 'contact')  renderContact();
@@ -647,7 +650,7 @@ function route() {
   else if (parts[0] === 'how-to-order') renderHowToOrder();
   else if (parts[0] === 'language') renderLanguage();
   else if (parts[0] === 'catalog-tools') renderCatalogTools();
-  else renderHome();
+  else if (parts[0] === 'global')   { if (window.SMGlobal) window.SMGlobal.route(parts.slice(1), qs); else renderApp(`<section class="sm-page">${pageHead('Global shop', 'The global catalogue is still loading. Reload the page if this message stays.')}</section>`); }  else renderHome();
 }
 
 /* ============================================================

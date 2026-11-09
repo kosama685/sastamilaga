@@ -1,0 +1,1 @@
+SM_CJ_SHARD("women-s-denim-tops",[["2113570698435817473","CJWD3321414","New Women's Long Sleeve Stand Collar Double-breasted Ruffle Denim Jacket, Elegant Style, Autumn Essential For Women",22.5,22.5,"https://cf.cjdropshipping.com/d3445433-87ef-448c-a11c-d1161d08c83d.jpg",""]]);

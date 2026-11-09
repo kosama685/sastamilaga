@@ -1,0 +1,1 @@
+SM_CJ_SHARD("2-in-1-tablets",[["2603121534521623100","CJYD2785765","Drawing Tablet Writing Board Handwriting Tablet Notebook",66.17,66.17,"https://oss-cf.cjdropshipping.com/product/2026/03/12/15/fc21e511-d5de-4c15-bed6-f5798d815f7d_trans.jpeg",""]]);

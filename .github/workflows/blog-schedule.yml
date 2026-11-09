@@ -1,0 +1,56 @@
+# Publishes scheduled blog posts: every day at 00:10 Pakistan time it builds static pages for
+# posts in assets/data/blog.js whose publish date has arrived, commits them and redeploys Pages.
+name: Publish scheduled blog posts
+
+on:
+  schedule:
+    - cron: '10 19 * * *'   # 19:10 UTC = 00:10 Asia/Karachi
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Build due posts
+        run: node tools/build-blog.mjs
+      - name: Commit changes
+        id: commit
+        run: |
+          git config user.name "sasta-milaga-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add b sitemap-blog.xml sitemap.xml
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "Publish scheduled blog posts"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Setup Pages
+        if: steps.commit.outputs.changed == 'true'
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        if: steps.commit.outputs.changed == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - name: Deploy to GitHub Pages
+        if: steps.commit.outputs.changed == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v4

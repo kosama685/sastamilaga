@@ -1,0 +1,1 @@
+SM_CJ_SHARD("women-s-denim-skirts",[["2107346046455111682","CJWD3225296","Cross-border Foreign Trade Sexy Spice Girl Skirt A- Shaped Split Slimming Denim Skirt Spring Summer",14.15,14.15,"https://cf.cjdropshipping.com/b3f153e0-e677-4984-97e2-6e6ae4501822.png",""]]);
