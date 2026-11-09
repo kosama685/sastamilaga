@@ -34,6 +34,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Syntax check of the site scripts (a broken script must never be deployed)
+        run: |
+          for f in app.js assets/js/*.js; do node --check "$f" || exit 1; done
       - name: Build blog posts that are due (any deploy publishes them, not only the daily schedule)
         run: node tools/build-blog.mjs
       - name: Clean URLs (section pages, clean links, sitemap entries)

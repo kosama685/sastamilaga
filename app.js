@@ -109,7 +109,8 @@ function pageUrl(p)      { return `${SITE_URL}/${pagePath(p)}`; }
    ============================================================ */
 const APP_BASE = (() => { try { return new URL('.', document.currentScript.src).pathname; } catch (e) { return location.pathname.replace(/[^/]*$/, ''); } })();
 const CLEAN_SECTIONS = ['shop', 'deals', 'videos', 'travel', 'live-tv', 'global', 'about', 'faq', 'contact', 'how-to-order', 'shipping',
-  'returns', 'return-policy', 'privacy', 'terms', 'cookies', 'track', 'seller', 'careers', 'press', 'sitemap'];
+  'returns', 'return-policy', 'privacy', 'terms', 'cookies', 'track', 'seller', 'careers', 'press', 'sitemap',
+  'cart', 'checkout', 'wishlist', 'account', 'thank-you'];   /* last five: private pages, real URLs but noindex and not in the sitemap */
 let _byPage = null;
 function productByPage(file) { if (!_byPage) { _byPage = new Map(); products.forEach(p => _byPage.set(pagePath(p), p)); } return _byPage.get(file); }
 function blogPublished(s) { const today = new Date(Date.now() + 5 * 3600e3).toISOString().slice(0, 10); return (window.SM_BLOG || []).some(b => b.slug === s && b.publish <= today); }
@@ -1549,15 +1550,16 @@ function removeCart(id) { setCart(getCart().filter(x => x.id !== id)); renderCar
 window.cartQty    = cartQty;
 window.removeCart = removeCart;
 
-function summaryBox(sub) {
-  const delivery = sub > 5000 ? 0 : 250;
+function summaryBox(sub, onCheckout) {
+  const C = window.SM_CONFIG || {};
+  const delivery = sub > (C.freeDeliveryFrom || 5000) ? 0 : (C.deliveryFee || 250);
   const total    = sub + delivery;
   return `<aside class="summary-box">
     <h2 style="margin:0 0 14px">Order Summary</h2>
     <div class="summary-row"><span>Subtotal</span><b>${PKR.format(sub)}</b></div>
     <div class="summary-row"><span>Delivery</span><b>${delivery ? PKR.format(delivery) : 'Free'}</b></div>
     <div class="summary-row" style="border:0;font-size:1.2rem"><span>Total</span><b style="color:var(--gold2)">${PKR.format(total)}</b></div>
-    <a class="primary-btn" style="width:100%;justify-content:center;display:flex;margin-top:14px" href="#/checkout">Proceed to checkout</a>
+    ${onCheckout ? '' : '<a class="primary-btn" style="width:100%;justify-content:center;display:flex;margin-top:14px" href="#/checkout">Proceed to checkout</a>'}
   </aside>`;
 }
 
@@ -1609,10 +1611,24 @@ function renderCheckout() {
         </select>
         <textarea name="address" required placeholder="Complete delivery address" aria-label="Delivery address"></textarea>
         <textarea name="notes" placeholder="Order notes (optional)" aria-label="Order notes"></textarea>
-        
-        <button type="submit" class="primary-btn" style="grid-column:1/-1;padding:16px">Place order</button>
+
+        <section id="smPay" class="sm-pay" hidden aria-labelledby="smPayTitle" style="grid-column:1/-1">
+          <h3 id="smPayTitle">Pay now with PayPal</h3>
+          <p class="sm-pay__amt" id="smPayAmt" role="status" aria-live="polite">Getting today's exchange rate…</p>
+          <div class="sm-pay__btns">
+            <button type="button" class="sm-pay__btn sm-pay__btn--pp" data-pay="Login"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg><span>Pay with PayPal</span></button>
+            <button type="button" class="sm-pay__btn sm-pay__btn--card" data-pay="Billing"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/></svg><span>Pay by debit or credit card</span></button>
+          </div>
+          <ul class="sm-pay__facts" role="list">
+            <li>Your order is saved first, so nothing is lost if you close the page.</li>
+            <li>PayPal opens in the next step. Card details are typed on PayPal's secure page; we never see or store them.</li>
+            <li>No PayPal account is needed for card payment where PayPal offers guest checkout in your country.</li>
+          </ul>
+        </section>
+
+        <button type="submit" id="smPlaceOrder" class="primary-btn" style="grid-column:1/-1;padding:16px">Place order</button>
       </form>
-      ${summaryBox(sub)}
+      ${summaryBox(sub, true)}
     </div>
   </section>`);
 }
@@ -1657,9 +1673,52 @@ function renderThankYou() {
     </section>`);
 }
 
-window.placeOrder = function (e) {
+/* PayPal panel: shown when "PayPal or debit/credit card" is selected; its two buttons save the order, then open PayPal
+   (Login = PayPal account, Billing = guest debit/credit card form). */
+function checkoutTotals() {
+  const C = window.SM_CONFIG || {};
+  const lines = getCart().map(x => ({ p: products.find(p => p.id === x.id), qty: x.qty })).filter(x => x.p);
+  const sub = lines.reduce((a, x) => a + price(x.p) * x.qty, 0);
+  const delivery = sub > (C.freeDeliveryFrom || 5000) ? 0 : (C.deliveryFee || 250);
+  return { lines, sub, delivery, totalPkr: sub + delivery };
+}
+async function payAmount() {
+  const cur = paypalCurrency(), { totalPkr } = checkoutTotals();
+  const r = await fetch('https://open.er-api.com/v6/latest/PKR').then(x => x.json());
+  const rate = r && r.rates && r.rates[cur]; if (!rate) throw new Error('rate');
+  const dec = PAYPAL_NO_DECIMALS.includes(cur) ? 0 : 2;
+  return { cur, rate, amount: Math.max(dec ? 0.01 : 1, Math.round(totalPkr * rate * 10 ** dec) / 10 ** dec).toFixed(dec), totalPkr };
+}
+let _payReq = 0;
+function syncPay() {
+  const form = document.getElementById('checkoutForm'); if (!form) return;
+  const on = form.elements.payment_method.value === 'PayPal / Card';
+  const panel = document.getElementById('smPay'), place = document.getElementById('smPlaceOrder'), amt = document.getElementById('smPayAmt');
+  panel.hidden = !on;
+  // "PayPal" (Worker checkout in assets/js/checkout.js, when configured) manages the submit button itself.
+  if (on || form.elements.payment_method.value !== 'PayPal') place.hidden = on;
+  if (!on) return;
+  const my = ++_payReq;
+  if (!checkoutTotals().lines.length) { amt.textContent = 'Your cart is empty. Add products before paying.'; panel.querySelectorAll('[data-pay]').forEach(b => { b.disabled = true; }); return; }
+  panel.querySelectorAll('[data-pay]').forEach(b => { b.disabled = true; });
+  amt.textContent = 'Getting today\'s exchange rate…';
+  payAmount().then(a => {
+    if (my !== _payReq) return;
+    amt.innerHTML = `You pay <b>${esc(a.cur)} ${esc(Number(a.amount).toLocaleString('en', { minimumFractionDigits: a.cur === 'JPY' || a.cur === 'HUF' || a.cur === 'TWD' ? 0 : 2 }))}</b> <small>(${PKR.format(a.totalPkr)} including delivery, at today's rate of 1 PKR = ${esc(String(a.rate))} ${esc(a.cur)}${a.cur === 'USD' && (JSON.parse(localStorage.getItem('sm_market') || '{}').currency || 'PKR') !== 'USD' ? '. PayPal cannot charge ' + esc(JSON.parse(localStorage.getItem('sm_market') || '{}').currency || 'PKR') + ', so US$ is used' : ''})</small>`;
+    panel.querySelectorAll('[data-pay]').forEach(b => { b.disabled = false; });
+  }).catch(() => { if (my === _payReq) amt.textContent = 'Could not get today\'s exchange rate. Check your connection and reselect PayPal, or choose cash on delivery.'; });
+}
+document.addEventListener('change', e => { if (e.target.matches && e.target.matches('#checkoutForm select[name="payment_method"]')) syncPay(); });
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('[data-pay]'); if (!b || b.disabled) return;
+  const form = document.getElementById('checkoutForm'); if (!form.reportValidity()) return;
+  window.placeOrder({ preventDefault() { } }, b.dataset.pay, b);
+});
+
+window.placeOrder = function (e, landing, trigger) {
   e.preventDefault();
   const form = document.getElementById('checkoutForm');
+  if (!checkoutTotals().lines.length) { toast('Your cart is empty. Add products first.'); return; }
   const data = new FormData(form);
   
   // Capture Meta Pixel data BEFORE form submission
@@ -1668,10 +1727,10 @@ window.placeOrder = function (e) {
   const productIds = metaProductIdsEl ? JSON.parse(metaProductIdsEl.value) : [];
   const orderTotal = metaOrderTotalEl ? parseFloat(metaOrderTotalEl.value) : 0;
   
-  const btn = form.querySelector('button[type="submit"]');
+  const btn = trigger || form.querySelector('button[type="submit"]');
   const originalText = btn.innerText;
   btn.disabled = true;
-  btn.innerText = 'Processing...';
+  btn.innerText = trigger ? 'Saving your order…' : 'Processing...';
 
   // Order contents: the order email must list what was bought.
   const C = window.SM_CONFIG || {};
@@ -1712,7 +1771,7 @@ window.placeOrder = function (e) {
     if (response.ok && response.usd) {
       try { localStorage.setItem('latestOrder', JSON.stringify({ total: orderTotal, currency: 'PKR', itemIds: productIds, transactionId: orderId, timestamp: Date.now(), paypal: response.usd })); } catch (e) { }
       setCart([]);
-      location.href = paypalLink({ email: C.paypalEmail, usd: response.usd, currency: payCur, orderId, items: lines.length });
+      location.href = paypalLink({ email: C.paypalEmail, usd: response.usd, currency: payCur, orderId, items: lines.length, landing: landing || 'Login' });
       return;
     }
     if (response.ok) {
@@ -1763,11 +1822,11 @@ function paypalCurrency() {
   let c = 'USD'; try { c = (JSON.parse(localStorage.getItem('sm_market') || '{}').currency || 'USD').toUpperCase(); } catch (e) { }
   return PAYPAL_CURRENCIES.includes(c) ? c : 'USD';
 }
-function paypalLink({ email, usd, currency = 'USD', orderId, items }) {
+function paypalLink({ email, usd, currency = 'USD', orderId, items, landing = 'Login' }) {
   const q = new URLSearchParams({
     cmd: '_xclick', business: email, item_name: `Sasta Milaga order ${orderId} (${items} item${items > 1 ? 's' : ''})`,
     item_number: orderId, invoice: orderId, amount: usd, currency_code: currency, quantity: '1', no_shipping: '1', no_note: '1',
-    charset: 'utf-8', return: `${SITE_URL}/#/thank-you`, cancel_return: `${SITE_URL}/#/cart`, rm: '1', landing_page: 'billing'
+    charset: 'utf-8', return: `${SITE_URL}/thank-you/`, cancel_return: `${SITE_URL}/cart/`, rm: '1', landing_page: landing
   });
   return 'https://www.paypal.com/cgi-bin/webscr?' + q.toString();
 }

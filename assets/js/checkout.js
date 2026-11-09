@@ -35,7 +35,7 @@
   }
 
   function enhance() {
-    if (!/^#\/checkout/.test(location.hash)) return;
+    if (!/^#\/checkout/.test(location.hash) && !(A.cleanRoute && A.cleanRoute(location.pathname) === 'checkout')) return;
     const form = document.getElementById('checkoutForm');
     if (!form || form.dataset.paypal) return;
     form.dataset.paypal = '1';

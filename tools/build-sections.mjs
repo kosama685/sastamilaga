@@ -34,7 +34,14 @@ const SECTIONS = {
   careers: ['Careers', 'Work with Sasta Milaga.'],
   press: ['Press', 'Sasta Milaga news and press information.'],
   sitemap: ['Site map', 'All sections, categories and pages of Sasta Milaga.'],
+  // Private pages: real URLs (no #) but noindex, not in the sitemap.
+  cart: ['Your cart', 'Review the items in your Sasta Milaga cart.'],
+  checkout: ['Checkout', 'Complete your Sasta Milaga order: cash on delivery, bank transfer, EasyPaisa/JazzCash or PayPal.'],
+  wishlist: ['Saved items', 'Your saved products at Sasta Milaga.'],
+  account: ['Your account', 'Sign in or register at Sasta Milaga.'],
+  'thank-you': ['Thank you for your order', 'Your Sasta Milaga order has been received.'],
 };
+const PRIVATE = new Set(['cart', 'checkout', 'wishlist', 'account', 'thank-you']);
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
 /* #/route -> clean relative URL, only when that file exists. */
@@ -70,6 +77,7 @@ for (const [sec, [title, desc]] of Object.entries(SECTIONS)) {
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(full)}</title>`)
     .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${esc(desc)}">`)
     .replace(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="${url}">`)
+    .replace(/<meta name="robots" content="[^"]*">/, `<meta name="robots" content="${PRIVATE.has(sec) ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'}">`)
     .replace(/(<link rel="alternate" hreflang="(?:en|x-default)" href=")[^"]*(">)/g, `$1${url}$2`)
     .replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${esc(full)}">`)
     .replace(/<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${esc(desc)}">`)
@@ -84,7 +92,7 @@ const smPath = path.join(ROOT, 'sitemap-pages.xml');
 if (fs.existsSync(smPath)) {
   let sm = fs.readFileSync(smPath, 'utf8'), added = 0;
   const today = new Date().toISOString().slice(0, 10);
-  const urls = Object.keys(SECTIONS).filter(s => s !== 'global').map(s => `${SITE}/${s}/`).concat(`${SITE}/b/`);
+  const urls = Object.keys(SECTIONS).filter(s => s !== 'global' && !PRIVATE.has(s)).map(s => `${SITE}/${s}/`).concat(`${SITE}/b/`);
   for (const u of urls) if (!sm.includes(`<loc>${u}</loc>`)) { sm = sm.replace('</urlset>', `<url><loc>${u}</loc><lastmod>${today}</lastmod></url>\n</urlset>`); added++; }
   fs.writeFileSync(smPath, sm);
   console.log(`sitemap-pages.xml: ${added} section URLs added`);
