@@ -118,11 +118,40 @@ The WordPress channel list (`https://sastamilaga.com/wp-json/sltv/v1/channels`) 
 
 Do not publish a partial list.
 
-## 7. Orders into Google Sheets (optional)
+## 7. Orders into Google Sheets (`apps-script/Code.gs`)
 
-1. Create an Apps Script project and deploy it as a web app (Execute as: me; Who has access: Anyone).
-2. Copy the `/exec` URL into a new `sheetEndpoint` setting.
-3. Wire up the checkout. See the Apps Script prompt from the project chat.
+The checkout is already wired. It turns on as soon as `sheetEndpoint` is set.
+
+1. Create a Google Sheet, then open Extensions → Apps Script and paste `apps-script/Code.gs` as `Code.gs`.
+2. Go to Project Settings → Script properties and add:
+   - `ORDER_TOKEN`: any long random text.
+   - `NOTIFY_EMAIL` (optional): an address that gets an email for every order.
+3. Choose Deploy → New deployment → Web app. Set "Execute as" to Me and "Who has access" to Anyone. Authorize it,
+   then copy the `/exec` URL.
+4. In `assets/js/config.js`:
+   - set `sheetEndpoint` to the `/exec` URL;
+   - set `sheetToken` to the same text as `ORDER_TOKEN`.
+
+   Then commit and push.
+
+Each order then adds one row to the "Orders" sheet, plus one row per item to "Order Items". A repeated order ID is
+ignored, and a request with a wrong token or a bad order ID is rejected. Orders still go to Formspree as well, so a Sheets
+problem never loses an order.
+
+If you change `Code.gs` later, choose Deploy → Manage deployments → Edit → New version. That keeps the same URL.
+
+## 7a. Country / language / currency window (`assets/js/market.js`)
+
+It works without setup and opens from the header "Shopping destination" button.
+
+- **Countries:** 246, each with its suggested currency.
+- **Languages:** the site's 128 browser-translated languages, labelled as machine translation.
+- **Currency:** converted amounts are shown as "≈ estimates" next to the real price, using the open.er-api.com rate,
+  cached for 12 hours. Checkout and payment stay in PKR for local products and US$ for global ones.
+- **Location suggestion:** only after the visitor ticks the box, and then one request to ipapi.co.
+- **Saved choice:** stored in the visitor's browser under `sm_market`.
+
+To change a country's suggested currency, edit the `CUR` map at the top of `market.js`.
 
 ## 8. Checks after any change
 

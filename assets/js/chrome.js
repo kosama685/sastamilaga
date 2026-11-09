@@ -50,4 +50,6 @@
   }).catch(function () { /* the fallback logo header stays */ });
   /* WhatsApp order button on every product and video card */
   var wa = document.createElement('script'); wa.src = prefix + 'assets/js/wa-cards.js'; wa.defer = true; document.head.appendChild(wa);
+  /* Country / language / currency window (header "Shopping destination" button) */
+  var mk = document.createElement('script'); mk.src = prefix + 'assets/js/market.js'; mk.defer = true; document.head.appendChild(mk);
 })();

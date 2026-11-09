@@ -1595,6 +1595,12 @@ window.placeOrder = function (e) {
       usd = Math.max(0.01, Math.round(totalPkr * rate * 100) / 100).toFixed(2);
       data.set('payment_status', `Awaiting PayPal payment of US$${usd} (1 PKR = ${rate} USD). Confirm receipt in PayPal before dispatch.`);
     }
+    // Google Sheets order log (apps-script/Code.gs), in parallel; never blocks the order. no-cors: Apps Script redirects.
+    if (C.sheetEndpoint) {
+      const sd = new FormData(); data.forEach((v, k) => sd.append(k, v));
+      sd.set('sheet_token', C.sheetToken || ''); sd.set('page', location.href.slice(0, 300));
+      fetch(C.sheetEndpoint, { method: 'POST', body: sd, mode: 'no-cors' }).catch(() => {});
+    }
     return fetch(C.orderEndpoint || 'https://formspree.io/f/xwvzzjdl', { method: 'POST', body: data, headers: { 'Accept': 'application/json' } })
       .then(response => { response.usd = usd; return response; });
   })

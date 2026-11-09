@@ -16,6 +16,10 @@ window.SM_CONFIG = {
   /* URL of the deployed CJ shipping Worker (workers/cj-shipping), e.g. 'https://sastamilaga-cj-shipping.<account>.workers.dev'.
      When set, global product pages show live supplier shipping prices. The CJ key stays in Cloudflare. */
   cjShippingWorker: '',
+  /* Google Sheets order log (apps-script/Code.gs). sheetEndpoint = the web app /exec URL; sheetToken = the same text as
+     the script property ORDER_TOKEN. Orders still go to orderEndpoint (Formspree) too. Leave empty to disable. */
+  sheetEndpoint: '',
+  sheetToken: '',
   orderEndpoint: 'https://formspree.io/f/xwvzzjdl',
   whatsapp: '966510451995',
   deliveryFee: 250,
