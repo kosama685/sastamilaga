@@ -1,70 +1,71 @@
-# Sasta Milaga Blastic Marketplace
+# Sasta Milaga — static storefront
 
-This ZIP contains a complete static HTML/CSS/JavaScript marketplace prototype built from your uploaded CSV.
+A static HTML/CSS/JavaScript copy of the sastamilaga.com storefront, hosted on GitHub Pages:
+https://kosama685.github.io/sastamilaga/
 
-## Files
+It reuses the live theme (header, mega menu, travel search, Live TV, footer). There is no build server: the data is in JS
+files, and crawlable HTML pages are generated ahead of time and committed.
 
-- `index.html` - Main single-page website.
-- `styles.css` - Blastic animated dark/neon marketplace design.
-- `app.js` - Routing, product rendering, filters, search, cart, wishlist, PDP, checkout, mega menu, and CSV-trained catalog helper chatbot.
-- `products.js` - All 13,674 products converted from your CSV into browser-readable JavaScript.
-- `products.csv` - Original uploaded CSV copied into the project.
-- `Code.gs` - Your Google Apps Script backend file for Google Sheets integration.
+## Catalogue
 
-## How to run locally
+| Data | Files | Count |
+|---|---|---|
+| Local products (WooCommerce export, with SEO title and description) | `products.js`, `products.csv`, `p/*.html` | 20,063 |
+| Local category pages | `c/*.html` | 217 |
+| Global (CJ) supplier products | `data/cj/manifest.js` + `data/cj/c/<category>.js` (loaded on demand) | 451,812 in 572 categories |
+| Global category pages | `c/global/*.html` | 573 |
+| Global product videos | `data/cj/videos.js` | 5,804 |
+| Airports for flight search (OurAirports, public domain) | `data/travel/airports.js` | 4,133 |
+| Live TV channels | live sltv API (local snapshot pending, see below) | 10,619 on the API |
 
-Because the catalog is embedded in `products.js`, you can open `index.html` directly in a browser.
+Global product prices are the supplier's US$ price plus margin, shown as estimates. Orders for them are sent as a
+WhatsApp request and confirmed by the team before payment.
 
-For best results, use a local server:
+## Routes
+
+The app is a hash-routed SPA (`app.js`): `#/home`, `#/shop`, `#/category/<slug>`, `#/product/<id>`, `#/search?q=`,
+`#/cart`, `#/checkout`, `#/global`, `#/global/c/<slug>`, `#/global/search?q=`, `#/global/videos`, `#/blog`,
+`#/blog/<slug>`, `#/live-tv`, `#/travel`, `#/catalog-tools` (CSV import/export).
+
+Every product, category and blog post also has a plain HTML page (`p/`, `c/`, `c/global/`, `b/`) with its own title,
+description, canonical URL and JSON-LD.
+
+## Scripts
+
+- `assets/js/local-api.js` answers flight airport suggestions from `data/travel/airports.js`, so they work without the
+  WordPress API. It can do the same for Live TV listings once the channel snapshot exists (`liveTvSnapshot`). Hotel city lookup uses the live
+  API because the booking partner needs its own city IDs.
+- `assets/js/checkout.js` adds PayPal when `paypalClientId` is set in `assets/js/config.js`. Only the public Client ID
+  goes there, never the secret.
+- `assets/js/global.js` is the global shop, and `assets/js/blog.js` is the blog.
+
+## Blog scheduling
+
+Posts are listed in `assets/data/blog.js`, each with a `date`. The SPA shows only posts whose date has passed.
+`.github/workflows/blog-schedule.yml` runs `node tools/build-blog.mjs` every day at 00:10 Pakistan time, then commits
+the new `b/*.html` pages and the sitemap and redeploys Pages. You can also run it by hand from the Actions tab.
+
+## SEO files
+
+- `sitemap.xml` (index), `sitemap-pages.xml`, `sitemap-products-{1,2,3}.xml`, `sitemap-global.xml`, `sitemap-blog.xml`
+- `robots.txt`, `llms.txt`
+
+## Run locally
 
 ```bash
 python -m http.server 8000
 ```
 
-Then open:
+Then open http://localhost:8000.
 
-```text
-http://localhost:8000
-```
+## Known limits
 
-## Main pages inside the SPA
+- Live TV still reads from the WordPress sltv API, which is slow (about 50 s per page) and sometimes times out (524).
+  `local-api.js` can serve a local snapshot once `data/livetv/channels.js` holds all 177 pages; then set
+  `liveTvSnapshot: true` in `assets/js/config.js`.
 
-- `#/home`
-- `#/category/fashion-and-apparel`
-- `#/tag/cosmetics`
-- `#/search?q=mobile`
-- `#/deals`
-- `#/product/<product-handle>`
-- `#/cart`
-- `#/wishlist`
-- `#/checkout`
-- `#/store/<store-name>`
-
-## CSV fields used
-
-The website uses:
-`product_id`, `sku`, `handle`, `product_type`, `name`, `category_main`, `category_path`, `category_leaf`, `brand_or_store`, `source_price`, `base_price`, `final_price`, `stock_quantity`, `in_stock`, `published`, `status`, `short_description`, `description`, `tags`, `primary_image`, `image_urls`, `video_urls`, `image_alt_tags`, `seo_meta_title`, `seo_meta_description`, and `last_updated`.
-
-## Chatbot
-
-The "Sasta AI Helper" is a local JavaScript catalog assistant. It does not call an external AI API. It searches and ranks your CSV products by category, tags, text, stock, video availability, price, and discount.
-
-Try:
-- `mobile under 1000`
-- `cosmetics deals`
-- `fashion with video`
-- `home decor`
-- `car accessories in stock`
-
-## Google Sheets backend
-
-To connect Google Sheets:
-
-1. Open Google Sheets.
-2. Import `products.csv` into a tab named `Products`.
-3. Open Extensions > Apps Script.
-4. Paste `Code.gs`.
-5. Deploy as Web App.
-6. Add frontend fetch/order logic as needed for live order submission.
-
-The current website works fully as a static frontend demo using localStorage for cart and wishlist.
+- PayPal is off until a public Client ID is added. A server-side endpoint is needed to verify payments, and GitHub Pages
+  cannot run one.
+- Individual global products have no static pages, because 451,812 pages would exceed the 1 GB Pages limit. Their
+  canonical link points to the product page on sastamilaga.com.
+- hreflang is English / x-default only. Translation happens in the browser, so no translated pages exist to list.

@@ -10,5 +10,8 @@ window.SM_CONFIG = {
   orderEndpoint: 'https://formspree.io/f/xwvzzjdl',
   whatsapp: '966510451995',
   deliveryFee: 250,
-  freeDeliveryFrom: 5000
+  freeDeliveryFrom: 5000,
+  /* true = Live TV lists channels from data/livetv/channels.js (a full snapshot of the approved sltv list)
+     instead of the WordPress API. Turn on only after that file has been built from all pages. */
+  liveTvSnapshot: false
 };
