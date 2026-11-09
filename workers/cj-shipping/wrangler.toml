@@ -1,0 +1,8 @@
+# Public settings only. The CJ key is a secret: `npx wrangler secret put CJ_API_KEY` (never commit it).
+name = "sastamilaga-cj-shipping"
+main = "worker.js"
+compatibility_date = "2025-07-18"
+
+[vars]
+ALLOWED_ORIGINS = "https://kosama685.github.io"
+START_COUNTRY = "CN"

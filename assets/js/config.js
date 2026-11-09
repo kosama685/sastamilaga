@@ -13,6 +13,9 @@ window.SM_CONFIG = {
   /* URL of the deployed PayPal Worker (workers/paypal), e.g. 'https://sastamilaga-paypal.<account>.workers.dev'.
      PayPal stays hidden until both paypalClientId and paypalWorker are set. */
   paypalWorker: '',
+  /* URL of the deployed CJ shipping Worker (workers/cj-shipping), e.g. 'https://sastamilaga-cj-shipping.<account>.workers.dev'.
+     When set, global product pages show live supplier shipping prices. The CJ key stays in Cloudflare. */
+  cjShippingWorker: '',
   orderEndpoint: 'https://formspree.io/f/xwvzzjdl',
   whatsapp: '966510451995',
   deliveryFee: 250,

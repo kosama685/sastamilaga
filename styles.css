@@ -333,3 +333,13 @@ body.lock { overflow: hidden; }
 .sm-home-global__head h3 { margin: 0; font-size: clamp(20px, 2.4vw, 26px); letter-spacing: -0.02em; }
 .sm-home-global__head a { color: #1a5c2a; font-weight: 600; }
 .sm-home-global__head a:focus-visible { outline: 2px solid #1a5c2a; outline-offset: 2px; }
+
+/* Global product: CJ shipping quote */
+.sm-ship { border: 1px solid #e3e8e1; border-radius: 12px; padding: 12px 14px; margin: 4px 0 12px; }
+.sm-ship legend { font-weight: 600; padding: 0 4px; }
+.sm-ship__row { display: flex; gap: 8px; flex-wrap: wrap; }
+.sm-ship__row select { flex: 1 1 160px; min-height: 40px; }
+.sm-ship__out { margin-top: 10px; font-size: 14px; line-height: 1.6; }
+.sm-ship__opt { display: grid; grid-template-columns: auto 1fr auto; gap: 2px 8px; align-items: center; padding: 6px 0; border-top: 1px solid #eef1ec; }
+.sm-ship__opt small { grid-column: 2 / -1; color: #5b6472; }
+.sm-ship__note { margin: 8px 0 0; color: #5b6472; font-size: 13px; }

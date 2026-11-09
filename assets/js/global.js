@@ -113,14 +113,41 @@
       <aside class="buy-panel" aria-label="Order options"><span class="eyebrow">${esc(c.n)}</span><h1>${esc(r[2])}</h1><p class="product-meta">SKU: ${esc(r[1])} · Global item</p>
         <div style="margin:12px 0"><span class="big-price">${est(r)}</span> <small class="sm-est">estimated</small></div>
         <form class="sm-greq" id="greq"><label><span>Quantity</span><input type="number" name="qty" min="1" max="99" value="1"></label><label><span>Size, colour or option (optional)</span><input name="opt" maxlength="120" placeholder="e.g. Blue, size M"></label><label><span>Deliver to (country and city)</span><input name="to" required maxlength="120" placeholder="e.g. Pakistan, Karachi"></label>
+          ${shipBox()}
           <button type="submit" class="sm-wa-btn">Request this item on WhatsApp</button></form>
         <ul class="sm-buy-facts" role="list"><li>We confirm stock, options and shipping first</li><li>Pay by card or PayPal link after confirmation</li><li>Delivery time depends on your country</li></ul>
         <p class="product-meta"><a href="${esc(liveUrl(r))}" rel="noopener">View this product on sastamilaga.com</a></p></aside></section>
       <section class="section"><div class="section-head"><div><h2>More in ${esc(c.n)}</h2></div><a class="ghost-btn" href="#/global/c/${cs}">View all</a></div><div class="products-row">${related.map(x => card(cs, x)).join('')}</div></section>`);
+    bindShip(r);
     document.getElementById('greq').addEventListener('submit', e => {
       e.preventDefault(); const f = e.target;
-      const msg = `Assalam o Alaikum! I want to order a global item:\n${r[2]}\nSKU: ${r[1]}\nQuantity: ${f.qty.value}\n${f.opt.value ? 'Option: ' + f.opt.value + '\n' : ''}Deliver to: ${f.to.value}\nEstimated price: ${est(r)}\n${liveUrl(r)}\nPlease confirm stock, shipping and the final total.`;
+      const ship = f.ship && f.ship.value ? `Shipping chosen: ${f.ship.value}\n` : '';
+      const msg = `Assalam o Alaikum! I want to order a global item:\n${r[2]}\nSKU: ${r[1]}\nQuantity: ${f.qty.value}\n${f.opt.value ? 'Option: ' + f.opt.value + '\n' : ''}Deliver to: ${f.to.value}\nEstimated price: ${est(r)}\n${ship}${liveUrl(r)}\nPlease confirm stock, shipping and the final total.`;
       window.open(waLink(msg), '_blank', 'noopener'); toast('Opening WhatsApp with your request');
+    });
+  }
+  /* Live CJ shipping quote (workers/cj-shipping). Shown only when SM_CONFIG.cjShippingWorker is set. */
+  function shipBox() {
+    if (!(window.SM_CONFIG || {}).cjShippingWorker) return '';
+    let names; try { names = new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) { names = null; }
+    const codes = 'AF AL DZ AR AM AU AT AZ BH BD BY BE BR BG CA CL CN CO HR CY CZ DK EG EE FI FR GE DE GH GR HK HU IN ID IQ IE IL IT JP JO KZ KE KW KG LV LB LT LU MY MV MT MX MA NP NL NZ NG NO OM PK PS PH PL PT QA RO RU SA RS SG SK SI ZA KR ES LK SE CH TW TJ TH TN TR TM UA AE GB US UZ VN YE'.split(' ');
+    const opts = codes.map(c => [c, names ? names.of(c) : c]).sort((a, b) => a[1].localeCompare(b[1])).map(([c, n]) => `<option value="${c}"${c === 'PK' ? ' selected' : ''}>${esc(n)}</option>`).join('');
+    return `<fieldset class="sm-ship"><legend>Shipping cost</legend><div class="sm-ship__row"><label class="screen-reader-text" for="gship-cc">Ship to country</label><select id="gship-cc">${opts}</select><button type="button" class="sm-btn sm-btn--ghost" id="gship-go">Get shipping cost</button></div>
+      <div id="gship-out" class="sm-ship__out" role="status" aria-live="polite"></div></fieldset>`;
+  }
+  function bindShip(r) {
+    const go = document.getElementById('gship-go'); if (!go) return;
+    const out = document.getElementById('gship-out'), W = window.SM_CONFIG.cjShippingWorker.replace(/\/$/, '');
+    go.addEventListener('click', async () => {
+      const cc = document.getElementById('gship-cc').value, qty = Number(document.querySelector('#greq [name="qty"]').value) || 1;
+      go.disabled = true; out.textContent = 'Getting shipping options from the supplier…';
+      try {
+        const res = await fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ country: cc, items: [{ pid: r[0], sku: r[1], qty }] }) });
+        const d = await res.json();
+        if (!res.ok || !d.methods || !d.methods.length) { out.textContent = (d && d.error ? d.error + '. ' : '') + 'We will confirm shipping on WhatsApp.'; return; }
+        out.innerHTML = d.methods.slice(0, 6).map((m, i) => `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(`${m.name}: ${USD.format(m.price)}, ${m.days} days`)}"${i ? '' : ' checked'}> <span>${esc(m.name)}</span> <b>${USD.format(m.price)}</b> <small>${esc(m.days)} days</small></label>`).join('') + '<p class="sm-ship__note">Supplier shipping price in US$ for this quantity, before any customs duties.</p>';
+      } catch (e) { out.textContent = 'Shipping prices are not available right now. We will confirm shipping on WhatsApp.'; }
+      finally { go.disabled = false; }
     });
   }
   function searchBox(q) {
