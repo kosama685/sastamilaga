@@ -36,5 +36,5 @@
       ${more.length ? `<section class="section"><h2>More guides</h2><div class="sm-blog-grid">${more.map(x => `<article class="sm-blog-card"><h3><a href="#/blog/${x.slug}">${esc(x.title)}</a></h3><p>${esc(x.description)}</p></article>`).join('')}</div></section>` : ''}</article>`);
   }
   window.SMBlog = { route(s) { return s ? post(s) : list(); }, published };
-  if (/^#\/blog(\/|$)/.test(location.hash)) A.route();
+  if (/^#\/blog(\/|$)/.test(location.hash) || /^blog(\/|$)/.test((A.cleanRoute && A.cleanRoute(location.pathname)) || '')) A.route();
 })();
