@@ -1517,7 +1517,7 @@ function renderCheckout() {
           <option>Cash on Delivery (COD)</option>
           <option>Bank Transfer</option>
           <option>EasyPaisa / JazzCash</option>
-          ${(window.SM_CONFIG || {}).paypalEmail ? '<option value="PayPal / Card">PayPal or debit/credit card (pay now in US$)</option>' : ''}
+          ${(window.SM_CONFIG || {}).paypalEmail ? `<option value="PayPal / Card">PayPal or debit/credit card (pay now in ${paypalCurrency()})</option>` : ''}
         </select>
         <textarea name="address" required placeholder="Complete delivery address" aria-label="Delivery address"></textarea>
         <textarea name="notes" placeholder="Order notes (optional)" aria-label="Order notes"></textarea>
@@ -1599,14 +1599,17 @@ window.placeOrder = function (e) {
   data.set('order_total', PKR.format(totalPkr));
   const payPal = data.get('payment_method') === 'PayPal / Card' && C.paypalEmail;
 
-  // PayPal / card: get today's PKR→USD rate first, record it with the order, then open PayPal.
-  const rateP = payPal ? fetch('https://open.er-api.com/v6/latest/PKR').then(r => r.json()).then(j => j.rates.USD) : Promise.resolve(null);
+  // PayPal / card: charge in the visitor's chosen currency when PayPal supports it, otherwise USD.
+  const payCur = paypalCurrency();
+  const rateP = payPal ? fetch('https://open.er-api.com/v6/latest/PKR').then(r => r.json()).then(j => j.rates[payCur]) : Promise.resolve(null);
   rateP.then(rate => {
     let usd = null;
     if (payPal) {
       if (!rate) throw new Error('rate');
-      usd = Math.max(0.01, Math.round(totalPkr * rate * 100) / 100).toFixed(2);
-      data.set('payment_status', `Awaiting PayPal payment of US$${usd} (1 PKR = ${rate} USD). Confirm receipt in PayPal before dispatch.`);
+      const dec = PAYPAL_NO_DECIMALS.includes(payCur) ? 0 : 2;
+      usd = Math.max(dec ? 0.01 : 1, Math.round(totalPkr * rate * 10 ** dec) / 10 ** dec).toFixed(dec);
+      data.set('payment_status', `Awaiting PayPal payment of ${payCur} ${usd} (1 PKR = ${rate} ${payCur}). Confirm receipt in PayPal before dispatch.`);
+      data.set('payment_currency', payCur);
     }
     // Google Sheets order log (apps-script/Code.gs), in parallel; never blocks the order. no-cors: Apps Script redirects.
     if (C.sheetEndpoint) {
@@ -1621,7 +1624,7 @@ window.placeOrder = function (e) {
     if (response.ok && response.usd) {
       try { localStorage.setItem('latestOrder', JSON.stringify({ total: orderTotal, currency: 'PKR', itemIds: productIds, transactionId: orderId, timestamp: Date.now(), paypal: response.usd })); } catch (e) { }
       setCart([]);
-      location.href = paypalLink({ email: C.paypalEmail, usd: response.usd, orderId, items: lines.length });
+      location.href = paypalLink({ email: C.paypalEmail, usd: response.usd, currency: payCur, orderId, items: lines.length });
       return;
     }
     if (response.ok) {
@@ -1665,10 +1668,17 @@ window.placeOrder = function (e) {
    receiving PayPal email, which is public by design. On PayPal's page the buyer pays with a PayPal account or a
    debit/credit card (guest checkout, where PayPal offers it in the buyer's country). The link sets the amount, so the
    team checks the received amount in PayPal against the order email before dispatch. */
-function paypalLink({ email, usd, orderId, items }) {
+/* Currencies PayPal accepts for payments (developer.paypal.com/reference/currency-codes). PKR, SAR, AED are not among them. */
+const PAYPAL_CURRENCIES = ['AUD', 'BRL', 'CAD', 'CNY', 'CZK', 'DKK', 'EUR', 'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'TWD', 'NZD', 'NOK', 'PHP', 'PLN', 'GBP', 'SGD', 'SEK', 'CHF', 'THB', 'USD'];
+const PAYPAL_NO_DECIMALS = ['HUF', 'JPY', 'TWD'];
+function paypalCurrency() {
+  let c = 'USD'; try { c = (JSON.parse(localStorage.getItem('sm_market') || '{}').currency || 'USD').toUpperCase(); } catch (e) { }
+  return PAYPAL_CURRENCIES.includes(c) ? c : 'USD';
+}
+function paypalLink({ email, usd, currency = 'USD', orderId, items }) {
   const q = new URLSearchParams({
     cmd: '_xclick', business: email, item_name: `Sasta Milaga order ${orderId} (${items} item${items > 1 ? 's' : ''})`,
-    item_number: orderId, invoice: orderId, amount: usd, currency_code: 'USD', quantity: '1', no_shipping: '1', no_note: '1',
+    item_number: orderId, invoice: orderId, amount: usd, currency_code: currency, quantity: '1', no_shipping: '1', no_note: '1',
     charset: 'utf-8', return: `${SITE_URL}/#/thank-you`, cancel_return: `${SITE_URL}/#/cart`, rm: '1', landing_page: 'billing'
   });
   return 'https://www.paypal.com/cgi-bin/webscr?' + q.toString();

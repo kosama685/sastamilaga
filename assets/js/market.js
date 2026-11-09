@@ -35,23 +35,63 @@
     });
   }
   function fmt(v, cur) { try { return new Intl.NumberFormat('en', { style: 'currency', currency: cur, maximumFractionDigits: v >= 100 ? 0 : 2 }).format(v); } catch (e) { return cur + ' ' + v.toFixed(2); } }
-  /* Adds "≈ SAR 12" after prices written as "Rs 1,234" or "$1.23 – $4.56". */
+  /* Shows prices in the visitor's currency only: "Rs 1,234" / "$1.23 – $4.56" are replaced by "SAR 16.70".
+     The original markup (with its PKR/USD schema.org microdata) stays in the DOM, hidden, and comes back on PKR. */
+  var PRICE_SEL = '.sm-card__price, .big-price, .smhv-price, .smh-cart__total, .smtp-price, .cart-line .price, .summary-row b, .sm-cat__price, .sm-stack__price';
   function convertIn(root) {
     if (!rates || state.currency === 'PKR' || !rates[state.currency]) return;
     var to = rates[state.currency], usd = rates.USD;
-    (root || document).querySelectorAll('.sm-card__price, .big-price, .smhv-price, .smh-cart__total, .smtp-price').forEach(function (el) {
-      if (el.dataset.fx === state.currency) return;
-      var old = el.querySelector('.sm-fx'); if (old) old.remove();
-      var t = el.textContent, out = [];
+    (root || document).querySelectorAll(PRICE_SEL).forEach(function (el) {
+      if (el.dataset.fx === state.currency && el.querySelector(':scope > .sm-fx')) return;
+      var orig = el.querySelector(':scope > .sm-fx-orig'), src = orig ? orig.innerHTML : el.innerHTML;
+      var probe = document.createElement('div'); probe.innerHTML = src; var t = probe.textContent, out = [];
       var rs = t.match(/Rs\.?\s?([\d,]+(?:\.\d+)?)/g), us = t.match(/\$\s?([\d,]+(?:\.\d+)?)/g);
       if (rs) rs.forEach(function (x) { out.push(fmt(parseFloat(x.replace(/[^\d.]/g, '')) * to, state.currency)); });
       else if (us && usd) { if (state.currency === 'USD') return; us.forEach(function (x) { out.push(fmt(parseFloat(x.replace(/[^\d.]/g, '')) / usd * to, state.currency)); }); }
       if (!out.length) return;
+      var extra = /est\./.test(t) ? ' <small class="sm-est">est.</small>' : '';
       el.dataset.fx = state.currency;
-      el.insertAdjacentHTML('beforeend', ' <small class="sm-fx" title="Estimate at today\'s rate. You pay in ' + (rs ? 'PKR' : 'USD') + '.">≈ ' + esc(out.join(' – ')) + '</small>');
+      el.innerHTML = '<span class="sm-fx-orig" hidden>' + src + '</span><span class="sm-fx" title="Converted at today\'s rate from ' + (rs ? 'PKR' : 'USD') + '">' + esc(out.join(' – ')) + '</span>' + extra;
     });
   }
-  function clearFx() { document.querySelectorAll('.sm-fx').forEach(function (e) { e.remove(); }); document.querySelectorAll('[data-fx]').forEach(function (e) { delete e.dataset.fx; }); }
+  /* Prices the live theme wrote in another currency (mega-menu visa prices: <span class="gdcs-converted-price"
+     data-currency="SAR">SAR 605.65</span>) follow the chosen currency too, PKR included. */
+  function convertTagged(root) {
+    if (!rates) return;
+    (root || document).querySelectorAll('.gdcs-converted-price[data-currency]').forEach(function (el) {
+      var from = el.getAttribute('data-currency'); if (!el.dataset.srcHtml) el.dataset.srcHtml = el.innerHTML;
+      if (el.dataset.shown === state.currency) return;
+      if (state.currency === from || !rates[from] || !rates[state.currency]) { el.innerHTML = el.dataset.srcHtml; el.dataset.shown = state.currency; return; }
+      var probe = document.createElement('div'); probe.innerHTML = el.dataset.srcHtml;
+      var amt = parseFloat(probe.textContent.replace(/[^\d.]/g, '')); if (!amt) return;
+      var v = amt / rates[from] * rates[state.currency];
+      el.innerHTML = '<span class="sm-fx" title="Converted at today\'s rate from ' + from + '">' + esc(state.currency === 'PKR' ? 'Rs ' + Math.round(v).toLocaleString('en') : fmt(v, state.currency)) + '</span>';
+      el.dataset.shown = state.currency;
+    });
+  }
+  function clearFx() {
+    document.querySelectorAll('[data-fx]').forEach(function (el) { var o = el.querySelector(':scope > .sm-fx-orig'); if (o) el.innerHTML = o.innerHTML; delete el.dataset.fx; });
+  }
+
+  /* Page wording follows the chosen destination: "Shopping for Pakistan · prices in PKR" -> "Shopping for Saudi Arabia · prices in SAR".
+     Text nodes keep their original value so switching back restores it exactly. */
+  var origText = new WeakMap();
+  function localiseText(root) {
+    var name = cname(state.country), cur = state.currency;
+    var w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, { acceptNode: function (n) {
+      var p = n.parentNode; if (!p || /^(SCRIPT|STYLE|TEXTAREA|OPTION|INPUT)$/.test(p.nodeName) || p.closest('.sm-mk, .sm-fx-orig, [data-no-localise]')) return NodeFilter.FILTER_REJECT;
+      return (origText.has(n) || /Pakistan|PKR/.test(n.nodeValue)) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP; } });
+    var n; while ((n = w.nextNode())) {
+      if (!origText.has(n)) origText.set(n, n.nodeValue);
+      var o = origText.get(n), v = o;
+      if (state.country !== 'PK' || cur !== 'PKR') {
+        v = v.replace(/Shopping for Pakistan/g, 'Shopping for ' + name).replace(/prices in PKR/g, 'prices in ' + cur);
+        // Destination card value ("Your shopping destination" → "Pakistan")
+        if (o.trim() === 'Pakistan' && n.parentNode.previousElementSibling && /shopping destination/i.test(n.parentNode.previousElementSibling.textContent)) v = o.replace('Pakistan', name);
+      }
+      if (n.nodeValue !== v) n.nodeValue = v;
+    }
+  }
 
   /* ---- header ---- */
   function paintHeader() {
@@ -137,20 +177,22 @@
   function apply() {
     var lang = langSel.value, langChanged = lang !== state.lang;
     state = { country: draft.country, currency: curSel.value || 'PKR', lang: lang };
-    save(state); dlg.close(); paintHeader(); clearFx();
+    save(state); dlg.close(); paintHeader(); clearFx(); localiseText(document.body);
     window.dispatchEvent(new CustomEvent('sm:market', { detail: state }));
     if (langChanged) {
       var u = new URL(location.href); if (lang === 'en') u.searchParams.delete('gdcs_lang'); else u.searchParams.set('gdcs_lang', lang);
       document.cookie = 'sm_lang=' + lang + ';path=/;max-age=31536000'; location.href = u.toString(); return;
     }
-    if (state.currency !== 'PKR') getRates().then(function () { convertIn(document); }).catch(function () {});
+    getRates().then(function () { convertIn(document); convertTagged(document); }).catch(function () {});
   }
 
   function init() {
     paintHeader();
     document.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('[data-gdcs-market], [data-gdl-header-language], [data-gdl-header-currency]'); if (t) { e.preventDefault(); e.stopPropagation(); open(); } }, true);
     // Always watch for newly rendered prices; convertIn() does nothing while the currency is PKR or rates are not loaded.
-    var queued = false, again = function () { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; convertIn(document); }); };
+    var queued = false, again = function () { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; convertIn(document); convertTagged(document); localiseText(document.body); }); };
+    localiseText(document.body);
+    if (document.querySelector('.gdcs-converted-price[data-currency]')) getRates().then(again).catch(function () {});
     new MutationObserver(function (m) { for (var i = 0; i < m.length; i++) if (m[i].addedNodes.length) { again(); break; } }).observe(document.body, { childList: true, subtree: true });
     window.addEventListener('load', again); document.addEventListener('sasta:rendered', again);
     if (state.currency !== 'PKR') getRates().then(again).catch(function () {});

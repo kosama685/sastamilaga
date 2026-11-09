@@ -52,6 +52,14 @@
       else {
         var q = fold(p.get('q')).trim(), cc = p.get('country'), cat = p.get('category');
         items = items.filter(function (c) { return (!cc || c.cc === cc) && (!cat || c.cat === cat) && (!q || fold(c.name).indexOf(q) >= 0); });
+        // Unfiltered list: the visitor's chosen country first, then widely watched countries; channels that play in the
+        // browser before external-only ones. Stable, so the playlist order is kept within each group.
+        if (!cc && !q) {
+          var home = 'PK'; try { home = (JSON.parse(localStorage.getItem('sm_market') || '{}').country || 'PK'); } catch (e) {}
+          var pref = [home, 'PK', 'GB', 'US', 'AE', 'SA', 'IN', 'QA', 'TR'];
+          var rank = function (c) { var i = pref.indexOf(c.cc); return (i < 0 ? 99 : i) * 2 + (c.ext ? 1 : 0); };
+          items = items.map(function (c, i) { return [rank(c), i, c]; }).sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; }).map(function (x) { return x[2]; });
+        }
       }
       var per = db.perPage || 60, page = Math.max(1, +p.get('page') || 1), pages = Math.max(1, Math.ceil(items.length / per));
       return { total: items.length, pages: pages, items: items.slice((page - 1) * per, page * per) };
@@ -93,10 +101,7 @@
     }
     var tvLocal = window.SM_CONFIG && window.SM_CONFIG.liveTvSnapshot;
     if (tvLocal && /\/wp-json\/sltv\/v1\/(channels|facets)\/?$/.test(u.pathname)) {
-      if (u.searchParams.get('_refresh')) {
-        return timed(input, init, 20000).then(function (r) { if (!r.ok) throw new Error(r.status); return r; })
-          .catch(function () { return channels(u).then(json); });
-      }
+      // The local list (Free-TV playlist) is the source of truth: refresh requests are answered locally too.
       return channels(u).then(json);
     }
     return realFetch(input, init);
