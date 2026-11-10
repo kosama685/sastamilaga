@@ -57,7 +57,8 @@
         if (!cc && !q) {
           var home = 'PK'; try { home = (JSON.parse(localStorage.getItem('sm_market') || '{}').country || 'PK'); } catch (e) {}
           var pref = [home, 'PK', 'GB', 'US', 'AE', 'SA', 'IN', 'QA', 'TR'];
-          var rank = function (c) { var i = pref.indexOf(c.cc); return (i < 0 ? 99 : i) * 2 + (c.ext ? 1 : 0); };
+          // Within a country: channels that passed the browser test first, VLC-only next, unreachable (maybe offline) last.
+          var rank = function (c) { var i = pref.indexOf(c.cc); return (i < 0 ? 99 : i) * 3 + (c.chk === 'fail' ? 2 : c.ext ? 1 : 0); };
           items = items.map(function (c, i) { return [rank(c), i, c]; }).sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; }).map(function (x) { return x[2]; });
         }
       }

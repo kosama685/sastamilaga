@@ -124,7 +124,7 @@
 		var recent = store('recent').filter(function (i) { return i !== ch.id; }); recent.unshift(ch.id); store('recent', recent.slice(0, 30));
 		list.querySelectorAll('button[aria-current]').forEach(function (b) { b.removeAttribute('aria-current'); });
 		var selected = list.querySelector('button[data-id="' + ch.id + '"]'); if (selected) selected.setAttribute('aria-current', 'true');
-		if (ch.ext || /^http:\/\//i.test(ch.src)) { state.active = false; video.hidden = true; return external(ch, 'A secure browser route is not available for this source.'); }
+		if (ch.ext || /^http:\/\//i.test(ch.src)) { state.active = false; video.hidden = true; return external(ch, ch.why === 'cors' ? 'This broadcaster does not allow playback in web browsers. Open it in VLC or another player instead.' : 'A secure browser route is not available for this source.'); }
 		if (ch.type === 'youtube' || ch.type === 'iframe') {
 			var src = ch.type === 'youtube' ? (ytId(ch.src) ? 'https://www.youtube-nocookie.com/embed/' + ytId(ch.src) + '?autoplay=1' : null) : (allowed(ch.src) ? ch.src : null);
 			if (!src) return failure('This channel cannot be embedded.');
@@ -202,7 +202,7 @@
 		var ph = function () { return el('span', 'sltv-ph', ch.name.slice(0, 2)); };
 		if (ch.logo) { var i = el('img'); i.src = ch.logo; i.alt = ''; i.loading = first ? 'eager' : 'lazy'; i.onerror = function () { this.replaceWith(ph()); }; b.appendChild(i); }
 		else b.appendChild(ph());
-		var t = el('span'); t.appendChild(el('b', '', ch.name)); t.appendChild(el('small', '', [catLabel[ch.cat] || ch.cat, ch.cc ? region(ch.cc) : ''].filter(Boolean).join(' · ')));
+		var t = el('span'); t.appendChild(el('b', '', ch.name)); t.appendChild(el('small', '', [catLabel[ch.cat] || ch.cat, ch.cc ? region(ch.cc) : '', ch.chk === 'fail' ? 'may be offline' : ''].filter(Boolean).join(' · ')));
 		b.appendChild(t);
 		b.appendChild(ch.ext ? el('span', 'sltv-vlc', 'VLC') : el('span', 'sltv-dot', 'Watch'));
 		b.appendChild(el('span', 'sltv-play'));

@@ -30,7 +30,7 @@ jobs:
       - name: Build due posts
         run: node tools/build-blog.mjs
       - name: Refresh Live TV channels from the Free-TV playlist
-        run: node tools/build-livetv.mjs || echo "Playlist unavailable; keeping the current channel list"
+        run: node tools/build-livetv.mjs --check || echo "Playlist unavailable; keeping the current channel list"
       - name: Commit changes
         id: commit
         run: |

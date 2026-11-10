@@ -39,6 +39,31 @@ for (let i = 0; i < lines.length; i++) {
   items.push({ id: ++id, name, logo: attr(l, 'tvg-logo'), cc, cat, type, src, ext, ...(src !== url ? { page: url } : {}),
     ...(marks.includes('Ⓖ') ? { geo: true } : {}), ...(marks.includes('Ⓢ') ? { part: true } : {}), group: attr(l, 'group-title') });
 }
+/* --check: test each browser-playable stream the way a browser would (Origin header, playlist then first video segment).
+   A stream that answers without CORS permission can never play on this site, so it goes straight to the VLC option instead of
+   failing in the player. Nothing else is changed: unreachable ones are only marked (chk:"fail") because they may be region-locked. */
+if (process.argv.includes('--check')) {
+  const ORIGIN = 'https://kosama685.github.io', UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130 Safari/537.36';
+  const get = async (u, ms = 9000, range) => { const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms); try { return await fetch(u, { headers: { Origin: ORIGIN, 'User-Agent': UA, ...(range ? { Range: 'bytes=0-1023' } : {}) }, signal: ac.signal, redirect: 'follow' }); } finally { clearTimeout(t); } };
+  const cors = r => { const a = r.headers.get('access-control-allow-origin'); return a === '*' || a === ORIGIN; };
+  const first = (text, after) => { const L = text.split(/\r?\n/); for (let i = 0; i < L.length; i++) if (L[i] && !L[i].startsWith('#') && (!after || /#EXT-X-STREAM-INF/.test(L[i - 1] || ''))) return L[i]; return ''; };
+  async function probe(c) {
+    if (c.ext || c.type !== 'hls') return;
+    try {
+      let r = await get(c.src); if (!r.ok) { c.chk = 'fail'; return; }
+      if (!cors(r)) { c.ext = true; c.why = 'cors'; return; }
+      let text = await r.text(), base = r.url;
+      if (/#EXT-X-STREAM-INF/.test(text)) { const v = first(text, true); if (v) { base = new URL(v, base).href; r = await get(base); if (!r.ok) { c.chk = 'fail'; return; } if (!cors(r)) { c.ext = true; c.why = 'cors'; return; } text = await r.text(); } }
+      const seg = first(text); if (!seg) return;
+      const sr = await get(new URL(seg, base).href, 9000, true); const ok = sr.ok || sr.status === 206; try { await sr.body?.cancel(); } catch (e) { }
+      if (!ok) { c.chk = 'fail'; return; }
+      if (!cors(sr)) { c.ext = true; c.why = 'cors'; }
+    } catch (e) { c.chk = 'fail'; }
+  }
+  const queue = items.filter(c => c.type === 'hls' && !c.ext); let done = 0;
+  await Promise.all(Array.from({ length: 16 }, async () => { while (queue.length) { await probe(queue.shift()); if (++done % 200 === 0) console.log(`checked ${done}`); } }));
+  console.log(`check: ${items.filter(c => c.why === 'cors').length} need VLC (no CORS), ${items.filter(c => c.chk === 'fail').length} unreachable from here`);
+}
 const count = key => Object.entries(items.reduce((a, c) => (c[key] && (a[c[key]] = (a[c[key]] || 0) + 1), a), {})).map(([k, n]) => ({ k, n })).sort((a, b) => b.n - a.n);
 const db = { source: SRC, license: 'Free-TV/IPTV playlist (free-to-air channels only)', snapshot: new Date().toISOString().slice(0, 10), perPage: 60,
   facets: { total: items.length, countries: count('cc'), categories: count('cat') }, items };
