@@ -48,18 +48,21 @@
     var k = key(), i, el, n, tel = new RegExp('^tel:\\+?(' + ALLK.map(function (x) { return LINES[x].n; }).join('|') + ')');
     var links = root.querySelectorAll('a[href*="wa.me/"],a[href*="api.whatsapp.com"],a[href^="tel:"]');
     for (i = 0; i < links.length; i++) {
-      el = links[i]; var h = el.getAttribute('href'), h2 = h.indexOf('tel:') === 0 ? h.replace(tel, 'tel:+' + LINES[k].n) : swapIn(h, k);
+      el = links[i]; if (el.closest('[data-no-swap]')) continue;   // the regional directory lists every team: never rewrite it
+      var h = el.getAttribute('href'), h2 = h.indexOf('tel:') === 0 ? h.replace(tel, 'tel:+' + LINES[k].n) : swapIn(h, k);
       if (h2 !== h) el.setAttribute('href', h2);
     }
     var w = document.createTreeWalker(root.body || root, NodeFilter.SHOW_TEXT, null), t, list = [];
-    while ((t = w.nextNode())) { if (t.nodeValue.indexOf('+') >= 0 && hasNumber(t.nodeValue)) list.push(t); }
+    while ((t = w.nextNode())) { if (t.nodeValue.indexOf('+') >= 0 && hasNumber(t.nodeValue) && !(t.parentNode && t.parentNode.closest && t.parentNode.closest('[data-no-swap]'))) list.push(t); }
     for (i = 0; i < list.length; i++) { n = swapIn(list[i].nodeValue, k); if (n !== list[i].nodeValue) list[i].nodeValue = n; }
     var labelled = root.querySelectorAll('[aria-label*="+"]');
-    for (i = 0; i < labelled.length; i++) { var a = labelled[i].getAttribute('aria-label'); if (hasNumber(a)) labelled[i].setAttribute('aria-label', swapIn(a, k)); }
+    for (i = 0; i < labelled.length; i++) { var a = labelled[i].getAttribute('aria-label'); if (!labelled[i].closest('[data-no-swap]') && hasNumber(a)) labelled[i].setAttribute('aria-label', swapIn(a, k)); }
   }
 
+  // The visitor's own regional team is marked in the directory.
+  function mark() { var cards = document.querySelectorAll('.smwa__card'), k = key(), i; for (i = 0; i < cards.length; i++) { var mine = cards[i].getAttribute('data-region') === k; cards[i].classList.toggle('is-mine', mine); } }
   var queued = false;
-  function run() { if (queued) return; queued = true; (window.requestAnimationFrame || setTimeout)(function () { queued = false; patchConfig(); if (document.body) fix(document); }); }
+  function run() { if (queued) return; queued = true; (window.requestAnimationFrame || setTimeout)(function () { queued = false; patchConfig(); if (document.body) { fix(document); mark(); } }); }
   window.SMContact = { number: function () { return LINES[key()].n; }, text: function () { return LINES[key()].t; }, region: key, lines: LINES, refresh: run };
   patchConfig(); run();
   document.addEventListener('DOMContentLoaded', run);

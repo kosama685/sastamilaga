@@ -42,10 +42,41 @@
     }, true);
     document.querySelectorAll('[data-gdcs-market]').forEach(function (b) { if (b.tagName === 'BUTTON') b.addEventListener('click', function () { location.href = prefix + '#/language'; }); });
     /* Cart badge from the shared cart (same storage key as app.js) */
-    try {
-      var n = JSON.parse(localStorage.getItem('sm_cart') || '[]').reduce(function (a, x) { return a + (x.qty || 0); }, 0);
-      document.querySelectorAll('.smh-cart__count').forEach(function (el) { el.textContent = n; el.setAttribute('data-n', n); });
-    } catch (e) {}
+    function badge() {
+      try {
+        var sum = function (k) { return JSON.parse(localStorage.getItem(k) || '[]').reduce(function (a, x) { return a + (x.qty || 0); }, 0); };
+        var n = sum('sm_cart') + sum('sm_gcart');
+        document.querySelectorAll('.smh-cart__count').forEach(function (el) { el.textContent = n; el.setAttribute('data-n', n); });
+      } catch (e) {}
+    }
+    badge();
+    /* Product pages: "Add to cart" and "Buy now" act on the shared cart right here (no second click on another page). */
+    function toast(msg) {
+      var t = document.getElementById('sm-static-toast');
+      if (!t) { t = document.createElement('div'); t.id = 'sm-static-toast'; t.setAttribute('role', 'status'); t.setAttribute('aria-live', 'polite'); t.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:99999;background:#0B3B20;color:#fff;padding:12px 20px;border-radius:12px;font:600 15px/1.3 system-ui,sans-serif;box-shadow:0 14px 30px -12px rgba(0,0,0,.5);opacity:0;transition:opacity .25s'; document.body.appendChild(t); }
+      t.innerHTML = msg; t.style.opacity = '1'; clearTimeout(t.__h); t.__h = setTimeout(function () { t.style.opacity = '0'; }, 3200);
+    }
+    function productSku() {
+      var out = '';
+      document.querySelectorAll('script[type="application/ld+json"]').forEach(function (s) {
+        try { var j = JSON.parse(s.textContent); (Array.isArray(j) ? j : j['@graph'] || [j]).forEach(function (x) { if (x['@type'] === 'Product' && x.sku) out = String(x.sku); }); } catch (e) {}
+      });
+      return out;
+    }
+    function addToSharedCart() {
+      var sku = productSku(); if (!sku) return false;
+      var cart = []; try { cart = JSON.parse(localStorage.getItem('sm_cart') || '[]'); } catch (e) {}
+      var row = cart.filter(function (x) { return x.id === sku; })[0]; if (row) row.qty = (row.qty || 0) + 1; else cart.push({ id: sku, qty: 1 });
+      try { localStorage.setItem('sm_cart', JSON.stringify(cart)); } catch (e) { return false; }
+      badge(); return true;
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('main a[href*="#/product/"]'); if (!a) return;
+      var label = (a.textContent || '').trim().toLowerCase(), isAdd = /^add to cart/.test(label), isBuy = /^buy now/.test(label); if (!isAdd && !isBuy) return;
+      if (!addToSharedCart()) return;   // no product data on the page: fall back to the link
+      e.preventDefault();
+      if (isBuy) location.href = prefix + 'checkout/'; else toast('Added to cart. <a href="' + prefix + 'cart/" style="color:#FFB347;margin-left:8px">View cart</a>');
+    });
     var site = document.createElement('script'); site.src = prefix + 'assets/js/site.min.js'; document.body.appendChild(site);
   }).catch(function () { /* the fallback logo header stays */ });
   /* WhatsApp order button on every product and video card */

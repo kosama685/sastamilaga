@@ -38,6 +38,47 @@
     return promise;
   }
   /* row = [id, sku, name, min, max, img, video] */
+  /* ---------- Global cart: prepaid global items, ordered through WhatsApp with the shipping confirmed before payment ---------- */
+  const GC_KEY = 'sm_gcart', GC_TO = 'sm_gto';
+  const gcGet = () => { try { return JSON.parse(localStorage.getItem(GC_KEY) || '[]'); } catch (e) { return []; } };
+  const gcSet = l => { try { localStorage.setItem(GC_KEY, JSON.stringify(l)); } catch (e) { } try { A.setCart(A.getCart()); } catch (e) { } };   // setCart refreshes the header count
+  const gcKey = x => [x.id, x.opt || '', x.vkey || ''].join('|');
+  const gcCount = () => gcGet().reduce((a, x) => a + (x.qty || 0), 0);
+  const gcAdd = row => { const l = gcGet(), k = gcKey(row), f = l.find(x => gcKey(x) === k); if (f) f.qty = Math.min(99, f.qty + row.qty); else l.push(row); gcSet(l); };
+  const gcTo = () => { try { const s = localStorage.getItem(GC_TO); if (s) return s; } catch (e) { } const mk = window.SMMarket; try { return mk ? mk.countryName(mk.state().country) : ''; } catch (e) { return ''; } };
+  function gcHtml() {
+    const l = gcGet(); if (!l.length) return '';
+    const sub = l.reduce((a, x) => a + x.unit * x.qty, 0);
+    const lines = l.map(x => `<div class="cart-line"><img src="${esc(x.img)}" alt="${esc(x.name)}" width="88" height="88" onerror="this.src=window.fallbackImg"><div><b>${esc(x.name)}</b><p style="color:var(--muted);margin:4px 0">${x.vname ? esc(x.vname) + ' · ' : ''}${x.opt ? esc(x.opt) + ' · ' : ''}Global item</p><div class="price">${USD.format(x.unit)} <small class="sm-est">estimated each</small></div></div><div><div class="qty"><button type="button" data-gc="dec" data-k="${esc(gcKey(x))}" aria-label="Decrease">−</button><b>${x.qty}</b><button type="button" data-gc="inc" data-k="${esc(gcKey(x))}" aria-label="Increase">+</button></div><button type="button" class="ghost-btn" data-gc="rm" data-k="${esc(gcKey(x))}" style="margin-top:8px">Remove</button></div></div>`).join('');
+    return `<section class="section sm-gcart" aria-labelledby="gcart-h"><div class="section-head"><div><h2 id="gcart-h">Global items</h2><p>Prepaid. Stock, options and shipping to your country are confirmed with you before you pay.</p></div></div>
+      <div class="cart-layout"><div>${lines}</div><aside class="summary-box"><h2 style="margin:0 0 14px">Global order</h2><div class="summary-row"><span>Items (estimated)</span><b>${USD.format(sub)}</b></div><div class="summary-row"><span>Shipping</span><b>Confirmed on WhatsApp</b></div>
+        <label class="sm-gcart__to"><span>Deliver to (country and city)</span><input id="gcTo" maxlength="120" value="${esc(gcTo())}" placeholder="e.g. Pakistan, Karachi" required></label>
+        <button type="button" class="sm-wa-btn" data-gc="order" style="width:100%;margin-top:12px">Place global order on WhatsApp</button><button type="button" class="ghost-btn" data-gc="clear" style="width:100%;margin-top:8px">Clear global items</button>
+        <p class="product-meta" style="margin-top:10px">Prices are estimates in US dollars. We send the final total, including shipping, before you pay by card or PayPal link.</p></aside></div></section>`;
+  }
+  function gcMessage(l, to) {
+    const sub = l.reduce((a, x) => a + x.unit * x.qty, 0);
+    return `Assalam o Alaikum! I want to order these global items (prepaid):\n\n${l.map((x, i) => `${i + 1}. ${x.name}\n   SKU: ${x.sku}${x.vname ? '\n   Variant: ' + x.vname : ''}${x.opt ? '\n   Notes: ' + x.opt : ''}\n   Quantity: ${x.qty}\n   Estimated: ${USD.format(x.unit)} each\n   ${x.url}`).join('\n\n')}\n\nItems total (estimated): ${USD.format(sub)}\nDeliver to: ${to}\nPlease confirm stock, shipping and the final total.`;
+  }
+  let gcBound = false;
+  function gcBind() {
+    if (gcBound) return; gcBound = true;
+    document.addEventListener('click', e => {
+      const b = e.target.closest && e.target.closest('[data-gc]'); if (!b) return; const act = b.getAttribute('data-gc'), k = b.getAttribute('data-k'); let l = gcGet();
+      if (act === 'inc' || act === 'dec') { l = l.map(x => gcKey(x) === k ? { ...x, qty: Math.max(1, Math.min(99, x.qty + (act === 'inc' ? 1 : -1))) } : x); gcSet(l); A.route(); }
+      else if (act === 'rm') { gcSet(l.filter(x => gcKey(x) !== k)); A.route(); }
+      else if (act === 'clear') { gcSet([]); A.route(); }
+      else if (act === 'order') {
+        const to = (document.getElementById('gcTo') || {}).value; if (!to || !to.trim()) { toast('Enter the country and city to deliver to'); const i = document.getElementById('gcTo'); if (i) i.focus(); return; }
+        try { localStorage.setItem(GC_TO, to.trim()); } catch (er) { }
+        window.open(waLink(gcMessage(l, to.trim())), '_blank', 'noopener'); toast('Opening WhatsApp with your global order');
+      }
+    });
+  }
+  window.SMGCart = { count: gcCount, html: gcHtml, bind: gcBind, get: gcGet };
+  gcBind();
+  // global.js loads after the first route has rendered: refresh the header count, and the cart page if it is the page being shown
+  if (gcCount()) { try { A.setCart(A.getCart()); } catch (e) { } if (/(^|\/)cart\/?$/.test(location.pathname) || /^#\/cart/.test(location.hash)) setTimeout(() => A.route(), 0); }
   const est = r => r[3] ? (r[4] > r[3] ? `${USD.format(r[3] * MARGIN)} – ${USD.format(r[4] * MARGIN)}` : USD.format(r[3] * MARGIN)) : 'Price on request';
   const liveUrl = r => `${A.LIVE_URL}/global-shop/p/${encodeURIComponent(r[0])}/${slug(r[2]).slice(0, 80)}/`;
   const detailHash = (cat, r) => `#/global/p/${cat}/${encodeURIComponent(r[0])}`;
@@ -122,13 +163,20 @@
         <div style="margin:12px 0"><span class="big-price">${est(r)}</span> <small class="sm-est">estimated</small></div>
         <form class="sm-greq" id="greq">${varBox()}<label><span>Quantity</span><input type="number" name="qty" min="1" max="99" value="1"></label><label><span>${(window.SM_CONFIG || {}).cjShippingWorker ? 'Notes (optional)' : 'Size, colour or option (optional)'}</span><input name="opt" maxlength="120" placeholder="${(window.SM_CONFIG || {}).cjShippingWorker ? 'Anything we should know' : 'e.g. Blue, size M'}"></label><label><span>Deliver to (country and city)</span><input name="to" required maxlength="120" placeholder="e.g. Pakistan, Karachi"></label>
           ${shipBox()}
-          <button type="submit" class="sm-wa-btn">Request this item on WhatsApp</button></form>
+          <div class="sm-gactions"><button type="button" class="primary-btn" id="gadd">Add to cart</button><button type="button" class="primary-btn sm-buynow" id="gbuy">Buy now</button></div>
+          <button type="submit" class="sm-wa-btn">Order on WhatsApp</button></form>
         <ul class="sm-buy-facts" role="list"><li>We confirm stock, options and shipping first</li><li>Pay by card or PayPal link after confirmation</li><li>Delivery time depends on your country</li></ul>
         <p class="product-meta">More like this: <a href="#/global/c/${cs}">${esc(c.n)}</a>${g ? ` · <a href="#/global/g/${g.s}">${esc(g.n)}</a>` : ''}</p></aside></section>
+      <section class="section sm-gdetails" aria-labelledby="gdet-h"><div class="section-head"><div><h2 id="gdet-h">Product details</h2></div></div>
+        <dl class="sm-gdl"><div><dt>Product</dt><dd>${esc(r[2])}</dd></div><div><dt>Reference</dt><dd>${esc(maskSku(r[1]))}</dd></div><div><dt>Category</dt><dd>${esc(c.n)}${g ? ` · ${esc(g.n)}` : ''}</dd></div><div><dt>Estimated price</dt><dd>${est(r)} per item (US dollars; final price confirmed before payment)</dd></div><div><dt>Product video</dt><dd>${r[6] ? 'Available on this page' : 'Not available for this item'}</dd></div><div><dt>Options</dt><dd>${(window.SM_CONFIG || {}).cjShippingWorker ? 'Choose from the options above' : 'Colour, size and other options are confirmed with you before you pay. Add them in the notes field.'}</dd></div><div><dt>Delivery</dt><dd>Worldwide. Shipping method, price and time depend on your country and are confirmed before payment.</dd></div></dl></section>
       <section class="section"><div class="section-head"><div><h2>More in ${esc(c.n)}</h2></div><a class="ghost-btn" href="#/global/c/${cs}">View all</a></div><div class="products-row">${related.map(x => card(cs, x)).join('')}</div></section>`);
     const chosen = { v: null };     /* the variant the customer picked (real CJ variants, when the CJ Worker is configured) */
     bindVariants(r, chosen);
     bindShip(r, chosen);
+    const rowFrom = f => { const v = chosen.v; return { id: r[0], cs, sku: r[1], name: r[2], img: r[5], unit: (v ? v.price : (r[3] || 0)) * MARGIN, qty: Math.max(1, Math.min(99, parseInt(f.qty.value, 10) || 1)), opt: (f.opt.value || '').trim(), vkey: v ? (v.sku || v.key || '') : '', vname: v ? (v.key || v.name || '') : '', url: ownUrl(cs, r) }; };
+    const addRow = () => { const f = document.getElementById('greq'); const row = rowFrom(f); if (!row.unit) { toast('This item has no listed price yet. Order it on WhatsApp and we will quote it.'); return null; } gcAdd(row); return row; };
+    document.getElementById('gadd').addEventListener('click', () => { if (addRow()) toast('Added to cart'); });
+    document.getElementById('gbuy').addEventListener('click', () => { if (addRow()) { A.go('cart'); } });   // quick buy: straight to the cart with the item added
     document.getElementById('greq').addEventListener('submit', e => {
       e.preventDefault(); const f = e.target; const v = chosen.v;
       const ship = f.ship && f.ship.value ? `Shipping chosen: ${f.ship.value}\n` : '';

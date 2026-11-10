@@ -169,7 +169,7 @@ function cleanLinks(root) {
     if (c !== null) { a.dataset.route = h.slice(2); a.setAttribute('href', APP_BASE + c); }
   });
 }
-function waLink(text)    { return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`; }
+function waLink(text)    { return `https://wa.me/${(window.SMContact && window.SMContact.number()) || WA_NUMBER}?text=${encodeURIComponent(text)}`; }   // the visitor's regional team
 function orderText(p, qty) { return `Assalam o Alaikum! I want to order:\n${p.n}\nSKU: ${p.sku || p.id}\nQuantity: ${qty || 1}\nPrice: ${PKR.format(price(p))}\n${pageUrl(p)}`; }
 
 function productsForCategory(cat){ return products.filter(p => p._catSlug === cat || slug(p.m) === cat); }
@@ -1541,7 +1541,7 @@ function toggleWish(id) {
 function updateCounts() {
   const cc = $('#cartCount');
   const wc = $('#wishCount');
-  const n = getCart().reduce((a, x) => a + (x.qty || 0), 0);
+  const n = getCart().reduce((a, x) => a + (x.qty || 0), 0) + (window.SMGCart ? window.SMGCart.count() : 0);
   const total = getCart().reduce((a, x) => { const p = products.find(y => y.id === x.id); return a + (p ? price(p) * x.qty : 0); }, 0);
   if (cc) cc.textContent = n;
   if (wc) wc.textContent = getWish().length;
@@ -1558,8 +1558,9 @@ function renderCart() {
     <div class="section-head"><div><h1>Your cart</h1><p>Review items and proceed to checkout.</p></div></div>
     ${rows.length
       ? `<div class="cart-layout"><div>${rows.map(({ item, qty }) => cartLine(item, qty)).join('')}</div>${summaryBox(sub)}</div>`
-      : empty('Your cart is empty', 'Shop Flash Deals', '#/deals')}
-  </section>`);
+      : (window.SMGCart && window.SMGCart.count() ? '' : empty('Your cart is empty', 'Shop Flash Deals', '#/deals'))}
+  </section>${window.SMGCart ? window.SMGCart.html() : ''}`);
+  if (window.SMGCart) window.SMGCart.bind();
 }
 
 function cartLine(p, qty) {

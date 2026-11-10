@@ -7,6 +7,7 @@
 // 3. Adds the public section URLs to sitemap-pages.xml.
 // Usage: node tools/build-sections.mjs   (idempotent; run after editing index.html)
 import fs from 'node:fs';
+import { waDirectory, WA_CSS } from './wa-directory.mjs';
 import path from 'node:path';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/(\w:)/, '$1')), '..');
@@ -90,6 +91,15 @@ let index = read('index.html');
 let [idx2, ni] = rewriteLinks(index); fs.writeFileSync(path.join(ROOT, 'index.html'), idx2); index = idx2;
 let [chrome2, nc] = rewriteLinks(read('partials/chrome.json'), '\\"'); fs.writeFileSync(path.join(ROOT, 'partials/chrome.json'), chrome2);
 
+/* Phone and WhatsApp worldwide: footer band (index.html + chrome.json) and its CSS, inserted idempotently. */
+const BAND = /<section class="smwa smwa--footer"[\s\S]*?<\/section>/;
+const addBand = html => { const clean = html.replace(BAND, ''); const i = clean.indexOf('<div class="smf-bottom">'); return i < 0 ? clean : clean.slice(0, i) + waDirectory('footer') + clean.slice(i); };
+index = addBand(index); fs.writeFileSync(path.join(ROOT, 'index.html'), index);
+{ const cj = JSON.parse(read('partials/chrome.json')); cj.footer = addBand(cj.footer); fs.writeFileSync(path.join(ROOT, 'partials/chrome.json'), JSON.stringify(cj)); }
+for (const css of ['styles.css', 'assets/theme/static-bundle.css']) {
+  const f = path.join(ROOT, css); let c = fs.readFileSync(f, 'utf8'); c = c.replace(/\n?\/\*smwa:start\*\/[\s\S]*?\/\*smwa:end\*\//, '');
+  fs.writeFileSync(f, c.replace(/\s*$/, '\n') + '/*smwa:start*/' + WA_CSS + '/*smwa:end*/\n');
+}
 let made = 0;
 const pages = [...Object.entries(SECTIONS).map(([key, [title, desc]]) => ({ key, title, desc })), ...GROUPS];
 const rep = (s, re, fn) => s.replace(re, () => fn);   // replacement as a function: "$" in text is never special
@@ -130,7 +140,7 @@ for (const { key, title, desc } of pages) {
   const rec = WP[key], pure = rec && PURE.has(key), urRec = WP['ur/' + key];
   const intro = `<section class="sm-page"><header class="sm-page-head"><h1>${esc(title.replace(/ \| Sasta Milaga$/, ''))}</h1><p>${esc(desc)}</p></header></section>`;
   // content pages use the cloned text and its own SEO title/description; shipping and returns keep the country-wise app and add the full policy under it
-  const body = pure ? wpArticle(rec) : rec ? intro + `<div class="sm-page sm-page--wide"><div class="sm-prose">${rec.body}</div></div>` : intro;
+  const body = pure ? (key === 'contact' ? wpArticle(rec).replace('</header>', () => '</header>' + waDirectory('page')) : wpArticle(rec)) : rec ? intro + `<div class="sm-page sm-page--wide"><div class="sm-prose">${rec.body}</div></div>` : intro;
   const h = shell({ key, keepHome: key === 'travel', keepTv: key === 'live-tv', base: '../'.repeat(key.split('/').length), title: pure ? titleTag(rec.seoTitle) : titleTag(title), desc: pure ? rec.description : desc, url, robots: priv ? 'noindex, nofollow' : 'index, follow, max-image-preview:large', body, isStatic: pure, alts: alt1(url, urRec ? `${SITE}/ur/${key}/` : '') });
   fs.mkdirSync(path.join(ROOT, key), { recursive: true });
   fs.writeFileSync(path.join(ROOT, key, 'index.html'), h); made++;
