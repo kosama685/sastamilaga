@@ -1,0 +1,628 @@
+{
+ "testedAt": "2026-11-10",
+ "method": "Real playback in Chrome from https://kosama685.github.io: one video element per stream; pass = the playhead advanced at least 3 seconds (not just a playlist response)",
+ "configuredChannels": 2203,
+ "browserStreamsTested": 714,
+ "played": 631,
+ "failed": 80,
+ "byType": {
+  "hls": {
+   "tested": 685,
+   "played": 624
+  },
+  "dash": {
+   "tested": 28,
+   "played": 9
+  },
+  "mp4": {
+   "tested": 1,
+   "played": 0
+  }
+ },
+ "failureReasons": {
+  "networkError/fragLoadError 0": 1,
+  "networkError/keyLoadError 404": 1,
+  "networkError/manifestLoadError 0": 12,
+  "networkError/manifestLoadError 403": 17,
+  "dash https://pe-ak-lp04a-9c9media.akamaized.net/live/NOOVO/p": 1,
+  "dash https://bpcdnmanprod.nexttv.ht.hr/bpk-tv/HRT1/default/i": 1,
+  "dash https://bpcdnmanprod.nexttv.ht.hr/bpk-tv/HRT2/default/i": 1,
+  "dash https://bpcdnmanprod.nexttv.ht.hr/bpk-tv/HRT3/default/i": 1,
+  "dash https://bpcdnmanprod.nexttv.ht.hr/bpk-tv/HRT4/default/i": 1,
+  "no playback in 20s": 18,
+  "networkError/manifestParsingError 200": 1,
+  "networkError/manifestLoadError 404": 1,
+  "dash https://ert-live.siliconweb.com/bpk-tv/ERT1/default/ind": 1,
+  "dash https://ert-live.siliconweb.com/bpk-tv/ERT2/default/ind": 1,
+  "dash https://ert-live.siliconweb.com/bpk-tv/ERT3/default/ind": 1,
+  "media 4": 1,
+  "dash https://dc3.telesveva.com:4433/cmaf/livetv/index.mpd is": 1,
+  "mediaError/fragParsingError": 1,
+  "dash https://cdn-s-lb2.pluscdn.pl/lv/1533809/392/dash/3de17d": 1,
+  "networkError/keyLoadError 0": 1,
+  "dash https://cdn-s-playnow-live.pluscdn.pl/ch/1502601/309/da": 1,
+  "networkError/fragLoadError 403": 1,
+  "networkError/levelLoadError 404": 1,
+  "dash https://svt-live-channel.akamaized.net/l4/se/svt1/manif": 1,
+  "dash https://svt-live-channel.akamaized.net/l6/se/svt2/manif": 1,
+  "dash https://svt-live-channel.akamaized.net/l6/se/svtb/manif": 1,
+  "dash https://svt-live-channel.akamaized.net/l6/se/svtk/manif": 1,
+  "networkError/levelLoadError 0": 8,
+  "dash https://live3.msf.cdn.mediaset.net/content/dash_d0_clr_": 2
+ },
+ "notTestedHere": {
+  "vlcOnly": 536,
+  "youtubeEmbeds": 129,
+  "broadcasterEmbeds": 6,
+  "note": "VLC-only channels cannot play in a browser by design; embeds are played by the broadcaster's own player"
+ },
+ "failedChannels": [
+  {
+   "id": 40,
+   "name": "El Trece",
+   "country": "AR",
+   "type": "hls",
+   "error": "networkError/fragLoadError 0"
+  },
+  {
+   "id": 48,
+   "name": "10 HD",
+   "country": "AU",
+   "type": "hls",
+   "error": "networkError/keyLoadError 404"
+  },
+  {
+   "id": 96,
+   "name": "Беларусь 2",
+   "country": "BY",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 0"
+  },
+  {
+   "id": 314,
+   "name": "MBC Masr 1",
+   "country": "EG",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 315,
+   "name": "MBC Masr 2",
+   "country": "EG",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 171,
+   "name": "Noovo",
+   "country": "CA",
+   "type": "dash",
+   "error": "dash https://pe-ak-lp04a-9c9media.akamaized.net/live/NOOVO/p/dash/00000001/f481c583dbd06b6c/manifest.mpd is not available"
+  },
+  {
+   "id": 233,
+   "name": "HRT 1",
+   "country": "HR",
+   "type": "dash",
+   "error": "dash https://bpcdnmanprod.nexttv.ht.hr/bpk-tv/HRT1/default/index.mpd is not available"
+  },
+  {
+   "id": 234,
+   "name": "HRT 2",
+   "country": "HR",
+   "type": "dash",
+   "error": "dash https://bpcdnmanprod.nexttv.ht.hr/bpk-tv/HRT2/default/index.mpd is not available"
+  },
+  {
+   "id": 237,
+   "name": "HRT 3",
+   "country": "HR",
+   "type": "dash",
+   "error": "dash https://bpcdnmanprod.nexttv.ht.hr/bpk-tv/HRT3/default/index.mpd is not available"
+  },
+  {
+   "id": 238,
+   "name": "HRT 4",
+   "country": "HR",
+   "type": "dash",
+   "error": "dash https://bpcdnmanprod.nexttv.ht.hr/bpk-tv/HRT4/default/index.mpd is not available"
+  },
+  {
+   "id": 331,
+   "name": "Nelonen",
+   "country": "FI",
+   "type": "hls",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 334,
+   "name": "TV5 Finland",
+   "country": "FI",
+   "type": "hls",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 337,
+   "name": "Kutonen",
+   "country": "FI",
+   "type": "hls",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 338,
+   "name": "TLC Finland",
+   "country": "FI",
+   "type": "hls",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 339,
+   "name": "Star Channel Finland",
+   "country": "FI",
+   "type": "hls",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 342,
+   "name": "Frii",
+   "country": "FI",
+   "type": "hls",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 569,
+   "name": "Jászsági Térségi TV",
+   "country": "HU",
+   "type": "hls",
+   "error": "networkError/manifestParsingError 200"
+  },
+  {
+   "id": 572,
+   "name": "Pannon RTV",
+   "country": "HU",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 404"
+  },
+  {
+   "id": 436,
+   "name": "ERT 1",
+   "country": "GR",
+   "type": "dash",
+   "error": "dash https://ert-live.siliconweb.com/bpk-tv/ERT1/default/index.mpd is not available"
+  },
+  {
+   "id": 437,
+   "name": "ERT 2",
+   "country": "GR",
+   "type": "dash",
+   "error": "dash https://ert-live.siliconweb.com/bpk-tv/ERT2/default/index.mpd is not available"
+  },
+  {
+   "id": 438,
+   "name": "ERT 3",
+   "country": "GR",
+   "type": "dash",
+   "error": "dash https://ert-live.siliconweb.com/bpk-tv/ERT3/default/index.mpd is not available"
+  },
+  {
+   "id": 450,
+   "name": "Star",
+   "country": "GR",
+   "type": "hls",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 821,
+   "name": "Cremona 1",
+   "country": "IT",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 0"
+  },
+  {
+   "id": 886,
+   "name": "News24 City",
+   "country": "IT",
+   "type": "mp4",
+   "error": "media 4"
+  },
+  {
+   "id": 916,
+   "name": "Radio Bianconera TV",
+   "country": "IT",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 0"
+  },
+  {
+   "id": 916,
+   "name": "Radio Bianconera TV",
+   "country": "IT",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 0"
+  },
+  {
+   "id": 922,
+   "name": "Radio Iglesias Visual Radio",
+   "country": "IT",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 1013,
+   "name": "Tele Foggia",
+   "country": "IT",
+   "type": "hls",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 1086,
+   "name": "Telesveva",
+   "country": "IT",
+   "type": "dash",
+   "error": "dash https://dc3.telesveva.com:4433/cmaf/livetv/index.mpd is not available"
+  },
+  {
+   "id": 1192,
+   "name": "MTV Lebanon",
+   "country": "",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 1123,
+   "name": "WLTV",
+   "country": "IT",
+   "type": "hls",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 1210,
+   "name": "Delfi TV",
+   "country": "LT",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 0"
+  },
+  {
+   "id": 1226,
+   "name": "Smash TV",
+   "country": "MT",
+   "type": "hls",
+   "error": "mediaError/fragParsingError"
+  },
+  {
+   "id": 1236,
+   "name": "Canal 6 Multimedios",
+   "country": "MX",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 1318,
+   "name": "Wazobia Max TV Nigeria",
+   "country": "NG",
+   "type": "hls",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 1517,
+   "name": "RTP Mundo",
+   "country": "PT",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 0"
+  },
+  {
+   "id": 1440,
+   "name": "Polsat News 2 (1080p) [Geo-blocked]",
+   "country": "PL",
+   "type": "dash",
+   "error": "dash https://cdn-s-lb2.pluscdn.pl/lv/1533809/392/dash/3de17d4a/live.mpd is not available"
+  },
+  {
+   "id": 1540,
+   "name": "Pro TV",
+   "country": "RO",
+   "type": "hls",
+   "error": "networkError/keyLoadError 0"
+  },
+  {
+   "id": 1478,
+   "name": "TV4 (Poland) (1080p) [Geo-blocked]",
+   "country": "PL",
+   "type": "dash",
+   "error": "dash https://cdn-s-playnow-live.pluscdn.pl/ch/1502601/309/dash/e25c2c93/live.mpd is not available"
+  },
+  {
+   "id": 1611,
+   "name": "Al Saudiya",
+   "country": "SA",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 1612,
+   "name": "SBC Saudi Arabia",
+   "country": "SA",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 1613,
+   "name": "Thikrayat",
+   "country": "SA",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 1614,
+   "name": "Al Ekhbariya",
+   "country": "SA",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 1615,
+   "name": "Al Saudiya Alaan",
+   "country": "SA",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 1626,
+   "name": "RTS 2",
+   "country": "RS",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 0"
+  },
+  {
+   "id": 1631,
+   "name": "RTS Svet",
+   "country": "RS",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 0"
+  },
+  {
+   "id": 1550,
+   "name": "Первый канал",
+   "country": "RU",
+   "type": "dash",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 1663,
+   "name": "La 2",
+   "country": "ES",
+   "type": "hls",
+   "error": "networkError/fragLoadError 403"
+  },
+  {
+   "id": 1691,
+   "name": "Televisión Canaria",
+   "country": "ES",
+   "type": "hls",
+   "error": "networkError/levelLoadError 404"
+  },
+  {
+   "id": 1710,
+   "name": "SVT 1",
+   "country": "SE",
+   "type": "dash",
+   "error": "dash https://svt-live-channel.akamaized.net/l4/se/svt1/manifest.mpd?format=dash&defaultSubLang=1 is not available"
+  },
+  {
+   "id": 1711,
+   "name": "SVT 2",
+   "country": "SE",
+   "type": "dash",
+   "error": "dash https://svt-live-channel.akamaized.net/l6/se/svt2/manifest.mpd?format=dash&defaultSubLang=1 is not available"
+  },
+  {
+   "id": 1714,
+   "name": "Kanal 10 Sverige",
+   "country": "SE",
+   "type": "hls",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 1715,
+   "name": "SVT 24",
+   "country": "SE",
+   "type": "dash",
+   "error": "dash https://svt-live-channel.akamaized.net/l6/se/svtb/manifest.mpd?format=dash&defaultSubLang=1 is not available"
+  },
+  {
+   "id": 1716,
+   "name": "Kunskapskanalen",
+   "country": "SE",
+   "type": "dash",
+   "error": "dash https://svt-live-channel.akamaized.net/l6/se/svtk/manifest.mpd?format=dash&defaultSubLang=1 is not available"
+  },
+  {
+   "id": 1807,
+   "name": "Bloomberg TV",
+   "country": "GB",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 0"
+  },
+  {
+   "id": 1818,
+   "name": "BBC Radio 2",
+   "country": "GB",
+   "type": "hls",
+   "error": "networkError/levelLoadError 0"
+  },
+  {
+   "id": 1817,
+   "name": "BBC Radio 1",
+   "country": "GB",
+   "type": "hls",
+   "error": "networkError/levelLoadError 0"
+  },
+  {
+   "id": 1820,
+   "name": "BBC Radio 4",
+   "country": "GB",
+   "type": "hls",
+   "error": "networkError/levelLoadError 0"
+  },
+  {
+   "id": 1819,
+   "name": "BBC Radio 3",
+   "country": "GB",
+   "type": "hls",
+   "error": "networkError/levelLoadError 0"
+  },
+  {
+   "id": 1824,
+   "name": "BBC Radio 4 Extra",
+   "country": "GB",
+   "type": "hls",
+   "error": "networkError/levelLoadError 0"
+  },
+  {
+   "id": 1821,
+   "name": "BBC Radio 5 Live",
+   "country": "GB",
+   "type": "hls",
+   "error": "networkError/levelLoadError 0"
+  },
+  {
+   "id": 1823,
+   "name": "BBC Radio 1Xtra",
+   "country": "GB",
+   "type": "hls",
+   "error": "networkError/levelLoadError 0"
+  },
+  {
+   "id": 1826,
+   "name": "BBC Asian Network",
+   "country": "GB",
+   "type": "hls",
+   "error": "networkError/levelLoadError 0"
+  },
+  {
+   "id": 1877,
+   "name": "MBC 1",
+   "country": "AE",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 1879,
+   "name": "MBC 3",
+   "country": "AE",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 1880,
+   "name": "MBC 4",
+   "country": "AE",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 1881,
+   "name": "MBC 5",
+   "country": "AE",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 1883,
+   "name": "MBC Bollywood",
+   "country": "AE",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 1884,
+   "name": "MBC Drama",
+   "country": "AE",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 1886,
+   "name": "MBC Persia",
+   "country": "AE",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 403"
+  },
+  {
+   "id": 1896,
+   "name": "Ajman TV",
+   "country": "AE",
+   "type": "hls",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 2031,
+   "name": "Bloomberg Television (Europe)",
+   "country": "",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 0"
+  },
+  {
+   "id": 2029,
+   "name": "Bloomberg TV+",
+   "country": "",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 0"
+  },
+  {
+   "id": 2030,
+   "name": "Bloomberg Television (US)",
+   "country": "",
+   "type": "hls",
+   "error": "networkError/manifestLoadError 0"
+  },
+  {
+   "id": 2051,
+   "name": "Grande Fratello Vip Regia 1",
+   "country": "",
+   "type": "dash",
+   "error": "dash https://live3.msf.cdn.mediaset.net/content/dash_d0_clr_vos/live/channel(b7)/manifest.mpd is not available"
+  },
+  {
+   "id": 2052,
+   "name": "Grande Fratello Vip Regia 2",
+   "country": "",
+   "type": "dash",
+   "error": "dash https://live3.msf.cdn.mediaset.net/content/dash_d0_clr_vos/live/channel(b8)/manifest.mpd is not available"
+  },
+  {
+   "id": 2053,
+   "name": "Grande Fratello Vip Regia un'ora fa",
+   "country": "",
+   "type": "dash",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 2059,
+   "name": "Family – Rakuten TV",
+   "country": "",
+   "type": "hls",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 2060,
+   "name": "Romance – Rakuten TV",
+   "country": "",
+   "type": "hls",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 2061,
+   "name": "Film Top – Rakuten TV",
+   "country": "",
+   "type": "hls",
+   "error": "no playback in 20s"
+  },
+  {
+   "id": 2062,
+   "name": "Drammatico – Rakuten TV",
+   "country": "",
+   "type": "hls",
+   "error": "no playback in 20s"
+  }
+ ]
+}

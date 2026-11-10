@@ -1,0 +1,2070 @@
+{
+ "productPages": 20165,
+ "inFeed": 19872,
+ "excluded": 293,
+ "excludedByReason": {
+  "no product image (a Merchant Center requirement)": 287,
+  "missing or zero price": 6,
+  "currency is not PKR": 6
+ },
+ "notIncluded": "brand, gtin, mpn, google_product_category, ratings and reviews are not in the catalogue and are not invented",
+ "excludedProducts": [
+  {
+   "page": "1-pc-foldable-traveling-hanger-hhc-890653.html",
+   "id": "hhc-890653",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "1007073-hhc-1007073.html",
+   "id": "hhc-1007073",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "1007121-hhc-1007121.html",
+   "id": "hhc-1007121",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "101-essays-that-will-change-the-way-you-think-a-novel-by-brianna-wiest-best-sell-hhc-723120.html",
+   "id": "hhc-723120",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "10pcs-multi-function-spit-bone-dish-household-food-grade-plastic-spit-bone-dish-hhc-798118.html",
+   "id": "hhc-798118",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "12-in-1-makeup-deal-foundation-eye-shadow-lip-gloss-makeup-fixer-powder-mascara-hhc-1949693.html",
+   "id": "hhc-1949693",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "12pcs-multi-shape-brush-black-handle-hhc-890635.html",
+   "id": "hhc-890635",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "13-things-mentally-strong-people-dont-do-best-selling-novel-book-hhc-717490.html",
+   "id": "hhc-717490",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "1pc-children-pencil-holder-tools-silicone-two-finger-ergonomic-posture-correctio-hhc-824858.html",
+   "id": "hhc-824858",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "1pc-silicone-spatula-dishes-baking-mix-set-pastry-tools-hhc-988443.html",
+   "id": "hhc-988443",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "2-islamic-wall-decor-kaaba-wall-art-811-1pcs-size-inches-abstract-allah-muhammed-hhc-3723739.html",
+   "id": "hhc-3723739",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "2-pcs-set-metal-stand-tap-without-bottle-hhc-766788.html",
+   "id": "hhc-766788",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "24pcs-imported-disposable-plastic-fork-party-cutlery-fork-birthday-party-tablewa-hhc-2742180.html",
+   "id": "hhc-2742180",
+   "reasons": [
+    "missing or zero price",
+    "currency is not PKR"
+   ]
+  },
+  {
+   "page": "3-in1-eyelash-curler-for-womens-hhc-875836.html",
+   "id": "hhc-875836",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "3d-wall-art-calligraphy-wall-decoration-wooden-wall-art-hhc-2126716.html",
+   "id": "hhc-2126716",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "3d-wall-art-islamic-calligraphy-wall-decoration-wooden-wall-art-hhc-2126154.html",
+   "id": "hhc-2126154",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "3d-wall-art-islamic-calligraphy-wall-decoration-wooden-wall-art-hhc-2126472.html",
+   "id": "hhc-2126472",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "3d-wall-art-islamic-calligraphy-wall-decoration-wooden-wall-art-hhc-2126673.html",
+   "id": "hhc-2126673",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "3d-wall-art-smile-elegant-smiley-calligraphy-wall-hanging-home-decor-hhc-2180309.html",
+   "id": "hhc-2180309",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "3d-wall-clock-bicycle-style-wooden-clock-hhc-2131193.html",
+   "id": "hhc-2131193",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "3d-wall-clock-bike-style-wooden-wall-clock-hhc-2131171.html",
+   "id": "hhc-2131171",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "3d-wall-clock-i-wooden-wall-clock-hhc-2131059.html",
+   "id": "hhc-2131059",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "3d-wall-clock-with-light-wooden-wall-clock-hhc-2126081.html",
+   "id": "hhc-2126081",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "3d-wooden-clock-with-premium-design-i-the-new-wooden-wall-clock-hhc-2116029.html",
+   "id": "hhc-2116029",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "3pcs-arabic-calligraphy-quran-verse-wall-frame-set-art-for-bedroom-and-drawing-r-hhc-3407701.html",
+   "id": "hhc-3407701",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "3pcs-cake-scraper-edge-decorating-cooking-cutters-set-hhc-988252.html",
+   "id": "hhc-988252",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "3pcs-set-of-subhanallah-allhamdulillah-allahu-akbar-sticky-photo-tile-wooden-mat-hhc-3258312-3752231.html",
+   "id": "hhc-3258312-3752231",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "3pcs-set-of-subhanallah-allhamdulillah-allahu-akbar-sticky-photo-tile-wooden-mat-hhc-3258312-3752232.html",
+   "id": "hhc-3258312-3752232",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "3pcs-set-of-subhanallah-allhamdulillah-allahu-akbar-sticky-photo-tile-wooden-mat-hhc-3258312.html",
+   "id": "hhc-3258312",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "4pc-set-food-sealing-clip-carrot-shape-for-food-fresh-keeping-hhc-798103.html",
+   "id": "hhc-798103",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "4pcs-motivational-sticky-phototile-wooden-material-wall-frames-for-home-decor-8x-hhc-3257052.html",
+   "id": "hhc-3257052",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "4pcs-vintage-sticky-phototile-wall-frames-for-home-decor-8-x-11-hhc-3257079.html",
+   "id": "hhc-3257079",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "4pcs-wooden-islamic-wall-frame-set-art-for-bedroom-and-drawing-room-decor-home-d-hhc-3678605.html",
+   "id": "hhc-3678605",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "5-in-1-miss-rose-deal-hhc-1922011.html",
+   "id": "hhc-1922011",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "50m-brushed-gold-silver-floor-edging-waterproof-seam-wall-stickers-wall-gap-ceil-hhc-876081.html",
+   "id": "hhc-876081",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "5pcs-islamic-calligraphy-wall-frames-sticky-phototiles-wall-art-home-decoration-hhc-3260129.html",
+   "id": "hhc-3260129",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "5pcs-small-palette-knife-hhc-890527.html",
+   "id": "hhc-890527",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "5pcs-vintage-painting-wall-frame-home-decor-wall-decor-hhc-3285978.html",
+   "id": "hhc-3285978",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "6-piece-pvc-wall-board-combo-for-wall-decoration-best-wall-decoration-item-motic-hhc-3284604.html",
+   "id": "hhc-3284604",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "6x6inches-different-printed-outline-designs-canvas-board-with-acrylic-colours-an-hhc-890613.html",
+   "id": "hhc-890613",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "7-days-whitening-serum-with-the-power-of-vitamin-b5-5ml-hhc-1880260.html",
+   "id": "hhc-1880260",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "7-ft-ring-light-stand-for-video-shooting-and-photography-2-hhc-1042300.html",
+   "id": "hhc-1042300",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "9-piece-islamic-calligraphy-wall-art-set-decorative-wooden-mdf-frames-sticky-pho-hhc-3757152.html",
+   "id": "hhc-3757152",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "a-good-girls-guide-to-murder-a-novel-by-holly-jackson-ks-a-good-girl-guide-to-mu-hhc-723271.html",
+   "id": "hhc-723271",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "a-luxurious-blend-of-iconic-designer-style-plush-comfort-and-premium-crafted-sue-hhc-3754657.html",
+   "id": "hhc-3754657",
+   "reasons": [
+    "missing or zero price",
+    "currency is not PKR"
+   ]
+  },
+  {
+   "page": "a-thousand-splendid-suns-novel-by-khalid-book-hhc-717694.html",
+   "id": "hhc-717694",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "abbas-alamdar-wall-clock-islamic-wall-art-3d-wall-clock-with-lights-hhc-2159808.html",
+   "id": "hhc-2159808",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "acrylic-colour-12ml-12-tubes-hhc-890686.html",
+   "id": "hhc-890686",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "ali-baba-the-house-that-jack-ma-built-book-by-duncan-clark-book-hhc-700177.html",
+   "id": "hhc-700177",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "aloe-vera-face-wash-gel-based-100ml-hhc-3274735.html",
+   "id": "hhc-3274735",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "aloe-vera-foot-soak-100ml-moon-touch-best-quality-foot-soak-hhc-2879348.html",
+   "id": "hhc-2879348",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "aloe-vera-soothing-lotion-120ml-hhc-1875603.html",
+   "id": "hhc-1875603",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "and-the-mountains-echoed-khaled-husseini-book-hhc-717516.html",
+   "id": "hhc-717516",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "anti-acne-tea-tree-serum-5ml-hhc-1879863.html",
+   "id": "hhc-1879863",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "arctic-air-grip-go-portable-evaporative-cooler-hhc-1583877.html",
+   "id": "hhc-1583877",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "artificial-money-plant-leave-with-coconut-stick-decorative-flowers-plants-best-f-hhc-2390522.html",
+   "id": "hhc-2390522",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "atomic-habits-by-james-clear-book-hhc-705890.html",
+   "id": "hhc-705890",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "atomic-habits-by-james-clear-hhc-700169.html",
+   "id": "hhc-700169",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "baby-miss-double-wax-warmer-electric-wax-warmer-professional-machine-for-hair-re-hhc-1235503.html",
+   "id": "hhc-1235503",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "babymiss-pro-wax-heater-without-bucket-hhc-1235695.html",
+   "id": "hhc-1235695",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "believe-me-by-tahereh-mafi-novel-ks-book-hhc-717583.html",
+   "id": "hhc-717583",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "better-than-the-movies-by-lynn-painter-best-novel-ks-book-hhc-723216.html",
+   "id": "hhc-723216",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "bioaqua-blueberry-essence-tender-beautiful-skin-whitening-moisturizing-cream-hhc-3202275.html",
+   "id": "hhc-3202275",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "bird-cage-3d-wooden-wall-clock-decoration-items-for-wall-hhc-2594665.html",
+   "id": "hhc-2594665",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "black-color-summer-designer-stylish-shorts-for-men-black-gym-sports-amp-fitness-hhc-3194939-3194940.html",
+   "id": "hhc-3194939-3194940",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "black-color-summer-designer-stylish-shorts-for-men-black-gym-sports-amp-fitness-hhc-3194939-3194941.html",
+   "id": "hhc-3194939-3194941",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "black-color-summer-designer-stylish-shorts-for-men-black-gym-sports-amp-fitness-hhc-3194939-3194942.html",
+   "id": "hhc-3194939-3194942",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "black-color-summer-designer-stylish-shorts-for-men-black-gym-sports-fitness-shor-hhc-3194939.html",
+   "id": "hhc-3194939",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "blueidea-four-head-massager-electric-best-quality-hhc-1105246.html",
+   "id": "hhc-1105246",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "body-massager-electric-double-head-massager-hhc-1137748.html",
+   "id": "hhc-1137748",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "body-wax-pro-double-wax-warmer-electric-wax-warmer-professional-machine-for-hair-hhc-1235481.html",
+   "id": "hhc-1235481",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "branded-scarves-for-winter-hhc-708377-708419.html",
+   "id": "hhc-708377-708419",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "branded-scarves-for-winter-hhc-708377-708420.html",
+   "id": "hhc-708377-708420",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "branded-scarves-for-winter-hhc-708377-708421.html",
+   "id": "hhc-708377-708421",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "branded-scarves-for-winter-hhc-708377-708422.html",
+   "id": "hhc-708377-708422",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "branded-scarves-for-winter-hhc-708377-708423.html",
+   "id": "hhc-708377-708423",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "branded-scarves-for-winter-hhc-708377-708424.html",
+   "id": "hhc-708377-708424",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "branded-scarves-for-winter-hhc-708377.html",
+   "id": "hhc-708377",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "brightening-clay-mask-50ml-reduce-hyperpigmentation-and-restore-your-skins-natur-hhc-3275377.html",
+   "id": "hhc-3275377",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "brightness-expert-serum-restore-natural-glow-5ml-hhc-1879895.html",
+   "id": "hhc-1879895",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "butterfly-3d-wooden-wall-clock-for-living-room-retro-decor-wall-clock-hhc-2575241.html",
+   "id": "hhc-2575241",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "c6-4-in-1-multi-functional-car-charger-fast-charging-with-star-light-providing-d-hhc-3754834-3755982.html",
+   "id": "hhc-3754834-3755982",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "c6-4-in-1-multi-functional-car-charger-fast-charging-with-star-light-providing-d-hhc-3754834-3755983.html",
+   "id": "hhc-3754834-3755983",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "c6-4-in-1-multi-functional-car-charger-fast-charging-with-star-light-providing-d-hhc-3754834.html",
+   "id": "hhc-3754834",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "chaki-aur-darya-childhood-stories-book-hhc-700083.html",
+   "id": "hhc-700083",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "charlie-and-the-chocolate-factory-novel-by-roald-dahl-book-hhc-723288.html",
+   "id": "hhc-723288",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "confess-by-colleen-hoover-book-hhc-700464.html",
+   "id": "hhc-700464",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "crack-foot-cream-50ml-moisturising-foot-cream-that-heals-cracked-and-dry-heels-hhc-3278988.html",
+   "id": "hhc-3278988",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "creamy-hair-removal-wax-300g-approx-hhc-1960784.html",
+   "id": "hhc-1960784",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "creamy-hair-removal-wax-300g-hhc-1326550.html",
+   "id": "hhc-1326550",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "creamy-pink-rose-face-wash-100ml-hhc-3274389.html",
+   "id": "hhc-3274389",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "creamy-whitening-face-wash-90g-approx-hhc-1331099.html",
+   "id": "hhc-1331099",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "creative-zip-top-can-air-humidifier-usb-mist-maker-fogger-with-colorful-led-ligh-hhc-2152216.html",
+   "id": "hhc-2152216",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "dancing-cactus-rechargable-hhc-728643.html",
+   "id": "hhc-728643",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "dancing-cactus-rechargable-without-box-random-doll-hhc-2152025.html",
+   "id": "hhc-2152025",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "diaper-mummy-bag-multi-function-waterproof-travel-backpack-hhc-737996.html",
+   "id": "hhc-737996",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "diary-of-a-wimpy-kid-book-17-diaper-over-loadenglish-edition-ks-book-hhc-700117.html",
+   "id": "hhc-700117",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "diary-of-an-awesome-friendly-kid-rowley-jeffersons-journal-book-hhc-723295.html",
+   "id": "hhc-723295",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "dingling-trimmer-09-original-with-different-combs-inside-chargeable-hhc-1116121.html",
+   "id": "hhc-1116121",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "diwan-e-ghalib-by-asad-ullah-ghalib-urdu-adab-literature-explaination-tashrih-bo-hhc-700076.html",
+   "id": "hhc-700076",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "doctor-posture-magnetic-inside-support-adjustable-for-men-and-women-white-color-hhc-1119005.html",
+   "id": "hhc-1119005",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "dolphin-multi-purpose-spray-paint-fast-drying-anti-rust-scratch-resistant-high-g-hhc-3757525.html",
+   "id": "hhc-3757525",
+   "reasons": [
+    "missing or zero price",
+    "currency is not PKR"
+   ]
+  },
+  {
+   "page": "door-hook-metal-for-home-kitchen-changing-rooms-hhc-797870.html",
+   "id": "hhc-797870",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "e-charge-wallet-deluxe-portable-mobile-charger-power-bank-and-credit-card-case-hhc-1204328.html",
+   "id": "hhc-1204328",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "eat-that-frog-by-brian-tracy-book-hhc-700444.html",
+   "id": "hhc-700444",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "ego-is-the-enemy-the-fight-to-master-our-greatest-opponent-book-by-ryan-holiday-hhc-700113.html",
+   "id": "hhc-700113",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "electric-body-massager-best-quality-led-display-hhc-1137773.html",
+   "id": "hhc-1137773",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "eye-massager-portable-electric-eye-care-massager-electric-relieve-fatigue-health-hhc-1072530.html",
+   "id": "hhc-1072530",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "face-pro-deal-makeup-fixer-foundationrandom-shade-2-in-1-face-powderwith-puff-lo-hhc-1949820.html",
+   "id": "hhc-1949820",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "final-offer-a-novel-by-lauren-asher-best-selling-ks-book-hhc-723102.html",
+   "id": "hhc-723102",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "fruity-pink-skin-polisher-hhc-1323160.html",
+   "id": "hhc-1323160",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "gehma-gehmi-novel-by-mumtaz-mufti-best-selling-urdu-reading-book-hhc-723301.html",
+   "id": "hhc-723301",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "glutathione-serum-even-out-complexion-fades-pigmentation-5ml-hhc-1879951.html",
+   "id": "hhc-1879951",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "gold-skin-polisher-pump-set-650ml-hhc-1323196.html",
+   "id": "hhc-1323196",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "good-girl-bad-blood-a-novel-by-holly-jackson-best-reading-novel-ks-book-hhc-723035.html",
+   "id": "hhc-723035",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "goya-by-jaun-elia-hhc-705799.html",
+   "id": "hhc-705799",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "gumaan-by-jaun-elia-hhc-705789.html",
+   "id": "hhc-705789",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "hand-foot-glowing-mask-100g-best-quality-mask-hhc-2908734.html",
+   "id": "hhc-2908734",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "heart-bones-best-selling-novel-by-colleen-hoover-ks-book-hhc-723155.html",
+   "id": "hhc-723155",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "hottu-fc56-35w-gan-super-quick-pd-wall-charger-hhc-3767575.html",
+   "id": "hhc-3767575",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "how-to-get-what-you-want-and-want-what-you-have-book-by-john-gray-book-hhc-722985.html",
+   "id": "hhc-722985",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "hum-kaha-kay-sachay-thay-novel-by-umaira-ahmad-pakistans-best-selling-urdu-readi-hhc-728323.html",
+   "id": "hhc-728323",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "hurf-say-lafz-tak-novel-by-umaira-ahmad-hurf-harf-se-lafz-tak-by-umera-ahmed-uma-hhc-700088.html",
+   "id": "hhc-700088",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "hy-boutique-lot-lining-screen-print-full-sleeve-t-shirt-premium-quality-smart-lo-hhc-3707898-3707899.html",
+   "id": "hhc-3707898-3707899",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "hy-boutique-lot-lining-screen-print-full-sleeve-t-shirt-premium-quality-smart-lo-hhc-3707898-3707900.html",
+   "id": "hhc-3707898-3707900",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "hy-boutique-lot-lining-screen-print-full-sleeve-t-shirt-premium-quality-smart-lo-hhc-3707898-3707901.html",
+   "id": "hhc-3707898-3707901",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "hy-boutique-lot-lining-screen-print-full-sleeve-t-shirt-premium-quality-smart-lo-hhc-3752266-3752181.html",
+   "id": "hhc-3752266-3752181",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "hy-boutique-lot-lining-screen-print-full-sleeve-t-shirt-premium-quality-smart-lo-hhc-3752266-3752182.html",
+   "id": "hhc-3752266-3752182",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "hy-boutique-lot-lining-screen-print-full-sleeve-t-shirt-premium-quality-smart-lo-hhc-3752266-3752183.html",
+   "id": "hhc-3752266-3752183",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "hy-boutique-lot-lining-screen-print-full-sleeve-t-shirt-premium-quality-smart-lo-hhc-3752266.html",
+   "id": "hhc-3752266",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "hyaluronic-acid-serum-pore-reducing-skin-lifting-5ml-hhc-1879826.html",
+   "id": "hhc-1879826",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "hydra-waterproof-agent-3-hhc-804491.html",
+   "id": "hhc-804491",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "icebreaker-a-novel-by-hannah-grace-best-selling-ks-hhc-717447.html",
+   "id": "hhc-717447",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "ikigai-the-japanese-secret-to-a-long-happy-life-hhc-700185.html",
+   "id": "hhc-700185",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "iman-afroz-sabak-amoz-sachay-waqiyat-book-hhc-717820.html",
+   "id": "hhc-717820",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "it-ends-with-us-by-colleen-hoover-book-hhc-705840.html",
+   "id": "hhc-705840",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "it-ends-with-us-by-colleen-hoover-book-hhc-717560.html",
+   "id": "hhc-717560",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "it-starts-with-us-by-colleen-hoover-book-hhc-728066.html",
+   "id": "hhc-728066",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "jannat-ke-pattey-by-nimra-ahmed-hhc-705908.html",
+   "id": "hhc-705908",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "kaolin-clay-mud-mask-50ml-deep-cleansing-removes-impurities-and-excess-oil-from-hhc-3279028.html",
+   "id": "hhc-3279028",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "karakoram-ka-taj-mehal-urdu-novel-by-nimra-ahmed-ks-book-hhc-717859.html",
+   "id": "hhc-717859",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "katan-silk-3pc-suit-embroidered-shirt-organza-dupatta-masoori-trouser-pink-hhc-1015388.html",
+   "id": "hhc-1015388",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "keratin-hair-care-balance-hair-shampoo-hair-treatment-500ml-3-hhc-777264.html",
+   "id": "hhc-777264",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "keratin-hair-care-balance-mask-and-treatment-for-healthy-scalp-500ml-hhc-2555846.html",
+   "id": "hhc-2555846",
+   "reasons": [
+    "missing or zero price",
+    "currency is not PKR"
+   ]
+  },
+  {
+   "page": "king-of-pride-by-ana-huang-novel-ks-book-hhc-728044.html",
+   "id": "hhc-728044",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "king-of-wrath-by-ana-huang-novel-ks-book-hhc-728002.html",
+   "id": "hhc-728002",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "kitchen-cleaning-towel-soft-hand-towel-strong-absorbent-kitchen-hanging-kitchen-hhc-803322.html",
+   "id": "hhc-803322",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "kitchen-paper-towel-hanger-holder-under-cabinet-roll-rack-space-save-organizer-r-hhc-777514.html",
+   "id": "hhc-777514",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "leg-massager-cell-operated-hhc-1120037.html",
+   "id": "hhc-1120037",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "lighter-with-knife-hhc-765978.html",
+   "id": "hhc-765978",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "likin-by-john-elia-book-hhc-705936.html",
+   "id": "hhc-705936",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "limitless-by-jim-kwik-book-hhc-700285.html",
+   "id": "hhc-700285",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "long-press-on-nails-24-pcs-matte-perfection-o-two-o-nail-polish-for-a-luxe-look-hhc-3139739.html",
+   "id": "hhc-3139739",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "love-from-a-to-z-by-s-k-ali-novel-ks-hhc-723054.html",
+   "id": "hhc-723054",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "mac-bb-whitening-foundation-cream-hhc-2011373.html",
+   "id": "hhc-2011373",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "magic-coloring-book-with-water-pen-hhc-798359.html",
+   "id": "hhc-798359",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "magic-waterproof-3d-blush-hhc-1922140.html",
+   "id": "hhc-1922140",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "magnetic-sealing-carrot-clips-pack-of-5-with-container-2-hhc-876069.html",
+   "id": "hhc-876069",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "me-rumi-the-autobiography-of-shams-i-tabrizi-by-william-c-chittick-book-hhc-717700.html",
+   "id": "hhc-717700",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "mehndi-art-stickers-for-hand-6pcs-hhc-766038.html",
+   "id": "hhc-766038",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "men-s-stainless-steel-quartz-wrist-watch-hhc-3763911.html",
+   "id": "hhc-3763911",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "metal-wall-art-islamic-calligraphy-design-metal-printed-wall-decor-hhc-3494952-3562569.html",
+   "id": "hhc-3494952-3562569",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "metal-wall-art-islamic-calligraphy-design-metal-printed-wall-decor-hhc-3494952-3562571.html",
+   "id": "hhc-3494952-3562571",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "metal-wall-art-islamic-calligraphy-design-metal-printed-wall-decor-hhc-3494952.html",
+   "id": "hhc-3494952",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "mint-cleanser-50ml-hhc-3278957.html",
+   "id": "hhc-3278957",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "mirror-wall-sticker-size-200mmx300mm-hhc-879850.html",
+   "id": "hhc-879850",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "moon-touch-facial-range-6pcs-500g-best-quality-facial-kit-hhc-2908711.html",
+   "id": "hhc-2908711",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "multifunctional-vegetable-chopper-mandoline-chopper-6-interchangeable-blades-wit-hhc-803140.html",
+   "id": "hhc-803140",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "muriel-maufroy-rumis-daughter-book-hhc-717711.html",
+   "id": "hhc-717711",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "my-awesome-activity-book-hhc-717787.html",
+   "id": "hhc-717787",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "my-picture-dictionary-a-book-hhc-717738.html",
+   "id": "hhc-717738",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "new-amazing-3pcs-set-plastic-cake-cream-spatula-dough-knife-cutter-heal-plastic-hhc-876158.html",
+   "id": "hhc-876158",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "nikai-11-in-1-beard-super-grooming-set-best-for-men-hair-and-beard-nk-2212-hhc-1234694.html",
+   "id": "hhc-1234694",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "nikai-5-in-1-grooming-kit-nk-2261-hhc-1234746.html",
+   "id": "hhc-1234746",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "non-stick-folding-omelette-pan-hhc-1115239.html",
+   "id": "hhc-1115239",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "normal-people-book-hhc-717842.html",
+   "id": "hhc-717842",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "nude-matte-6-pcs-lip-gloss-hhc-1922173.html",
+   "id": "hhc-1922173",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "one-of-us-is-next-novel-by-karen-m-mcmanus-best-selling-ks-book-hhc-723192.html",
+   "id": "hhc-723192",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "pack-of-2-car-neck-pillow-breathable-auto-head-neck-rest-cushion-relax-neck-supp-hhc-3757184.html",
+   "id": "hhc-3757184",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "pack-of-6-graceful-mdf-wall-hangers-artistic-wooden-decor-modern-and-decent-isla-hhc-3276159.html",
+   "id": "hhc-3276159",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "peach-bleach-cream-with-powder-best-quality-cream-with-powder-hhc-2914348.html",
+   "id": "hhc-2914348",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "peer-e-kamil-by-umera-ahmed-book-hhc-705900.html",
+   "id": "hhc-705900",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "pen-vase-pencil-holder-makeup-brush-holder-stationery-desk-tidy-container-hhc-883326.html",
+   "id": "hhc-883326",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "philco-4-in1-grooming-kit-professional-grooming-kit-hhc-1234513.html",
+   "id": "hhc-1234513",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "premium-black-pure-lawn-handmade-gota-work-3pc-suit-heavy-gala-work-hhc-3767747.html",
+   "id": "hhc-3767747",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "premium-moisturizer-cream-50ml-improves-skin-texture-hydration-hhc-3275385.html",
+   "id": "hhc-3275385",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "premium-quality-keratin-hair-mask-deep-repair-strength-frizz-control-hhc-3274590.html",
+   "id": "hhc-3274590",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "professional-eye-lashes-curler-2-hhc-890178.html",
+   "id": "hhc-890178",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "professional-hair-cutting-trimming-clippers-beard-ear-nose-7-in-1-shinon-hhc-1234610.html",
+   "id": "hhc-1234610",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "professional-hair-cutting-trimming-clippers-beard-ear-nose-rechargeable-nikai-hhc-1234585.html",
+   "id": "hhc-1234585",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "quilt-storage-bag-waterproof-closet-organizers-zipper-folding-organizer-durable-hhc-2709736.html",
+   "id": "hhc-2709736",
+   "reasons": [
+    "missing or zero price",
+    "currency is not PKR"
+   ]
+  },
+  {
+   "page": "qul-ya-ayyuhal-kafirun-islamic-surah-kafirun-3d-wall-decor-clock-with-light-for-hhc-2171338.html",
+   "id": "hhc-2171338",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "racing-cars-jdm-honda-civic-lamborgini-supra-wall-posters-wall-decorations-for-a-hhc-3690022.html",
+   "id": "hhc-3690022",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "raja-gidh-by-bano-qusia-book-hhc-705918.html",
+   "id": "hhc-705918",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "reclaim-your-heart-by-yasmin-mogahed-yasmeen-mogahed-book-hhc-700482.html",
+   "id": "hhc-700482",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "red-white-royal-blue-a-novel-by-casey-mcquiston-best-selling-novel-ks-hhc-717435.html",
+   "id": "hhc-717435",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "relax-massage-oil-100ml-hhc-1918509.html",
+   "id": "hhc-1918509",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "reminders-of-him-by-colleen-hoover-book-hhc-700121.html",
+   "id": "hhc-700121",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "remington-crimper-digital-keratin-protect-intelligent-straightener-hhc-1092157.html",
+   "id": "hhc-1092157",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "restore-me-by-tahereh-mafi-best-novel-ks-book-hhc-723282.html",
+   "id": "hhc-723282",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "retinol-renewal-serum-for-restoring-skin-barrier-approx-0-35-5ml-hhc-1880212.html",
+   "id": "hhc-1880212",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "reveal-me-by-tahereh-mafi-ks-book-hhc-723279.html",
+   "id": "hhc-723279",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "reveion-pro-wax-heater-unmovable-bucket-hhc-1236049.html",
+   "id": "hhc-1236049",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "roman-numbers-clock-gold-frame-and-black-clock-wall-decor-wall-clock-3d-acrylic-hhc-2613585.html",
+   "id": "hhc-2613585",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "rose-skin-shiner-100ml-soothing-and-hydrating-for-all-skin-type-hhc-1880356.html",
+   "id": "hhc-1880356",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "rowley-jeffersons-awesome-friendly-adventure-book-hhc-717881.html",
+   "id": "hhc-717881",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "sea-prayer-by-khaled-hosseini-novel-ks-book-hhc-700143.html",
+   "id": "hhc-700143",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "seal-pour-food-storage-bag-clip-snack-sealing-clip-fresh-keeping-sealer-clamp-pl-hhc-776248.html",
+   "id": "hhc-776248",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "secret-intimate-whitening-cream-75ml-hhc-3274792.html",
+   "id": "hhc-3274792",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "sell-like-crazy-by-sabri-suby-book-hhc-700093.html",
+   "id": "hhc-700093",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "sell-like-crazy-by-sabri-suby-book-hhc-717890.html",
+   "id": "hhc-717890",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "set-of-3-flowers-art-wooden-frames-for-wall-decoration-sticky-photo-tiles-hhc-3313376.html",
+   "id": "hhc-3313376",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "set-of-3-flowers-art-wooden-frames-for-wall-decoration-sticky-photo-tiles-hhc-3442541.html",
+   "id": "hhc-3442541",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "set-of-3-gaming-text-neon-wall-frames-wall-frame-for-room-decoration-hhc-2654687.html",
+   "id": "hhc-2654687",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "set-of-3-premium-wall-art-photo-tiles-modern-home-decor-sets-8x11-14-hhc-3764675.html",
+   "id": "hhc-3764675",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "set-of-6-motivational-art-wooden-frames-for-wall-decoration-sticky-photo-tiles-hhc-3296168.html",
+   "id": "hhc-3296168",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "set-of-6-motivational-art-wooden-frames-for-wall-decoration-sticky-photo-tiles-hhc-3302791.html",
+   "id": "hhc-3302791",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "set-of-6-motivational-wooden-canvas-frames-for-wall-decore-8x11-inches-size-stic-hhc-3605640.html",
+   "id": "hhc-3605640",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "set-of-6-motivational-wooden-canvas-frames-for-wall-decore-8x11-inches-size-stic-hhc-3605649.html",
+   "id": "hhc-3605649",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "set-of-6-motivational-wooden-canvas-frames-for-wall-decore-8x11-inches-size-stic-hhc-3606011.html",
+   "id": "hhc-3606011",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "set-of-8-premium-wall-art-photo-tiles-modern-home-decor-sets-8x11-hhc-3765234.html",
+   "id": "hhc-3765234",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "shayad-by-john-elia-book-hhc-705947.html",
+   "id": "hhc-705947",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "shinon-personal-care-8-in-1-professional-trimmer-suit-hhc-1234551.html",
+   "id": "hhc-1234551",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "silicone-bottle-cleaning-brush-with-long-handler-milk-bottle-brush-cup-brush-hhc-803395.html",
+   "id": "hhc-803395",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "silicone-iron-rest-cushion-versatile-for-ironing-board-heat-resistant-mat-heat-r-hhc-775862.html",
+   "id": "hhc-775862",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "six-rows-of-sticky-hook-storage-holder-multipurpose-random-color-hhc-906518.html",
+   "id": "hhc-906518",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "skin-color-royal-posturm-spine-support-belt-adjustable-adult-corset-posture-corr-hhc-1116197-1116198.html",
+   "id": "hhc-1116197-1116198",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "skin-color-royal-posturm-spine-support-belt-adjustable-adult-corset-posture-corr-hhc-1116197-1116199.html",
+   "id": "hhc-1116197-1116199",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "skin-color-royal-posturm-spine-support-belt-adjustable-adult-corset-posture-corr-hhc-1116197-1116201.html",
+   "id": "hhc-1116197-1116201",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "skin-color-royal-posturm-spine-support-belt-adjustable-adult-corset-posture-corr-hhc-1116197.html",
+   "id": "hhc-1116197",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "small-water-colour-palette-with-brush-hhc-890564.html",
+   "id": "hhc-890564",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "soft-base-chocolate-contour-10g-hhc-1330989.html",
+   "id": "hhc-1330989",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "soft-base-orange-corrector-10g-hhc-1331027.html",
+   "id": "hhc-1331027",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "special-repairing-coconut-hair-conditioner-100ml-hhc-3274765.html",
+   "id": "hhc-3274765",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "stainless-steel-peeler-potato-peeler-kitchen-accessories-tools-fruits-peeler-veg-hhc-988579.html",
+   "id": "hhc-988579",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "student-makeup-deal-makeup-fixer-foundation-random-shade-mascar-random-color-liq-hhc-1949804.html",
+   "id": "hhc-1949804",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "subhan-allah-3d-wall-clock-wooden-wall-clock-hhc-2131355.html",
+   "id": "hhc-2131355",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "teaching-of-rumi-by-andrew-harvey-book-hhc-723013.html",
+   "id": "hhc-723013",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "teeth-cleaning-powder-organic-white-30g-hhc-3283379.html",
+   "id": "hhc-3283379",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "terms-and-conditions-novel-by-lauren-asher-best-selling-novel-ks-book-hhc-723143.html",
+   "id": "hhc-723143",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "thanda-gosht-by-saadat-hasan-manto-best-selling-urdu-reading-book-hhc-728338.html",
+   "id": "hhc-728338",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-7-habits-of-highly-effective-people-book-hhc-717895.html",
+   "id": "hhc-717895",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-alchemist-by-paulo-coelho-hhc-700050.html",
+   "id": "hhc-700050",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-art-of-reading-minds-by-henrik-fexeus-hhc-700297.html",
+   "id": "hhc-700297",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-bfg-by-roald-dahl-novel-book-hhc-728058.html",
+   "id": "hhc-728058",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-fine-print-a-novel-by-lauren-asher-best-selling-ks-book-hhc-723153.html",
+   "id": "hhc-723153",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-forty-rules-of-love-a-novel-of-elif-shafaq-book-hhc-700313.html",
+   "id": "hhc-700313",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-forty-rules-of-love-by-elif-shafak-book-hhc-705822.html",
+   "id": "hhc-705822",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-islamic-enlightenment-the-modern-struggle-between-faith-book-hhc-723025.html",
+   "id": "hhc-723025",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-kite-runner-by-khaled-hosseini-kiterunner-book-hhc-717721.html",
+   "id": "hhc-717721",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-leader-who-had-no-title-by-robin-sharma-book-hhc-717732.html",
+   "id": "hhc-717732",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-maidens-the-silent-patient-alex-michaelides-book-hhc-700317.html",
+   "id": "hhc-700317",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-midnight-library-matt-haig-best-novel-ks-book-hhc-717531.html",
+   "id": "hhc-717531",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-monk-who-sold-his-ferr-ari-by-robin-s-sharma-book-hhc-700333.html",
+   "id": "hhc-700333",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-power-of-positive-thinking-book-hhc-717763.html",
+   "id": "hhc-717763",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-psychology-of-money-by-morgan-housel-book-hhc-717751.html",
+   "id": "hhc-717751",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-reluctant-fundamentalist-novel-by-mohsin-hamid-book-hhc-700422.html",
+   "id": "hhc-700422",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-secret-by-rhonda-byrne-best-english-novel-book-hhc-717598.html",
+   "id": "hhc-717598",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-silent-patient-book-by-alex-michaelides-book-hhc-700063.html",
+   "id": "hhc-700063",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-silent-patient-by-alex-michaelides-book-hhc-705830.html",
+   "id": "hhc-705830",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "the-subtle-art-of-not-giving-a-fck-by-mark-manson-book-hhc-700148.html",
+   "id": "hhc-700148",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "things-we-hide-from-the-light-novel-by-lucy-score-best-selling-ks-book-hhc-723214.html",
+   "id": "hhc-723214",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "think-and-grow-rich-book-hhc-700350.html",
+   "id": "hhc-700350",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "think-and-grow-rich-by-napoleon-hill-book-hhc-705930.html",
+   "id": "hhc-705930",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "think-and-grow-rich-in-black-cover-book-hhc-700432.html",
+   "id": "hhc-700432",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "think-like-a-monk-a-novel-by-jay-shetty-best-selling-novel-ks-book-hhc-723137.html",
+   "id": "hhc-723137",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "thumb-knife-one-finger-one-thumb-knife-gloves-hhc-767565.html",
+   "id": "hhc-767565",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "to-kill-a-mockingbird-novel-by-harper-lee-best-selling-novel-ks-book-hhc-717871.html",
+   "id": "hhc-717871",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "traction-get-a-grip-on-your-business-book-by-gino-wickman-book-hhc-728321.html",
+   "id": "hhc-728321",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "twin-door-draft-protector-door-air-lock-foam-for-cold-air-window-shutters-dust-b-hhc-803208.html",
+   "id": "hhc-803208",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "twisted-games-by-ana-huang-book-hhc-705856.html",
+   "id": "hhc-705856",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "twisted-games-by-ana-huang-ks-book-hhc-717619.html",
+   "id": "hhc-717619",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "twisted-hate-by-ana-huang-hhc-705872.html",
+   "id": "hhc-705872",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "twisted-hate-by-ana-huang-ks-book-hhc-717464.html",
+   "id": "hhc-717464",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "twisted-lies-by-ana-huang-hhc-705860.html",
+   "id": "hhc-705860",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "twisted-lies-by-ana-huang-ks-book-hhc-717683.html",
+   "id": "hhc-717683",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "twisted-love-by-ana-huang-book-hhc-705882.html",
+   "id": "hhc-705882",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "twisted-love-by-ana-huang-hhc-705809.html",
+   "id": "hhc-705809",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "ugly-love-by-colleen-hoover-novel-book-hhc-700458.html",
+   "id": "hhc-700458",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "unite-me-by-tahereh-mafi-best-novel-ks-book-hhc-723175.html",
+   "id": "hhc-723175",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "urdu-alchemist-urdu-novel-by-paulo-coelho-book-hhc-700072.html",
+   "id": "hhc-700072",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "vehicle-camera-a9-mini-camera-wifi-wireless-recorder-hd-video-home-camcorder-nig-hhc-1960920.html",
+   "id": "hhc-1960920",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "verity-book-novel-by-colleen-hoover-book-hhc-700162.html",
+   "id": "hhc-700162",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "vitamin-e-serum-antioxidant-protection-moisturization-5ml-hhc-1880118.html",
+   "id": "hhc-1880118",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "wall-hanging-wireless-wifi-router-shelf-storage-box-wire-cable-storage-bag-power-hhc-3704436.html",
+   "id": "hhc-3704436",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "whitening-serum-enhanced-glow-brightened-complexion-5ml-hhc-1880181.html",
+   "id": "hhc-1880181",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "womens-black-block-heel-sandals-with-sparkling-rhinestone-straps-elegant-party-c-hhc-3513171-3513298.html",
+   "id": "hhc-3513171-3513298",
+   "reasons": [
+    "missing or zero price",
+    "currency is not PKR"
+   ]
+  },
+  {
+   "page": "wooden-3d-wall-clock-modern-design-flower-cut-living-room-decoration-kitchen-clo-hhc-2575183.html",
+   "id": "hhc-2575183",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "wooden-rolling-pin-kick-rolling-pin-kick-wood-belan-best-quality-belan-rolling-p-hhc-3326535.html",
+   "id": "hhc-3326535",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "ya-ali-madad-3d-wall-clock-hhc-2131149.html",
+   "id": "hhc-2131149",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "ya-hayyu-ya-qayyum-3d-wall-clock-islamic-wooden-wall-clock-hhc-2131272.html",
+   "id": "hhc-2131272",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "yani-by-jaun-elia-book-hhc-705479.html",
+   "id": "hhc-705479",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  },
+  {
+   "page": "zafarani-facial-set-50ml-hhc-1323124.html",
+   "id": "hhc-1323124",
+   "reasons": [
+    "no product image (a Merchant Center requirement)"
+   ]
+  }
+ ]
+}
