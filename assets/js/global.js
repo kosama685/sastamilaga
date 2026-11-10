@@ -13,7 +13,11 @@
   if (!A) return;
   const { esc, slug, renderApp, setSEO, toast, waLink, pageHead } = A;
   const BASE = 'data/cj/';
-  const MARGIN = 1.2;            /* same 20% margin the live store applies to supplier observations */
+  const MARGIN = 1.2;
+  /* Supplier names are never shown to customers: SKU prefix and shipping method brand are masked in visible text.
+     The order message to our own team keeps the full SKU and method name. */
+  const maskSku = s => String(s || '').replace(/^CJ/i, 'SM-');
+  const neutral = s => String(s || '').replace(/\bCJ\s*Packet\b/gi, 'Packet').replace(/\bCJ\s*/gi, '');            /* same 20% margin the live store applies to supplier observations */
   const USD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
   const shards = new Map();      /* slug -> rows */
   const pending = new Map();
@@ -37,7 +41,7 @@
   const est = r => r[3] ? (r[4] > r[3] ? `${USD.format(r[3] * MARGIN)} – ${USD.format(r[4] * MARGIN)}` : USD.format(r[3] * MARGIN)) : 'Price on request';
   const liveUrl = r => `${A.LIVE_URL}/global-shop/p/${encodeURIComponent(r[0])}/${slug(r[2]).slice(0, 80)}/`;
   const detailHash = (cat, r) => `#/global/p/${cat}/${encodeURIComponent(r[0])}`;
-  const ownUrl = (cat, r) => `${A.SITE_URL}/${detailHash(cat, r)}`;   /* link that works for the customer (the WordPress copy is not reliable) */
+  const ownUrl = (cat, r) => `${A.SITE_URL}/global/p/${cat}/${encodeURIComponent(r[0])}`;   /* link that works for the customer (the WordPress copy is not reliable) */
   const fallback = window.fallbackImg || '';
 
   function card(cat, r) {
@@ -107,14 +111,14 @@
       // canonical points to the real static category page that lists them. Real product pages need workers/product-pages.
       url: `${A.SITE_URL}/c/global/${cs}.html`, robots: 'noindex, follow',
       ldJson: { '@context': 'https://schema.org', '@graph': [
-        { '@type': 'Product', name: r[2], sku: r[1], image: [r[5]], category: c.n, brand: { '@type': 'Brand', name: 'Sasta Milaga' }, url: ownUrl(cs, r),
+        { '@type': 'Product', name: r[2], sku: maskSku(r[1]), image: [r[5]], category: c.n, brand: { '@type': 'Brand', name: 'Sasta Milaga' }, url: ownUrl(cs, r),
           ...(r[6] ? { subjectOf: { '@type': 'VideoObject', name: r[2], description: `${r[2]} product video`, thumbnailUrl: r[5], contentUrl: r[6], uploadDate: m.snapshot } } : {}) },
         { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: `${A.SITE_URL}/` }, { '@type': 'ListItem', position: 2, name: 'Global shop', item: `${A.SITE_URL}/c/global/index.html` }, { '@type': 'ListItem', position: 3, name: c.n, item: `${A.SITE_URL}/c/global/${cs}.html` }, { '@type': 'ListItem', position: 4, name: r[2] }] }] } });
     const related = rows.filter(x => x !== r).slice(0, 8);
     renderApp(`<nav class="sm-crumbs" aria-label="Breadcrumb"><a href="./">Home</a> <span aria-hidden="true">/</span> <a href="#/global">Global shop</a>${g ? ` <span aria-hidden="true">/</span> <a href="#/global/g/${g.s}">${esc(g.n)}</a>` : ''} <span aria-hidden="true">/</span> <a href="#/global/c/${cs}">${esc(c.n)}</a></nav>
       <section class="pdp" aria-label="Product detail"><div><div class="gallery-panel"><div class="gallery-main">${r[6] ? `<video src="${esc(r[6])}" poster="${esc(r[5])}" controls playsinline preload="none"></video>` : `<img src="${esc(r[5])}" alt="${esc(r[2])}" width="800" height="800" onerror="this.src=window.fallbackImg">`}</div>
         ${r[6] ? `<div class="gallery-thumbs"><button type="button" data-gallery="${esc(r[5])}" data-type="img" aria-label="Show image"><img src="${esc(r[5])}" alt=""></button><button type="button" class="active" data-gallery="${esc(r[6])}" data-type="video" aria-label="Play video"><img src="${esc(r[5])}" alt=""></button></div>` : ''}</div></div>
-      <aside class="buy-panel" aria-label="Order options"><span class="eyebrow">${esc(c.n)}</span><h1>${esc(r[2])}</h1><p class="product-meta">SKU: ${esc(r[1])} · Global item</p>
+      <aside class="buy-panel" aria-label="Order options"><span class="eyebrow">${esc(c.n)}</span><h1>${esc(r[2])}</h1><p class="product-meta">SKU: ${esc(maskSku(r[1]))} · Global item</p>
         <div style="margin:12px 0"><span class="big-price">${est(r)}</span> <small class="sm-est">estimated</small></div>
         <form class="sm-greq" id="greq">${varBox()}<label><span>Quantity</span><input type="number" name="qty" min="1" max="99" value="1"></label><label><span>${(window.SM_CONFIG || {}).cjShippingWorker ? 'Notes (optional)' : 'Size, colour or option (optional)'}</span><input name="opt" maxlength="120" placeholder="${(window.SM_CONFIG || {}).cjShippingWorker ? 'Anything we should know' : 'e.g. Blue, size M'}"></label><label><span>Deliver to (country and city)</span><input name="to" required maxlength="120" placeholder="e.g. Pakistan, Karachi"></label>
           ${shipBox()}
@@ -168,7 +172,7 @@
       const list = (d && d.variants) || [];
       if (!list.length) { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Options will be confirmed on WhatsApp.</p>'; return; }
       if (list.length === 1) {
-        box.innerHTML = `<legend>Option</legend><p class="sm-var__one"><b>${esc(list[0].key || list[0].name)}</b> <small>SKU ${esc(list[0].sku)}</small></p>`; pick(list[0]); return;
+        box.innerHTML = `<legend>Option</legend><p class="sm-var__one"><b>${esc(list[0].key || list[0].name)}</b> <small>SKU ${esc(maskSku(list[0].sku))}</small></p>`; pick(list[0]); return;
       }
       box.innerHTML = `<legend>Choose an option <small>(${list.length})</small></legend><div class="sm-var__grid" role="radiogroup">${list.map((v, i) => `<label class="sm-var__opt"><input type="radio" name="variant" value="${esc(v.vid)}" required><span class="sm-var__img">${v.image ? `<img src="${esc(v.image)}" alt="" width="44" height="44" loading="lazy">` : ''}</span><span class="sm-var__t"><b>${esc(v.key || v.name)}</b><small>${USD.format(v.price * MARGIN)}</small></span></label>`).join('')}</div>`;
       box.addEventListener('change', e => { if (e.target.name === 'variant') pick(list.find(v => v.vid === e.target.value)); });
@@ -190,7 +194,7 @@
         const res = await fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ country: cc, items: [{ pid: r[0], sku: r[1], qty, ...(chosen && chosen.v ? { vid: chosen.v.vid } : {}) }] }) });
         const d = await res.json();
         if (!res.ok || !d.methods || !d.methods.length) { out.textContent = (d && d.error ? d.error + '. ' : '') + 'We will confirm shipping on WhatsApp.'; return; }
-        out.innerHTML = d.methods.slice(0, 6).map((m, i) => `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(`${m.name}: ${USD.format(m.price)}, ${m.days} days`)}"${i ? '' : ' checked'}> <span>${esc(m.name)}</span> <b>${USD.format(m.price)}</b> <small>${esc(m.days)} days</small></label>`).join('') + '<p class="sm-ship__note">Supplier shipping price in US$ for this quantity, before any customs duties.</p>';
+        out.innerHTML = d.methods.slice(0, 6).map((m, i) => `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(`${m.name}: ${USD.format(m.price)}, ${m.days} days`)}"${i ? '' : ' checked'}> <span>${esc(neutral(m.name))}</span> <b>${USD.format(m.price)}</b> <small>${esc(m.days)} days</small></label>`).join('') + '<p class="sm-ship__note">Supplier shipping price in US$ for this quantity, before any customs duties.</p>';
       } catch (e) { out.textContent = 'Shipping prices are not available right now. We will confirm shipping on WhatsApp.'; }
       finally { go.disabled = false; }
     });

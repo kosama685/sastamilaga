@@ -130,6 +130,7 @@ function hashToClean(hash) {
   if (parts[0] === 'global' && parts.length === 1) return withQuery('global/');
   if (parts[0] === 'global' && parts[1] === 'c' && parts[2] && parts.length === 3) return `c/global/${parts[2]}.html`;
   if (parts[0] === 'global' && parts[1] === 'g' && parts[2] && parts.length === 3) return (!window.SM_CJ || window.SM_CJ.groups.some(g => g.s === parts[2])) ? `global/g/${parts[2]}/` : null;
+  if (parts[0] === 'global' && parts[1] === 'p' && parts[2] && parts[3] && parts.length === 4) return `global/p/${parts[2]}/${parts[3]}`;   /* served by 404.html: a real path, a genuine 404 status, not indexed */
   if (parts[0] === 'global' && parts.length === 2 && CLEAN_SECTIONS.includes(`global/${parts[1]}`)) return withQuery(`global/${parts[1]}/`);
   if (parts[0] === 'blog' && parts.length === 1) return 'b/';
   if (parts[0] === 'blog' && parts[1]) return blogPublished(parts[1]) ? `b/${parts[1]}.html` : null;
@@ -147,6 +148,7 @@ function cleanToRoute(pathname) {
   if ((m = rel.match(/^c\/([a-z0-9-]+)\.html$/))) { const s = m[1], base = s.replace(/-\d+$/, ''); return categories.some(c => c.slug === s) ? `category/${s}` : categories.some(c => c.slug === base) ? `category/${base}` : null; }
   if (/^b\/(index\.html)?$/.test(rel)) return 'blog';
   if ((m = rel.match(/^b\/([a-z0-9-]+)\.html$/))) return `blog/${m[1]}`;
+  if ((m = rel.match(/^global\/p\/([a-z0-9-]+)\/([A-Za-z0-9%_-]+)$/))) return `global/p/${m[1]}/${m[2]}`;
   const sec = rel.replace(/\/(index\.html)?$/, '');
   if (rel !== sec && (CLEAN_SECTIONS.includes(sec) || /^global\/g\/[a-z0-9-]+$/.test(sec))) return sec;
   return null;
@@ -680,6 +682,12 @@ function bindEvents() {
 /* ============================================================
    ROUTER
    ============================================================ */
+function renderNotFound() {
+  setSEO({ title: 'Page not found', description: 'This page does not exist. Try the shop, the global shop or search.', url: SITE_URL, robots: 'noindex, follow' });
+  renderApp(`<section class="sm-page">${pageHead('Page not found', 'We could not find that page. It may have moved, or the address may be mistyped.')}
+    <p class="sm-page-actions"><a class="sm-btn" href="${APP_BASE}">Home</a> <a class="sm-btn sm-btn--ghost" href="${APP_BASE}shop/">Shop</a> <a class="sm-btn sm-btn--ghost" href="${APP_BASE}global/">Global shop</a> <a class="sm-btn sm-btn--ghost" href="${APP_BASE}search/">Search</a></p></section>`);
+}
+
 function route() {
   const megaMenu = $('#megaMenu');
   if (megaMenu) megaMenu.classList.remove('open');
@@ -696,7 +704,9 @@ function route() {
     const c = hashToClean(location.hash);
     if (c !== null) history.replaceState({ r: raw }, '', APP_BASE + c);
   } else {
-    raw = cleanToRoute(location.pathname) || 'home';
+    raw = cleanToRoute(location.pathname);
+    if (!raw && document.documentElement.hasAttribute('data-nf')) { renderNotFound(); return; }   /* 404.html: unknown address */
+    raw = raw || 'home';
     // Query string of a clean URL (/search/?q=x, /global/all/?page=2, /travel/?tab=flights); the language switch param is not part of the route.
     const sp = new URLSearchParams(location.search); sp.delete('gdcs_lang');
     const q = sp.toString(); if (q && raw !== 'home' && QUERY_OK.has(raw)) raw += '?' + q;

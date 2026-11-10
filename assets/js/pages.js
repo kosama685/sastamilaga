@@ -15,6 +15,7 @@
   const all = () => (M() ? M().list() : [{ c: 'PK', n: 'Pakistan' }]);
   const selectHtml = (id, value, label) => `<label class="sm-pg__sel" for="${id}"><span>${esc(label)}</span><select id="${id}">${all().map(x => `<option value="${x.c}"${x.c === value ? ' selected' : ''}>${esc(x.n)}</option>`).join('')}</select></label>`;
   const rs = n => 'Rs ' + Number(n).toLocaleString('en');
+  const neutral = s => String(s || '').replace(/\bCJ\s*Packet\b/gi, 'Packet').replace(/\bCJ\s*/gi, '');   /* supplier names are not shown to customers */
   let shipP = null;
   const shipData = () => shipP || (shipP = fetch(BASE + 'data/shipping/cj-sample.json').then(r => (r.ok ? r.json() : null)).catch(() => null));
   const fee = () => C().deliveryFee || 250, free = () => C().freeDeliveryFrom || 5000;
@@ -30,7 +31,7 @@
     const data = await shipData();
     const draw = () => {
       const name = cname(cc), local = cc === 'PK', ctry = data && data.countries && data.countries[cc];
-      const rows = ctry ? ctry.map(m => `<tr><th scope="row">${esc(m.name)}</th><td>${USD.format(m.price)}</td><td>${esc(m.days)} days</td></tr>`).join('') : '';
+      const rows = ctry ? ctry.map(m => `<tr><th scope="row">${esc(neutral(m.name))}</th><td>${USD.format(m.price)}</td><td>${esc(m.days)} days</td></tr>`).join('') : '';
       document.getElementById('pg-body').innerHTML = `<div class="sm-pg__cards">
         <article class="sm-pg__card"><h2>Local products</h2>${local
           ? `<ul class="sm-pg__facts"><li>Delivery in Pakistan is <b>${rs(fee())}</b>, <b>free above ${rs(free())}</b>.</li><li>Cash on delivery is available.</li><li>Delivery charges are shown before you order.</li></ul>`

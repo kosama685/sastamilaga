@@ -106,6 +106,21 @@ for (const { key, title, desc } of pages) {
   fs.mkdirSync(path.join(ROOT, key), { recursive: true });
   fs.writeFileSync(path.join(ROOT, key, 'index.html'), h); made++;
 }
+// 404.html: GitHub Pages serves it, with a genuine 404 status, for every unknown address. It also carries global product
+// addresses (/global/p/<category>/<id>): the app renders them in the browser; they are noindex and not in any sitemap.
+{
+  const baseOld = "b.href=location.pathname.replace(/[^\\/]*$/,'')";
+  const baseNew = "b.href=(function(){var p=location.pathname,i=p.indexOf('/global/p/');if(i>=0)return p.slice(0,i+1);return /github\\.io$/.test(location.hostname)?'/'+p.split('/')[1]+'/':'/';})()";
+  if (!index.includes(baseOld)) throw new Error('404.html: base script not found in index.html');
+  const intro = `<section class="sm-page"><header class="sm-page-head"><h1>Page not found</h1><p>We could not find that page. It may have moved, or the address may be mistyped.</p></header></section>`;
+  const h = index.replace(baseOld, baseNew).replace(/<html\b/, '<html data-nf')
+    .replace(/<title>[^<]*<\/title>/, '<title>Page not found | Sasta Milaga</title>')
+    .replace(/<meta name="robots" content="[^"]*">/, '<meta name="robots" content="noindex, follow">')
+    .replace(/<meta name="description" content="[^"]*">/, '<meta name="description" content="This page does not exist. Try the shop, the global shop or search.">')
+    .replace('<div id="home-view">', '<div id="home-view" hidden>')
+    .replace('<div id="app" class="sm-app" hidden></div>', `<div id="app" class="sm-app">${intro}</div>`);
+  fs.writeFileSync(path.join(ROOT, '404.html'), h);
+}
 // Public section URLs in sitemap-pages.xml (idempotent; global/ is canonicalised to c/global/index.html, so it is left out).
 const smPath = path.join(ROOT, 'sitemap-pages.xml');
 if (fs.existsSync(smPath)) {
