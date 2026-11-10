@@ -482,7 +482,7 @@ body[data-view="tv"] .sm-main .sm-page-head { display: none !important; }
 .sm-prose th, .sm-prose td { padding: 10px 12px; border-bottom: 1px solid #e3e8e1; text-align: start; }
 .sm-prose img, .sm-prose iframe { max-width: 100%; height: auto; }
 /*smgc:start*/
-.sm-gactions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 8px}.sm-gactions .primary-btn{justify-content:center;text-align:center;width:100%}.sm-gactions .sm-buynow{background:var(--sm-brand-orange,#FF8A00);color:#1d1200;border-color:var(--sm-brand-orange,#FF8A00)}.sm-gcart__to{display:block;margin-top:14px}.sm-gcart__to span{display:block;font-size:.85rem;font-weight:600;margin-bottom:4px}.sm-gcart__to input{width:100%}.sm-gcart .cart-line img{width:88px;height:88px;object-fit:cover;border-radius:10px}
+.sm-gactions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 8px}.sm-gactions .primary-btn{justify-content:center;text-align:center;width:100%}.sm-gactions .sm-buynow,.sm-gactions .sm-buynow:hover{background:var(--sm-brand-orange,#FF8A00);color:#1d1200!important;border-color:var(--sm-brand-orange,#FF8A00)}.sm-gcart__to{display:block;margin-top:14px}.sm-gcart__to span{display:block;font-size:.85rem;font-weight:600;margin-bottom:4px}.sm-gcart__to input{width:100%}.sm-gcart .cart-line img{width:88px;height:88px;object-fit:cover;border-radius:10px}
 .sm-gdl{display:grid;gap:0;margin:0;border:1px solid rgba(15,122,59,.14);border-radius:14px;overflow:hidden;background:#fff}.sm-gdl>div{display:grid;grid-template-columns:minmax(120px,200px) 1fr;gap:12px;padding:12px 16px;border-top:1px solid rgba(15,122,59,.1)}.sm-gdl>div:first-child{border-top:0}.sm-gdl dt{font-weight:700;color:var(--sm-brand-deep,#0B3B20)}.sm-gdl dd{margin:0}@media(max-width:560px){.sm-gdl>div{grid-template-columns:1fr;gap:2px}}
 /*smgc:end*/
 /*smwa:start*/
@@ -547,3 +547,14 @@ body[data-view="tv"] .sm-main .sm-page-head { display: none !important; }
 }
 @media (prefers-reduced-motion:reduce){.smwa__card,.smwa__btn{transition:none}.smwa__card:hover{transform:none}}
 /*smwa:end*/
+
+/*sma11y:start*/
+/* WCAG AA contrast: the brand orange (#FF8A00) is for fills and large shapes; text in that colour uses a darker shade of the same hue */
+.is-hot,.smx-eyebrow,.smx-hcard__tx em{color:#A85600!important}
+a[data-route="shop"]>small{color:#fff!important;opacity:1!important}
+a[href$="all/"]>small{color:#1f6f40!important;opacity:1!important}
+.blast-badge{color:#1d1200!important}
+.smb a.smb-btn,.smb a.smb-btn:visited,.smb a.smb-btn:hover{color:#1d1200!important}
+.sm-wa-btn.sm-wa-btn,.sm-wa-btn.sm-wa-btn:hover,a.sm-wa-btn.sm-wa-btn:visited{background:#0F7A3B!important;background-image:none!important;color:#fff!important}
+.sltv-note a,.sm-prose p a{text-decoration:underline;text-underline-offset:2px}
+/*sma11y:end*/

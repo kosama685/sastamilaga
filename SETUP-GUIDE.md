@@ -204,3 +204,31 @@ To change a country's suggested currency, edit the `CUR` map at the top of `mark
 | PayPal Client Secret, Webhook ID | Cloudflare secrets (paypal Worker) | the repo, `config.js` |
 | PayPal Client ID | `config.js` (it is public) | (none) |
 | PayPal email | `config.js` (it is public by design) | (none) |
+
+---
+
+## Cloudflare Workers, secrets and the production domain (added 2026-11-11)
+
+**1. Deploy the Workers from GitHub (no local login needed).** Add these in *Settings > Secrets and variables > Actions > New repository secret*:
+
+| Secret | What it is |
+|---|---|
+| `CLOUDFLARE_API_TOKEN` | Token with the "Edit Cloudflare Workers" permission |
+| `CLOUDFLARE_ACCOUNT_ID` | Account id from the Cloudflare dashboard |
+| `CJ_API_KEY` | A **new** CJ key (the one pasted in chat must be revoked) |
+| `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID` | Optional, for the PayPal Worker |
+
+Then run *Actions > Deploy Cloudflare Workers > Run workflow*. Without the two Cloudflare secrets the workflow only prints a warning. After it succeeds, put the Worker URLs in `assets/js/config.js` (`cjShippingWorker`, `paypalWorker`): that switches on real CJ variants, descriptions, live shipping quotes and the server-priced PayPal checkout.
+
+**2. Make `sastamilaga.com` (or any domain) the indexed address.** The pages declare `https://kosama685.github.io/sastamilaga` as their canonical address. If a custom domain is the real storefront:
+
+```
+node tools/set-site-url.mjs https://sastamilaga.com --check   # dry run: counts what would change
+node tools/set-site-url.mjs https://sastamilaga.com           # rewrite canonicals, hreflang, sitemaps, feed, build tools
+```
+
+Commit and deploy once. Do not run it while github.io is the address you want indexed.
+
+**3. Google Merchant Center.** Add `https://<your address>/feeds/google-merchant.xml` as a scheduled-fetch feed. `feeds/merchant-report.json` lists every product that is left out and why. Rebuild with `node tools/build-merchant-feed.mjs`.
+
+**4. Live TV health.** `node tools/apply-playback.mjs <results.json ...>` records real browser playback results; `data/livetv/playback-report.json` is the channel-by-channel report.

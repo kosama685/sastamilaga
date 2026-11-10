@@ -146,6 +146,7 @@ const BLOG_CSS = `
 .smb .smb-excerpt{margin:0 0 .9rem;color:#445a4c;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .smb .smb-meta{display:flex;flex-wrap:wrap;gap:.4rem 1.1rem;margin:0 0 1.1rem;font-size:.86rem;color:#4f6657}
 .smb .smb-meta span{display:inline-flex;align-items:center;gap:.4rem}.smb .smb-meta svg{color:var(--g)}
+.smb a.smb-btn,.smb a.smb-btn:visited,.smb a.smb-btn:hover{color:#1d1200}
 .smb .smb-btn{display:inline-flex;align-items:center;gap:.55rem;padding:.7rem 1.25rem;border-radius:12px;background:var(--o);color:#1d1200;font-weight:800;text-decoration:none;box-shadow:0 12px 22px -14px rgba(255,138,0,.9);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
 .smb .smb-btn:hover{transform:translateY(-2px);box-shadow:0 16px 26px -14px rgba(255,138,0,.95)}.smb .smb-btn:active{transform:translateY(0)}
 .smb a:focus-visible{outline:3px solid var(--o);outline-offset:3px;border-radius:6px}
