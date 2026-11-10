@@ -107,5 +107,17 @@
     }
     return realFetch(input, init);
   };
+  /* "Download playlist" links on the Live TV page pointed at the WordPress API (slow, often down). Build the .m3u here instead. */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href*="/wp-json/sltv/v1/m3u"]'); if (!a) return;
+    e.preventDefault();
+    var q = new URL(a.href.replace(/&#038;/g, '&')).searchParams, cc = q.get('country'), cat = q.get('category');
+    load('data/livetv/channels.js', 'SM_LIVETV').then(function (db) {
+      var items = db.items.filter(function (c) { return c.src && (!cc || c.cc === cc) && (!cat || c.cat === cat); });
+      var text = '#EXTM3U\n' + items.map(function (c) { return '#EXTINF:-1 tvg-logo="' + (c.logo || '') + '" group-title="' + (c.cat || '') + '",' + c.name + '\n' + (c.page || c.src); }).join('\n') + '\n';
+      var b = document.createElement('a'); b.href = URL.createObjectURL(new Blob([text], { type: 'audio/x-mpegurl' }));
+      b.download = 'sasta-milaga-' + (cc || cat || 'all').toLowerCase() + '.m3u'; document.body.appendChild(b); b.click(); b.remove();
+    });
+  });
   window.SMLocalApi = { airports: airports, channels: function (qs) { return channels(new URL('https://x/wp-json/sltv/v1/channels?' + (qs || ''))); } };
 })();

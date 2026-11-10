@@ -51,7 +51,7 @@
   }
   function applyAutoLang(lang) {
     if (!lang || lang === 'en') return false;
-    if (!document.getElementById('home-view')) return false;   /* only the app pages carry the page translator (not p/, c/, b/ pages) */
+    if (!document.getElementById('home-view') || document.documentElement.hasAttribute('data-native')) return false;   /* only the app pages carry the page translator (not p/, c/, b/ pages) */
     var q = new URLSearchParams(location.search).get('gdcs_lang'); if (q && q.toLowerCase() === lang) return false;
     try { if (sessionStorage.getItem('sm_lang_tried')) return false; sessionStorage.setItem('sm_lang_tried', '1'); } catch (e) { return false; }
     var u = new URL(location.href); u.searchParams.set('gdcs_lang', lang);

@@ -22,6 +22,7 @@
   function post(slug) {
     const p = published().find(x => x.slug === slug);
     if (!p) { renderApp(`<section class="sm-page">${pageHead('Post not found', 'This post is not published yet or the link has changed.')}<p><a class="sm-btn" href="#/blog">See all posts</a></p></section>`); return; }
+    if (p.static) { location.replace(A.APP_BASE + 'b/' + p.slug + '.html'); return; }   /* cloned posts are real pages with their content in the HTML */
     setSEO({ title: p.title, description: p.description, url: url(p), image: `${A.SITE_URL}/${p.image}`,
       ldJson: { '@context': 'https://schema.org', '@graph': [
         { '@type': 'BlogPosting', headline: p.title, description: p.description, datePublished: p.publish, dateModified: p.updated || p.publish, author: { '@type': 'Organization', name: p.author },

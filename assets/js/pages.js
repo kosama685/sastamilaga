@@ -20,6 +20,11 @@
   const shipData = () => shipP || (shipP = fetch(BASE + 'data/shipping/cj-sample.json').then(r => (r.ok ? r.json() : null)).catch(() => null));
   const fee = () => C().deliveryFee || 250, free = () => C().freeDeliveryFrom || 5000;
 
+  /* Full policy text of the live site, under the country-wise summary (data/wp/policy-<page>.html is built from the cloned page). */
+  function policy(name) {
+    fetch(BASE + `data/wp/policy-${name}.html`).then(r => (r.ok ? r.text() : '')).then(h => { const el = document.getElementById('pg-policy'); if (h && el) el.innerHTML = `<section class="sm-pg__policy"><h2>Full ${name === 'shipping' ? 'shipping' : 'returns'} policy</h2><div class="sm-prose">${h}</div></section>`; }).catch(() => { });
+  }
+
   /* ---------------- Shipping ---------------- */
   async function shipping(qs) {
     const q = new URLSearchParams(qs || '').get('country');
@@ -27,7 +32,8 @@
     setSEO({ title: 'Shipping and delivery by country', description: `Delivery in Pakistan is Rs ${fee()}, free above Rs ${free()}. Global items ship worldwide: see supplier shipping methods, prices and transit times for your country.`, url: `${A.SITE_URL}/shipping/` });
     renderApp(`<section class="sm-page sm-page--wide">${pageHead('Shipping and delivery', 'Rates and delivery times for your country. We detect your country automatically; change it any time.')}
       <div class="sm-pg__bar">${selectHtml('pg-cc', cc, 'Delivering to')}<p class="sm-pg__hint">Detected from your location. Local products are delivered in Pakistan; global products ship worldwide.</p></div>
-      <div id="pg-body" aria-live="polite"><p class="sm-pg__load">Loading shipping details…</p></div></section>`);
+      <div id="pg-body" aria-live="polite"><p class="sm-pg__load">Loading shipping details…</p></div><div id="pg-policy"></div></section>`);
+    policy('shipping');
     const data = await shipData();
     const draw = () => {
       const name = cname(cc), local = cc === 'PK', ctry = data && data.countries && data.countries[cc];
@@ -57,7 +63,8 @@
     let cc = country();
     setSEO({ title: 'Returns and refunds by country', description: '7-day returns for Sasta Milaga Local products in Pakistan; return terms for global products depend on the supplier and your country.', url: `${A.SITE_URL}/returns/` });
     renderApp(`<section class="sm-page sm-page--wide">${pageHead('Returns and refunds', 'What applies in your country. We detect it automatically; change it any time.')}
-      <div class="sm-pg__bar">${selectHtml('pg-cc', cc, 'Your country')}</div><div id="pg-body" aria-live="polite"></div></section>`);
+      <div class="sm-pg__bar">${selectHtml('pg-cc', cc, 'Your country')}</div><div id="pg-body" aria-live="polite"></div><div id="pg-policy"></div></section>`);
+    policy('returns');
     const draw = () => {
       const name = cname(cc), local = cc === 'PK';
       const wa = waLink(`Assalam o Alaikum! I want to return an item.\nCountry: ${name}\nOrder ID: \nReason: `);

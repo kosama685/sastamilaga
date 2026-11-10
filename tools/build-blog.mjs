@@ -10,6 +10,8 @@ const SITE = 'https://kosama685.github.io/sastamilaga';
 const today = new Date(Date.now() + 5 * 3600e3).toISOString().slice(0, 10);
 const ctx = { window: {} };
 vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'assets/data/blog.js'), 'utf8'), ctx);
+// Posts cloned from sastamilaga.com (metadata here, body in data/wp/posts/<slug>.html)
+if (fs.existsSync(path.join(ROOT, 'assets/data/blog-wp.js'))) vm.runInContext(fs.readFileSync(path.join(ROOT, 'assets/data/blog-wp.js'), 'utf8'), ctx);
 // Validation: unique slugs and titles, real ISO dates. A bad entry stops the build instead of publishing duplicates.
 {
   const all = ctx.window.SM_BLOG || [], seen = new Set(), titles = new Set(), bad = [];
@@ -39,7 +41,7 @@ function page({ title, desc, url, image, schema, body, type = 'article' }) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>${e(title)} | Sasta Milaga</title>
+<title>${e(/Sasta Milaga/i.test(title) ? title : title + ' | Sasta Milaga')}</title>
 <meta name="description" content="${e(desc)}">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="${url}">
@@ -66,25 +68,28 @@ ${ld(schema)}
 const dir = path.join(ROOT, 'b');
 fs.rmSync(dir, { recursive: true, force: true });
 fs.mkdirSync(dir, { recursive: true });
-const img = p => `${SITE}/${p.image}`;
+const img = p => (p.image ? (/^https?:/.test(p.image) ? p.image : `${SITE}/${p.image}`) : `${SITE}/assets/brand/og-default-1200x630.jpg`);
+const imgRel = p => (/^https?:/.test(p.image) ? p.image : `../${p.image}`);
+const bodyOf = p => (p.static ? fs.readFileSync(path.join(ROOT, 'data/wp/posts', `${p.slug}.html`), 'utf8') : p.body);
 for (const p of posts) {
   const url = `${SITE}/b/${p.slug}.html`;
   const more = posts.filter(x => x !== p).slice(0, 3);
   const schema = { '@context': 'https://schema.org', '@graph': [
     { '@type': 'BlogPosting', headline: p.title, description: p.description, datePublished: p.publish, dateModified: p.updated || p.publish, inLanguage: 'en',
       author: { '@type': 'Organization', name: p.author }, publisher: { '@type': 'Organization', name: 'Sasta Milaga', logo: { '@type': 'ImageObject', url: `${SITE}/assets/brand/logo.png` } },
-      mainEntityOfPage: url, image: img(p), keywords: p.tags.join(', '), articleSection: p.category },
+      mainEntityOfPage: url, image: img(p), keywords: (p.tags || []).join(', '), articleSection: p.category },
     ...(p.faq?.length ? [{ '@type': 'FAQPage', mainEntity: p.faq.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }] : []),
     { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` }, { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE}/b/index.html` }, { '@type': 'ListItem', position: 3, name: p.title, item: url }] }] };
   const body = `<article class="sm-page sm-article">
 <nav class="sm-crumbs" aria-label="Breadcrumb"><a href="../">Home</a> <span aria-hidden="true">/</span> <a href="index.html">Blog</a> <span aria-hidden="true">/</span> <span aria-current="page">${e(p.title)}</span></nav>
 <header class="sm-page-head"><h1>${e(p.title)}</h1><p><span class="sm-blog-meta"><span>${e(p.category)}</span> <time datetime="${p.publish}">${fmt(p.publish)}</time> · ${e(p.author)}</span></p></header>
-<div class="sm-prose">${fixLinks(p.body)}</div>
+${p.image ? `<figure class="sm-article-hero"><img src="${e(imgRel(p))}" alt="${e(p.imageAlt || p.title)}" width="960" height="540" decoding="async"></figure>` : ''}
+<div class="sm-prose">${fixLinks(bodyOf(p))}</div>
 ${p.faq?.length ? `<section class="sm-article-faq"><h2>Questions people ask</h2>${p.faq.map(f => `<details><summary>${e(f.q)}</summary><p>${e(f.a)}</p></details>`).join('')}</section>` : ''}
 ${p.links?.length ? `<p class="sm-page-actions">${p.links.map(([l, h], i) => `<a class="sm-btn${i ? ' sm-btn--ghost' : ''}" href="${e(h.startsWith('#/') ? '../' + h : h)}">${e(l)}</a>`).join(' ')}</p>` : ''}
 ${more.length ? `<section class="section"><h2>More guides</h2><div class="sm-blog-grid">${more.map(x => `<article class="sm-blog-card"><h3><a href="${x.slug}.html">${e(x.title)}</a></h3><p>${e(x.description)}</p></article>`).join('')}</div></section>` : ''}
 </article>`;
-  fs.writeFileSync(path.join(dir, `${p.slug}.html`), page({ title: p.title, desc: p.description, url, image: img(p), schema, body }));
+  fs.writeFileSync(path.join(dir, `${p.slug}.html`), page({ title: p.metaTitle || p.title, desc: p.description, url, image: img(p), schema, body }));
 }
 const listUrl = `${SITE}/b/index.html`;
 fs.writeFileSync(path.join(dir, 'index.html'), page({
@@ -93,7 +98,7 @@ fs.writeFileSync(path.join(dir, 'index.html'), page({
   schema: { '@context': 'https://schema.org', '@type': 'Blog', name: 'Sasta Milaga blog', url: listUrl, blogPost: posts.map(p => ({ '@type': 'BlogPosting', headline: p.title, url: `${SITE}/b/${p.slug}.html`, datePublished: p.publish })) },
   body: `<section class="sm-page sm-page--wide"><nav class="sm-crumbs" aria-label="Breadcrumb"><a href="../">Home</a> <span aria-hidden="true">/</span> <span aria-current="page">Blog</span></nav>
 <header class="sm-page-head"><h1>Blog</h1><p>Shopping guides, travel planning and how-tos from the Sasta Milaga team.</p></header>
-<div class="sm-blog-grid">${posts.map(p => `<article class="sm-blog-card"><p class="sm-blog-meta"><span>${e(p.category)}</span> <time datetime="${p.publish}">${fmt(p.publish)}</time></p><h2><a href="${p.slug}.html">${e(p.title)}</a></h2><p>${e(p.description)}</p><a class="sm-blog-more" href="${p.slug}.html">Read the guide</a></article>`).join('')}</div></section>`
+<div class="sm-blog-grid">${posts.map(p => `<article class="sm-blog-card">${p.image ? `<a class="sm-blog-thumb" href="${p.slug}.html" tabindex="-1" aria-hidden="true"><img src="${e(imgRel(p))}" alt="" width="320" height="180" loading="lazy" decoding="async"></a>` : ''}<p class="sm-blog-meta"><span>${e(p.category)}</span> <time datetime="${p.publish}">${fmt(p.publish)}</time></p><h2><a href="${p.slug}.html">${e(p.title)}</a></h2><p>${e(p.description)}</p><a class="sm-blog-more" href="${p.slug}.html">Read the guide</a></article>`).join('')}</div></section>`
 }));
 
 const urls = [[listUrl, posts[0]?.updated || today], ...posts.map(p => [`${SITE}/b/${p.slug}.html`, p.updated || p.publish])];

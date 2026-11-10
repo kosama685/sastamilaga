@@ -16,6 +16,8 @@ const exists = f => fs.existsSync(path.join(ROOT, f));
 const total = (() => { const t = read('products.js'); return (t.match(/"id":/g) || []).length; })();
 const M = (() => { const t = read('data/cj/manifest.js'); return JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1)); })();
 const fmt = n => n.toLocaleString('en');
+const WP = exists('data/wp/pages.json') ? JSON.parse(read('data/wp/pages.json')) : {};   // pages cloned from sastamilaga.com (tools: see data/wp)
+const PURE = new Set(['about', 'contact', 'faq', 'how-to-order', 'privacy', 'terms', 'safe-shopping', 'tours']);   // content pages: their text is in the HTML and the app does not re-render them
 const SECTIONS = {
   shop: ['Shop all products', `Shop ${fmt(total)} products in PKR at Sasta Milaga with cash on delivery across Pakistan, plus ${fmt(M.total)} global products with worldwide delivery.`],
   global: ['Global shop – worldwide delivery', `Browse ${fmt(M.total)} global products in ${M.cats.length} categories with worldwide delivery. Prices are US$ estimates confirmed on WhatsApp before you pay.`],
@@ -42,6 +44,8 @@ const SECTIONS = {
   careers: ['Careers', 'Work with Sasta Milaga.'],
   press: ['Press', 'Sasta Milaga news and press information.'],
   sitemap: ['Site map', 'All sections, categories and pages of Sasta Milaga.'],
+  'safe-shopping': ['Safe shopping', 'A few habits keep online shopping safe, on this site and everywhere else.'],
+  tours: ['Tour packages and guided trips', 'Find a trip that fits your dates and budget: dated tour packages, guided activities and pilgrimage trips.'],
   // Private pages: real URLs (no #) but noindex, not in the sitemap.
   cart: ['Your cart', 'Review the items in your Sasta Milaga cart.'],
   checkout: ['Checkout', 'Complete your Sasta Milaga order: cash on delivery, bank transfer, EasyPaisa/JazzCash or PayPal.'],
@@ -51,10 +55,13 @@ const SECTIONS = {
   search: ['Search results', 'Search the Sasta Milaga catalogue.'],
   'global/search': ['Search the global shop', `Search ${fmt(M.total)} global products at Sasta Milaga.`],
 };
+const PRODUCTION_PRIVATE = k => PRIVATE.has(k);
 const PRIVATE = new Set(['cart', 'checkout', 'wishlist', 'account', 'thank-you', 'search', 'global/search']);
 // One page per global group (Fashion & Apparel, Electronics …), indexable.
 const GROUPS = M.groups.map(g => ({ key: `global/g/${g.s}`, title: `${g.n} – global shop`, desc: `${fmt(g.c)} ${g.n} products in ${M.cats.filter(c => c.g === g.n).length} categories with worldwide delivery from Sasta Milaga.` }));
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+const wpArticle = rec => `<article class="sm-page sm-page--wide"><header class="sm-page-head"><h1>${esc(rec.title)}</h1></header><div class="sm-prose">${rec.body}</div></article>`;
+const titleTag = t => (/Sasta Milaga/i.test(t) ? t : `${t} | Sasta Milaga`);
 
 /* #/route -> clean relative URL, only when that page exists. */
 function clean(route) {
@@ -80,32 +87,62 @@ let index = read('index.html');
 let [idx2, ni] = rewriteLinks(index); fs.writeFileSync(path.join(ROOT, 'index.html'), idx2); index = idx2;
 let [chrome2, nc] = rewriteLinks(read('partials/chrome.json'), '\\"'); fs.writeFileSync(path.join(ROOT, 'partials/chrome.json'), chrome2);
 
-const pages = [...Object.entries(SECTIONS).map(([key, [title, desc]]) => ({ key, title, desc })), ...GROUPS];
 let made = 0;
+const pages = [...Object.entries(SECTIONS).map(([key, [title, desc]]) => ({ key, title, desc })), ...GROUPS];
+const rep = (s, re, fn) => s.replace(re, () => fn);   // replacement as a function: "$" in text is never special
+/* Empties a <div id=...> but keeps its opening tag (balanced </div> matching). */
+function emptyDiv(h, openRe) {
+  const m = openRe.exec(h); if (!m) return h;
+  const re = /<div\b|<\/div>/g; re.lastIndex = m.index; let depth = 0, x;
+  while ((x = re.exec(h))) { depth += x[0] === '</div>' ? -1 : 1; if (depth === 0) return h.slice(0, m.index) + m[0] + '</div>' + h.slice(re.lastIndex); }
+  return h;
+}
+function shell({ key, keepHome = false, keepTv = false, lang = 'en', dir = 'ltr', base, title, desc, url, robots, body, isStatic, alts, locale }) {
+  let h = index
+    .replace('<html lang="en" dir="ltr">', () => `<html lang="${lang}" dir="${dir}"${lang !== 'en' ? ' data-native' : ''}>`)
+    .replace(/<head>/, () => `<head>\n<base href="${base}">`);
+  h = rep(h, /<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`);
+  h = rep(h, /<meta name="description" content="[^"]*">/, `<meta name="description" content="${esc(desc)}">`);
+  h = rep(h, /<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="${url}">`);
+  h = rep(h, /<meta name="robots" content="[^"]*">/, `<meta name="robots" content="${robots}">`);
+  h = rep(h, /<link rel="alternate" hreflang="en" href="[^"]*"><link rel="alternate" hreflang="x-default" href="[^"]*">/, alts);
+  h = rep(h, /<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${esc(title)}">`);
+  h = rep(h, /<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${esc(desc)}">`);
+  h = rep(h, /<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="${url}">`);
+  if (locale) h = rep(h, /<meta property="og:locale" content="[^"]*">/, `<meta property="og:locale" content="${locale}">`);
+  h = rep(h, /<meta name="twitter:title" content="[^"]*">/, `<meta name="twitter:title" content="${esc(title)}">`);
+  h = rep(h, /<meta name="twitter:description" content="[^"]*">/, `<meta name="twitter:description" content="${esc(desc)}">`);
+  // Without JavaScript (or before the app renders) the page shows its own content, not the home page.
+  h = h.replace('<div id="home-view">', () => '<div id="home-view" hidden>');
+  if (!keepHome) h = emptyDiv(h, /<div id="home-view"[^>]*>/);      // one H1 and no repeated home content on pages that do not need it
+  if (!keepTv) h = emptyDiv(h, /<div id="view-livetv"[^>]*>/);
+  h = h.replace('<div id="app" class="sm-app" hidden></div>', () => `<div id="app" class="sm-app"${isStatic ? ' data-static="1"' : ''}>${body}</div>`);
+  return h;
+}
+const alt1 = (en, ur) => `<link rel="alternate" hreflang="en" href="${en}">${ur ? `<link rel="alternate" hreflang="ur" href="${ur}">` : ''}<link rel="alternate" hreflang="x-default" href="${en}">`;
+let made2 = 0;
 for (const { key, title, desc } of pages) {
   // global/ shows the same content as the generated c/global/index.html, which stays the canonical page.
-  const url = key === 'global' ? `${SITE}/c/global/index.html` : `${SITE}/${key}/`, full = `${title} | Sasta Milaga`;
-  const base = '../'.repeat(key.split('/').length), priv = PRIVATE.has(key);
-  const h1 = esc(title.replace(/ \| Sasta Milaga$/, ''));
-  const intro = `<section class="sm-page"><header class="sm-page-head"><h1>${h1}</h1><p>${esc(desc)}</p></header></section>`;
-  let h = index
-    .replace(/<head>/, `<head>\n<base href="${base}">`)
-    .replace(/<title>[^<]*<\/title>/, `<title>${esc(full)}</title>`)
-    .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${esc(desc)}">`)
-    .replace(/<link rel="canonical" href="[^"]*">/, `<link rel="canonical" href="${url}">`)
-    .replace(/<meta name="robots" content="[^"]*">/, `<meta name="robots" content="${priv ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'}">`)
-    .replace(/(<link rel="alternate" hreflang="(?:en|x-default)" href=")[^"]*(">)/g, `$1${url}$2`)
-    .replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${esc(full)}">`)
-    .replace(/<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${esc(desc)}">`)
-    .replace(/<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="${url}">`)
-    .replace(/<meta name="twitter:title" content="[^"]*">/, `<meta name="twitter:title" content="${esc(full)}">`)
-    .replace(/<meta name="twitter:description" content="[^"]*">/, `<meta name="twitter:description" content="${esc(desc)}">`)
-    // Without JavaScript (or before the app renders) this page shows its own heading, not the home page.
-    .replace('<div id="home-view">', '<div id="home-view" hidden>')
-    .replace('<div id="app" class="sm-app" hidden></div>', `<div id="app" class="sm-app">${intro}</div>`);
+  const url = key === 'global' ? `${SITE}/c/global/index.html` : `${SITE}/${key}/`, priv = PRODUCTION_PRIVATE(key);
+  const rec = WP[key], pure = rec && PURE.has(key), urRec = WP['ur/' + key];
+  const intro = `<section class="sm-page"><header class="sm-page-head"><h1>${esc(title.replace(/ \| Sasta Milaga$/, ''))}</h1><p>${esc(desc)}</p></header></section>`;
+  // content pages use the cloned text and its own SEO title/description; shipping and returns keep the country-wise app and add the full policy under it
+  const body = pure ? wpArticle(rec) : rec ? intro + `<div class="sm-page sm-page--wide"><div class="sm-prose">${rec.body}</div></div>` : intro;
+  const h = shell({ key, keepHome: key === 'travel', keepTv: key === 'live-tv', base: '../'.repeat(key.split('/').length), title: pure ? titleTag(rec.seoTitle) : titleTag(title), desc: pure ? rec.description : desc, url, robots: priv ? 'noindex, nofollow' : 'index, follow, max-image-preview:large', body, isStatic: pure, alts: alt1(url, urRec ? `${SITE}/ur/${key}/` : '') });
   fs.mkdirSync(path.join(ROOT, key), { recursive: true });
   fs.writeFileSync(path.join(ROOT, key, 'index.html'), h); made++;
 }
+// Native Urdu pages (ur/<page>/): the owner's own Urdu text, paired with the English page by hreflang.
+for (const [k, rec] of Object.entries(WP)) {
+  if (!k.startsWith('ur/')) continue;
+  const key = k.slice(3), url = `${SITE}/ur/${key}/`, en = `${SITE}/${key}/`;
+  const h = shell({ key, lang: 'ur', dir: 'rtl', locale: 'ur_PK', base: '../../', title: titleTag(rec.seoTitle), desc: rec.description, url, robots: 'index, follow, max-image-preview:large', body: wpArticle(rec), isStatic: true,
+    alts: `<link rel="alternate" hreflang="en" href="${en}"><link rel="alternate" hreflang="ur" href="${url}"><link rel="alternate" hreflang="x-default" href="${en}">` });
+  fs.mkdirSync(path.join(ROOT, 'ur', key), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, 'ur', key, 'index.html'), h); made2++;
+}
+// Full shipping and returns policy text for the app pages (fetched by assets/js/pages.js)
+for (const k of ['shipping', 'returns']) if (WP[k]) fs.writeFileSync(path.join(ROOT, 'data/wp', `policy-${k}.html`), WP[k].body);
 // 404.html: GitHub Pages serves it, with a genuine 404 status, for every unknown address. It also carries global product
 // addresses (/global/p/<category>/<id>): the app renders them in the browser; they are noindex and not in any sitemap.
 {
@@ -119,16 +156,16 @@ for (const { key, title, desc } of pages) {
     .replace(/<meta name="description" content="[^"]*">/, '<meta name="description" content="This page does not exist. Try the shop, the global shop or search.">')
     .replace('<div id="home-view">', '<div id="home-view" hidden>')
     .replace('<div id="app" class="sm-app" hidden></div>', `<div id="app" class="sm-app">${intro}</div>`);
-  fs.writeFileSync(path.join(ROOT, '404.html'), h);
+  fs.writeFileSync(path.join(ROOT, '404.html'), emptyDiv(emptyDiv(h, /<div id="home-view"[^>]*>/), /<div id="view-livetv"[^>]*>/));
 }
 // Public section URLs in sitemap-pages.xml (idempotent; global/ is canonicalised to c/global/index.html, so it is left out).
 const smPath = path.join(ROOT, 'sitemap-pages.xml');
 if (fs.existsSync(smPath)) {
   let sm = fs.readFileSync(smPath, 'utf8'), added = 0;
   const today = new Date().toISOString().slice(0, 10);
-  const urls = pages.map(p => p.key).filter(k => k !== 'global' && !PRIVATE.has(k)).map(s => `${SITE}/${s}/`).concat(`${SITE}/b/`);
+  const urls = pages.map(p => p.key).filter(k => k !== 'global' && !PRIVATE.has(k)).map(s => `${SITE}/${s}/`).concat(`${SITE}/b/`, Object.keys(WP).filter(k => k.startsWith('ur/')).map(k => `${SITE}/${k}/`));
   for (const u of urls) if (!sm.includes(`<loc>${u}</loc>`)) { sm = sm.replace('</urlset>', `<url><loc>${u}</loc><lastmod>${today}</lastmod></url>\n</urlset>`); added++; }
   fs.writeFileSync(smPath, sm);
   console.log(`sitemap-pages.xml: ${added} section URLs added`);
 }
-console.log(`index.html: ${ni} links made clean · chrome.json: ${nc} · pages: ${made} (${GROUPS.length} global groups)`);
+console.log(`index.html: ${ni} links made clean · chrome.json: ${nc} · pages: ${made} (${GROUPS.length} global groups) · Urdu pages: ${made2}`);

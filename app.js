@@ -111,7 +111,9 @@ const APP_BASE = (() => { try { return new URL('.', document.currentScript.src).
 const CLEAN_SECTIONS = ['shop', 'deals', 'videos', 'travel', 'live-tv', 'global', 'about', 'faq', 'contact', 'how-to-order', 'shipping',
   'returns', 'return-policy', 'privacy', 'terms', 'cookies', 'track', 'seller', 'careers', 'press', 'sitemap',
   'cart', 'checkout', 'wishlist', 'account', 'thank-you',   /* private pages: real URLs but noindex and not in the sitemap */
-  'visa', 'rewards', 'search', 'global/all', 'global/videos', 'global/search'];
+  'visa', 'rewards', 'search', 'global/all', 'global/videos', 'global/search', 'safe-shopping', 'tours'];
+/* Content pages whose text is in the page HTML itself (about/, faq/, ur/about/ …): the browser loads them as real pages; the app does not render them. */
+const STATIC_PAGES = new Set(['about', 'contact', 'faq', 'how-to-order', 'privacy', 'terms', 'safe-shopping', 'tours']);
 /* Sections whose real URL may carry a query string (search text, page number, travel tab) without becoming another page. */
 const QUERY_OK = new Set(['search', 'travel', 'shop', 'deals', 'videos', 'visa', 'rewards', 'global/all', 'global/search']);
 let _byPage = null;
@@ -378,6 +380,7 @@ function pageHead(title, lead, crumbs) {
 
 /* Travel uses the live search form on the home view (travel.js is bound to it once). */
 function renderTravel(qs) {
+  if (!($('#home-view') || {}).firstElementChild) { location.assign(APP_BASE + 'travel/' + (qs ? '?' + qs : '')); return; }   // this page does not carry the search box
   showView('home');
   const home = $('#home-view');
   const travel = home && home.querySelector('.sm-travel');
@@ -399,6 +402,7 @@ function renderTravel(qs) {
 
 /* Live TV: the live hub markup is in index.html; hub.js (approved channels from the live API) loads on first visit. */
 function renderLiveTV() {
+  if (!($('#view-livetv') || {}).firstElementChild) { location.assign(APP_BASE + 'live-tv/'); return; }
   showView('tv');
   const tvTitle = $('#view-livetv [data-sm-h1]');
   if (tvTitle && tvTitle.tagName === 'H2') { const h = document.createElement('h1'); [...tvTitle.attributes].forEach(a => h.setAttribute(a.name, a.value)); h.innerHTML = tvTitle.innerHTML; tvTitle.replaceWith(h); }
@@ -582,6 +586,7 @@ function bindEvents() {
     let u; try { u = new URL(a.href); } catch (x) { return; }
     if (u.origin !== location.origin) return;
     const r = a.dataset.route || (u.search ? null : cleanToRoute(u.pathname));
+    if (r && STATIC_PAGES.has(String(r).split('?')[0])) return;    // real content page: let the browser load it
     if (r) { e.preventDefault(); go(r); }
   });
   /* Keep rendered links clean as views change. */
@@ -697,6 +702,11 @@ function route() {
     const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
     if (target) { if (!$('#home-view') || !$('#home-view').hidden) { target.scrollIntoView({ behavior: 'smooth' }); return; } }
   }
+  const appEl = document.getElementById('app');
+  if (appEl && appEl.dataset.static) {     // a content page already in the HTML (about/, ur/faq/ …)
+    if (!window.__staticShown) { window.__staticShown = 1; showView('app'); return; }
+    delete appEl.dataset.static;
+  }
   let raw;
   if (location.hash.startsWith('#/')) {
     raw = location.hash.replace(/^#\/?/, '');
@@ -715,6 +725,7 @@ function route() {
   const parts = path.split('/').filter(Boolean);
   window.__route = parts[0] || 'home';
 
+  if (STATIC_PAGES.has(parts[0])) { location.replace(APP_BASE + parts[0] + '/'); return; }   // old #/about bookmark etc.: load the real page
   state.limit = 60;
   state.view  = 'grid';
   window.scrollTo({ top: 0 });
@@ -919,6 +930,7 @@ function renderApp(html) {
    HOME PAGE
    ============================================================ */
 function renderHome() {
+  if (!($('#home-view') || {}).firstElementChild) { location.assign(APP_BASE); return; }   // section pages do not carry the home markup
   showView('home');
   setSEO({
     title: '',
