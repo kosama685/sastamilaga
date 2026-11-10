@@ -146,6 +146,35 @@ problem never loses an order.
 
 If you change `Code.gs` later, choose Deploy → Manage deployments → Edit → New version. That keeps the same URL.
 
+## 7b. Automatic country, language and currency
+
+On a visitor's first visit the site chooses everything by itself, with no keys and no server:
+
+- **Country:** from free keyless location services, tried in order (GeoJS, ipwho.is, country.is). If all are down, the
+  region of the browser language is used (for example `en-AU` gives Australia).
+- **Language:** from the browser's own preference list. Pages are machine translated in the browser (labelled), and the
+  chat starts in Arabic or English to match.
+- **Currency:** from the country (prices show as converted amounts; checkout and payment stay PKR or US$).
+- **Fairness:** a small notice says what was chosen, with a Change button. An explicit choice in the window is never
+  overridden. Search-engine crawlers are skipped, so Google always sees the default English page.
+- **Privacy:** only the country code is kept, in the visitor's own browser. The location services see the visitor's IP
+  address, like any website that loads a script from a third party; mention this in `privacy/` if you wish.
+- **CJ shipping:** the global product page selects the visitor's country by itself and quotes automatically (when the CJ
+  Worker is set up).
+
+## 7c. Shipping prices by country without a server (`data/shipping/cj-sample.json`)
+
+The Shipping page lists real CJ methods, prices and transit times for 222 countries, for one small sample parcel
+(50 g from China). Refresh it any time on a computer that has the CJ key:
+
+```bash
+node tools/cj-shipping-sample.mjs      # reads CJ_API_KEY or workers/cj-shipping/.dev.vars; takes about 5 minutes
+git add data/shipping/cj-sample.json && git commit -m "Refresh CJ shipping sample" && git push
+```
+
+The key is used only on that computer and is never written to the file. Exact prices for a given item still come from the
+CJ Worker (section 3) or are confirmed on WhatsApp before payment.
+
 ## 7a. Country / language / currency window (`assets/js/market.js`)
 
 It works without setup and opens from the header "Shopping destination" button.

@@ -22,7 +22,66 @@
   function cookie(n) { var m = document.cookie.match(new RegExp('(?:^|; )' + n + '=([^;]*)')); return m ? decodeURIComponent(m[1]) : ''; }
   function load() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
   function save(m) { try { localStorage.setItem(KEY, JSON.stringify(m)); } catch (e) {} }
-  var state = load() || { country: 'PK', currency: 'PKR', lang: (new URLSearchParams(location.search).get('gdcs_lang') || cookie('sm_lang') || 'en').toLowerCase() };
+  var saved = load();
+  var state = saved || { country: 'PK', currency: 'PKR', lang: (new URLSearchParams(location.search).get('gdcs_lang') || cookie('sm_lang') || 'en').toLowerCase(), auto: false };
+  var IS_BOT = /bot|crawl|spider|slurp|mediapartners|lighthouse|pagespeed|facebookexternalhit/i.test(navigator.userAgent || '');
+
+  /* ---- automatic country, language and currency (no API keys) ----
+     Country: free keyless IP lookups, tried in order (GeoJS, ipwho.is, country.is); fallback = region of the browser language.
+     Language: the browser's own preference list (navigator.languages). Currency: from the country.
+     Only the country code is kept (in this browser). Search-engine crawlers are skipped so they always see the default page. */
+  var GEO_URLS = [
+    ['https://get.geojs.io/v1/ip/country.json', function (j) { return j.country; }],
+    ['https://ipwho.is/?fields=success,country_code', function (j) { return j.success === false ? '' : j.country_code; }],
+    ['https://api.country.is/', function (j) { return j.country; }]
+  ];
+  function timedFetch(url, ms) { var c = new AbortController(), t = setTimeout(function () { c.abort(); }, ms); return fetch(url, { signal: c.signal, credentials: 'omit' }).finally(function () { clearTimeout(t); }); }
+  function geoCountry(i) {
+    i = i || 0; if (i >= GEO_URLS.length) return Promise.reject(new Error('geo'));
+    return timedFetch(GEO_URLS[i][0], 3500).then(function (r) { return r.json(); }).then(function (j) {
+      var cc = String(GEO_URLS[i][1](j) || '').toUpperCase(); if (!CUR[cc]) throw new Error('bad country'); return cc;
+    }).catch(function () { return geoCountry(i + 1); });
+  }
+  function browserCountry() { var l = (navigator.languages && navigator.languages[0]) || navigator.language || ''; try { var r = new Intl.Locale(l).region; if (r && CUR[r]) return r; } catch (e) {} return ''; }
+  var LANG_ALIAS = { nn: 'nb', tl: 'fil', iw: 'he', 'zh-tw': 'zh', 'zh-hk': 'zh' };
+  function browserLang() {
+    var list = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en'];
+    for (var i = 0; i < list.length; i++) { var l = String(list[i]).toLowerCase(), b = l.split('-')[0]; b = LANG_ALIAS[l] || LANG_ALIAS[b] || b; if (b === 'en') return 'en'; if (LANGS.indexOf(b) >= 0) return b; }
+    return 'en';
+  }
+  function applyAutoLang(lang) {
+    if (!lang || lang === 'en') return false;
+    if (!document.getElementById('home-view')) return false;   /* only the app pages carry the page translator (not p/, c/, b/ pages) */
+    var q = new URLSearchParams(location.search).get('gdcs_lang'); if (q && q.toLowerCase() === lang) return false;
+    try { if (sessionStorage.getItem('sm_lang_tried')) return false; sessionStorage.setItem('sm_lang_tried', '1'); } catch (e) { return false; }
+    var u = new URL(location.href); u.searchParams.set('gdcs_lang', lang);
+    document.cookie = 'sm_lang=' + lang + ';path=/;max-age=31536000';
+    location.replace(u.toString()); return true;
+  }
+  function autoDetect() {
+    if (saved || IS_BOT) return Promise.resolve();
+    var lang = browserLang();
+    return geoCountry().catch(function () { return browserCountry() || 'PK'; }).then(function (cc) {
+      state = { country: cc, currency: CUR[cc] || 'PKR', lang: lang, auto: true };
+      save(state); paintHeader(); clearFx(); localiseText(document.body);
+      window.dispatchEvent(new CustomEvent('sm:market', { detail: state }));
+      if (applyAutoLang(lang)) return;
+      getRates().then(function () { convertIn(document); convertTagged(document); }).catch(function () { });
+      note();
+    });
+  }
+  /* A small, dismissible notice: what was chosen and why, with a one-click way to change it. */
+  function note() {
+    if (!state.auto) return;
+    try { if (localStorage.getItem('sm_auto_ack')) return; } catch (e) { }
+    if (document.getElementById('sm-auto')) return;
+    var active = (new URLSearchParams(location.search).get('gdcs_lang') || '').toLowerCase() === state.lang;   /* say "language" only when it is really applied */
+    var langTxt = state.lang !== 'en' && active ? ' · ' + ((langName && langName.of(state.lang)) || state.lang) + ' (machine translation)' : '';
+    var n = document.createElement('div'); n.id = 'sm-auto'; n.className = 'sm-auto'; n.setAttribute('role', 'status');
+    n.innerHTML = '<span>Set for you: <b>' + esc(cname(state.country)) + ' · ' + esc(state.currency) + '</b>' + esc(langTxt) + ', from your approximate location.</span><button type="button" data-a="change">Change</button><button type="button" data-a="ok" aria-label="Dismiss this notice">OK</button>';
+    n.addEventListener('click', function (e) { var a = e.target.getAttribute && e.target.getAttribute('data-a'); if (!a) return; try { localStorage.setItem('sm_auto_ack', '1'); } catch (x) { } n.remove(); if (a === 'change') open(); });
+    document.body.appendChild(n);
+  }
   var rates = null;
 
   /* ---- exchange rates (PKR base) ---- */
@@ -143,10 +202,8 @@
     geo.addEventListener('change', function () {
       if (!geo.checked) return;
       status.textContent = 'Finding your approximate location…';
-      fetch('https://ipapi.co/country/').then(function (r) { return r.text(); }).then(function (cc) {
-        cc = String(cc || '').trim().toUpperCase();
-        if (CUR[cc]) { pick(cc, true); search.value = ''; renderList(); status.textContent = 'Suggested: ' + cname(cc) + '. You can change it.'; }
-        else status.textContent = 'Could not detect your location. Choose a country from the list.';
+      geoCountry().then(function (cc) {
+        pick(cc, true); search.value = ''; renderList(); status.textContent = 'Suggested: ' + cname(cc) + '. You can change it.';
       }).catch(function () { status.textContent = 'Could not detect your location. Choose a country from the list.'; });
     });
   }
@@ -176,7 +233,8 @@
   }
   function apply() {
     var lang = langSel.value, langChanged = lang !== state.lang;
-    state = { country: draft.country, currency: curSel.value || 'PKR', lang: lang };
+    state = { country: draft.country, currency: curSel.value || 'PKR', lang: lang, auto: false };   /* an explicit choice always wins over detection */
+    var n = document.getElementById('sm-auto'); if (n) n.remove();
     save(state); dlg.close(); paintHeader(); clearFx(); localiseText(document.body);
     window.dispatchEvent(new CustomEvent('sm:market', { detail: state }));
     if (langChanged) {
@@ -196,6 +254,13 @@
     new MutationObserver(function (m) { for (var i = 0; i < m.length; i++) if (m[i].addedNodes.length) { again(); break; } }).observe(document.body, { childList: true, subtree: true });
     window.addEventListener('load', again); document.addEventListener('sasta:rendered', again);
     if (state.currency !== 'PKR') getRates().then(again).catch(function () {});
+    // Visa tab of the travel box: every destination, popular ones first (the live form listed only 10).
+    var dl = document.getElementById('smx-countries');
+    if (dl) {
+      var pop = ['Saudi Arabia', 'United Arab Emirates', 'Serbia', 'Turkey', 'Schengen (Europe)', 'United Kingdom', 'Malaysia', 'Azerbaijan', 'Qatar', 'Thailand'];
+      dl.innerHTML = pop.concat(COUNTRIES.map(function (x) { return x.n; }).filter(function (n) { return pop.indexOf(n) < 0; })).map(function (n) { return '<option value="' + esc(n) + '"></option>'; }).join('');
+    }
+    if (saved) { if (state.auto && applyAutoLang(state.lang)) return; note(); } else autoDetect();
   }
   var css = document.createElement('style');
   css.textContent = '.sm-mk{width:min(1180px,calc(100vw - 32px));max-height:min(860px,calc(100vh - 32px));padding:0;border:0;border-radius:28px;box-shadow:0 30px 80px rgba(9,46,30,.28),0 4px 14px rgba(9,46,30,.12);color:#11261b;background:#fff;overflow:hidden}' +
@@ -222,6 +287,9 @@
     '@media (max-width:820px){.sm-mk{border-radius:20px;overflow:auto}.sm-mk[open]{display:block}.sm-mk__body{grid-template-columns:1fr;overflow:visible}.sm-mk__left{border-right:0;border-bottom:1px solid #e6eee9}.sm-mk__head{padding:20px;gap:14px}.sm-mk__globe{width:56px;height:56px}.sm-mk__globe svg{width:30px;height:30px}.sm-mk__left,.sm-mk__right{padding:20px}.sm-mk__list{max-height:260px}}' +
     '@media (prefers-reduced-motion:reduce){.sm-mk *{transition:none!important}}';
   document.head.appendChild(css);
-  window.SMMarket = { open: open, state: function () { return state; }, convert: convertIn };
+  css.textContent += '.sm-auto{position:fixed;z-index:99990;left:50%;top:12px;transform:translateX(-50%);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;max-width:min(760px,calc(100vw - 24px));padding:10px 14px;border-radius:14px;background:#11261b;color:#fff;font-size:14px;line-height:1.45;box-shadow:0 12px 30px rgba(9,46,30,.35)}' +
+    '.sm-auto button{min-height:34px;padding:0 14px;border:0;border-radius:999px;font:600 13px/1 inherit;cursor:pointer;background:#fff;color:#11261b}.sm-auto button[data-a="change"]{background:transparent;color:#bfeedd;text-decoration:underline}.sm-auto button:focus-visible{outline:3px solid #ffc439;outline-offset:2px}' +
+    '@media (max-width:820px){.sm-auto{top:auto;bottom:calc(86px + env(safe-area-inset-bottom));}}';
+  window.SMMarket = { open: open, state: function () { return state; }, convert: convertIn, list: function () { return COUNTRIES.slice(); }, detect: geoCountry, browserLang: browserLang, countryName: cname, flag: flag, currencies: CUR };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

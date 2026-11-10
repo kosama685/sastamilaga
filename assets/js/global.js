@@ -138,8 +138,10 @@
   function shipBox() {
     if (!(window.SM_CONFIG || {}).cjShippingWorker) return '';
     let names; try { names = new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) { names = null; }
-    const codes = 'AF AL DZ AR AM AU AT AZ BH BD BY BE BR BG CA CL CN CO HR CY CZ DK EG EE FI FR GE DE GH GR HK HU IN ID IQ IE IL IT JP JO KZ KE KW KG LV LB LT LU MY MV MT MX MA NP NL NZ NG NO OM PK PS PH PL PT QA RO RU SA RS SG SK SI ZA KR ES LK SE CH TW TJ TH TN TR TM UA AE GB US UZ VN YE'.split(' ');
-    const opts = codes.map(c => [c, names ? names.of(c) : c]).sort((a, b) => a[1].localeCompare(b[1])).map(([c, n]) => `<option value="${c}"${c === 'PK' ? ' selected' : ''}>${esc(n)}</option>`).join('');
+    // Every country, with the visitor's own (detected) country selected: no manual choice needed.
+    const mk = window.SMMarket, cur = (mk && mk.state().country) || 'PK';
+    const list = mk ? mk.list() : 'AF AL DZ AR AM AU AT AZ BH BD BY BE BR BG CA CL CN CO HR CY CZ DK EG EE FI FR GE DE GH GR HK HU IN ID IQ IE IL IT JP JO KZ KE KW KG LV LB LT LU MY MV MT MX MA NP NL NZ NG NO OM PK PS PH PL PT QA RO RU SA RS SG SK SI ZA KR ES LK SE CH TW TJ TH TN TR TM UA AE GB US UZ VN YE'.split(' ').map(c => ({ c, n: names ? names.of(c) : c }));
+    const opts = list.map(x => `<option value="${x.c}"${x.c === cur ? ' selected' : ''}>${esc(x.n)}</option>`).join('');
     return `<fieldset class="sm-ship"><legend>Shipping cost</legend><div class="sm-ship__row"><label class="screen-reader-text" for="gship-cc">Ship to country</label><select id="gship-cc">${opts}</select><button type="button" class="sm-btn sm-btn--ghost" id="gship-go">Get shipping cost</button></div>
       <div id="gship-out" class="sm-ship__out" role="status" aria-live="polite"></div></fieldset>`;
   }
@@ -148,6 +150,9 @@
     if (!(window.SM_CONFIG || {}).cjShippingWorker) return '';
     return `<fieldset class="sm-var" id="gvar" aria-live="polite"><legend>Choose an option</legend><p class="sm-var__load">Loading the supplier's options…</p></fieldset>`;
   }
+  /* Automatic shipping quote for the visitor's country (re-run when the variant or the detected country changes). */
+  let quoteTimer = null;
+  function quoteSoon() { clearTimeout(quoteTimer); quoteTimer = setTimeout(() => { const go = document.getElementById('gship-go'); if (go && !go.disabled) go.click(); }, 250); }
   function bindVariants(r, chosen) {
     const box = document.getElementById('gvar'); if (!box) return;
     const W = window.SM_CONFIG.cjShippingWorker.replace(/\/$/, '');
@@ -157,6 +162,7 @@
       const img = document.querySelector('.gallery-main img'); if (img && v.image) img.src = v.image;
       const vid = document.querySelector('.gallery-main video'); if (vid && v.image && vid.paused) vid.poster = v.image;   /* video products: the cover image follows the variant */
       const out = document.getElementById('gship-out'); if (out) out.textContent = '';   /* a new variant needs a new shipping quote */
+      quoteSoon();
     };
     fetch(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`).then(x => x.json()).then(d => {
       const list = (d && d.variants) || [];
@@ -170,6 +176,12 @@
   }
   function bindShip(r, chosen) {
     const go = document.getElementById('gship-go'); if (!go) return;
+    if (window.__shipMk) window.removeEventListener('sm:market', window.__shipMk);
+    window.__shipMk = e => {          /* country detected or changed: select it and quote again */
+      const sel = document.getElementById('gship-cc'); if (!sel || !e.detail) return;
+      sel.value = e.detail.country; if (chosen && chosen.v) quoteSoon();
+    };
+    window.addEventListener('sm:market', window.__shipMk);
     const out = document.getElementById('gship-out'), W = window.SM_CONFIG.cjShippingWorker.replace(/\/$/, '');
     go.addEventListener('click', async () => {
       const cc = document.getElementById('gship-cc').value, qty = Number(document.querySelector('#greq [name="qty"]').value) || 1;

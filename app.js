@@ -110,22 +110,30 @@ function pageUrl(p)      { return `${SITE_URL}/${pagePath(p)}`; }
 const APP_BASE = (() => { try { return new URL('.', document.currentScript.src).pathname; } catch (e) { return location.pathname.replace(/[^/]*$/, ''); } })();
 const CLEAN_SECTIONS = ['shop', 'deals', 'videos', 'travel', 'live-tv', 'global', 'about', 'faq', 'contact', 'how-to-order', 'shipping',
   'returns', 'return-policy', 'privacy', 'terms', 'cookies', 'track', 'seller', 'careers', 'press', 'sitemap',
-  'cart', 'checkout', 'wishlist', 'account', 'thank-you'];   /* last five: private pages, real URLs but noindex and not in the sitemap */
+  'cart', 'checkout', 'wishlist', 'account', 'thank-you',   /* private pages: real URLs but noindex and not in the sitemap */
+  'visa', 'rewards', 'search', 'global/all', 'global/videos', 'global/search'];
+/* Sections whose real URL may carry a query string (search text, page number, travel tab) without becoming another page. */
+const QUERY_OK = new Set(['search', 'travel', 'shop', 'deals', 'videos', 'visa', 'rewards', 'global/all', 'global/search']);
 let _byPage = null;
 function productByPage(file) { if (!_byPage) { _byPage = new Map(); products.forEach(p => _byPage.set(pagePath(p), p)); } return _byPage.get(file); }
 function blogPublished(s) { const today = new Date(Date.now() + 5 * 3600e3).toISOString().slice(0, 10); return (window.SM_BLOG || []).some(b => b.slug === s && b.publish <= today); }
 /* '#/shop' -> 'shop/', '#/product/x' -> 'p/x-id.html' … ; null when the route has no clean page. */
 function hashToClean(hash) {
-  const raw = String(hash || '').replace(/^#?\/?/, ''); if (raw.includes('?')) return null;
+  const full = String(hash || '').replace(/^#?\/?/, ''), qi = full.indexOf('?');
+  const raw = qi < 0 ? full : full.slice(0, qi), qs = qi < 0 ? '' : full.slice(qi + 1);
   const parts = raw.split('/').filter(Boolean);
-  if (!parts.length || parts[0] === 'home') return '';
+  const withQuery = path => (qs ? (QUERY_OK.has(path.replace(/\/$/, '')) ? `${path}?${qs}` : null) : path);
+  if (!parts.length || parts[0] === 'home') return qs ? null : '';
+  if (qs && !QUERY_OK.has(parts.join('/'))) return null;      /* filters and other parameter routes keep #/ */
   if (parts[0] === 'product' && parts[1]) { const p = byHandle.get(parts.slice(1).join('/')); return p ? pagePath(p) : null; }
   if (parts[0] === 'category' && parts[1] && parts.length === 2) return categories.some(c => c.slug === parts[1]) ? `c/${parts[1]}.html` : null;
-  if (parts[0] === 'global' && parts.length === 1) return 'global/';
-  if (parts[0] === 'global' && parts[1] === 'c' && parts[2]) return `c/global/${parts[2]}.html`;
+  if (parts[0] === 'global' && parts.length === 1) return withQuery('global/');
+  if (parts[0] === 'global' && parts[1] === 'c' && parts[2] && parts.length === 3) return `c/global/${parts[2]}.html`;
+  if (parts[0] === 'global' && parts[1] === 'g' && parts[2] && parts.length === 3) return (!window.SM_CJ || window.SM_CJ.groups.some(g => g.s === parts[2])) ? `global/g/${parts[2]}/` : null;
+  if (parts[0] === 'global' && parts.length === 2 && CLEAN_SECTIONS.includes(`global/${parts[1]}`)) return withQuery(`global/${parts[1]}/`);
   if (parts[0] === 'blog' && parts.length === 1) return 'b/';
   if (parts[0] === 'blog' && parts[1]) return blogPublished(parts[1]) ? `b/${parts[1]}.html` : null;
-  if (parts.length === 1 && CLEAN_SECTIONS.includes(parts[0])) return `${parts[0]}/`;
+  if (parts.length === 1 && CLEAN_SECTIONS.includes(parts[0])) return withQuery(`${parts[0]}/`);
   return null;
 }
 /* Path of a clean URL -> app route ('shop', 'product/x', …); null when it is not an app page. */
@@ -139,7 +147,8 @@ function cleanToRoute(pathname) {
   if ((m = rel.match(/^c\/([a-z0-9-]+)\.html$/))) { const s = m[1], base = s.replace(/-\d+$/, ''); return categories.some(c => c.slug === s) ? `category/${s}` : categories.some(c => c.slug === base) ? `category/${base}` : null; }
   if (/^b\/(index\.html)?$/.test(rel)) return 'blog';
   if ((m = rel.match(/^b\/([a-z0-9-]+)\.html$/))) return `blog/${m[1]}`;
-  if ((m = rel.match(/^([a-z-]+)\/(index\.html)?$/)) && CLEAN_SECTIONS.includes(m[1])) return m[1];
+  const sec = rel.replace(/\/(index\.html)?$/, '');
+  if (rel !== sec && (CLEAN_SECTIONS.includes(sec) || /^global\/g\/[a-z0-9-]+$/.test(sec))) return sec;
   return null;
 }
 /* Navigate inside the app to a route ('shop', 'search?q=x', …): clean URL when there is one, else #/route. */
@@ -569,8 +578,8 @@ function bindEvents() {
     }
     if (href.startsWith('#/')) { e.preventDefault(); go(href.slice(2)); return; }
     let u; try { u = new URL(a.href); } catch (x) { return; }
-    if (u.origin !== location.origin || u.search) return;
-    const r = a.dataset.route || cleanToRoute(u.pathname);
+    if (u.origin !== location.origin) return;
+    const r = a.dataset.route || (u.search ? null : cleanToRoute(u.pathname));
     if (r) { e.preventDefault(); go(r); }
   });
   /* Keep rendered links clean as views change. */
@@ -688,6 +697,9 @@ function route() {
     if (c !== null) history.replaceState({ r: raw }, '', APP_BASE + c);
   } else {
     raw = cleanToRoute(location.pathname) || 'home';
+    // Query string of a clean URL (/search/?q=x, /global/all/?page=2, /travel/?tab=flights); the language switch param is not part of the route.
+    const sp = new URLSearchParams(location.search); sp.delete('gdcs_lang');
+    const q = sp.toString(); if (q && raw !== 'home' && QUERY_OK.has(raw)) raw += '?' + q;
   }
   const [path, qs] = raw.split('?');
   const parts = path.split('/').filter(Boolean);
@@ -722,13 +734,14 @@ function route() {
   else if (parts[0] === 'thank-you') renderThankYou(); // firePurchaseConversions() called inside
   else if (parts[0] === 'faq')      renderFAQ();
   else if (parts[0] === 'about')    renderAbout();
-  else if (parts[0] === 'return-policy') renderReturnPolicy();
+  else if (parts[0] === 'return-policy') { if (window.SMPages) window.SMPages.route('returns', qs); else renderReturnPolicy(); }
+  else if (parts[0] === 'visa' || parts[0] === 'rewards') { if (window.SMPages) window.SMPages.route(parts[0], qs); else renderApp(`<section class="sm-page">${pageHead('Loading…', 'This page is loading. Reload if this message stays.')}</section>`); }
   else if (parts[0] === 'blog')     { if (window.SMBlog) window.SMBlog.route(parts[1]); else renderBlog(); }
   else if (parts[0] === 'careers')  renderCareers();
   else if (parts[0] === 'press')    renderPress();
   else if (parts[0] === 'contact')  renderContact();
-  else if (parts[0] === 'returns')  renderReturns();
-  else if (parts[0] === 'shipping') renderShipping();
+  else if (parts[0] === 'returns')  { if (window.SMPages) window.SMPages.route('returns', qs); else renderReturns(); }
+  else if (parts[0] === 'shipping') { if (window.SMPages) window.SMPages.route('shipping', qs); else renderShipping(); }
   else if (parts[0] === 'track')    renderTrackOrder();
   else if (parts[0] === 'seller')   renderSeller();
   else if (parts[0] === 'privacy')  renderPrivacy();

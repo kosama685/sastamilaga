@@ -423,3 +423,52 @@ form#checkoutForm #smPay .sm-pay__facts { display: grid; }
 .sm-greq .sm-var__t { display: grid !important; gap: 1px; }
 .sm-greq .sm-var__t b { display: block; font-size: 13.5px; line-height: 1.25; color: #1f3329; }
 .sm-greq .sm-var__t small { display: block; font-size: 12.5px; color: #0e7a5c; font-weight: 600; }
+
+/* Country-aware Shipping / Returns, Visa destinations, Rewards */
+.sm-pg__bar { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: end; margin: 8px 0 18px; }
+.sm-pg__sel { display: grid; gap: 6px; min-width: 220px; font-weight: 600; font-size: .9rem; color: #1f3329; }
+.sm-pg__sel--grow { flex: 1 1 280px; }
+.sm-pg__sel select, .sm-pg__sel input { min-height: 48px; padding: 0 14px; border: 1px solid #d5e0da; border-radius: 12px; background: #fff; font: inherit; min-width: 0; width: 100%; box-sizing: border-box; }
+.sm-pg__hint, .sm-pg__note { margin: 0; color: #5b6a62; font-size: .88rem; line-height: 1.6; }
+.sm-pg__load { color: #5b6a62; }
+.sm-pg__cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin: 6px 0 22px; }
+.sm-pg__card { border: 1px solid #dfe8e2; border-radius: 18px; padding: 20px 22px; background: linear-gradient(180deg, #fff, #f8fbf9); box-shadow: 0 6px 20px rgba(14, 92, 60, .06); }
+.sm-pg__card h2, .sm-pg__tbl h2, .sm-pg__faq h2 { margin: 0 0 10px; font-size: 1.15rem; letter-spacing: -.01em; display: flex; align-items: center; gap: 10px; }
+.sm-pg__flag img { display: block; border-radius: 3px; }
+.sm-pg__facts, .sm-pg__steps { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; line-height: 1.6; color: #2d3f35; }
+.sm-pg__tbl { margin: 0 0 22px; }
+.sm-pg__scroll { overflow-x: auto; border: 1px solid #dfe8e2; border-radius: 14px; }
+.sm-pg__tbl table { width: 100%; border-collapse: collapse; min-width: 360px; }
+.sm-pg__tbl th, .sm-pg__tbl td { padding: 11px 14px; text-align: left; border-bottom: 1px solid #eef1ec; }
+.sm-pg__tbl thead th { background: #f2f7f4; font-size: .82rem; color: #3f4d46; }
+.sm-pg__tbl tbody tr:last-child > * { border-bottom: 0; }
+.sm-pg__tbl .sm-pg__note { margin-top: 10px; }
+.sm-pg__faq details { border: 1px solid #dfe8e2; border-radius: 12px; padding: 12px 16px; margin: 8px 0; background: #fff; }
+.sm-pg__faq summary { cursor: pointer; font-weight: 600; }
+.sm-pg__faq summary:focus-visible { outline: 3px solid #0e7a5c; outline-offset: 3px; border-radius: 6px; }
+.sm-pg__faq p { margin: 8px 0 0; color: #3f4d46; line-height: 1.65; }
+.sm-pg__cta { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin: 4px 0 22px; }
+.sm-pg__cta .sm-wa-btn { width: auto; display: inline-flex; padding: 0 22px; margin: 0; }
+.sm-pg__count { margin: 0 0 12px; color: #3f4d46; font-size: .95rem; }
+.sm-pg__more { display: flex; justify-content: center; margin: 18px 0 8px; }
+.sm-visa { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.sm-visa__card { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid #dfe8e2; border-radius: 14px; background: #fff; text-decoration: none; color: #1f3329; transition: transform .2s cubic-bezier(.34, 1.56, .64, 1), border-color .2s, box-shadow .2s; }
+.sm-visa__card:hover { transform: translateY(-2px); border-color: #9bd3bf; box-shadow: 0 8px 20px rgba(14, 92, 60, .1); }
+.sm-visa__card:active { transform: scale(.98); }
+.sm-visa__card:focus-visible { outline: 3px solid #0e7a5c; outline-offset: 3px; }
+.sm-visa__card b { display: block; font-size: 1rem; }
+.sm-visa__card small { color: #0e7a5c; font-weight: 600; }
+.sm-visa__flag img { display: block; border-radius: 4px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .08); }
+.sm-visa__none { grid-column: 1 / -1; padding: 20px; color: #3f4d46; }
+@media (max-width: 640px) { .sm-pg__sel { min-width: 100%; } .sm-pg__cards { grid-template-columns: 1fr; } }
+
+/* Responsive: keep the last content clear of the floating chat button, WhatsApp button and the bottom app bar */
+@media (max-width: 900px) {
+  body { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+  .sm-pg__cta, .sm-page { scroll-margin-bottom: 96px; }
+  footer, .wp-block-template-part:last-child { margin-bottom: 8px; }
+}
+
+/* The Live TV stylesheet hid every page title whenever the (hidden) Live TV block exists in the page. Hide titles only on the Live TV page itself. */
+.sm-main:has(#sltv) .sm-page-head { display: block !important; }
+body[data-view="tv"] .sm-main .sm-page-head { display: none !important; }
