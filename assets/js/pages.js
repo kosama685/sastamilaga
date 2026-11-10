@@ -128,7 +128,7 @@
     setSEO({ title: 'Rewards and lowest prices', description: 'The lowest-priced products at Sasta Milaga, cheapest first, with price bands from Rs 300. Prices in PKR, cash on delivery in Pakistan.', url: `${A.SITE_URL}/rewards/` });
     if (!cheap) cheap = A.products.filter(p => A.price(p) > 0 && (p.in || Number(p.stock) > 0)).sort((a, b) => A.price(a) - A.price(b));
     const st = { band, shown: 60 };
-    renderApp(`<section class="sm-page sm-page--wide">${pageHead('Rewards and lowest prices', `Points, the daily spin and referral rewards are run on <a href="https://sastamilaga.com/rewards-program/" rel="noopener">sastamilaga.com</a>. Here are our lowest prices, cheapest first.`)}
+    renderApp(`<section class="sm-page sm-page--wide">${pageHead('Rewards and lowest prices', `See how you <a href="earn-points/">earn points</a>, try the <a href="daily-spin/">daily spin</a>, and shop our lowest prices, cheapest first.`)}
       <div class="sm-pg__bar"><label class="sm-pg__sel" for="rwband"><span>Show</span><select id="rwband"><option value="0">Lowest price first (all)</option>${[300, 500, 1000, 2000].map(n => `<option value="${n}"${n === band ? ' selected' : ''}>Under ${rs(n)}</option>`).join('')}</select></label></div>
       <p class="sm-pg__count" id="rwcount" role="status" aria-live="polite"></p><div id="rwgrid" class="products-row"></div><div class="sm-pg__more"><button type="button" class="sm-btn sm-btn--ghost" id="rwmore" hidden>Show more</button></div></section>`);
     const draw = () => {

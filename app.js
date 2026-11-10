@@ -109,11 +109,11 @@ function pageUrl(p)      { return `${SITE_URL}/${pagePath(p)}`; }
    ============================================================ */
 const APP_BASE = (() => { try { return new URL('.', document.currentScript.src).pathname; } catch (e) { return location.pathname.replace(/[^/]*$/, ''); } })();
 const CLEAN_SECTIONS = ['shop', 'deals', 'videos', 'travel', 'live-tv', 'global', 'about', 'faq', 'contact', 'how-to-order', 'shipping',
-  'returns', 'return-policy', 'privacy', 'terms', 'cookies', 'track', 'seller', 'careers', 'press', 'sitemap',
+  'returns', 'return-policy', 'privacy', 'terms', 'cookies', 'track', 'seller', 'earn-points', 'daily-spin', 'seller-rules', 'careers', 'press', 'sitemap',
   'cart', 'checkout', 'wishlist', 'account', 'thank-you',   /* private pages: real URLs but noindex and not in the sitemap */
   'visa', 'rewards', 'search', 'global/all', 'global/videos', 'global/search', 'safe-shopping', 'tours'];
 /* Content pages whose text is in the page HTML itself (about/, faq/, ur/about/ …): the browser loads them as real pages; the app does not render them. */
-const STATIC_PAGES = new Set(['about', 'contact', 'faq', 'how-to-order', 'privacy', 'terms', 'safe-shopping', 'tours']);
+const STATIC_PAGES = new Set(['earn-points', 'daily-spin', 'seller-rules', 'about', 'contact', 'faq', 'how-to-order', 'privacy', 'terms', 'safe-shopping', 'tours']);
 /* Sections whose real URL may carry a query string (search text, page number, travel tab) without becoming another page. */
 const QUERY_OK = new Set(['search', 'travel', 'shop', 'deals', 'videos', 'visa', 'rewards', 'global/all', 'global/search']);
 let _byPage = null;

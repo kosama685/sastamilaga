@@ -3,7 +3,8 @@
 	if (!root || !window.SLTV_CFG) return;
 	var cfg = window.SLTV_CFG, $ = function (id) { return document.getElementById(id); };
 	var video = $('sltv-video'), player = root.querySelector('.sltv-player'), frame = root.querySelector('.sltv-frame');
-	var live = root.querySelector('.sltv-live'), logo = root.querySelector('.sltv-logo'), msg = root.querySelector('.sltv-msg');
+	function secureLogo(u) { return String(u).replace(/^http:\/\//i, 'https://'); }   // http logos are blocked on an https page
+  var live = root.querySelector('.sltv-live'), logo = root.querySelector('.sltv-logo'), msg = root.querySelector('.sltv-msg');
 	var list = $('sltv-list'), more = $('sltv-more'), drawer = $('sltv-drawer'), allBtn = $('sltv-all'), catSel = $('sltv-cat');
 	var state = { tab: 'all', page: 1, pages: 1, current: null, hls: null };
 	var catLabel = { News: 'News & Current Affairs', General: 'General Entertainment', Religious: 'Islamic & Religious', Kids: 'Kids & Family' };
@@ -120,7 +121,7 @@
 		now.textContent = ch.name; status.textContent = ch.orig ? 'Connecting through secure relay...' : 'Connecting...';
 		retryButton.disabled = false;
 		msg.textContent = 'Loading ' + ch.name + '...'; player.dataset.state = 'loading';
-		if (ch.logo) { logo.src = ch.logo; logo.alt = ch.name; logo.hidden = false; }
+		if (ch.logo) { logo.onerror = function () { this.hidden = true; }; logo.src = secureLogo(ch.logo); logo.alt = ch.name; logo.hidden = false; }
 		var recent = store('recent').filter(function (i) { return i !== ch.id; }); recent.unshift(ch.id); store('recent', recent.slice(0, 30));
 		list.querySelectorAll('button[aria-current]').forEach(function (b) { b.removeAttribute('aria-current'); });
 		var selected = list.querySelector('button[data-id="' + ch.id + '"]'); if (selected) selected.setAttribute('aria-current', 'true');
@@ -200,7 +201,7 @@
 		b.type = 'button'; b.dataset.id = ch.id;
 		if (state.current && state.current.id === ch.id) b.setAttribute('aria-current', 'true');
 		var ph = function () { return el('span', 'sltv-ph', ch.name.slice(0, 2)); };
-		if (ch.logo) { var i = el('img'); i.src = ch.logo; i.alt = ''; i.loading = first ? 'eager' : 'lazy'; i.onerror = function () { this.replaceWith(ph()); }; b.appendChild(i); }
+		if (ch.logo) { var i = el('img'); i.src = secureLogo(ch.logo); i.alt = ''; i.loading = first ? 'eager' : 'lazy'; i.onerror = function () { this.replaceWith(ph()); }; b.appendChild(i); }
 		else b.appendChild(ph());
 		var t = el('span'); t.appendChild(el('b', '', ch.name)); t.appendChild(el('small', '', [catLabel[ch.cat] || ch.cat, ch.cc ? region(ch.cc) : '', ch.chk === 'fail' ? 'may be offline' : ''].filter(Boolean).join(' · ')));
 		b.appendChild(t);

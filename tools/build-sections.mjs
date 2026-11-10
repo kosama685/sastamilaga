@@ -16,8 +16,8 @@ const exists = f => fs.existsSync(path.join(ROOT, f));
 const total = (() => { const t = read('products.js'); return (t.match(/"id":/g) || []).length; })();
 const M = (() => { const t = read('data/cj/manifest.js'); return JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1)); })();
 const fmt = n => n.toLocaleString('en');
-const WP = exists('data/wp/pages.json') ? JSON.parse(read('data/wp/pages.json')) : {};   // pages cloned from sastamilaga.com (tools: see data/wp)
-const PURE = new Set(['about', 'contact', 'faq', 'how-to-order', 'privacy', 'terms', 'safe-shopping', 'tours']);   // content pages: their text is in the HTML and the app does not re-render them
+const WP = { ...(exists('data/wp/pages.json') ? JSON.parse(read('data/wp/pages.json')) : {}), ...(exists('data/wp/pages-own.json') ? JSON.parse(read('data/wp/pages-own.json')) : {}) };   // pages cloned from sastamilaga.com (tools: see data/wp)
+const PURE = new Set(['earn-points', 'daily-spin', 'seller-rules', 'about', 'contact', 'faq', 'how-to-order', 'privacy', 'terms', 'safe-shopping', 'tours']);   // content pages: their text is in the HTML and the app does not re-render them
 const SECTIONS = {
   shop: ['Shop all products', `Shop ${fmt(total)} products in PKR at Sasta Milaga with cash on delivery across Pakistan, plus ${fmt(M.total)} global products with worldwide delivery.`],
   global: ['Global shop – worldwide delivery', `Browse ${fmt(M.total)} global products in ${M.cats.length} categories with worldwide delivery. Prices are US$ estimates confirmed on WhatsApp before you pay.`],
@@ -40,6 +40,9 @@ const SECTIONS = {
   terms: ['Terms and conditions', 'Terms and conditions for shopping and travel services at Sasta Milaga.'],
   cookies: ['Cookie policy', 'How Sasta Milaga uses cookies.'],
   track: ['Track your order', 'Track a Sasta Milaga order with your order number and phone.'],
+  'earn-points': ['Earn reward points', 'Earn 1 point for every Rs 100 on completed orders.'],
+  'daily-spin': ['Daily spin', 'Spin once a day for points or wallet money.'],
+  'seller-rules': ['Seller rules and policies', 'Rules for selling on Sasta Milaga.'],
   seller: ['Sell on Sasta Milaga', 'Sell your products on Sasta Milaga to customers across Pakistan.'],
   careers: ['Careers', 'Work with Sasta Milaga.'],
   press: ['Press', 'Sasta Milaga news and press information.'],
