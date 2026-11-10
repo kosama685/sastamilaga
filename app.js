@@ -166,7 +166,10 @@ function productsForStore(store) { return products.filter(p => p._storeSlug === 
 /* ============================================================
    SEO HELPERS
    ============================================================ */
-function setSEO({ title, description, image, url, ldJson }) {
+/* Pages that must not be indexed: private pages, and search results (infinite near-duplicate URLs). */
+const NOINDEX_ROUTES = new Set(['cart', 'checkout', 'wishlist', 'account', 'thank-you', 'search']);
+function setSEO({ title, description, image, url, ldJson, robots }) {
+  setMetaName('robots', robots || (NOINDEX_ROUTES.has(window.__route) ? 'noindex, follow' : 'index, follow, max-image-preview:large'));
   document.title = title
     ? `${title} | ${SITE_NAME}`
     : `${SITE_NAME} – Online Shopping in Pakistan, Travel & Live TV`;
@@ -688,6 +691,7 @@ function route() {
   }
   const [path, qs] = raw.split('?');
   const parts = path.split('/').filter(Boolean);
+  window.__route = parts[0] || 'home';
 
   state.limit = 60;
   state.view  = 'grid';

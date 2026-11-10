@@ -37,6 +37,7 @@
   const est = r => r[3] ? (r[4] > r[3] ? `${USD.format(r[3] * MARGIN)} – ${USD.format(r[4] * MARGIN)}` : USD.format(r[3] * MARGIN)) : 'Price on request';
   const liveUrl = r => `${A.LIVE_URL}/global-shop/p/${encodeURIComponent(r[0])}/${slug(r[2]).slice(0, 80)}/`;
   const detailHash = (cat, r) => `#/global/p/${cat}/${encodeURIComponent(r[0])}`;
+  const ownUrl = (cat, r) => `${A.SITE_URL}/${detailHash(cat, r)}`;   /* link that works for the customer (the WordPress copy is not reliable) */
   const fallback = window.fallbackImg || '';
 
   function card(cat, r) {
@@ -101,9 +102,12 @@
     const r = rows.find(x => x[0] === id);
     if (!r || !c) { renderApp(`<section class="sm-page">${pageHead('Product not found', 'This global product is not in the current catalogue. Try searching for it.')}${searchBox('')}</section>`); bindSearch(); return; }
     const g = m.groups.find(x => x.n === c.g);
-    setSEO({ title: `${r[2]} – ${c.n}`, description: `${r[2]} from the Sasta Milaga global shop (${c.n}). Estimated price ${est(r)}; stock, options and shipping are confirmed before you pay.`, image: r[5], url: liveUrl(r),
+    setSEO({ title: `${r[2]} – ${c.n}`, description: `${r[2]} from the Sasta Milaga global shop (${c.n}). Estimated price ${est(r)}; stock, options and shipping are confirmed before you pay.`, image: r[5],
+      // These product views are rendered in the browser (no page of their own on GitHub Pages), so they are not indexed:
+      // canonical points to the real static category page that lists them. Real product pages need workers/product-pages.
+      url: `${A.SITE_URL}/c/global/${cs}.html`, robots: 'noindex, follow',
       ldJson: { '@context': 'https://schema.org', '@graph': [
-        { '@type': 'Product', name: r[2], sku: r[1], image: [r[5]], category: c.n, brand: { '@type': 'Brand', name: 'Sasta Milaga' }, url: liveUrl(r),
+        { '@type': 'Product', name: r[2], sku: r[1], image: [r[5]], category: c.n, brand: { '@type': 'Brand', name: 'Sasta Milaga' }, url: ownUrl(cs, r),
           ...(r[6] ? { subjectOf: { '@type': 'VideoObject', name: r[2], description: `${r[2]} product video`, thumbnailUrl: r[5], contentUrl: r[6], uploadDate: m.snapshot } } : {}) },
         { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: `${A.SITE_URL}/` }, { '@type': 'ListItem', position: 2, name: 'Global shop', item: `${A.SITE_URL}/c/global/index.html` }, { '@type': 'ListItem', position: 3, name: c.n, item: `${A.SITE_URL}/c/global/${cs}.html` }, { '@type': 'ListItem', position: 4, name: r[2] }] }] } });
     const related = rows.filter(x => x !== r).slice(0, 8);
@@ -112,17 +116,21 @@
         ${r[6] ? `<div class="gallery-thumbs"><button type="button" data-gallery="${esc(r[5])}" data-type="img" aria-label="Show image"><img src="${esc(r[5])}" alt=""></button><button type="button" class="active" data-gallery="${esc(r[6])}" data-type="video" aria-label="Play video"><img src="${esc(r[5])}" alt=""></button></div>` : ''}</div></div>
       <aside class="buy-panel" aria-label="Order options"><span class="eyebrow">${esc(c.n)}</span><h1>${esc(r[2])}</h1><p class="product-meta">SKU: ${esc(r[1])} · Global item</p>
         <div style="margin:12px 0"><span class="big-price">${est(r)}</span> <small class="sm-est">estimated</small></div>
-        <form class="sm-greq" id="greq"><label><span>Quantity</span><input type="number" name="qty" min="1" max="99" value="1"></label><label><span>Size, colour or option (optional)</span><input name="opt" maxlength="120" placeholder="e.g. Blue, size M"></label><label><span>Deliver to (country and city)</span><input name="to" required maxlength="120" placeholder="e.g. Pakistan, Karachi"></label>
+        <form class="sm-greq" id="greq">${varBox()}<label><span>Quantity</span><input type="number" name="qty" min="1" max="99" value="1"></label><label><span>${(window.SM_CONFIG || {}).cjShippingWorker ? 'Notes (optional)' : 'Size, colour or option (optional)'}</span><input name="opt" maxlength="120" placeholder="${(window.SM_CONFIG || {}).cjShippingWorker ? 'Anything we should know' : 'e.g. Blue, size M'}"></label><label><span>Deliver to (country and city)</span><input name="to" required maxlength="120" placeholder="e.g. Pakistan, Karachi"></label>
           ${shipBox()}
           <button type="submit" class="sm-wa-btn">Request this item on WhatsApp</button></form>
         <ul class="sm-buy-facts" role="list"><li>We confirm stock, options and shipping first</li><li>Pay by card or PayPal link after confirmation</li><li>Delivery time depends on your country</li></ul>
-        <p class="product-meta"><a href="${esc(liveUrl(r))}" rel="noopener">View this product on sastamilaga.com</a></p></aside></section>
+        <p class="product-meta">More like this: <a href="#/global/c/${cs}">${esc(c.n)}</a>${g ? ` · <a href="#/global/g/${g.s}">${esc(g.n)}</a>` : ''}</p></aside></section>
       <section class="section"><div class="section-head"><div><h2>More in ${esc(c.n)}</h2></div><a class="ghost-btn" href="#/global/c/${cs}">View all</a></div><div class="products-row">${related.map(x => card(cs, x)).join('')}</div></section>`);
-    bindShip(r);
+    const chosen = { v: null };     /* the variant the customer picked (real CJ variants, when the CJ Worker is configured) */
+    bindVariants(r, chosen);
+    bindShip(r, chosen);
     document.getElementById('greq').addEventListener('submit', e => {
-      e.preventDefault(); const f = e.target;
+      e.preventDefault(); const f = e.target; const v = chosen.v;
       const ship = f.ship && f.ship.value ? `Shipping chosen: ${f.ship.value}\n` : '';
-      const msg = `Assalam o Alaikum! I want to order a global item:\n${r[2]}\nSKU: ${r[1]}\nQuantity: ${f.qty.value}\n${f.opt.value ? 'Option: ' + f.opt.value + '\n' : ''}Deliver to: ${f.to.value}\nEstimated price: ${est(r)}\n${ship}${liveUrl(r)}\nPlease confirm stock, shipping and the final total.`;
+      const variant = v ? `Variant: ${v.key || v.name} (SKU ${v.sku})\n` : '';
+      const price = v ? USD.format(v.price * MARGIN) : est(r);
+      const msg = `Assalam o Alaikum! I want to order a global item:\n${r[2]}\nSKU: ${r[1]}\n${variant}Quantity: ${f.qty.value}\n${f.opt.value ? 'Notes: ' + f.opt.value + '\n' : ''}Deliver to: ${f.to.value}\nEstimated price: ${price} each\n${ship}${ownUrl(cs, r)}\nPlease confirm stock, shipping and the final total.`;
       window.open(waLink(msg), '_blank', 'noopener'); toast('Opening WhatsApp with your request');
     });
   }
@@ -135,14 +143,39 @@
     return `<fieldset class="sm-ship"><legend>Shipping cost</legend><div class="sm-ship__row"><label class="screen-reader-text" for="gship-cc">Ship to country</label><select id="gship-cc">${opts}</select><button type="button" class="sm-btn sm-btn--ghost" id="gship-go">Get shipping cost</button></div>
       <div id="gship-out" class="sm-ship__out" role="status" aria-live="polite"></div></fieldset>`;
   }
-  function bindShip(r) {
+  /* Real CJ variants (colour, size …) from workers/cj-shipping: GET /api/cj/product?pid=. Shown only when the Worker is configured. */
+  function varBox() {
+    if (!(window.SM_CONFIG || {}).cjShippingWorker) return '';
+    return `<fieldset class="sm-var" id="gvar" aria-live="polite"><legend>Choose an option</legend><p class="sm-var__load">Loading the supplier's options…</p></fieldset>`;
+  }
+  function bindVariants(r, chosen) {
+    const box = document.getElementById('gvar'); if (!box) return;
+    const W = window.SM_CONFIG.cjShippingWorker.replace(/\/$/, '');
+    const pick = v => {
+      chosen.v = v;
+      const price = document.querySelector('.buy-panel .big-price'); if (price) price.textContent = USD.format(v.price * MARGIN);
+      const img = document.querySelector('.gallery-main img'); if (img && v.image) img.src = v.image;
+      const vid = document.querySelector('.gallery-main video'); if (vid && v.image && vid.paused) vid.poster = v.image;   /* video products: the cover image follows the variant */
+      const out = document.getElementById('gship-out'); if (out) out.textContent = '';   /* a new variant needs a new shipping quote */
+    };
+    fetch(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`).then(x => x.json()).then(d => {
+      const list = (d && d.variants) || [];
+      if (!list.length) { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Options will be confirmed on WhatsApp.</p>'; return; }
+      if (list.length === 1) {
+        box.innerHTML = `<legend>Option</legend><p class="sm-var__one"><b>${esc(list[0].key || list[0].name)}</b> <small>SKU ${esc(list[0].sku)}</small></p>`; pick(list[0]); return;
+      }
+      box.innerHTML = `<legend>Choose an option <small>(${list.length})</small></legend><div class="sm-var__grid" role="radiogroup">${list.map((v, i) => `<label class="sm-var__opt"><input type="radio" name="variant" value="${esc(v.vid)}" required><span class="sm-var__img">${v.image ? `<img src="${esc(v.image)}" alt="" width="44" height="44" loading="lazy">` : ''}</span><span class="sm-var__t"><b>${esc(v.key || v.name)}</b><small>${USD.format(v.price * MARGIN)}</small></span></label>`).join('')}</div>`;
+      box.addEventListener('change', e => { if (e.target.name === 'variant') pick(list.find(v => v.vid === e.target.value)); });
+    }).catch(() => { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Options could not be loaded. Tell us your size or colour in the notes and we will confirm it on WhatsApp.</p>'; });
+  }
+  function bindShip(r, chosen) {
     const go = document.getElementById('gship-go'); if (!go) return;
     const out = document.getElementById('gship-out'), W = window.SM_CONFIG.cjShippingWorker.replace(/\/$/, '');
     go.addEventListener('click', async () => {
       const cc = document.getElementById('gship-cc').value, qty = Number(document.querySelector('#greq [name="qty"]').value) || 1;
       go.disabled = true; out.textContent = 'Getting shipping options from the supplier…';
       try {
-        const res = await fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ country: cc, items: [{ pid: r[0], sku: r[1], qty }] }) });
+        const res = await fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ country: cc, items: [{ pid: r[0], sku: r[1], qty, ...(chosen && chosen.v ? { vid: chosen.v.vid } : {}) }] }) });
         const d = await res.json();
         if (!res.ok || !d.methods || !d.methods.length) { out.textContent = (d && d.error ? d.error + '. ' : '') + 'We will confirm shipping on WhatsApp.'; return; }
         out.innerHTML = d.methods.slice(0, 6).map((m, i) => `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(`${m.name}: ${USD.format(m.price)}, ${m.days} days`)}"${i ? '' : ' checked'}> <span>${esc(m.name)}</span> <b>${USD.format(m.price)}</b> <small>${esc(m.days)} days</small></label>`).join('') + '<p class="sm-ship__note">Supplier shipping price in US$ for this quantity, before any customs duties.</p>';
@@ -161,7 +194,7 @@
   async function search(qs) {
     const q = (new URLSearchParams(qs || '').get('q') || '').trim();
     const m = await manifest(); const token = ++searchToken;
-    setSEO({ title: q ? `"${q}" in the global shop` : 'Search the global shop', description: `Search ${m.total.toLocaleString()} global products at Sasta Milaga.`, url: `${A.SITE_URL}/#/global/search` });
+    setSEO({ title: q ? `"${q}" in the global shop` : 'Search the global shop', description: `Search ${m.total.toLocaleString()} global products at Sasta Milaga.`, url: `${A.SITE_URL}/#/global/search`, robots: 'noindex, follow' });
     renderApp(`<section class="sm-page sm-page--wide">${pageHead(q ? `Global results for "${q}"` : 'Search the global shop', '', ['<a href="#/global">Global shop</a>'])}${searchBox(q)}
       <p id="gstat" class="sm-gcount" role="status" aria-live="polite"></p><div class="sm-progress" aria-hidden="true"><span id="gbar"></span></div><div id="ggrid" class="products-row"></div>
       <div class="load-more-wrap"><button type="button" class="ghost-btn" id="gmore" hidden>Keep searching</button></div></section>`);

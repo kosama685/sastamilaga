@@ -30,10 +30,16 @@ These values are public; anyone can see them in the page source.
 
 After you edit `config.js`, commit and push to `main`. GitHub Actions deploys within about a minute.
 
-## 3. CJ live shipping prices (`workers/cj-shipping`)
+## 3. CJ variants and live shipping prices (`workers/cj-shipping`)
 
-This Worker shows real CJ shipping methods and prices on global product pages, and adds the chosen method to the
-WhatsApp order.
+This Worker gives global product pages two things, both from CJ's real API:
+
+- **Variants:** the real colours and sizes of the product (`GET /api/cj/product?pid=`), each with its own SKU, photo and
+  price. The CSV files have no variant data at all, so this is the only source. The customer picks one; the price and photo
+  update, and the choice goes into the shipping quote and the WhatsApp order.
+- **Shipping:** real CJ shipping methods and prices for the chosen variant and country, added to the WhatsApp order.
+
+Until you deploy it, global product pages show neither box and fall back to the plain order form.
 
 ```bash
 cd workers/cj-shipping

@@ -20,6 +20,10 @@ export default {
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
     try {
       if (url.pathname === '/api/cj/health') return json({ key: !!env.CJ_API_KEY, origins: allowed });
+      if (url.pathname === '/api/cj/product' && req.method === 'GET') {
+        if (origin && !allowed.includes(origin)) return json({ error: 'Origin not allowed' }, 403);
+        return await product(url.searchParams.get('pid'), env, ctx, json);
+      }
       if (url.pathname === '/api/cj/shipping' && req.method === 'POST') {
         if (origin && !allowed.includes(origin)) return json({ error: 'Origin not allowed' }, 403);
         return await quote(await req.json(), env, ctx, json);
@@ -58,18 +62,32 @@ async function token(env, ctx) {
   return d.data.accessToken;
 }
 
-/* CJ freight needs a variant ID (vid). The site's CSV data has the product ID and SKU, so look the vid up once and cache it. */
-async function vidFor(pid, sku, tok, ctx) {
-  const key = `https://cache.internal/cj-vid/${encodeURIComponent(pid)}/${encodeURIComponent(sku || '')}`;
-  const c = await cached(key); if (c && c.vid) return c.vid;
+/* Variants (colour, size …) of a CJ product, from CJ's variant API; cached 6 hours. */
+async function variantsOf(pid, tok, ctx) {
+  const key = `https://cache.internal/cj-variants/${encodeURIComponent(pid)}`;
+  const c = await cached(key); if (c) return c;
   const { d } = await cj(`/product/variant/query?pid=${encodeURIComponent(pid)}`, { headers: { 'CJ-Access-Token': tok } });
-  const list = (d && d.data) || [];
-  if (!list.length) throw new ItemError(`No CJ variants found for product ${pid}`);
-  const v = (sku && list.find(x => x.variantSku === sku)) || list[0];
-  await store(key, { vid: v.vid }, 30 * 86400, ctx);
-  return v.vid;
+  const list = ((d && d.data) || []).map(v => ({
+    vid: v.vid, sku: v.variantSku, key: v.variantKey || '', name: v.variantNameEn || v.variantName || '',
+    price: Number(v.variantSellPrice) || 0, image: v.variantImage || '', weight: Number(v.variantWeight) || 0
+  })).filter(v => v.vid);
+  if (list.length) await store(key, list, 6 * 3600, ctx);
+  return list;
+}
+/* CJ freight needs a variant ID (vid): use the one the customer picked, else the variant with the product SKU, else the first. */
+async function vidFor(it, tok, ctx) {
+  if (it.vid && /^[A-Za-z0-9-]{8,64}$/.test(String(it.vid))) return String(it.vid);
+  const list = await variantsOf(String(it.pid), tok, ctx);
+  if (!list.length) throw new ItemError(`No CJ variants found for product ${it.pid}`);
+  return ((it.sku && list.find(x => x.sku === it.sku)) || list[0]).vid;
 }
 class ItemError extends Error {}
+
+async function product(pid, env, ctx, json) {
+  if (!/^[A-Za-z0-9-]{8,64}$/.test(String(pid || ''))) return json({ error: 'Invalid product id' }, 400);
+  const tok = await token(env, ctx), variants = await variantsOf(pid, tok, ctx);
+  return json({ pid, currency: 'USD', variants, ...(variants.length ? {} : { error: 'No variants found for this product' }) });
+}
 
 async function quote(body, env, ctx, json) {
   const country = String(body.country || '').toUpperCase();
@@ -79,7 +97,7 @@ async function quote(body, env, ctx, json) {
   const tok = await token(env, ctx);
   let products;
   try {
-    products = await Promise.all(items.map(async it => ({ quantity: Math.min(99, Math.max(1, Math.floor(Number(it.qty) || 1))), vid: await vidFor(String(it.pid), it.sku, tok, ctx) })));
+    products = await Promise.all(items.map(async it => ({ quantity: Math.min(99, Math.max(1, Math.floor(Number(it.qty) || 1))), vid: await vidFor(it, tok, ctx) })));
   } catch (e) {
     if (e instanceof ItemError) return json({ country, methods: [], error: e.message }, 200);
     throw e;
