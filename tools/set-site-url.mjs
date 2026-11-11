@@ -11,8 +11,8 @@ import fs from 'node:fs'; import path from 'node:path';
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/(\w:)/, '$1')), '..');
 const [target, flag] = process.argv.slice(2);
 if (!target || !/^https:\/\/[a-z0-9.-]+(\/[a-z0-9._~\-\/]*)?$/i.test(target)) { console.error('Usage: node tools/set-site-url.mjs https://your-domain [--check]'); process.exit(1); }
-const NEW = target.replace(/\/+$/, ''), OLDS = ['https://kosama685.github.io/sastamilaga'];
-const SKIP = new Set(['.git', 'node_modules', 'workers', 'backup', 'temporary screenshots', '.wrangler', '.vscode']);
+const NEW = target.replace(/\/+$/, ''), OLDS = ['https://sastamilaga.com'];
+const SKIP = new Set(['.github', '.git', 'node_modules', 'workers', 'backup', 'temporary screenshots', '.wrangler', '.vscode']);
 const EXT = new Set(['.html', '.xml', '.js', '.mjs', '.json', '.txt', '.css', '.md', '.yml', '.m3u']);
 let files = 0, changed = 0, hits = 0;
 (function walk(dir) {
@@ -26,3 +26,4 @@ let files = 0, changed = 0, hits = 0;
   }
 })(ROOT);
 console.log(`${flag === '--check' ? 'would change' : 'changed'} ${hits} addresses in ${changed} of ${files} files -> ${NEW}`);
+

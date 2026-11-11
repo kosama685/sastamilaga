@@ -11,7 +11,7 @@ import { waDirectory, WA_CSS } from './wa-directory.mjs';
 import path from 'node:path';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/(\w:)/, '$1')), '..');
-const SITE = 'https://kosama685.github.io/sastamilaga';
+const SITE = 'https://sastamilaga.com';
 const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
 const exists = f => fs.existsSync(path.join(ROOT, f));
 const total = (() => { const t = read('products.js'); return (t.match(/"id":/g) || []).length; })();

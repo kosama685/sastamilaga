@@ -14,7 +14,7 @@ const PRODUCTS_RAW = (typeof window !== 'undefined' && Array.isArray(window.SAST
   : [];
 
 const PKR        = new Intl.NumberFormat('en-PK', { style: 'currency', currency: 'PKR', maximumFractionDigits: 0 });
-const SITE_URL   = 'https://kosama685.github.io/sastamilaga';
+const SITE_URL   = 'https://sastamilaga.com';
 const LIVE_URL   = 'https://sastamilaga.com';
 const SITE_NAME  = 'Sasta Milaga';
 const WA_NUMBER  = '966510451995';

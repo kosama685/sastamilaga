@@ -10,33 +10,33 @@ Key facts:
 - Contact: WhatsApp +966510451995, info@sastamilaga.com. Main store: https://sastamilaga.com/
 
 ## Shop
-- [All local products](https://kosama685.github.io/sastamilaga/#/shop): 20,165 products in 64 categories
-- [Home & Living](https://kosama685.github.io/sastamilaga/c/home-and-living.html): 4,933 products
-- [Fashion & Apparel](https://kosama685.github.io/sastamilaga/c/fashion-and-apparel.html): 4,486 products
-- [Health & Beauty](https://kosama685.github.io/sastamilaga/c/health-and-beauty.html): 4,445 products
-- [Electronics & Appliances](https://kosama685.github.io/sastamilaga/c/electronics-and-appliances.html): 2,064 products
-- [Automotive](https://kosama685.github.io/sastamilaga/c/automotive.html): 938 products
-- [Travel & Outdoor](https://kosama685.github.io/sastamilaga/c/travel-and-outdoor.html): 413 products
-- [Books & Stationery](https://kosama685.github.io/sastamilaga/c/books-and-stationery.html): 392 products
-- [Tools & DIY](https://kosama685.github.io/sastamilaga/c/tools-and-diy.html): 294 products
-- [Events & Gifting](https://kosama685.github.io/sastamilaga/c/events-and-gifting.html): 285 products
-- [Personal Care & Beauty](https://kosama685.github.io/sastamilaga/c/personal-care-and-beauty.html): 272 products
-- [Home](https://kosama685.github.io/sastamilaga/c/home.html): 191 products
-- [Toys & Games](https://kosama685.github.io/sastamilaga/c/toys-and-games.html): 177 products
-- [Global shop](https://kosama685.github.io/sastamilaga/c/global/index.html): 451,812 products in 572 categories
+- [All local products](https://sastamilaga.com/#/shop): 20,165 products in 64 categories
+- [Home & Living](https://sastamilaga.com/c/home-and-living.html): 4,933 products
+- [Fashion & Apparel](https://sastamilaga.com/c/fashion-and-apparel.html): 4,486 products
+- [Health & Beauty](https://sastamilaga.com/c/health-and-beauty.html): 4,445 products
+- [Electronics & Appliances](https://sastamilaga.com/c/electronics-and-appliances.html): 2,064 products
+- [Automotive](https://sastamilaga.com/c/automotive.html): 938 products
+- [Travel & Outdoor](https://sastamilaga.com/c/travel-and-outdoor.html): 413 products
+- [Books & Stationery](https://sastamilaga.com/c/books-and-stationery.html): 392 products
+- [Tools & DIY](https://sastamilaga.com/c/tools-and-diy.html): 294 products
+- [Events & Gifting](https://sastamilaga.com/c/events-and-gifting.html): 285 products
+- [Personal Care & Beauty](https://sastamilaga.com/c/personal-care-and-beauty.html): 272 products
+- [Home](https://sastamilaga.com/c/home.html): 191 products
+- [Toys & Games](https://sastamilaga.com/c/toys-and-games.html): 177 products
+- [Global shop](https://sastamilaga.com/c/global/index.html): 451,812 products in 572 categories
 
 ## Help
-- [How to order](https://kosama685.github.io/sastamilaga/#/how-to-order)
-- [Shipping & delivery](https://kosama685.github.io/sastamilaga/#/shipping)
-- [Returns & refunds](https://kosama685.github.io/sastamilaga/#/returns)
-- [Track your order](https://kosama685.github.io/sastamilaga/#/track)
-- [Contact](https://kosama685.github.io/sastamilaga/#/contact)
+- [How to order](https://sastamilaga.com/#/how-to-order)
+- [Shipping & delivery](https://sastamilaga.com/#/shipping)
+- [Returns & refunds](https://sastamilaga.com/#/returns)
+- [Track your order](https://sastamilaga.com/#/track)
+- [Contact](https://sastamilaga.com/#/contact)
 
 ## Travel and media
-- [Flights, hotels, Umrah and visas](https://kosama685.github.io/sastamilaga/#/travel)
-- [Live TV](https://kosama685.github.io/sastamilaga/#/live-tv)
-- [Blog and guides](https://kosama685.github.io/sastamilaga/b/index.html)
+- [Flights, hotels, Umrah and visas](https://sastamilaga.com/#/travel)
+- [Live TV](https://sastamilaga.com/#/live-tv)
+- [Blog and guides](https://sastamilaga.com/b/index.html)
 
 ## Data
-- [Sitemap index](https://kosama685.github.io/sastamilaga/sitemap.xml)
-- [Product catalogue CSV](https://kosama685.github.io/sastamilaga/products.csv)
+- [Sitemap index](https://sastamilaga.com/sitemap.xml)
+- [Product catalogue CSV](https://sastamilaga.com/products.csv)

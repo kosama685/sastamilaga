@@ -220,14 +220,14 @@ To change a country's suggested currency, edit the `CUR` map at the top of `mark
 
 Then run *Actions > Deploy Cloudflare Workers > Run workflow*. Without the two Cloudflare secrets the workflow only prints a warning. After it succeeds, put the Worker URLs in `assets/js/config.js` (`cjShippingWorker`, `paypalWorker`): that switches on real CJ variants, descriptions, live shipping quotes and the server-priced PayPal checkout.
 
-**2. Make `sastamilaga.com` (or any domain) the indexed address.** The pages declare `https://kosama685.github.io/sastamilaga` as their canonical address. If a custom domain is the real storefront:
+**2. Canonical address (done).** `https://sastamilaga.com` is the canonical address of every page, sitemap, hreflang, Open Graph tag, structured-data URL and the Merchant feed. GitHub Pages (`https://kosama685.github.io/sastamilaga`) is only the build-and-deploy path: its pages point search engines at `sastamilaga.com`, so Google consolidates on the real domain. To point everything at a different address later:
 
 ```
-node tools/set-site-url.mjs https://sastamilaga.com --check   # dry run: counts what would change
-node tools/set-site-url.mjs https://sastamilaga.com           # rewrite canonicals, hreflang, sitemaps, feed, build tools
+node tools/set-site-url.mjs https://new-address --check   # dry run
+node tools/set-site-url.mjs https://new-address           # rewrite (edit OLDS in the tool first if the current address changed)
 ```
 
-Commit and deploy once. Do not run it while github.io is the address you want indexed.
+The `.github/workflows` files keep the github.io address on purpose: they check the deployed Pages site.
 
 **3. Google Merchant Center.** Add `https://<your address>/feeds/google-merchant.xml` as a scheduled-fetch feed. `feeds/merchant-report.json` lists every product that is left out and why. Rebuild with `node tools/build-merchant-feed.mjs`.
 

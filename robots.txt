@@ -1,8 +1,8 @@
 # Sasta Milaga static store (GitHub Pages project site).
-# Note: crawlers read robots.txt only at a host root; submit https://kosama685.github.io/sastamilaga/sitemap.xml in Search Console.
+# Note: crawlers read robots.txt only at a host root; submit https://sastamilaga.com/sitemap.xml in Search Console.
 User-agent: *
 Allow: /
 Disallow: /backup/
 Disallow: /partials/
 
-Sitemap: https://kosama685.github.io/sastamilaga/sitemap.xml
+Sitemap: https://sastamilaga.com/sitemap.xml

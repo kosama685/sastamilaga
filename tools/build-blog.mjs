@@ -6,7 +6,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/(\w:)/, '$1')), '..');
-const SITE = 'https://kosama685.github.io/sastamilaga';
+const SITE = 'https://sastamilaga.com';
 const today = new Date(Date.now() + 5 * 3600e3).toISOString().slice(0, 10);
 const ctx = { window: {} };
 vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'assets/data/blog.js'), 'utf8'), ctx);

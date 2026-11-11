@@ -1,7 +1,7 @@
 # Sasta Milaga — static storefront
 
 A static HTML/CSS/JavaScript copy of the sastamilaga.com storefront, hosted on GitHub Pages:
-https://kosama685.github.io/sastamilaga/
+https://sastamilaga.com/
 
 It reuses the live theme (header, mega menu, travel search, Live TV, footer). There is no build server: the data is in JS
 files, and crawlable HTML pages are generated ahead of time and committed.

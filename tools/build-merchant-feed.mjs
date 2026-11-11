@@ -6,7 +6,7 @@
  * Products that Merchant Center would reject (no image, no price, no title ...) are not written; each one is listed with its reason in the report. */
 import fs from 'node:fs'; import path from 'node:path';
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/(\w:)/, '$1')), '..');
-const SITE = 'https://kosama685.github.io/sastamilaga';
+const SITE = 'https://sastamilaga.com';
 const dir = path.join(ROOT, 'p');
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const text = s => String(s || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/\s+/g, ' ').trim();
