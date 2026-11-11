@@ -265,7 +265,7 @@
     /* Real options: the CJ Worker when configured, otherwise the WordPress store's live options (same CJ data, the store's own price). */
     const RATE = { USD: 1, SAR: 1 / 3.75, AED: 1 / 3.6725 };   // pegged currencies only; anything else keeps the catalogue price
     const fromWp = d => ({ variants: ((d && d.options) || []).map(o => { const m = /([A-Z]{3})\s*([\d.,]+)/.exec(o.price_label || ''); const usd = m && RATE[m[1]] ? parseFloat(m[2].replace(/,/g, '')) * RATE[m[1]] : (r[3] || 0) * MARGIN; return { vid: o.vid, name: o.name, key: o.name, sku: o.sku, image: o.image || '', price: usd / MARGIN, label: o.price_label || '' }; }) });
-    (W ? fetch(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`).then(x => x.json()) : fetch(`${(window.SMWoo && window.SMWoo.active ? (() => { try { return new URL(C.wpApi).pathname; } catch (e) { return C.wpApi; } })() : C.wpApi).replace(/\/$/, '')}/live/options/${encodeURIComponent(r[0])}`).then(x => { if (!x.ok) throw new Error(x.status); return x.json(); }).then(fromWp)).then(d => {
+    (W ? fetch(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`).then(x => x.json()) : (window.SMWoo && window.SMWoo.active ? window.SMWoo.sync() : Promise.resolve()).then(() => fetch(`${(window.SMWoo && window.SMWoo.active ? (() => { try { return new URL(C.wpApi).pathname; } catch (e) { return C.wpApi; } })() : C.wpApi).replace(/\/$/, '')}/live/options/${encodeURIComponent(r[0])}`).then(x => { if (!x.ok) throw new Error(x.status); return x.json(); }).then(fromWp))).then(d => {
       const list = (d && d.variants) || [];
       if (!list.length) { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Options will be confirmed on WhatsApp.</p>'; return; }
       if (list.length === 1) {
