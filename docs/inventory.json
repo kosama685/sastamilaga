@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-11T18:01:58Z",
+  "checked_at": "2026-11-11T19:34:35Z",
   "token": {
     "success": true,
     "status": "active"
@@ -283,28 +283,28 @@
       },
       {
         "id": "sastamilaga-cj-shipping",
-        "modified_on": "2026-11-11T18:00:33.949697Z",
+        "modified_on": "2026-11-11T19:33:09.181471Z",
         "created_on": "2026-11-11T03:54:36.589467Z",
         "usage_model": "standard",
         "compatibility_date": "2025-07-18"
       },
       {
         "id": "sastamilaga-global-pages",
-        "modified_on": "2026-11-11T18:00:46.598962Z",
+        "modified_on": "2026-11-11T19:33:19.135678Z",
         "created_on": "2026-11-11T03:54:44.151298Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-paypal",
-        "modified_on": "2026-11-11T18:00:40.926537Z",
+        "modified_on": "2026-11-11T19:33:15.423629Z",
         "created_on": "2026-11-11T03:54:41.174076Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-redirects",
-        "modified_on": "2026-11-11T18:00:54.66241Z",
+        "modified_on": "2026-11-11T19:33:25.705507Z",
         "created_on": "2026-11-11T05:14:22.59741Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
@@ -534,6 +534,18 @@
       {
         "pattern": "sastamilaga.com/sitemaps/global/*",
         "script": "sastamilaga-global-pages"
+      },
+      {
+        "pattern": "sastamilaga.com/digital-marketing/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/language-currency/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/live-tv/category/*",
+        "script": "sastamilaga-redirects"
       }
     ]
   },
