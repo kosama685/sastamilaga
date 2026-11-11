@@ -577,3 +577,5 @@ a[href$="all/"]>small{color:#1f6f40!important;opacity:1!important}
 @media(prefers-reduced-motion:reduce){.sm-var__opt{transition:none}.sm-var__opt:hover{transform:none}}
 .gallery-thumbs .sm-var-thumb{border:2px solid #0F7A3B;border-radius:10px;padding:0;overflow:hidden;background:#fff;cursor:pointer;width:64px;height:64px}.gallery-thumbs .sm-var-thumb img{display:block;width:100%;height:100%;object-fit:cover}
 /*smvar:end*/
+
+.sm-gcart__form{display:grid;gap:10px;margin-top:12px}.sm-gcart__to{display:grid;gap:4px;font-weight:600;font-size:.9rem;color:#0B3B20}.sm-gcart__to input,.sm-gcart__to textarea{font:inherit;padding:11px 12px;border:1px solid rgba(15,122,59,.28);border-radius:10px;background:#fff;width:100%;box-sizing:border-box}.sm-gcart__to input:focus-visible,.sm-gcart__to textarea:focus-visible{outline:3px solid #FF8A00;outline-offset:1px}

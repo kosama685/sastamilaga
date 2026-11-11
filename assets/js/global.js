@@ -45,6 +45,7 @@
   const gcKey = x => [x.id, x.opt || '', x.vkey || ''].join('|');
   const gcCount = () => gcGet().reduce((a, x) => a + (x.qty || 0), 0);
   const gcAdd = row => { const l = gcGet(), k = gcKey(row), f = l.find(x => gcKey(x) === k); if (f) f.qty = Math.min(99, f.qty + row.qty); else l.push(row); gcSet(l); };
+  const gcSaved = k => { try { return localStorage.getItem('sm_gc_' + k) || ''; } catch (e) { return ''; } };
   const gcTo = () => { try { const s = localStorage.getItem(GC_TO); if (s) return s; } catch (e) { } const mk = window.SMMarket; try { return mk ? mk.countryName(mk.state().country) : ''; } catch (e) { return ''; } };
   function gcHtml() {
     const l = gcGet(); if (!l.length) return '';
@@ -52,7 +53,12 @@
     const lines = l.map(x => `<div class="cart-line"><img src="${esc(x.img)}" alt="${esc(x.name)}" width="88" height="88" onerror="this.src=window.fallbackImg"><div><b>${esc(x.name)}</b><p style="color:var(--muted);margin:4px 0">${x.vname ? esc(x.vname) + ' · ' : ''}${x.opt ? esc(x.opt) + ' · ' : ''}Global item${x.ship ? '<br>Shipping: ' + esc(x.ship) : ''}</p><div class="price">${USD.format(x.unit)} <small class="sm-est">estimated each</small></div></div><div><div class="qty"><button type="button" data-gc="dec" data-k="${esc(gcKey(x))}" aria-label="Decrease">−</button><b>${x.qty}</b><button type="button" data-gc="inc" data-k="${esc(gcKey(x))}" aria-label="Increase">+</button></div><button type="button" class="ghost-btn" data-gc="rm" data-k="${esc(gcKey(x))}" style="margin-top:8px">Remove</button></div></div>`).join('');
     return `<section class="section sm-gcart" aria-labelledby="gcart-h"><div class="section-head"><div><h2 id="gcart-h">Global items</h2><p>Prepaid. Stock, options and shipping to your country are confirmed with you before you pay.</p></div></div>
       <div class="cart-layout"><div>${lines}</div><aside class="summary-box"><h2 style="margin:0 0 14px">Global order</h2><div class="summary-row"><span>Items (estimated)</span><b>${USD.format(sub)}</b></div><div class="summary-row"><span>Shipping</span><b>Confirmed on WhatsApp</b></div>
-        <label class="sm-gcart__to"><span>Deliver to (country and city)</span><input id="gcTo" maxlength="120" value="${esc(gcTo())}" placeholder="e.g. Pakistan, Karachi" required></label>
+        <div class="sm-gcart__form" role="group" aria-label="Delivery details">
+          <label class="sm-gcart__to"><span>Full name</span><input id="gcName" maxlength="80" autocomplete="name" value="${esc(gcSaved('name'))}" required></label>
+          <label class="sm-gcart__to"><span>Phone / WhatsApp number</span><input id="gcPhone" type="tel" maxlength="30" autocomplete="tel" value="${esc(gcSaved('phone'))}" placeholder="e.g. +92 300 1234567" required></label>
+          <label class="sm-gcart__to"><span>Email (optional)</span><input id="gcEmail" type="email" maxlength="100" autocomplete="email" value="${esc(gcSaved('email'))}"></label>
+          <label class="sm-gcart__to"><span>Deliver to (country and city)</span><input id="gcTo" maxlength="120" autocomplete="country-name" value="${esc(gcTo())}" placeholder="e.g. Pakistan, Karachi" required></label>
+          <label class="sm-gcart__to"><span>Street address</span><textarea id="gcAddr" maxlength="300" rows="2" autocomplete="street-address" required>${esc(gcSaved('addr'))}</textarea></label></div>
         <button type="button" class="sm-wa-btn" data-gc="order" style="width:100%;margin-top:12px">Place global order on WhatsApp</button><button type="button" class="ghost-btn" data-gc="clear" style="width:100%;margin-top:8px">Clear global items</button>
         <p class="product-meta" style="margin-top:10px">Prices are estimates in US dollars. We send the final total, including shipping, before you pay by card or PayPal link.</p></aside></div></section>`;
   }
@@ -69,9 +75,13 @@
       else if (act === 'rm') { gcSet(l.filter(x => gcKey(x) !== k)); A.route(); }
       else if (act === 'clear') { gcSet([]); A.route(); }
       else if (act === 'order') {
-        const to = (document.getElementById('gcTo') || {}).value; if (!to || !to.trim()) { toast('Enter the country and city to deliver to'); const i = document.getElementById('gcTo'); if (i) i.focus(); return; }
-        try { localStorage.setItem(GC_TO, to.trim()); } catch (er) { }
-        window.open(waLink(gcMessage(l, to.trim())), '_blank', 'noopener'); toast('Opening WhatsApp with your global order');
+        const v = id => ((document.getElementById(id) || {}).value || '').trim(), need = [['gcName', 'your name'], ['gcPhone', 'your phone number'], ['gcTo', 'the country and city to deliver to'], ['gcAddr', 'your street address']];
+        for (const [id, label] of need) if (!v(id)) { toast('Enter ' + label); const i = document.getElementById(id); if (i) i.focus(); return; }
+        const em = v('gcEmail'); if (em && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { toast('Check your email address'); document.getElementById('gcEmail').focus(); return; }
+        if (v('gcPhone').replace(/\D/g, '').length < 7) { toast('Enter a valid phone number'); document.getElementById('gcPhone').focus(); return; }
+        const to = v('gcTo'); try { localStorage.setItem(GC_TO, to); localStorage.setItem('sm_gc_name', v('gcName')); localStorage.setItem('sm_gc_phone', v('gcPhone')); localStorage.setItem('sm_gc_email', em); localStorage.setItem('sm_gc_addr', v('gcAddr')); } catch (er) { }
+        const who = `Customer: ${v('gcName')}\nPhone: ${v('gcPhone')}${em ? '\nEmail: ' + em : ''}\nAddress: ${v('gcAddr')}\n\n`;
+        window.open(waLink(who + gcMessage(l, to)), '_blank', 'noopener'); toast('Opening WhatsApp with your global order');
       }
     });
   }
