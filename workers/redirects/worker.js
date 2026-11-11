@@ -39,7 +39,11 @@ export default {
     const pass = async () => { const r = await fetch(`${env.SITE_ORIGIN}${q}/`, { cf: { cacheTtl: 300, cacheEverything: true } }); if (!r.ok) return new Response('Not found', { status: 404, headers: { 'X-Robots-Tag': 'noindex' } }); return new Response(r.body, { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=120, s-maxage=300', 'X-Redirects-Worker': 'index-passthrough' } }); };
     let m0;
     try {
-      if (!ur && (q === '/videos' || q === '/visa')) return pass();
+      if (!ur && (q === '/videos' || q === '/visa' || q === '/contact')) return pass();   // the site's own pages, in the site design
+      if (q === '/blog') return go('/b/');
+      if (q === '/blog/sitemap.xml') return go('/sitemap-blog.xml');
+      if (/^\/blog\//.test(q) && /\.[a-z]{2,4}$/.test(q) === false && q.split('/').length > 3) return go('/b/');
+      if (/^\/contact\//.test(q)) return go('/contact/');
       if (ur && (q === '/videos' || q === '/visa')) return go(q + '/');
       if (q === '/product') return go('/shop/');
       if (ur && q === '/travel') return go('/travel/');
