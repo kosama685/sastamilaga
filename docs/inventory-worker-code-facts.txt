@@ -196,15 +196,17 @@
 223:    const response=outward(await refresh(),key&&cache?'MISS':'BYPASS');if(supportDiagnostic.reason)response.headers.set('X-Sasta-Support-Fallback',supportDiagnostic.reason);return response;
 ## sastamilaga-cj-shipping  bytes=7094
 13:    const allowed = (env.ALLOWED_ORIGINS || "https://kosama685.github.io").split(",").map((s) => s.trim());
-## sastamilaga-global-pages  bytes=15892
+## sastamilaga-global-pages  bytes=16470
 18:Sitemap: ${cfg.self}/sitemap-global-products.xml
 20:      if (p === "/sitemap-global-products.xml")
 22:      let m = p.match(/^\/sitemaps\/global\/([a-z0-9-]+)\.xml$/);
-25:      if (p === "/feeds/global/index.json")
-27:      m = p.match(/^\/feeds\/global\/(\d{1,3})\.xml$/);
-55:    const r = await fetch(`${env.SITE_ORIGIN}/data/cj/${path}`, { cf: { cacheTtl: 86400, cacheEverything: true } });
-119:  return text(JSON.stringify({ total: m.total, files: chunks.length, feeds: chunks.map((cs, i) => ({ url: `${cfg.self}/feeds/global/${i + 1}.xml`, products: cs.reduce((a, c) => a + c.c, 0), categories: cs.length })) 
-227:${m.cats.map((c) => `<sitemap><loc>${cfg.self}/sitemaps/global/${c.s}.xml</loc><lastmod>${m.snapshot}</lastmod></sitemap>`).join("\n")}
+25:      if (p === "/feeds/google-merchant.xml")
+27:      if (p === "/feeds/global/index.json")
+29:      m = p.match(/^\/feeds\/global\/(\d{1,3})\.xml$/);
+57:    const r = await fetch(`${env.SITE_ORIGIN}/data/cj/${path}`, { cf: { cacheTtl: 86400, cacheEverything: true } });
+103:  const r = await fetch(`${env.SITE_ORIGIN}/feeds/google-merchant.xml`, { cf: { cacheTtl: 3600, cacheEverything: true } });
+128:  return text(JSON.stringify({ total: m.total, files: chunks.length, feeds: chunks.map((cs, i) => ({ url: `${cfg.self}/feeds/global/${i + 1}.xml`, products: cs.reduce((a, c) => a + c.c, 0), categories: cs.length })) 
+236:${m.cats.map((c) => `<sitemap><loc>${cfg.self}/sitemaps/global/${c.s}.xml</loc><lastmod>${m.snapshot}</lastmod></sitemap>`).join("\n")}
 ## sastamilaga-paypal  bytes=8898
 19:    const allowed = (env.ALLOWED_ORIGINS || "https://kosama685.github.io").split(",").map((s) => s.trim());
 70:  const r = await fetch(`${env.SITE_ORIGIN}/data/prices.json`, { cf: { cacheTtl: 600 } });

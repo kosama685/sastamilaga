@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-11T03:58:56Z",
+  "checked_at": "2026-11-11T03:59:48Z",
   "token": {
     "success": true,
     "status": "active"
@@ -262,21 +262,21 @@
       },
       {
         "id": "sastamilaga-cj-shipping",
-        "modified_on": "2026-11-11T03:54:37.302079Z",
+        "modified_on": "2026-11-11T03:58:54.973936Z",
         "created_on": "2026-11-11T03:54:36.589467Z",
         "usage_model": "standard",
         "compatibility_date": "2025-07-18"
       },
       {
         "id": "sastamilaga-global-pages",
-        "modified_on": "2026-11-11T03:54:44.929227Z",
+        "modified_on": "2026-11-11T03:59:04.240282Z",
         "created_on": "2026-11-11T03:54:44.151298Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-paypal",
-        "modified_on": "2026-11-11T03:54:42.124582Z",
+        "modified_on": "2026-11-11T03:58:59.880622Z",
         "created_on": "2026-11-11T03:54:41.174076Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
@@ -316,6 +316,14 @@
       {
         "pattern": "sastamilaga.com/api/cj/*",
         "script": "sasta-cj-variants-shipping"
+      },
+      {
+        "pattern": "sastamilaga.com/feeds/google-merchant.xml",
+        "script": "sastamilaga-global-pages"
+      },
+      {
+        "pattern": "sastamilaga.com/feeds/global/*",
+        "script": "sastamilaga-global-pages"
       },
       {
         "pattern": "sastamilaga.com/smcs-oauth/*",
