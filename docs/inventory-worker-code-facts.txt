@@ -155,6 +155,8 @@
 147:   if(Number(request.headers.get('content-length')||0)>max)return new Response('Too large',{status:413});
 ## sasta-seo-origin-probe-v1  bytes=1693
 4:const PATHS=['/product-category/fashion-apparel/','/product/***/','/product/***/','/blog/','/ur/product-category/fashion-apparel/'];export default {async fetch(request,env){const url=new URL(request.url);if(request.met
+## sasta-seo-product-preview-v1  bytes=1813
+4:const ROOT='https://sastamilaga.com';const escape=x=>String(x??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');export default {async fetch(req){const u=new URL(req.url);const 
 ## sasta-seo-recovery-v3  bytes=7921
 4:const ROBOTS_TEXT="User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\nDisallow: /cart/\nDisallow: /checkout/\nDisallow: /my-account/\n\nUser-agent: GPTBot\nDisallow: /\nUser-agent: ClaudeBot\nDisallo
 5:const BACKUP='https://kosama685.github.io/sastamilaga',CANONICAL='https://sastamilaga.com';
@@ -218,5 +220,6 @@
 19:    const allowed = (env.ALLOWED_ORIGINS || "https://kosama685.github.io").split(",").map((s) => s.trim());
 70:  const r = await fetch(`${env.SITE_ORIGIN}/data/prices.json`, { cf: { cacheTtl: 600 } });
 81:  const r = await fetch("https://open.er-api.com/v6/latest/PKR", { cf: { cacheTtl: 3600 } });
-## sastamilaga-redirects  bytes=3909
+## sastamilaga-redirects  bytes=4620
 12:  const r = await fetch(`${env.SITE_ORIGIN}/data/redirects/${name}.json`, { cf: { cacheTtl: 3600, cacheEverything: true } });
+43:      const r = await fetch(`${env.SITE_ORIGIN}${q}/`, { cf: { cacheTtl: 300, cacheEverything: true } });

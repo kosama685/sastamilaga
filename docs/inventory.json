@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-11T05:15:28Z",
+  "checked_at": "2026-11-11T05:23:22Z",
   "token": {
     "success": true,
     "status": "active"
@@ -233,6 +233,13 @@
         "compatibility_date": "2026-11-11"
       },
       {
+        "id": "sasta-seo-product-preview-v1",
+        "modified_on": "2026-11-11T05:16:15.168937Z",
+        "created_on": "2026-11-11T05:16:15.168937Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-11"
+      },
+      {
         "id": "sasta-seo-recovery-v3",
         "modified_on": "2026-11-09T20:42:28.61918Z",
         "created_on": "2026-11-09T20:42:16.219773Z",
@@ -276,28 +283,28 @@
       },
       {
         "id": "sastamilaga-cj-shipping",
-        "modified_on": "2026-11-11T05:14:12.355388Z",
+        "modified_on": "2026-11-11T05:22:15.249742Z",
         "created_on": "2026-11-11T03:54:36.589467Z",
         "usage_model": "standard",
         "compatibility_date": "2025-07-18"
       },
       {
         "id": "sastamilaga-global-pages",
-        "modified_on": "2026-11-11T05:14:19.939366Z",
+        "modified_on": "2026-11-11T05:22:24.087729Z",
         "created_on": "2026-11-11T03:54:44.151298Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-paypal",
-        "modified_on": "2026-11-11T05:14:17.227044Z",
+        "modified_on": "2026-11-11T05:22:20.773989Z",
         "created_on": "2026-11-11T03:54:41.174076Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-redirects",
-        "modified_on": "2026-11-11T05:14:23.220157Z",
+        "modified_on": "2026-11-11T05:22:29.006344Z",
         "created_on": "2026-11-11T05:14:22.59741Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
@@ -387,6 +394,10 @@
         "script": "sastamilaga-redirects"
       },
       {
+        "pattern": "sastamilaga.com/videos/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
         "pattern": "sastamilaga.com/ur/sell-with-us/",
         "script": "sastamilaga-redirects"
       },
@@ -408,6 +419,10 @@
       },
       {
         "pattern": "sastamilaga.com/shipping-delivery/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/visa/*",
         "script": "sastamilaga-redirects"
       },
       {
@@ -439,6 +454,10 @@
         "script": "sastamilaga-redirects"
       },
       {
+        "pattern": "sastamilaga.com/ur/product/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
         "pattern": "sastamilaga.com/ur/",
         "script": "sastamilaga-redirects"
       },
@@ -448,6 +467,22 @@
       },
       {
         "pattern": "sastamilaga.com/ur/product-tag/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/videos/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/visa/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/__seo-preview/*",
+        "script": "sasta-seo-product-preview-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/product/*",
         "script": "sastamilaga-redirects"
       }
     ]
