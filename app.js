@@ -697,7 +697,7 @@ function renderNotFound() {
 }
 
 /* A full page load that starts while the browser is animating a page transition rejects that transition: harmless, not an error. */
-window.addEventListener('unhandledrejection', e => { if (e.reason && e.reason.name === 'AbortError' && /transition/i.test(String(e.reason.message))) e.preventDefault(); });
+window.addEventListener('unhandledrejection', e => { if (e.reason && /^(AbortError|InvalidStateError)$/.test(e.reason.name) && /transition/i.test(String(e.reason.message))) e.preventDefault(); });
 
 function route() {
   const megaMenu = $('#megaMenu');
@@ -1531,6 +1531,14 @@ function setWish(w){ try { localStorage.setItem('sm_wish', JSON.stringify(w)); }
 function addToCart(id, qty) {
   qty = Number(qty) || 1;
   const item = products.find(x => x.id === id);
+  if (window.SMWoo && window.SMWoo.active && item) {   // live domain: WooCommerce owns the cart
+    window.SMWoo.add(item.sku || item.id, qty).then(r => {
+      if (r.ok) toast('Added to cart');
+      else if (r.reason === 'unmapped') { toast('This item is ordered on WhatsApp'); window.open(waLink(orderText(item, qty)), '_blank', 'noopener'); }
+      else toast(r.message);
+    });
+    return;
+  }
   if (item && !price(item)) { toast('This product has no listed price yet. Ask for the price on WhatsApp.'); return; }
   const cart = getCart();
   const row  = cart.find(x => x.id === id);

@@ -176,6 +176,11 @@ const idxPath = path.join(ROOT, 'sitemap.xml');
 let idx = fs.readFileSync(idxPath, 'utf8');
 const entry = `<sitemap><loc>${SITE}/sitemap-blog.xml</loc><lastmod>${today}</lastmod></sitemap>`;
 idx = idx.includes('sitemap-blog.xml') ? idx.replace(/<sitemap><loc>[^<]*sitemap-blog\.xml<\/loc><lastmod>[^<]*<\/lastmod><\/sitemap>/, entry) : idx.replace('</sitemapindex>', `${entry}\n</sitemapindex>`);
+// All 451,812 global products: one sitemap per category (served by the product-pages Worker at /sitemaps/global/<category>.xml).
+// A sitemap index may not contain another index, so the category sitemaps are listed here directly. Rebuilt on every run (daily and on every deploy).
+{ const mf = fs.readFileSync(path.join(ROOT, 'data/cj/manifest.js'), 'utf8'), M = JSON.parse(mf.slice(mf.indexOf('{'), mf.lastIndexOf('}') + 1));
+  idx = idx.replace(/<sitemap><loc>[^<]*\/sitemaps\/global\/[^<]*<\/loc>(?:<lastmod>[^<]*<\/lastmod>)?<\/sitemap>\n?/g, '');
+  idx = idx.replace('</sitemapindex>', M.cats.map(c => `<sitemap><loc>${SITE}/sitemaps/global/${c.s}.xml</loc><lastmod>${today}</lastmod></sitemap>`).join('\n') + '\n</sitemapindex>'); }
 fs.writeFileSync(idxPath, idx);
 const scheduled = (ctx.window.SM_BLOG || []).filter(p => p.publish > today).map(p => `${p.publish} ${p.slug}`);
 console.log(`published ${posts.length} posts (today ${today}); scheduled: ${scheduled.length ? scheduled.join(', ') : 'none'}`);

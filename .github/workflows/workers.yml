@@ -65,7 +65,7 @@ jobs:
         run: |
           ZID=$(curl -sS -m 60 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/zones?name=sastamilaga.com" | jq -r '.result[0].id // empty')
           if [ -z "$ZID" ]; then echo "::warning::zone sastamilaga.com not found for this token; routes not attached"; exit 0; fi
-          for pat in "sastamilaga.com/feeds/global/*" "sastamilaga.com/feeds/google-merchant.xml"; do
+          for pat in "sastamilaga.com/feeds/global/*" "sastamilaga.com/feeds/google-merchant.xml" "sastamilaga.com/sitemaps/global/*" "sastamilaga.com/sitemap-global-products.xml"; do
             have=$(curl -sS -m 60 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/zones/$ZID/workers/routes" | jq -r --arg p "$pat" '[.result[]? | select(.pattern==$p)] | length')
             if [ "$have" = "0" ]; then
               curl -sS -m 60 -X POST -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json" --data "{\"pattern\":\"$pat\",\"script\":\"sastamilaga-global-pages\"}" "https://api.cloudflare.com/client/v4/zones/$ZID/workers/routes" | jq -r '"route '"$pat"': success=" + (.success|tostring) + " " + ((.errors // [] | map(.message) | join(";")))'

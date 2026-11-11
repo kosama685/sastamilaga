@@ -73,6 +73,17 @@
     document.addEventListener('click', function (e) {
       var a = e.target.closest && e.target.closest('main a[href*="#/product/"]'); if (!a) return;
       var label = (a.textContent || '').trim().toLowerCase(), isAdd = /^add to cart/.test(label), isBuy = /^buy now/.test(label); if (!isAdd && !isBuy) return;
+      if (window.SMWoo && window.SMWoo.active) {   // live domain: the real WooCommerce cart
+        var sku = productSku(); if (!sku) return; e.preventDefault();
+        if (a.getAttribute('aria-busy')) return; a.setAttribute('aria-busy', 'true');
+        window.SMWoo.add(sku, 1).then(function (r) {
+          a.removeAttribute('aria-busy');
+          if (r.ok) { if (isBuy) location.href = '/checkout/'; else toast('Added to cart. <a href="/cart/" style="color:#FFB347;margin-left:8px">View cart</a>'); }
+          else if (r.reason === 'unmapped') toast('This item is ordered on WhatsApp. <a href="' + (document.querySelector('main a.sm-wa-btn') || {}).href + '" target="_blank" rel="noopener" style="color:#FFB347;margin-left:8px">Order on WhatsApp</a>');
+          else toast(r.message);
+        });
+        return;
+      }
       if (!addToSharedCart()) return;   // no product data on the page: fall back to the link
       e.preventDefault();
       if (isBuy) location.href = prefix + 'checkout/'; else toast('Added to cart. <a href="' + prefix + 'cart/" style="color:#FFB347;margin-left:8px">View cart</a>');
@@ -83,6 +94,7 @@
   var wa = document.createElement('script'); wa.src = prefix + 'assets/js/wa-cards.js'; wa.defer = true; document.head.appendChild(wa);
   /* Country / language / currency window (header "Shopping destination" button) */
   var mk = document.createElement('script'); mk.src = prefix + 'assets/js/market.js'; mk.defer = true; document.head.appendChild(mk);
+  var wb = document.createElement('script'); wb.src = prefix + 'assets/js/woo-bridge.js'; wb.defer = true; document.head.appendChild(wb);
   var ay = document.createElement('script'); ay.src = prefix + 'assets/js/a11y.js'; ay.defer = true; document.head.appendChild(ay);
   /* Contact number by location (Pakistan number for Pakistan visitors) */
   var ct = document.createElement('script'); ct.src = prefix + 'assets/js/contact.js'; ct.defer = true; document.head.appendChild(ct);
