@@ -1,0 +1,419 @@
+{
+  "checked_at": "2026-11-11T03:54:45Z",
+  "token": {
+    "success": true,
+    "status": "active"
+  },
+  "scripts": {
+    "success": true,
+    "errors": [],
+    "scripts": [
+      {
+        "id": "bestwebdeveloper-mcp",
+        "modified_on": "2026-10-07T17:26:25.051395Z",
+        "created_on": "2026-10-07T17:26:25.051395Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-10-07"
+      },
+      {
+        "id": "bwd-ai-readiness-robots",
+        "modified_on": "2026-10-14T20:38:15.88608Z",
+        "created_on": "2026-10-13T16:34:02.679565Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-10-14"
+      },
+      {
+        "id": "bwd-crawl-robots",
+        "modified_on": "2026-11-10T16:23:37.312666Z",
+        "created_on": "2026-11-01T16:36:35.659615Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-01"
+      },
+      {
+        "id": "bwd-favicon-fallback",
+        "modified_on": "2026-10-05T20:00:33.582065Z",
+        "created_on": "2026-10-05T20:00:33.582065Z",
+        "usage_model": "standard",
+        "compatibility_date": null
+      },
+      {
+        "id": "bwd-media-gateway",
+        "modified_on": "2026-10-14T17:43:29.688934Z",
+        "created_on": "2026-10-10T03:52:36.552836Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-10-10"
+      },
+      {
+        "id": "bwd-performance-static",
+        "modified_on": "2026-10-05T19:58:31.878958Z",
+        "created_on": "2026-10-05T19:58:31.878958Z",
+        "usage_model": "standard",
+        "compatibility_date": null
+      },
+      {
+        "id": "bwd-public-page-protection",
+        "modified_on": "2026-10-14T21:09:07.799038Z",
+        "created_on": "2026-10-14T04:11:29.626188Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-10-14"
+      },
+      {
+        "id": "bwd-recovery-crawler",
+        "modified_on": "2026-10-14T21:14:31.084499Z",
+        "created_on": "2026-10-04T21:53:44.239849Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-10-04"
+      },
+      {
+        "id": "bwd-translation-service",
+        "modified_on": "2026-11-02T05:25:40.998119Z",
+        "created_on": "2026-11-01T03:53:36.860576Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-02"
+      },
+      {
+        "id": "bwd-wordpress-cron",
+        "modified_on": "2026-10-14T20:42:56.130889Z",
+        "created_on": "2026-10-14T18:48:29.685591Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-10-13"
+      },
+      {
+        "id": "sasta-account-links-v10",
+        "modified_on": "2026-11-10T03:21:33.377433Z",
+        "created_on": "2026-11-10T03:21:17.126712Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-09"
+      },
+      {
+        "id": "sasta-blog-contact-design-v2",
+        "modified_on": "2026-11-10T19:11:29.363701Z",
+        "created_on": "2026-11-10T19:11:29.363701Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-09"
+      },
+      {
+        "id": "sasta-brand-pages-v1",
+        "modified_on": "2026-11-10T19:02:20.78546Z",
+        "created_on": "2026-11-10T18:54:43.345444Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-10"
+      },
+      {
+        "id": "sasta-canonical-sync-v11",
+        "modified_on": "2026-11-10T19:15:25.458202Z",
+        "created_on": "2026-11-10T03:24:18.728466Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-09"
+      },
+      {
+        "id": "sasta-catalog-readonly-v1",
+        "modified_on": "2026-11-10T19:09:17.361803Z",
+        "created_on": "2026-11-10T17:56:00.890407Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-10"
+      },
+      {
+        "id": "sasta-cj-variants-shipping",
+        "modified_on": "2026-11-10T06:07:39.708911Z",
+        "created_on": "2026-11-10T06:07:22.447045Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-10"
+      },
+      {
+        "id": "sasta-cj-video-proxy",
+        "modified_on": "2026-10-30T12:22:23.136368Z",
+        "created_on": "2026-10-30T12:10:56.140385Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-10-30"
+      },
+      {
+        "id": "sasta-commerce-safe-v9",
+        "modified_on": "2026-11-09T21:59:45.419941Z",
+        "created_on": "2026-11-09T21:59:32.023603Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-09"
+      },
+      {
+        "id": "sasta-csv-products-scheduler",
+        "modified_on": "2026-11-04T05:30:54.077434Z",
+        "created_on": "2026-11-04T05:24:12.987662Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-04"
+      },
+      {
+        "id": "sasta-d1-catalog",
+        "modified_on": "2026-11-08T18:59:23.062537Z",
+        "created_on": "2026-11-08T17:17:19.956864Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-08"
+      },
+      {
+        "id": "sasta-github-blog-primary-v5",
+        "modified_on": "2026-11-09T21:05:55.435401Z",
+        "created_on": "2026-11-09T21:05:42.209896Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-09"
+      },
+      {
+        "id": "sasta-github-edge-public-v6",
+        "modified_on": "2026-11-09T21:25:48.809202Z",
+        "created_on": "2026-11-09T21:25:39.102898Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-09"
+      },
+      {
+        "id": "sasta-github-no-banner-v8",
+        "modified_on": "2026-11-09T21:51:52.679307Z",
+        "created_on": "2026-11-09T21:51:41.357438Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-09"
+      },
+      {
+        "id": "sasta-github-public-cookie-safe-v7",
+        "modified_on": "2026-11-09T21:29:21.307656Z",
+        "created_on": "2026-11-09T21:29:12.335527Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-09"
+      },
+      {
+        "id": "sasta-github-static-primary-v4",
+        "modified_on": "2026-11-09T20:55:31.599005Z",
+        "created_on": "2026-11-09T20:55:18.425492Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-09"
+      },
+      {
+        "id": "sasta-global-product-pages",
+        "modified_on": "2026-11-10T05:38:32.999343Z",
+        "created_on": "2026-11-10T05:38:13.401922Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-09"
+      },
+      {
+        "id": "sasta-global-product-recovery-v1",
+        "modified_on": "2026-11-10T19:13:08.942805Z",
+        "created_on": "2026-11-10T19:07:12.576283Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-10"
+      },
+      {
+        "id": "sasta-global-product-variants-v2",
+        "modified_on": "2026-11-10T06:12:01.645264Z",
+        "created_on": "2026-11-10T06:11:08.262897Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-10"
+      },
+      {
+        "id": "sasta-origin-failover",
+        "modified_on": "2026-11-09T18:32:14.5289Z",
+        "created_on": "2026-11-09T18:30:33.110316Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-09"
+      },
+      {
+        "id": "sasta-publisher-media",
+        "modified_on": "2026-10-12T21:56:20.608191Z",
+        "created_on": "2026-10-09T19:00:43.313121Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-10-09"
+      },
+      {
+        "id": "sasta-seo-recovery-v3",
+        "modified_on": "2026-11-09T20:42:28.61918Z",
+        "created_on": "2026-11-09T20:42:16.219773Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-09"
+      },
+      {
+        "id": "sasta-static-blog-reader",
+        "modified_on": "2026-11-09T21:00:25.485164Z",
+        "created_on": "2026-11-09T21:00:10.625113Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-09"
+      },
+      {
+        "id": "sasta-static-readonly-recovery",
+        "modified_on": "2026-11-09T20:17:16.233592Z",
+        "created_on": "2026-11-09T20:17:02.352202Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-09"
+      },
+      {
+        "id": "sasta-static-readonly-recovery-v2",
+        "modified_on": "2026-11-09T20:33:08.085636Z",
+        "created_on": "2026-11-09T20:28:25.143547Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-09"
+      },
+      {
+        "id": "sasta-tv-relay",
+        "modified_on": "2026-11-04T04:07:56.267308Z",
+        "created_on": "2026-11-04T03:25:24.431527Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-04"
+      },
+      {
+        "id": "sasta-wp-cron-autopilot",
+        "modified_on": "2026-11-07T10:19:56.758704Z",
+        "created_on": "2026-10-28T18:10:32.736251Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-10-28"
+      }
+    ]
+  },
+  "zone": {
+    "zone_found": true
+  },
+  "routes": {
+    "success": true,
+    "routes": [
+      {
+        "pattern": "www.sastamilaga.com/*",
+        "script": "sasta-canonical-sync-v11"
+      },
+      {
+        "pattern": "sastamilaga.com/*",
+        "script": "sasta-canonical-sync-v11"
+      },
+      {
+        "pattern": "sastamilaga.com/cjv/*",
+        "script": "sasta-cj-video-proxy"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/*",
+        "script": "sasta-brand-pages-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/global-shop/sitemap.xml",
+        "script": "sasta-global-product-pages"
+      },
+      {
+        "pattern": "sastamilaga.com/global-shop/p/*",
+        "script": "sasta-global-product-variants-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/api/cj/*",
+        "script": "sasta-cj-variants-shipping"
+      },
+      {
+        "pattern": "sastamilaga.com/smcs-oauth/*",
+        "script": "sasta-wp-cron-autopilot"
+      },
+      {
+        "pattern": "sastamilaga.com/api/catalog/*",
+        "script": "sasta-catalog-readonly-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/contact/*",
+        "script": "sasta-brand-pages-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/global/p/*",
+        "script": "sasta-global-product-recovery-v1"
+      }
+    ]
+  },
+  "d1": {
+    "success": true,
+    "databases": [
+      {
+        "name": "sasta-global-orders",
+        "uuid": "7e984781-1b20-4462-b085-071947c43e0c",
+        "created_at": "2026-11-10T05:42:50.384Z",
+        "file_size": 45056,
+        "num_tables": 0
+      },
+      {
+        "name": "sasta-static-blog",
+        "uuid": "04bcbf4d-3b52-40c0-8d23-bdc24785d85d",
+        "created_at": "2026-11-09T20:56:46.512Z",
+        "file_size": 49152,
+        "num_tables": 0
+      },
+      {
+        "name": "sastamilaga",
+        "uuid": "ac28088f-6a54-4d29-8c64-821661efe88f",
+        "created_at": "2026-11-07T16:43:12.023Z",
+        "file_size": 323592192,
+        "num_tables": 0
+      },
+      {
+        "name": "bestwebdeveloper",
+        "uuid": "f2b7e594-8dfb-4ed9-b4ed-71a42f5b4f8f",
+        "created_at": "2026-04-23T10:02:57.305Z",
+        "file_size": 12288,
+        "num_tables": 0
+      }
+    ]
+  },
+  "pages": {
+    "success": true,
+    "projects": []
+  },
+  "wordpress_user": {
+    "ok": false,
+    "id": null,
+    "roles": null,
+    "can": {
+      "manage_woocommerce": null,
+      "manage_options": null,
+      "edit_products": null,
+      "install_plugins": null,
+      "upload_files": null
+    },
+    "code": "incorrect_password"
+  },
+  "wordpress_namespaces": {
+    "namespaces": [
+      "oembed/1.0",
+      "sm-track/v1",
+      "giw/v1",
+      "smts/v1",
+      "sastamilaga/v1",
+      "rankmath/v1",
+      "rankmath/v1/setupWizard",
+      "rankmath/v1/an",
+      "sm-travel/v1",
+      "smg/v1",
+      "sm-publisher/v1",
+      "sm-wa/v1",
+      "wpvibe/v1",
+      "wc/v3",
+      "wc/v1",
+      "wc/pos/v1/catalog",
+      "hhc-dropshipping/v1",
+      "jetpack/v4",
+      "wc-facebook/v1",
+      "fb_api",
+      "sltv/v1",
+      "paypal/v1",
+      "wc/v3/wc_paypal",
+      "wc-admin",
+      "wc-analytics",
+      "wc/store",
+      "wc/store/v1",
+      "wc/private",
+      "wc/v2",
+      "smcs/v1",
+      "sm-earn/v1",
+      "wc/gla",
+      "gdcs/v1",
+      "rankmath/v1/ai-visibility",
+      "rankmath/v1/ca",
+      "rankmath/v1/in",
+      "rankmath/v1/status",
+      "rankmath/v1/link-genius",
+      "wc-admin-email",
+      "wc-push-notifications",
+      "wc-telemetry",
+      "wccom-site/v3",
+      "rankmath-marketplace/v1",
+      "wp-abilities/v1",
+      "mcp",
+      "wp/v2",
+      "wp-site-health/v1",
+      "wp-block-editor/v1"
+    ]
+  }
+}
