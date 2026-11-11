@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-11T04:03:16Z",
+  "checked_at": "2026-11-11T05:15:28Z",
   "token": {
     "success": true,
     "status": "active"
@@ -101,7 +101,7 @@
       },
       {
         "id": "sasta-canonical-sync-v11",
-        "modified_on": "2026-11-10T19:15:25.458202Z",
+        "modified_on": "2026-11-11T04:27:07.55791Z",
         "created_on": "2026-11-10T03:24:18.728466Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-09"
@@ -205,6 +205,13 @@
         "compatibility_date": "2026-11-10"
       },
       {
+        "id": "sasta-live-tv-static-v2",
+        "modified_on": "2026-11-11T04:37:35.166936Z",
+        "created_on": "2026-11-11T04:35:16.296202Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-11"
+      },
+      {
         "id": "sasta-origin-failover",
         "modified_on": "2026-11-09T18:32:14.5289Z",
         "created_on": "2026-11-09T18:30:33.110316Z",
@@ -217,6 +224,13 @@
         "created_on": "2026-10-09T19:00:43.313121Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-09"
+      },
+      {
+        "id": "sasta-seo-origin-probe-v1",
+        "modified_on": "2026-11-11T05:12:44.949793Z",
+        "created_on": "2026-11-11T05:12:43.62976Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-11"
       },
       {
         "id": "sasta-seo-recovery-v3",
@@ -248,7 +262,7 @@
       },
       {
         "id": "sasta-tv-relay",
-        "modified_on": "2026-11-04T04:07:56.267308Z",
+        "modified_on": "2026-11-11T04:14:33.061621Z",
         "created_on": "2026-11-04T03:25:24.431527Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-04"
@@ -262,22 +276,29 @@
       },
       {
         "id": "sastamilaga-cj-shipping",
-        "modified_on": "2026-11-11T03:58:54.973936Z",
+        "modified_on": "2026-11-11T05:14:12.355388Z",
         "created_on": "2026-11-11T03:54:36.589467Z",
         "usage_model": "standard",
         "compatibility_date": "2025-07-18"
       },
       {
         "id": "sastamilaga-global-pages",
-        "modified_on": "2026-11-11T03:59:04.240282Z",
+        "modified_on": "2026-11-11T05:14:19.939366Z",
         "created_on": "2026-11-11T03:54:44.151298Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-paypal",
-        "modified_on": "2026-11-11T03:58:59.880622Z",
+        "modified_on": "2026-11-11T05:14:17.227044Z",
         "created_on": "2026-11-11T03:54:41.174076Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-10-01"
+      },
+      {
+        "id": "sastamilaga-redirects",
+        "modified_on": "2026-11-11T05:14:23.220157Z",
+        "created_on": "2026-11-11T05:14:22.59741Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       }
@@ -334,12 +355,100 @@
         "script": "sasta-catalog-readonly-v1"
       },
       {
+        "pattern": "sastamilaga.com/live-tv/*",
+        "script": "sasta-live-tv-static-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/live-tv",
+        "script": "sasta-live-tv-static-v2"
+      },
+      {
         "pattern": "sastamilaga.com/contact/*",
         "script": "sasta-brand-pages-v1"
       },
       {
         "pattern": "sastamilaga.com/global/p/*",
-        "script": "sasta-global-product-recovery-v1"
+        "script": "sastamilaga-global-pages"
+      },
+      {
+        "pattern": "sastamilaga.com/product-tag/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/refer-and-earn/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/terms-conditions/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/rewards-program/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/sell-with-us/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/privacy-policy/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/store/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/returns-refunds/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/terms-conditions/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/shipping-delivery/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/track-order/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/product-category/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/sell-with-us/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/product-category/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/returns-refunds/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/store/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/shipping-delivery/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/privacy-policy/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/product-tag/*",
+        "script": "sastamilaga-redirects"
       }
     ]
   },
@@ -357,14 +466,14 @@
         "name": "sasta-static-blog",
         "uuid": "04bcbf4d-3b52-40c0-8d23-bdc24785d85d",
         "created_at": "2026-11-09T20:56:46.512Z",
-        "file_size": 49152,
+        "file_size": 73728,
         "num_tables": 0
       },
       {
         "name": "sastamilaga",
         "uuid": "ac28088f-6a54-4d29-8c64-821661efe88f",
         "created_at": "2026-11-07T16:43:12.023Z",
-        "file_size": 323592192,
+        "file_size": 323604480,
         "num_tables": 0
       },
       {
