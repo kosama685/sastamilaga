@@ -59,7 +59,7 @@
           <label class="sm-gcart__to"><span>Email (optional)</span><input id="gcEmail" type="email" maxlength="100" autocomplete="email" value="${esc(gcSaved('email'))}"></label>
           <label class="sm-gcart__to"><span>Deliver to (country and city)</span><input id="gcTo" maxlength="120" autocomplete="country-name" value="${esc(gcTo())}" placeholder="e.g. Pakistan, Karachi" required></label>
           <label class="sm-gcart__to"><span>Street address</span><textarea id="gcAddr" maxlength="300" rows="2" autocomplete="street-address" required>${esc(gcSaved('addr'))}</textarea></label></div>
-        <button type="button" class="sm-wa-btn" data-gc="order" style="width:100%;margin-top:12px">Place global order on WhatsApp</button><button type="button" class="ghost-btn" data-gc="clear" style="width:100%;margin-top:8px">Clear global items</button>
+        <a class="primary-btn" href="#/checkout" style="width:100%;margin-top:12px;display:flex;justify-content:center">Proceed to checkout</a><button type="button" class="ghost-btn" data-gc="order" style="width:100%;margin-top:12px">Place global order on WhatsApp</button><button type="button" class="ghost-btn" data-gc="clear" style="width:100%;margin-top:8px">Clear global items</button>
         <p class="product-meta" style="margin-top:10px">Prices are estimates in US dollars. We send the final total, including shipping, before you pay by card or PayPal link.</p></aside></div></section>`;
   }
   function gcMessage(l, to) {
@@ -92,10 +92,10 @@
     main.innerHTML = tb.dataset.type === 'video' ? `<video src="${esc(u)}" poster="${esc(poster)}" controls playsinline preload="metadata"></video>` : `<img src="${esc(u)}" alt="" width="800" height="800">`;
     document.querySelectorAll('.pdp .gallery-thumbs button').forEach(x => x.classList.toggle('active', x === tb));
   });
-  window.SMGCart = { count: gcCount, html: gcHtml, bind: gcBind, get: gcGet };
+  window.SMGCart = { count: gcCount, html: gcHtml, bind: gcBind, get: gcGet, fmt: n => USD.format(n), clear: () => gcSet([]) };
   gcBind();
   // global.js loads after the first route has rendered: refresh the header count, and the cart page if it is the page being shown
-  if (gcCount()) { try { A.setCart(A.getCart()); } catch (e) { } if (/(^|\/)cart\/?$/.test(location.pathname) || /^#\/cart/.test(location.hash)) setTimeout(() => A.route(), 0); }
+  if (gcCount()) { try { A.setCart(A.getCart()); } catch (e) { } if (/(^|\/)(cart|checkout)\/?$/.test(location.pathname) || /^#\/(cart|checkout)/.test(location.hash)) setTimeout(() => A.route(), 0); }
   const est = r => r[3] ? (r[4] > r[3] ? `${USD.format(r[3] * MARGIN)} – ${USD.format(r[4] * MARGIN)}` : USD.format(r[3] * MARGIN)) : 'Price on request';
   const liveUrl = r => `${A.LIVE_URL}/global-shop/p/${encodeURIComponent(r[0])}/${slug(r[2]).slice(0, 80)}/`;
   const detailHash = (cat, r) => `#/global/p/${cat}/${encodeURIComponent(r[0])}`;
@@ -190,10 +190,10 @@
     const chosen = { v: null };     /* the variant the customer picked (real CJ variants, when the CJ Worker is configured) */
     bindVariants(r, chosen);
     (wpShip() ? bindShipWp : bindShip)(r, chosen);
-    const rowFrom = f => { const v = chosen.v; return { id: r[0], cs, sku: r[1], name: r[2], img: (v && v.image) || r[5], unit: (v ? v.price : (r[3] || 0)) * MARGIN, qty: Math.max(1, Math.min(99, parseInt(f.qty.value, 10) || 1)), opt: (f.opt.value || '').trim(), ship: ((document.querySelector('#greq [name=ship]:checked') || {}).value || ''), vkey: v ? (v.sku || v.key || '') : '', vname: v ? (v.key || v.name || '') : '', url: ownUrl(cs, r) }; };
+    const rowFrom = f => { const v = chosen.v; return { id: r[0], cs, sku: r[1], name: r[2], img: (v && v.image) || r[5], unit: (v ? v.price : (r[3] || 0)) * MARGIN, qty: Math.max(1, Math.min(99, parseInt(f.qty.value, 10) || 1)), opt: (f.opt.value || '').trim(), ship: ((document.querySelector('#greq [name=ship]:checked') || {}).value || ''), shipAmt: parseFloat(((document.querySelector('#greq [name=ship]:checked') || {}).dataset || {}).amt) || 0, shipCur: ((document.querySelector('#greq [name=ship]:checked') || {}).dataset || {}).cur || 'USD', vkey: v ? (v.sku || v.key || '') : '', vname: v ? (v.key || v.name || '') : '', url: ownUrl(cs, r) }; };
     const addRow = () => { const f = document.getElementById('greq'); const row = rowFrom(f); if (!row.unit) { toast('This item has no listed price yet. Order it on WhatsApp and we will quote it.'); return null; } gcAdd(row); return row; };
     /* Window-capture handler: on the store's own domain a site-wide script swallows add-to-cart clicks at document level, so these two buttons are handled before it (window comes first in the event path). */
-    window.__gcAct = { add: () => { if (addRow()) toast('Added to cart'); }, buy: () => { if (addRow()) { A.go('cart'); } } };
+    window.__gcAct = { add: () => { if (addRow()) toast('Added to cart'); }, buy: () => { if (addRow()) { A.go('checkout'); } } };
     if (!window.__gcActBound) { window.__gcActBound = true; window.addEventListener('click', e => { const b = e.target && e.target.closest && e.target.closest('#gadd,#gbuy'); if (!b || !window.__gcAct) return; e.preventDefault(); e.stopImmediatePropagation(); window.__gcAct[b.id === 'gbuy' ? 'buy' : 'add'](); }, true); }
     document.getElementById('greq').addEventListener('submit', e => {
       e.preventDefault(); const f = e.target; const v = chosen.v;
@@ -232,7 +232,7 @@
         const d = await res.json().catch(() => null);
         if (!res.ok || !d || !d.quotes || !d.quotes.length) { out.textContent = ((d && d.message) ? d.message.replace(/<[^>]+>/g, '') + ' ' : '') + 'We will confirm shipping on WhatsApp.'; return; }
         const money = (n, cur) => { try { return new Intl.NumberFormat('en', { style: 'currency', currency: cur }).format(n); } catch (e) { return `${cur} ${n.toFixed(2)}`; } };
-        out.innerHTML = d.quotes.slice(0, 6).map((m, i) => { const val = `${neutral(m.service)}: ${money(m.cost, m.currency)}, ${m.estimate} days`; return `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(val)}"${i ? '' : ' checked'}> <span>${esc(neutral(m.service))}</span> <b>${esc(money(m.cost, m.currency))}</b> <small>${esc(m.estimate)} days</small></label>`; }).join('') + `<p class="sm-ship__note">Carrier price for ${qty} item${qty > 1 ? 's' : ''} shipped from ${esc((d.origins && d.origins[0] && d.origins[0].name) || 'our supplier')}, before any customs duties. The final total is confirmed before you pay.</p>`;
+        out.innerHTML = d.quotes.slice(0, 6).map((m, i) => { const val = `${neutral(m.service)}: ${money(m.cost, m.currency)}, ${m.estimate} days`; return `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(val)}" data-amt="${esc(String(m.cost))}" data-cur="${esc(String(m.currency || 'USD'))}"${i ? '' : ' checked'}> <span>${esc(neutral(m.service))}</span> <b>${esc(money(m.cost, m.currency))}</b> <small>${esc(m.estimate)} days</small></label>`; }).join('') + `<p class="sm-ship__note">Carrier price for ${qty} item${qty > 1 ? 's' : ''} shipped from ${esc((d.origins && d.origins[0] && d.origins[0].name) || 'our supplier')}, before any customs duties. The final total is confirmed before you pay.</p>`;
       } catch (e) { out.textContent = 'Shipping prices are not available right now. We will confirm shipping on WhatsApp.'; }
       finally { go.disabled = false; }
     });
@@ -312,7 +312,7 @@
         const res = await fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ country: cc, items: [{ pid: r[0], sku: r[1], qty, ...(chosen && chosen.v ? { vid: chosen.v.vid } : {}) }] }) });
         const d = await res.json();
         if (!res.ok || !d.methods || !d.methods.length) { out.textContent = (d && d.error ? d.error + '. ' : '') + 'We will confirm shipping on WhatsApp.'; return; }
-        out.innerHTML = d.methods.slice(0, 6).map((m, i) => `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(`${m.name}: ${USD.format(m.price)}, ${m.days} days`)}"${i ? '' : ' checked'}> <span>${esc(neutral(m.name))}</span> <b>${USD.format(m.price)}</b> <small>${esc(m.days)} days</small></label>`).join('') + '<p class="sm-ship__note">Supplier shipping price in US$ for this quantity, before any customs duties.</p>';
+        out.innerHTML = d.methods.slice(0, 6).map((m, i) => `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(`${m.name}: ${USD.format(m.price)}, ${m.days} days`)}" data-amt="${esc(String(m.price))}" data-cur="USD"${i ? '' : ' checked'}> <span>${esc(neutral(m.name))}</span> <b>${USD.format(m.price)}</b> <small>${esc(m.days)} days</small></label>`).join('') + '<p class="sm-ship__note">Supplier shipping price in US$ for this quantity, before any customs duties.</p>';
       } catch (e) { out.textContent = 'Shipping prices are not available right now. We will confirm shipping on WhatsApp.'; }
       finally { go.disabled = false; }
     });

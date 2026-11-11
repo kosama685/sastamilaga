@@ -1607,7 +1607,22 @@ function removeCart(id) { setCart(getCart().filter(x => x.id !== id)); renderCar
 window.cartQty    = cartQty;
 window.removeCart = removeCart;
 
-function summaryBox(sub, onCheckout) {
+const gLines = () => (window.SMGCart ? window.SMGCart.get() : []);
+const gFmt = n => (window.SMGCart ? window.SMGCart.fmt(n) : '$' + Number(n).toFixed(2));
+const gSub = () => gLines().reduce((s, x) => s + x.unit * x.qty, 0);
+function globalBlock(G) {
+  if (!G.length) return '';
+  return `<section class="sm-gco" style="grid-column:1/-1" aria-label="Global items"><h3 style="margin:0 0 4px">Global items (prepaid)</h3><p class="product-meta" style="margin:0 0 10px">Shipped from our supplier. The carrier you chose on the product page is shown for each item.</p>${G.map(x => `<div class="cart-line"><img src="${esc(x.img)}" alt="${esc(x.name)}" width="64" height="64" onerror="this.src=window.fallbackImg"><div><b>${esc(x.name)}</b><p style="color:var(--muted);margin:4px 0">${x.vname ? esc(x.vname) + ' · ' : ''}Qty ${x.qty} · ${gFmt(x.unit * x.qty)}${x.ship ? '<br>Shipping: ' + esc(x.ship) : '<br>Shipping: confirmed on WhatsApp'}</p></div></div>`).join('')}</section>`;
+}
+function summaryBox(sub, onCheckout, G = []) {
+  if (G.length) {
+    const C = window.SM_CONFIG || {}, hasLocal = sub > 0, delivery = !hasLocal ? 0 : (sub > (C.freeDeliveryFrom || 5000) ? 0 : (C.deliveryFee || 250));
+    return `<aside class="summary-box"><h2 style="margin:0 0 14px">Order Summary</h2>
+      ${hasLocal ? `<div class="summary-row"><span>Local items</span><b>${PKR.format(sub)}</b></div><div class="summary-row"><span>Local delivery</span><b>${delivery ? PKR.format(delivery) : 'Free'}</b></div>` : ''}
+      <div class="summary-row"><span>Global items (estimated)</span><b>${gFmt(gSub())}</b></div>
+      <div class="summary-row"><span>Global shipping</span><b>${G.every(x => x.shipAmt) ? 'Chosen carrier, added to your payment' : 'Confirmed before dispatch'}</b></div>
+      <p class="product-meta">Prices are estimates. The final total is confirmed with you on WhatsApp before dispatch.</p></aside>`;
+  }
   const C = window.SM_CONFIG || {};
   const delivery = sub > (C.freeDeliveryFrom || 5000) ? 0 : (C.deliveryFee || 250);
   const total    = sub + delivery;
@@ -1634,6 +1649,7 @@ function renderCheckout() {
   setSEO({ title: 'Checkout – Sasta Milaga Pakistan', description: 'Complete your order. Fast, secure checkout with Cash on Delivery.', url: `${SITE_URL}/#/checkout` });
   const rows = getCart().map(x => ({ item: products.find(p => p.id === x.id), qty: x.qty })).filter(x => x.item);
   const sub  = rows.reduce((a, x) => a + price(x.item) * x.qty, 0);
+  const G = gLines(), onlyGlobal = G.length && !rows.length;
 
   // Generate Product Summary for Hidden Field and Meta Pixel data
   const productSummary = rows.map(({item, qty}) => `${item.n} (x${qty})`).join(', ');
@@ -1660,10 +1676,11 @@ function renderCheckout() {
         <input name="full_name" required placeholder="Full name" aria-label="Full name">
         <input name="phone" required placeholder="Phone number" type="tel" aria-label="Phone number">
         <input name="email" placeholder="Email (optional)" type="email" aria-label="Email">
+        ${globalBlock(G)}
         <select name="payment_method" aria-label="Payment method">
-          <option>Cash on Delivery (COD)</option>
+          ${G.length ? '' : '<option>Cash on Delivery (COD)</option>'}
           <option>Bank Transfer</option>
-          <option>EasyPaisa / JazzCash</option>
+          ${G.length ? '' : '<option>EasyPaisa / JazzCash</option>'}
           ${(window.SM_CONFIG || {}).paypalEmail ? `<option value="PayPal / Card">PayPal or debit/credit card (pay now in ${paypalCurrency()})</option>` : ''}
         </select>
         <textarea name="address" required placeholder="Complete delivery address" aria-label="Delivery address"></textarea>
@@ -1685,7 +1702,7 @@ function renderCheckout() {
 
         <button type="submit" id="smPlaceOrder" class="primary-btn" style="grid-column:1/-1;padding:16px">Place order</button>
       </form>
-      ${summaryBox(sub, true)}
+      ${summaryBox(sub, true, G)}
     </div>
   </section>`);
 }
@@ -1737,14 +1754,25 @@ function checkoutTotals() {
   const lines = getCart().map(x => ({ p: products.find(p => p.id === x.id), qty: x.qty })).filter(x => x.p);
   const sub = lines.reduce((a, x) => a + price(x.p) * x.qty, 0);
   const delivery = sub > (C.freeDeliveryFrom || 5000) ? 0 : (C.deliveryFee || 250);
-  return { lines, sub, delivery, totalPkr: sub + delivery };
+  const gl = gLines(), dl = lines.length ? delivery : 0;
+  return { lines, sub, delivery: dl, totalPkr: sub + dl, count: lines.length + gl.length };
+}
+/* Cart total in the payment currency: local items are priced in PKR, global items in US dollars, and each global item's chosen carrier in the currency it was quoted in. rates = units of each currency per 1 PKR. */
+function cartInCur(rates, cur) {
+  const { totalPkr } = checkoutTotals(), G = gLines(); let v = totalPkr * rates[cur];
+  if (G.length) {
+    if (!rates.USD) throw new Error('rate');
+    v += gSub() * rates[cur] / rates.USD;
+    G.forEach(x => { const sc = x.shipCur || 'USD'; if (x.shipAmt) { if (!rates[sc]) throw new Error('rate'); v += x.shipAmt * rates[cur] / rates[sc]; } });
+  }
+  return v;
 }
 async function payAmount() {
   const cur = paypalCurrency(), { totalPkr } = checkoutTotals();
   const r = await fetch('https://open.er-api.com/v6/latest/PKR').then(x => x.json());
   const rate = r && r.rates && r.rates[cur]; if (!rate) throw new Error('rate');
   const dec = PAYPAL_NO_DECIMALS.includes(cur) ? 0 : 2;
-  return { cur, rate, amount: Math.max(dec ? 0.01 : 1, Math.round(totalPkr * rate * 10 ** dec) / 10 ** dec).toFixed(dec), totalPkr };
+  return { cur, rate, amount: Math.max(dec ? 0.01 : 1, Math.round(cartInCur(r.rates, cur) * 10 ** dec) / 10 ** dec).toFixed(dec), totalPkr };
 }
 let _payReq = 0;
 function syncPay() {
@@ -1756,12 +1784,12 @@ function syncPay() {
   if (on || form.elements.payment_method.value !== 'PayPal') place.hidden = on;
   if (!on) return;
   const my = ++_payReq;
-  if (!checkoutTotals().lines.length) { amt.textContent = 'Your cart is empty. Add products before paying.'; panel.querySelectorAll('[data-pay]').forEach(b => { b.disabled = true; }); return; }
+  if (!checkoutTotals().count) { amt.textContent = 'Your cart is empty. Add products before paying.'; panel.querySelectorAll('[data-pay]').forEach(b => { b.disabled = true; }); return; }
   panel.querySelectorAll('[data-pay]').forEach(b => { b.disabled = true; });
   amt.textContent = 'Getting today\'s exchange rate…';
   payAmount().then(a => {
     if (my !== _payReq) return;
-    amt.innerHTML = `You pay <b>${esc(a.cur)} ${esc(Number(a.amount).toLocaleString('en', { minimumFractionDigits: a.cur === 'JPY' || a.cur === 'HUF' || a.cur === 'TWD' ? 0 : 2 }))}</b> <small>(${PKR.format(a.totalPkr)} including delivery, at today's rate of 1 PKR = ${esc(String(a.rate))} ${esc(a.cur)}${a.cur === 'USD' && (JSON.parse(localStorage.getItem('sm_market') || '{}').currency || 'PKR') !== 'USD' ? '. PayPal cannot charge ' + esc(JSON.parse(localStorage.getItem('sm_market') || '{}').currency || 'PKR') + ', so US$ is used' : ''})</small>`;
+    amt.innerHTML = `You pay <b>${esc(a.cur)} ${esc(Number(a.amount).toLocaleString('en', { minimumFractionDigits: a.cur === 'JPY' || a.cur === 'HUF' || a.cur === 'TWD' ? 0 : 2 }))}</b> <small>(${gLines().length ? 'global items, chosen shipping' + (a.totalPkr ? ' and ' + PKR.format(a.totalPkr) + ' of local items' : '') : PKR.format(a.totalPkr) + ' including delivery'}, at today's rate of 1 PKR = ${esc(String(a.rate))} ${esc(a.cur)}${a.cur === 'USD' && (JSON.parse(localStorage.getItem('sm_market') || '{}').currency || 'PKR') !== 'USD' ? '. PayPal cannot charge ' + esc(JSON.parse(localStorage.getItem('sm_market') || '{}').currency || 'PKR') + ', so US$ is used' : ''})</small>`;
     panel.querySelectorAll('[data-pay]').forEach(b => { b.disabled = false; });
   }).catch(() => { if (my === _payReq) amt.textContent = 'Could not get today\'s exchange rate. Check your connection and reselect PayPal, or choose cash on delivery.'; });
 }
@@ -1775,7 +1803,7 @@ document.addEventListener('click', e => {
 window.placeOrder = function (e, landing, trigger) {
   e.preventDefault();
   const form = document.getElementById('checkoutForm');
-  if (!checkoutTotals().lines.length) { toast('Your cart is empty. Add products first.'); return; }
+  if (!checkoutTotals().count) { toast('Your cart is empty. Add products first.'); return; }
   const data = new FormData(form);
   
   // Capture Meta Pixel data BEFORE form submission
@@ -1794,10 +1822,11 @@ window.placeOrder = function (e, landing, trigger) {
   const orderId = 'SM-' + Date.now().toString(36).toUpperCase();
   const lines = getCart().map(x => ({ p: products.find(p => p.id === x.id), qty: x.qty })).filter(x => x.p);
   const sub = lines.reduce((a, x) => a + price(x.p) * x.qty, 0);
-  const delivery = sub > (C.freeDeliveryFrom || 5000) ? 0 : (C.deliveryFee || 250);
-  const totalPkr = sub + delivery;
+  const delivery = !lines.length ? 0 : (sub > (C.freeDeliveryFrom || 5000) ? 0 : (C.deliveryFee || 250));
+  const totalPkr = sub + delivery, GL = gLines();
   data.set('order_id', orderId);
   data.set('order_items', lines.map(x => `${x.qty} x ${x.p.n} (SKU ${x.p.sku || x.p.id}) @ ${PKR.format(price(x.p))} = ${PKR.format(price(x.p) * x.qty)}\n${pageUrl(x.p)}`).join('\n\n'));
+  if (GL.length) { data.set('global_items', GL.map(x => `${x.qty} x ${x.name}${x.vname ? ' [' + x.vname + ']' : ''} (SKU ${x.sku}) est. USD ${(x.unit * x.qty).toFixed(2)}; shipping: ${x.ship || 'to be confirmed'}\n${x.url || ''}`).join('\n\n')); data.set('global_estimate_usd', gSub().toFixed(2)); }
   data.set('order_subtotal', PKR.format(sub));
   data.set('order_delivery', delivery ? PKR.format(delivery) : 'Free');
   data.set('order_total', PKR.format(totalPkr));
@@ -1805,13 +1834,13 @@ window.placeOrder = function (e, landing, trigger) {
 
   // PayPal / card: charge in the visitor's chosen currency when PayPal supports it, otherwise USD.
   const payCur = paypalCurrency();
-  const rateP = payPal ? fetch('https://open.er-api.com/v6/latest/PKR').then(r => r.json()).then(j => j.rates[payCur]) : Promise.resolve(null);
-  rateP.then(rate => {
-    let usd = null;
+  const rateP = payPal ? fetch('https://open.er-api.com/v6/latest/PKR').then(r => r.json()).then(j => j.rates) : Promise.resolve(null);
+  rateP.then(rates => {
+    let usd = null, rate = rates && rates[payCur];
     if (payPal) {
       if (!rate) throw new Error('rate');
       const dec = PAYPAL_NO_DECIMALS.includes(payCur) ? 0 : 2;
-      usd = Math.max(dec ? 0.01 : 1, Math.round(totalPkr * rate * 10 ** dec) / 10 ** dec).toFixed(dec);
+      usd = Math.max(dec ? 0.01 : 1, Math.round(cartInCur(rates, payCur) * 10 ** dec) / 10 ** dec).toFixed(dec);
       data.set('payment_status', `Awaiting PayPal payment of ${payCur} ${usd} (1 PKR = ${rate} ${payCur}). Confirm receipt in PayPal before dispatch.`);
       data.set('payment_currency', payCur);
     }
@@ -1827,7 +1856,7 @@ window.placeOrder = function (e, landing, trigger) {
   .then(response => {
     if (response.ok && response.usd) {
       try { localStorage.setItem('latestOrder', JSON.stringify({ total: orderTotal, currency: 'PKR', itemIds: productIds, transactionId: orderId, timestamp: Date.now(), paypal: response.usd })); } catch (e) { }
-      setCart([]);
+      setCart([]); if (window.SMGCart) window.SMGCart.clear();
       location.href = paypalLink({ email: C.paypalEmail, usd: response.usd, currency: payCur, orderId, items: lines.length, landing: landing || 'Login' });
       return;
     }
@@ -1847,7 +1876,7 @@ window.placeOrder = function (e, landing, trigger) {
       }
       
       toast('✅ Order placed! Our team will contact you shortly.');
-      setCart([]); // Clear cart
+      setCart([]); if (window.SMGCart) window.SMGCart.clear(); // Clear cart
       location.hash = '#/thank-you'; // Redirect to thank-you page
     } else {
       response.json().then(data => {
