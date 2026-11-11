@@ -71,3 +71,35 @@ jobs:
               curl -sS -m 60 -X POST -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json" --data "{\"pattern\":\"$pat\",\"script\":\"sastamilaga-global-pages\"}" "https://api.cloudflare.com/client/v4/zones/$ZID/workers/routes" | jq -r '"route '"$pat"': success=" + (.success|tostring) + " " + ((.errors // [] | map(.message) | join(";")))'
             else echo "route $pat already attached"; fi
           done
+      - name: Deploy the redirects Worker (old WordPress addresses -> new pages)
+        if: steps.chk.outputs.ok == 'true'
+        working-directory: workers/redirects
+        run: npx --yes wrangler@3 deploy
+      - name: Attach the redirect routes and serve /global/p/* from the full-catalogue Worker
+        if: steps.chk.outputs.ok == 'true'
+        run: |
+          API="https://api.cloudflare.com/client/v4"; H="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+          ZID=$(curl -sS -m 60 -H "$H" "$API/zones?name=sastamilaga.com" | jq -r '.result[0].id // empty')
+          if [ -z "$ZID" ]; then echo "::warning::zone sastamilaga.com not found for this token; routes not attached"; exit 0; fi
+          ROUTES=$(curl -sS -m 60 -H "$H" "$API/zones/$ZID/workers/routes")
+          attach() { # pattern script  (adds the route; if the pattern already points at another Worker, switches it and prints the previous one)
+            cur=$(echo "$ROUTES" | jq -c --arg p "$1" '[.result[]? | select(.pattern==$p)][0] // empty')
+            if [ -z "$cur" ]; then
+              curl -sS -m 60 -X POST -H "$H" -H "Content-Type: application/json" --data "{\"pattern\":\"$1\",\"script\":\"$2\"}" "$API/zones/$ZID/workers/routes" | jq -r --arg p "$1" '"added   " + $p + " success=" + (.success|tostring)'
+            else
+              rid=$(echo "$cur" | jq -r '.id'); prev=$(echo "$cur" | jq -r '.script')
+              if [ "$prev" = "$2" ]; then echo "present $1"; else
+                curl -sS -m 60 -X PUT -H "$H" -H "Content-Type: application/json" --data "{\"pattern\":\"$1\",\"script\":\"$2\"}" "$API/zones/$ZID/workers/routes/$rid" | jq -r --arg p "$1" --arg prev "$prev" '"switched " + $p + " (was " + $prev + ") success=" + (.success|tostring)'
+              fi
+            fi
+          }
+          for pat in "sastamilaga.com/product/*/" "sastamilaga.com/ur/product/*/" "sastamilaga.com/product-category/*" "sastamilaga.com/ur/product-category/*" \
+                     "sastamilaga.com/product-tag/*" "sastamilaga.com/ur/product-tag/*" "sastamilaga.com/store/*" "sastamilaga.com/ur/store/*" \
+                     "sastamilaga.com/videos/*/" "sastamilaga.com/ur/videos/*/" "sastamilaga.com/visa/*/" "sastamilaga.com/ur/visa/*/" \
+                     "sastamilaga.com/privacy-policy/" "sastamilaga.com/terms-conditions/" "sastamilaga.com/returns-refunds/" "sastamilaga.com/shipping-delivery/" \
+                     "sastamilaga.com/track-order/" "sastamilaga.com/sell-with-us/" "sastamilaga.com/rewards-program/" "sastamilaga.com/refer-and-earn/" \
+                     "sastamilaga.com/ur/" "sastamilaga.com/ur/privacy-policy/" "sastamilaga.com/ur/terms-conditions/" "sastamilaga.com/ur/returns-refunds/" \
+                     "sastamilaga.com/ur/shipping-delivery/" "sastamilaga.com/ur/sell-with-us/"; do attach "$pat" sastamilaga-redirects; done
+          # The Worker on /global/p/* only accepts UUID-style ids (numeric ids return 404) and marks pages noindex; the full-catalogue Worker serves all 451,812.
+          # Roll back: PUT the route again with the previous script printed above (sasta-global-product-recovery-v1).
+          attach "sastamilaga.com/global/p/*" sastamilaga-global-pages

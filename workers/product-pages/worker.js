@@ -102,7 +102,7 @@ async function feedChunk(k, env, cfg, ctx) {
     for (const r of rows) {
       const [id, sku, name, lo, hi, img] = r;
       if (!(lo > 0) || !/^https?:\/\//.test(img || '') || !name) { skipped++; continue; }
-      const link = `${cfg.self}/global/p/${c.s}/${id}`;   // the address the live domain serves (no slug suffix)
+      const link = `${cfg.self}/global/p/${c.s}/${id}/${slug(name)}`;   // the canonical address of the product page
       items.push(`<item><g:id>${esc(id)}</g:id><g:title>${esc(String(name).slice(0, 150))}</g:title><g:description>${esc(uniqueDesc(r, c))}</g:description><g:link>${esc(link)}</g:link><g:image_link>${esc(img)}</g:image_link><g:availability>${esc(avail)}</g:availability>${avail === 'backorder' || avail === 'preorder' ? `<g:availability_date>${date}</g:availability_date>` : ''}<g:price>${(Math.round(lo * MARGIN * 100) / 100).toFixed(2)} USD</g:price><g:condition>new</g:condition><g:product_type>${esc(c.g + ' > ' + c.n)}</g:product_type><g:identifier_exists>no</g:identifier_exists></item>`);
     }
   }
@@ -129,34 +129,36 @@ async function productPage(cat, pid, given, env, cfg, ctx) {
       { '@type': 'ListItem', position: 3, name: c.n, item: `${cfg.site}/c/global/${cat}.html` },
       { '@type': 'ListItem', position: 4, name, item: canonical }] }] };
   const idx = rows.indexOf(r), related = rows.slice(Math.max(0, idx - 4), idx).concat(rows.slice(idx + 1, idx + 5)).slice(0, 8);
-  const html = `<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  const S = cfg.self, relUrl = x => `${S}/global/p/${cat}/${x[0]}/${slug(x[2])}`;
+  const spa = `${S}/#/global/p/${cat}/${encodeURIComponent(id)}`;
+  const html = `<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(name.slice(0, 90))} – ${esc(c.n)} | Sasta Milaga</title>
-<meta name="description" content="${esc(desc)}"><meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="description" content="${esc(desc)}"><meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="${esc(canonical)}"><link rel="alternate" hreflang="en" href="${esc(canonical)}"><link rel="alternate" hreflang="x-default" href="${esc(canonical)}">
 <meta property="og:type" content="product"><meta property="og:site_name" content="Sasta Milaga"><meta property="og:locale" content="en_PK">
 <meta property="og:title" content="${esc(name)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${esc(canonical)}"><meta property="og:image" content="${esc(img)}">
-<meta name="twitter:card" content="summary_large_image"><link rel="icon" href="${cfg.site}/fav.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#0F7A3B">
+<link rel="icon" href="${S}/assets/brand/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="${S}/assets/brand/apple-touch-icon.png">
+<link rel="stylesheet" href="${S}/assets/theme/static-bundle.css">
 <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}</script>
-<style>:root{--g:#1a5c2a;--wa:#25d366;--ink:#1f2937;--mut:#5b6472;--bg:#f6f8f5;--line:#e3e8e1}*{box-sizing:border-box}body{margin:0;font:16px/1.7 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg)}
-a{color:var(--g)}header{background:#fff;border-bottom:1px solid var(--line)}header div,main{max-width:1120px;margin:0 auto;padding:12px 16px}header img{height:40px;vertical-align:middle}
-nav.bc{font-size:14px;color:var(--mut);margin:8px 0 16px}.p{display:grid;gap:24px;grid-template-columns:1fr}@media(min-width:800px){.p{grid-template-columns:1fr 1fr}}
-.media{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}.media img,.media video{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;background:#fff}
-h1{font-size:clamp(22px,3vw,30px);line-height:1.25;letter-spacing:-.02em;margin:0 0 12px}.price{font-size:26px;font-weight:700;color:var(--g)}.est{font-size:14px;color:var(--mut);font-weight:400}
-.note{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--mut)}dl{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;font-size:14px}dt{color:var(--mut)}
-.wa{display:inline-flex;align-items:center;gap:8px;background:var(--wa);color:#fff;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:999px;margin:16px 0;box-shadow:0 4px 14px rgba(18,140,74,.25);transition:transform .2s}
-.wa:hover{transform:translateY(-1px)}.wa:active{transform:scale(.97)}.wa:focus-visible{outline:3px solid #075e54;outline-offset:2px}
-.rel{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;padding:0;list-style:none}.rel a{display:block;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;text-decoration:none;color:var(--ink);font-size:13px;line-height:1.4}
-.rel img{width:100%;aspect-ratio:1/1;object-fit:contain}footer{max-width:1120px;margin:32px auto;padding:0 16px;font-size:13px;color:var(--mut)}</style></head>
-<body><header><div><a href="${cfg.site}/"><img src="${cfg.site}/sasta-milaga-logo-final.png" alt="Sasta Milaga" width="160" height="40"></a></div></header>
-<main><nav class="bc" aria-label="Breadcrumb"><a href="${cfg.site}/">Home</a> / <a href="${cfg.site}/c/global/index.html">Global shop</a> / <a href="${cfg.site}/c/global/${cat}.html">${esc(c.n)}</a></nav>
-<article class="p"><div class="media">${video ? `<video controls preload="none" poster="${esc(img)}" src="${esc(video)}"></video>` : `<img src="${esc(img)}" alt="${esc(name)}" width="800" height="800">`}</div>
-<div><h1>${esc(name)}</h1><p class="price">${esc(price)} <span class="est">estimated, USD</span></p>
-<a class="wa" href="${esc(wa)}" target="_blank" rel="noopener">Order on WhatsApp</a>
-<p class="note">Global items ship worldwide from our supplier network. This price is an estimate from the supplier list of ${esc(m.snapshot)}. We confirm stock, options, shipping and the final total with you on WhatsApp before you pay.</p>
-<dl><dt>Category</dt><dd><a href="${cfg.site}/c/global/${cat}.html">${esc(c.n)}</a> (${esc(c.g)})</dd><dt>SKU</dt><dd>${esc(sku)}</dd><dt>Product ID</dt><dd>${esc(id)}</dd></dl>
-<p><a href="${cfg.site}/#/global/p/${cat}/${encodeURIComponent(id)}">Open in the shop</a></p></div></article>
-${related.length ? `<section><h2>More in ${esc(c.n)}</h2><ul class="rel">${related.map(x => `<li><a href="${cfg.self}/global/p/${cat}/${x[0]}/${slug(x[2])}"><img src="${esc(x[5])}" alt="" loading="lazy" width="160" height="160">${esc(x[2].slice(0, 70))}</a></li>`).join('')}</ul></section>` : ''}
-</main><footer>Sasta Milaga · prices in USD are estimates · <a href="${cfg.site}/">sastamilaga</a></footer></body></html>`;
+</head>
+<body class="sm-static sm-page-static">
+<div id="sm-chrome-header" data-prefix="/"><header class="sm-fallback-head"><a href="${S}/"><img src="${S}/assets/brand/logo-46.png" width="171" height="46" alt="Sasta Milaga"></a></header></div>
+<main id="main" class="sm-main"><div id="app" class="sm-app">
+<nav class="sm-crumbs" aria-label="Breadcrumb"><a href="${S}/">Home</a> <span aria-hidden="true">/</span> <a href="${S}/#/global">Global shop</a> <span aria-hidden="true">/</span> <a href="${S}/c/global/${cat}.html">${esc(c.n)}</a> <span aria-hidden="true">/</span> <span aria-current="page">${esc(name.slice(0, 70))}</span></nav>
+<section class="pdp" aria-label="Product detail"><div>
+<div class="gallery-panel"><div class="gallery-main">${video ? `<video controls playsinline preload="none" poster="${esc(img)}" src="${esc(video)}"></video>` : `<img src="${esc(img)}" alt="${esc(name)}" width="800" height="800" fetchpriority="high" decoding="async">`}</div></div>
+<div class="detail-panel"><h2>Product details</h2><p>${esc(uniqueDesc(r, c))}</p><p class="product-meta">Reference: <code>${esc(maskSku(sku))}</code> · Category: <a href="${S}/c/global/${cat}.html">${esc(c.n)}</a> (${esc(c.g)})</p></div></div>
+<aside class="buy-panel" aria-label="Order options"><span class="eyebrow">${esc(c.n)}</span><h1>${esc(name)}</h1><p class="product-meta">Global item · delivered worldwide</p>
+<div style="margin:12px 0"><span class="big-price">${esc(price)}</span> <small class="sm-est">estimated, US dollars</small></div>
+<div class="sm-gactions"><a class="primary-btn sm-buynow" href="${esc(spa)}" style="text-align:center;justify-content:center">Choose options and add to cart</a></div>
+<a class="sm-wa-btn" href="${esc(wa)}" target="_blank" rel="noopener" style="display:flex;justify-content:center;text-align:center;text-decoration:none">Order on WhatsApp</a>
+<ul class="sm-buy-facts" role="list"><li>Stock, options and shipping to your country are confirmed before you pay</li><li>Pay by card or PayPal link after confirmation</li><li>Prices are estimates; the final total is sent on WhatsApp</li></ul></aside></section>
+${related.length ? `<section class="section"><div class="section-head"><div><h2>More in ${esc(c.n)}</h2></div><a class="ghost-btn" href="${S}/c/global/${cat}.html">View all</a></div><ul class="sm-static-links" role="list">${related.map(x => `<li><a href="${esc(relUrl(x))}">${esc(String(x[2]).slice(0, 90))}</a> <span>${x[3] ? esc(usd(x[3])) : ''}</span></li>`).join('')}</ul></section>` : ''}
+</div></main>
+<div id="sm-chrome-footer"></div>
+<script src="${S}/assets/js/chrome.js" defer></script>
+</body></html>`;
   return text(html, 'text/html');
 }
 

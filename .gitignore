@@ -4,3 +4,5 @@ workers/*/.wrangler/
 workers/*/node_modules/
 .dev.vars
 
+
+reports/large/
