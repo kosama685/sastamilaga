@@ -5,7 +5,11 @@ compatibility_date = "2026-10-01"
 [vars]
 SITE_ORIGIN = "https://kosama685.github.io/sastamilaga"
 WHATSAPP = "966510451995"
-# CANONICAL_BASE = "https://shop.example.com"   # set when a custom domain is attached; defaults to the Worker URL
+CANONICAL_BASE = "https://sastamilaga.com"          # the real domain: canonical URLs, sitemaps and feed links use it
+# Google Merchant feed (/feeds/global/<n>.xml). The CJ catalogue has no verified stock, so items are offered as backorder with a dispatch window.
+# Change to "in stock" only when stock is verified. The window is in days from the day the feed is fetched.
+FEED_AVAILABILITY = "backorder"
+FEED_LEAD_DAYS = "14"
 
 # Optional: serve shards from R2 instead of GitHub Pages. Upload data/cj/** to the bucket first (see README.md).
 # [[r2_buckets]]

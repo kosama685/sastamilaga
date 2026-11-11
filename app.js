@@ -159,6 +159,9 @@ function cleanToRoute(pathname) {
 function go(routeStr, replace) {
   const clean = hashToClean('#/' + routeStr);
   const url = clean !== null ? APP_BASE + clean : APP_BASE + '#/' + routeStr;
+  // Content pages (about, contact, faq …) carry no product data: leaving them is a normal page load, which brings the data in.
+  const appEl0 = document.getElementById('app');
+  if (!window.SASTA_PRODUCTS && appEl0 && appEl0.dataset.static && !replace) { location.assign(url); return; }
   history[replace ? 'replaceState' : 'pushState']({ r: routeStr }, '', url);
   route();
 }
@@ -693,6 +696,9 @@ function renderNotFound() {
     <p class="sm-page-actions"><a class="sm-btn" href="${APP_BASE}">Home</a> <a class="sm-btn sm-btn--ghost" href="${APP_BASE}shop/">Shop</a> <a class="sm-btn sm-btn--ghost" href="${APP_BASE}global/">Global shop</a> <a class="sm-btn sm-btn--ghost" href="${APP_BASE}search/">Search</a></p></section>`);
 }
 
+/* A full page load that starts while the browser is animating a page transition rejects that transition: harmless, not an error. */
+window.addEventListener('unhandledrejection', e => { if (e.reason && e.reason.name === 'AbortError' && /transition/i.test(String(e.reason.message))) e.preventDefault(); });
+
 function route() {
   const megaMenu = $('#megaMenu');
   if (megaMenu) megaMenu.classList.remove('open');
@@ -705,6 +711,8 @@ function route() {
   const appEl = document.getElementById('app');
   if (appEl && appEl.dataset.static) {     // a content page already in the HTML (about/, ur/faq/ …)
     if (!window.__staticShown) { window.__staticShown = 1; showView('app'); return; }
+    // Another route on a content page that has no product data (header search, a #/ link): load the real page, which brings the data.
+    if (!window.SASTA_PRODUCTS && location.hash.startsWith('#/')) { const cl = hashToClean(location.hash); location.replace(cl !== null ? APP_BASE + cl : APP_BASE + location.hash); return; }
     delete appEl.dataset.static;
   }
   let raw;
@@ -1426,7 +1434,7 @@ function productCard(p) {
   const out = !(p.in || num(p.stock) > 0);
   return `<article class="sm-card${out ? ' is-out' : ''}" itemscope itemtype="https://schema.org/Product">
     <a class="sm-card__media" href="#/product/${p._slug}" tabindex="-1" aria-hidden="true">
-      <img src="${esc(img(p))}" alt="${esc((p.alt && p.alt[0]) || p.n)}" width="480" height="480" loading="lazy" decoding="async" onerror="this.src=window.fallbackImg" itemprop="image">
+      <img src="${esc(img(p))}" alt="${esc((Array.isArray(p.alt) ? p.alt[0] : p.alt) || p.n)}" width="480" height="480" loading="lazy" decoding="async" onerror="this.src=window.fallbackImg" itemprop="image">
       ${(p.vids || []).length ? '<span class="sm-card__badge">Video</span>' : ''}
     </a>
     <div class="sm-card__body">
@@ -1546,7 +1554,7 @@ function updateCounts() {
   if (cc) cc.textContent = n;
   if (wc) wc.textContent = getWish().length;
   $$('.smh-cart__count, .sm-appbar__count, [data-cart-count]').forEach(el => { el.textContent = n; el.dataset.n = n; });
-  $$('.smh-cart__total').forEach(el => { el.textContent = PKR.format(total); });
+  if (products.length) $$('.smh-cart__total').forEach(el => { el.textContent = PKR.format(total); });   // no product data on content pages: leave the header total as is
 }
 
 function renderCart() {

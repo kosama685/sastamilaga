@@ -127,6 +127,7 @@ function shell({ key, keepHome = false, keepTv = false, lang = 'en', dir = 'ltr'
   h = rep(h, /<meta name="twitter:description" content="[^"]*">/, `<meta name="twitter:description" content="${esc(desc)}">`);
   // Without JavaScript (or before the app renders) the page shows its own content, not the home page.
   h = h.replace('<div id="home-view">', () => '<div id="home-view" hidden>');
+  if (isStatic) h = h.replace(/<script src="assets\/data\/products-lite\.js" defer><\/script>\n?/, '');   // content pages do not need the 20 MB product data
   if (!keepHome) h = emptyDiv(h, /<div id="home-view"[^>]*>/);      // one H1 and no repeated home content on pages that do not need it
   if (!keepTv) h = emptyDiv(h, /<div id="view-livetv"[^>]*>/);
   h = h.replace('<div id="app" class="sm-app" hidden></div>', () => `<div id="app" class="sm-app"${isStatic ? ' data-static="1"' : ''}>${body}</div>`);

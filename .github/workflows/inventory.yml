@@ -1,0 +1,65 @@
+# Read-only inventory of the Cloudflare account and a check of the WordPress application password.
+# It only issues GET requests. It writes docs/inventory.json (names, routes, sizes, a few masked code facts, capability flags):
+# never a token, password, key or cookie value.
+name: Inventory (read-only)
+
+on:
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/inventory.yml"]
+
+permissions:
+  contents: write
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    env:
+      CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      WP_URL: ${{ secrets.WORDPRESS_URL }}
+      WP_USER: ${{ secrets.WORDPRESS_USERNAME }}
+      WP_PASS: ${{ secrets.WORDPRESS_APP_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Collect
+        run: |
+          set -u
+          mkdir -p docs/_inv; out=docs/_inv
+          api() { curl -sS -m 60 -H "Authorization: Bearer $CF_TOKEN" "https://api.cloudflare.com/client/v4$1"; }
+          # token and permissions
+          api "/user/tokens/verify" | jq '{success, status: .result.status}' > $out/token.json || echo '{"success":false}' > $out/token.json
+          # Workers scripts
+          api "/accounts/$CF_ACCOUNT/workers/scripts" | jq '{success, errors: (.errors // [] | map(.message)), scripts: [.result[]? | {id, modified_on, created_on, usage_model, compatibility_date}]}' > $out/scripts.json || echo '{}' > $out/scripts.json
+          # zone and routes
+          ZID=$(api "/zones?name=sastamilaga.com" | jq -r '.result[0].id // empty')
+          echo "{\"zone_found\": $([ -n "$ZID" ] && echo true || echo false)}" > $out/zone.json
+          if [ -n "$ZID" ]; then api "/zones/$ZID/workers/routes" | jq '{success, routes: [.result[]? | {pattern, script}]}' > $out/routes.json; else echo '{"routes":[]}' > $out/routes.json; fi
+          # D1 databases
+          api "/accounts/$CF_ACCOUNT/d1/database" | jq '{success, databases: [.result[]? | {name, uuid, created_at, file_size, num_tables}]}' > $out/d1.json || echo '{}' > $out/d1.json
+          # Pages projects
+          api "/accounts/$CF_ACCOUNT/pages/projects" | jq '{success, projects: [.result[]? | {name, subdomain, domains, production_branch, source: (.source.config.repo_name // null)}]}' > $out/pages.json || echo '{}' > $out/pages.json
+          # Facts from each Worker's code (names of headers/limits only, long tokens masked)
+          : > $out/code.txt
+          for id in $(jq -r '.scripts[]?.id' $out/scripts.json); do
+            curl -sS -m 60 -H "Authorization: Bearer $CF_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT/workers/scripts/$id" -o /tmp/w.js || true
+            echo "## $id  bytes=$(wc -c < /tmp/w.js)" >> $out/code.txt
+            grep -a -n -i -E "x-sasta|github|raw\.githubusercontent|content-length|max_?bytes|maxBytes|slice\(0, *[0-9]{4,}|\.xml|feeds/|cacheTtl" /tmp/w.js | sed -E 's/[A-Za-z0-9_-]{32,}/***/g' | cut -c1-220 | head -25 >> $out/code.txt || true
+          done
+          # WordPress application password: who am I, what can I do (no values printed)
+          WPB="${WP_URL%/}"
+          curl -sS -m 60 -u "$WP_USER:$WP_PASS" "$WPB/wp-json/wp/v2/users/me?context=edit" | jq '{ok: (.id != null), id, roles, can: {manage_woocommerce: .capabilities.manage_woocommerce, manage_options: .capabilities.manage_options, edit_products: .capabilities.edit_products, install_plugins: .capabilities.install_plugins, upload_files: .capabilities.upload_files}, code: .code}' > $out/wp-user.json || echo '{"ok":false}' > $out/wp-user.json
+          curl -sS -m 60 "$WPB/wp-json/" | jq '{namespaces}' > $out/wp-ns.json || echo '{}' > $out/wp-ns.json
+          jq -s '{checked_at: (now|todate), token: .[0], scripts: .[1], zone: .[2], routes: .[3], d1: .[4], pages: .[5], wordpress_user: .[6], wordpress_namespaces: .[7]}' \
+            $out/token.json $out/scripts.json $out/zone.json $out/routes.json $out/d1.json $out/pages.json $out/wp-user.json $out/wp-ns.json > docs/inventory.json
+          mv $out/code.txt docs/inventory-worker-code-facts.txt; rm -rf $out
+          # Never publish anything that looks like a secret
+          if grep -E -q "(Bearer [A-Za-z0-9_-]{20,}|[A-Za-z0-9]{4} [A-Za-z0-9]{4} [A-Za-z0-9]{4} [A-Za-z0-9]{4} [A-Za-z0-9]{4})" docs/inventory.json docs/inventory-worker-code-facts.txt; then echo "secret-looking text found; not publishing"; rm -f docs/inventory.json docs/inventory-worker-code-facts.txt; exit 1; fi
+      - name: Commit the inventory
+        run: |
+          git config user.name "inventory-bot"; git config user.email "inventory-bot@users.noreply.github.com"
+          git add docs/inventory.json docs/inventory-worker-code-facts.txt
+          git commit -m "Inventory (read-only): Cloudflare account and WordPress credential check [skip ci]" || echo "nothing to commit"
+          git pull --rebase -q origin main && git push -q origin HEAD:main

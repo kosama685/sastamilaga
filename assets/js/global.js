@@ -161,14 +161,14 @@
         ${r[6] ? `<div class="gallery-thumbs"><button type="button" data-gallery="${esc(r[5])}" data-type="img" aria-label="Show image"><img src="${esc(r[5])}" alt=""></button><button type="button" class="active" data-gallery="${esc(r[6])}" data-type="video" aria-label="Play video"><img src="${esc(r[5])}" alt=""></button></div>` : ''}</div></div>
       <aside class="buy-panel" aria-label="Order options"><span class="eyebrow">${esc(c.n)}</span><h1>${esc(r[2])}</h1><p class="product-meta">SKU: ${esc(maskSku(r[1]))} · Global item</p>
         <div style="margin:12px 0"><span class="big-price">${est(r)}</span> <small class="sm-est">estimated</small></div>
-        <form class="sm-greq" id="greq">${varBox()}<label><span>Quantity</span><input type="number" name="qty" min="1" max="99" value="1"></label><label><span>${(window.SM_CONFIG || {}).cjShippingWorker ? 'Notes (optional)' : 'Size, colour or option (optional)'}</span><input name="opt" maxlength="120" placeholder="${(window.SM_CONFIG || {}).cjShippingWorker ? 'Anything we should know' : 'e.g. Blue, size M'}"></label><label><span>Deliver to (country and city)</span><input name="to" required maxlength="120" placeholder="e.g. Pakistan, Karachi"></label>
+        <form class="sm-greq" id="greq">${varBox()}<label><span>Quantity</span><input type="number" name="qty" min="1" max="99" value="1"></label><label><span>${(window.SM_CONFIG || {}).cjShippingWorker || (window.SM_CONFIG || {}).wpApi ? 'Notes (optional)' : 'Size, colour or option (optional)'}</span><input name="opt" maxlength="120" placeholder="${(window.SM_CONFIG || {}).cjShippingWorker || (window.SM_CONFIG || {}).wpApi ? 'Anything we should know' : 'e.g. Blue, size M'}"></label><label><span>Deliver to (country and city)</span><input name="to" required maxlength="120" placeholder="e.g. Pakistan, Karachi"></label>
           ${shipBox()}
           <div class="sm-gactions"><button type="button" class="primary-btn" id="gadd">Add to cart</button><button type="button" class="primary-btn sm-buynow" id="gbuy">Buy now</button></div>
           <button type="submit" class="sm-wa-btn">Order on WhatsApp</button></form>
         <ul class="sm-buy-facts" role="list"><li>We confirm stock, options and shipping first</li><li>Pay by card or PayPal link after confirmation</li><li>Delivery time depends on your country</li></ul>
         <p class="product-meta">More like this: <a href="#/global/c/${cs}">${esc(c.n)}</a>${g ? ` · <a href="#/global/g/${g.s}">${esc(g.n)}</a>` : ''}</p></aside></section>
       <section class="section sm-gdetails" aria-labelledby="gdet-h"><div class="section-head"><div><h2 id="gdet-h">Product details</h2></div></div>
-        <dl class="sm-gdl"><div><dt>Product</dt><dd>${esc(r[2])}</dd></div><div><dt>Reference</dt><dd>${esc(maskSku(r[1]))}</dd></div><div><dt>Category</dt><dd>${esc(c.n)}${g ? ` · ${esc(g.n)}` : ''}</dd></div><div><dt>Estimated price</dt><dd>${est(r)} per item (US dollars; final price confirmed before payment)</dd></div><div><dt>Product video</dt><dd>${r[6] ? 'Available on this page' : 'Not available for this item'}</dd></div><div><dt>Options</dt><dd>${(window.SM_CONFIG || {}).cjShippingWorker ? 'Choose from the options above' : 'Colour, size and other options are confirmed with you before you pay. Add them in the notes field.'}</dd></div><div><dt>Delivery</dt><dd>Worldwide. Shipping method, price and time depend on your country and are confirmed before payment.</dd></div></dl></section>
+        <dl class="sm-gdl"><div><dt>Product</dt><dd>${esc(r[2])}</dd></div><div><dt>Reference</dt><dd>${esc(maskSku(r[1]))}</dd></div><div><dt>Category</dt><dd>${esc(c.n)}${g ? ` · ${esc(g.n)}` : ''}</dd></div><div><dt>Estimated price</dt><dd>${est(r)} per item (US dollars; final price confirmed before payment)</dd></div><div><dt>Product video</dt><dd>${r[6] ? 'Available on this page' : 'Not available for this item'}</dd></div><div><dt>Options</dt><dd>${(window.SM_CONFIG || {}).cjShippingWorker || (window.SM_CONFIG || {}).wpApi ? 'Choose from the options above (live supplier options)' : 'Colour, size and other options are confirmed with you before you pay. Add them in the notes field.'}</dd></div><div><dt>Delivery</dt><dd>Worldwide. Shipping method, price and time depend on your country and are confirmed before payment.</dd></div></dl></section>
       <section class="section"><div class="section-head"><div><h2>More in ${esc(c.n)}</h2></div><a class="ghost-btn" href="#/global/c/${cs}">View all</a></div><div class="products-row">${related.map(x => card(cs, x)).join('')}</div></section>`);
     const chosen = { v: null };     /* the variant the customer picked (real CJ variants, when the CJ Worker is configured) */
     bindVariants(r, chosen);
@@ -199,7 +199,7 @@
   }
   /* Real CJ variants (colour, size …) from workers/cj-shipping: GET /api/cj/product?pid=. Shown only when the Worker is configured. */
   function varBox() {
-    if (!(window.SM_CONFIG || {}).cjShippingWorker) return '';
+    const C = window.SM_CONFIG || {}; if (!C.cjShippingWorker && !C.wpApi) return '';
     return `<fieldset class="sm-var" id="gvar" aria-live="polite"><legend>Choose an option</legend><p class="sm-var__load">Loading the supplier's options…</p></fieldset>`;
   }
   /* Automatic shipping quote for the visitor's country (re-run when the variant or the detected country changes). */
@@ -207,7 +207,7 @@
   function quoteSoon() { clearTimeout(quoteTimer); quoteTimer = setTimeout(() => { const go = document.getElementById('gship-go'); if (go && !go.disabled) go.click(); }, 250); }
   function bindVariants(r, chosen) {
     const box = document.getElementById('gvar'); if (!box) return;
-    const W = window.SM_CONFIG.cjShippingWorker.replace(/\/$/, '');
+    const C = window.SM_CONFIG || {}, W = (C.cjShippingWorker || '').replace(/\/$/, '');
     const pick = v => {
       chosen.v = v;
       const price = document.querySelector('.buy-panel .big-price'); if (price) price.textContent = USD.format(v.price * MARGIN);
@@ -216,7 +216,10 @@
       const out = document.getElementById('gship-out'); if (out) out.textContent = '';   /* a new variant needs a new shipping quote */
       quoteSoon();
     };
-    fetch(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`).then(x => x.json()).then(d => {
+    /* Real options: the CJ Worker when configured, otherwise the WordPress store's live options (same CJ data, the store's own price). */
+    const RATE = { USD: 1, SAR: 1 / 3.75, AED: 1 / 3.6725 };   // pegged currencies only; anything else keeps the catalogue price
+    const fromWp = d => ({ variants: ((d && d.options) || []).map(o => { const m = /([A-Z]{3})\s*([\d.,]+)/.exec(o.price_label || ''); const usd = m && RATE[m[1]] ? parseFloat(m[2].replace(/,/g, '')) * RATE[m[1]] : (r[3] || 0) * MARGIN; return { vid: o.vid, name: o.name, key: o.name, sku: o.sku, image: o.image || '', price: usd / MARGIN }; }) });
+    (W ? fetch(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`).then(x => x.json()) : fetch(`${C.wpApi.replace(/\/$/, '')}/live/options/${encodeURIComponent(r[0])}`).then(x => { if (!x.ok) throw new Error(x.status); return x.json(); }).then(fromWp)).then(d => {
       const list = (d && d.variants) || [];
       if (!list.length) { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Options will be confirmed on WhatsApp.</p>'; return; }
       if (list.length === 1) {

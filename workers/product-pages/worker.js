@@ -5,6 +5,8 @@
  * GET /global/p/<category>/<productId>[/<slug>]     product page (301 to the canonical slug)
  * GET /sitemap-global-products.xml                  sitemap index (one sitemap per category)
  * GET /sitemaps/global/<category>.xml               product URLs of one category (largest has 5,866)
+ * GET /feeds/global/index.json                     list of Google Merchant feed files (about 4,000 products each)
+ * GET /feeds/global/<n>.xml                       one Google Merchant feed file of the global catalogue
  * GET /robots.txt
  *
  * Nothing is invented: name, SKU, image, video, category and the supplier price range come from the CSV snapshot.
@@ -23,6 +25,9 @@ export default {
       if (p === '/sitemap-global-products.xml') return sitemapIndex(env, cfg);
       let m = p.match(/^\/sitemaps\/global\/([a-z0-9-]+)\.xml$/);
       if (m) return categorySitemap(m[1], env, cfg, ctx);
+      if (p === '/feeds/global/index.json') return feedIndex(env, cfg, ctx);
+      m = p.match(/^\/feeds\/global\/(\d{1,3})\.xml$/);
+      if (m) return feedChunk(+m[1], env, cfg, ctx);
       m = p.match(/^\/global\/p\/([a-z0-9-]+)\/([A-Za-z0-9-]+)(?:\/([a-z0-9-]*))?\/?$/);
       if (m) return productPage(m[1], m[2], m[3], env, cfg, ctx);
       if (p === '/' || p === '/global') return Response.redirect(`${cfg.site}/#/global`, 302);
@@ -58,6 +63,44 @@ async function shard(cat, env, ctx) {
   return JSON.parse(t.slice(t.indexOf('[', t.indexOf(',')), t.lastIndexOf(']') + 1));
 }
 
+
+/* ---------- Unique, honest descriptions: only real fields (name, group, category, price band, video, reference) ---------- */
+const maskSku = s => String(s || '').replace(/^CJ/i, 'SM-');
+const hash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+function uniqueDesc(r, c) {
+  const [id, sku, name, lo, hi, , video] = r, h = hash(id), pick = (a, k) => a[(h >>> k) % a.length];
+  const band = lo ? (hi > lo ? `from ${usd(lo)} to ${usd(hi)}` : `about ${usd(lo)}`) : '';
+  const open = pick([`${name} is listed in ${c.n} (${c.g}) at the Sasta Milaga global shop.`, `Find ${name} under ${c.n} in the Sasta Milaga global shop.`, `${name}: a ${String(c.n).toLowerCase()} item from the Sasta Milaga global range, ${c.g}.`, `Sasta Milaga global shop, ${c.g} / ${c.n}: ${name}.`], 0);
+  const price = band ? pick([`Estimated price ${band} in US dollars, depending on the option you choose.`, `Prices run ${band} (US dollars, estimated) across the available options.`, `The estimated price is ${band}; the final amount is confirmed before you pay.`], 5) : 'The price is quoted on request.';
+  const vid = video ? pick(['A product video is available on the product page.', 'You can watch a video of this item before you order.'], 9) : '';
+  const ref = `Reference ${maskSku(sku)}.`;
+  const close = pick(['Colour, size, stock and the shipping cost for your country are confirmed with you before payment, and delivery is worldwide.', 'We confirm the option, stock and shipping to your country first; you pay only after that, and we deliver worldwide.', 'Shipping to your country, the exact option and availability are confirmed before you pay. Worldwide delivery.'], 13);
+  return [open, price, vid, ref, close].filter(Boolean).join(' ');
+}
+
+/* ---------- Google Merchant feed of the global catalogue: files of about 4,000 products ---------- */
+function chunkCats(m, per = 4000) { const out = []; let cur = [], n = 0; for (const c of m.cats) { if (n + c.c > per && cur.length) { out.push(cur); cur = []; n = 0; } cur.push(c); n += c.c; } if (cur.length) out.push(cur); return out; }
+async function feedIndex(env, cfg, ctx) {
+  const m = await manifest(env, ctx), chunks = chunkCats(m);
+  return text(JSON.stringify({ total: m.total, files: chunks.length, feeds: chunks.map((cs, i) => ({ url: `${cfg.self}/feeds/global/${i + 1}.xml`, products: cs.reduce((a, c) => a + c.c, 0), categories: cs.length })) }, null, 1), 'application/json', 200, { 'Cache-Control': 'public, max-age=600, s-maxage=3600' });
+}
+async function feedChunk(k, env, cfg, ctx) {
+  const m = await manifest(env, ctx), cats = chunkCats(m)[k - 1]; if (!cats) return notFound(cfg);
+  const avail = env.FEED_AVAILABILITY || 'backorder', lead = +(env.FEED_LEAD_DAYS || 14), date = new Date(Date.now() + lead * 864e5).toISOString().slice(0, 10) + 'T00:00+00:00';
+  const items = []; let skipped = 0;
+  for (const c of cats) {
+    const rows = await shard(c.s, env, ctx); if (!rows) continue;
+    for (const r of rows) {
+      const [id, sku, name, lo, hi, img] = r;
+      if (!(lo > 0) || !/^https?:\/\//.test(img || '') || !name) { skipped++; continue; }
+      const link = `${cfg.self}/global/p/${c.s}/${id}/${slug(name)}`;
+      items.push(`<item><g:id>${esc(id)}</g:id><g:title>${esc(String(name).slice(0, 150))}</g:title><g:description>${esc(uniqueDesc(r, c))}</g:description><g:link>${esc(link)}</g:link><g:image_link>${esc(img)}</g:image_link><g:availability>${esc(avail)}</g:availability>${avail === 'backorder' || avail === 'preorder' ? `<g:availability_date>${date}</g:availability_date>` : ''}<g:price>${(Math.round(lo * MARGIN * 100) / 100).toFixed(2)} USD</g:price><g:condition>new</g:condition><g:product_type>${esc(c.g + ' > ' + c.n)}</g:product_type><g:identifier_exists>no</g:identifier_exists></item>`);
+    }
+  }
+  const body = `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0"><channel><title>Sasta Milaga global shop (${k})</title><link>${cfg.self}/global/</link><description>Global products with worldwide delivery. Prices are US-dollar estimates; the final price and shipping are confirmed before payment.</description>\n${items.join('\n')}\n</channel></rss>\n`;
+  return text(body, 'application/xml', 200, { 'X-Feed-Items': String(items.length), 'X-Feed-Skipped': String(skipped) });
+}
+
 async function productPage(cat, pid, given, env, cfg, ctx) {
   const [m, rows] = await Promise.all([manifest(env, ctx), shard(cat, env, ctx)]);
   const c = m.cats.find(x => x.s === cat); if (!c || !rows) return notFound(cfg);
@@ -65,7 +108,7 @@ async function productPage(cat, pid, given, env, cfg, ctx) {
   const [id, sku, name, lo, hi, img, video] = r, s = slug(name), path = `/global/p/${cat}/${id}/${s}`, canonical = cfg.self + path;
   if (given !== s) return Response.redirect(canonical, 301);
   const price = lo ? (hi > lo ? `${usd(lo)} – ${usd(hi)}` : usd(lo)) : 'Price on request';
-  const desc = `${name} in ${c.n} at the Sasta Milaga global shop. Estimated price ${price} (USD); stock, options and worldwide shipping are confirmed on WhatsApp before you pay.`.slice(0, 300);
+  const desc = uniqueDesc(r, c).slice(0, 300);
   const msg = `Assalam o Alaikum! I want to order this global item:\n${name}\nCJ ID: ${id}\nSKU: ${sku}\nEstimated price: ${price}\n${canonical}`;
   const wa = `https://wa.me/${cfg.wa}?text=${encodeURIComponent(msg)}`;
   const ld = { '@context': 'https://schema.org', '@graph': [
