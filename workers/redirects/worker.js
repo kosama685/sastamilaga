@@ -37,10 +37,14 @@ export default {
     const gone = () => new Response('<!doctype html><meta charset="utf-8"><meta name="robots" content="noindex"><title>Gone | Sasta Milaga</title><p>This address no longer exists. <a href="/shop/">Browse the shop</a>.</p>', { status: 410, headers: { 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex', 'Cache-Control': 'public, max-age=3600' } });
     // The index pages /videos/ and /visa/ exist as real pages on the site: this Worker is routed on /videos/* and /visa/*, so it serves them itself (read from the static site).
     const pass = async () => { const r = await fetch(`${env.SITE_ORIGIN}${q}/`, { cf: { cacheTtl: 300, cacheEverything: true } }); if (!r.ok) return new Response('Not found', { status: 404, headers: { 'X-Robots-Tag': 'noindex' } }); return new Response(r.body, { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=120, s-maxage=300', 'X-Redirects-Worker': 'index-passthrough' } }); };
+    let m0;
     try {
       if (!ur && (q === '/videos' || q === '/visa')) return pass();
       if (ur && (q === '/videos' || q === '/visa')) return go(q + '/');
       if (q === '/product') return go('/shop/');
+      if (ur && q === '/travel') return go('/travel/');
+      m0 = q.match(/^\/blog\/([^/]+)$/);   // old WordPress blog posts (exact routes only: the /blog/* route itself belongs to another Worker)
+      if (m0) { const t = (await data('blog', env))[decodeURIComponent(m0[1]).toLowerCase()]; return go(t ? `/${t}` : '/blog/'); }
       if (/\/feed$/.test(q) || /^\/(product-tag|store)\//.test(q)) return gone();
       if (ur && q === '/') return go('/');
       if (ur && URDU_PAGES[q]) return go(URDU_PAGES[q]);

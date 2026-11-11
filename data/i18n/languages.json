@@ -1,0 +1,730 @@
+[
+ {
+  "code": "en",
+  "native": "English",
+  "dir": "ltr",
+  "status": "live",
+  "reviewed_by_human": true
+ },
+ {
+  "code": "ur",
+  "native": "اردو",
+  "dir": "rtl",
+  "status": "live",
+  "reviewed_by_human": true
+ },
+ {
+  "code": "ar",
+  "native": "العربية",
+  "dir": "rtl",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "hi",
+  "native": "हिन्दी",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "bn",
+  "native": "বাংলা",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "pa",
+  "native": "ਪੰਜਾਬੀ",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ps",
+  "native": "پښتو",
+  "dir": "rtl",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "sd",
+  "native": "سنڌي",
+  "dir": "rtl",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "fa",
+  "native": "فارسی",
+  "dir": "rtl",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "tr",
+  "native": "Türkçe",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "fr",
+  "native": "Français",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "de",
+  "native": "Deutsch",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "es",
+  "native": "Español",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "pt",
+  "native": "Português",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "it",
+  "native": "Italiano",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ru",
+  "native": "Русский",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "zh",
+  "native": "中文",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ja",
+  "native": "日本語",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ko",
+  "native": "한국어",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "id",
+  "native": "Bahasa Indonesia",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ms",
+  "native": "Bahasa Melayu",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "th",
+  "native": "ไทย",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "vi",
+  "native": "Tiếng Việt",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "nl",
+  "native": "Nederlands",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "pl",
+  "native": "Polski",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "sv",
+  "native": "Svenska",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "da",
+  "native": "Dansk",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "no",
+  "native": "Norsk",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "fi",
+  "native": "Suomi",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "el",
+  "native": "Ελληνικά",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "he",
+  "native": "עברית",
+  "dir": "rtl",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "uk",
+  "native": "Українська",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "cs",
+  "native": "Čeština",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "sk",
+  "native": "Slovenčina",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "hu",
+  "native": "Magyar",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ro",
+  "native": "Română",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "bg",
+  "native": "Български",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "hr",
+  "native": "Hrvatski",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "sr",
+  "native": "Српски",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "sl",
+  "native": "Slovenščina",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "lt",
+  "native": "Lietuvių",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "lv",
+  "native": "Latviešu",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "et",
+  "native": "Eesti",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "sq",
+  "native": "Shqip",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "mk",
+  "native": "Македонски",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "bs",
+  "native": "Bosanski",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "mt",
+  "native": "Malti",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "is",
+  "native": "Íslenska",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ga",
+  "native": "Gaeilge",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "cy",
+  "native": "Cymraeg",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ca",
+  "native": "Català",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "eu",
+  "native": "Euskara",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "gl",
+  "native": "Galego",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "af",
+  "native": "Afrikaans",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "sw",
+  "native": "Kiswahili",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "am",
+  "native": "አማርኛ",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ha",
+  "native": "Hausa",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "yo",
+  "native": "Yorùbá",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ig",
+  "native": "Igbo",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "zu",
+  "native": "isiZulu",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "xh",
+  "native": "isiXhosa",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "so",
+  "native": "Soomaali",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "mg",
+  "native": "Malagasy",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ne",
+  "native": "नेपाली",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "si",
+  "native": "සිංහල",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ta",
+  "native": "தமிழ்",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "te",
+  "native": "తెలుగు",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "kn",
+  "native": "ಕನ್ನಡ",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ml",
+  "native": "മലയാളം",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "mr",
+  "native": "मराठी",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "gu",
+  "native": "ગુજરાતી",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "or",
+  "native": "ଓଡ଼ିଆ",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "as",
+  "native": "অসমীয়া",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "my",
+  "native": "မြန်မာ",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "km",
+  "native": "ខ្មែរ",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "lo",
+  "native": "ລາວ",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "mn",
+  "native": "Монгол",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ka",
+  "native": "ქართული",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "hy",
+  "native": "Հայերեն",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "az",
+  "native": "Azərbaycan",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "kk",
+  "native": "Қазақша",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "uz",
+  "native": "Oʻzbek",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ky",
+  "native": "Кыргызча",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "tg",
+  "native": "Тоҷикӣ",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "tk",
+  "native": "Türkmen",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ku",
+  "native": "Kurdî",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ckb",
+  "native": "کوردی",
+  "dir": "rtl",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "yi",
+  "native": "ייִדיש",
+  "dir": "rtl",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "fil",
+  "native": "Filipino",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "jv",
+  "native": "Basa Jawa",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "su",
+  "native": "Basa Sunda",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ceb",
+  "native": "Cebuano",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "mi",
+  "native": "Māori",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "sm",
+  "native": "Gagana Samoa",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "lb",
+  "native": "Lëtzebuergesch",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "be",
+  "native": "Беларуская",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "fy",
+  "native": "Frysk",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "eo",
+  "native": "Esperanto",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ny",
+  "native": "Chichewa",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "sn",
+  "native": "chiShona",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "st",
+  "native": "Sesotho",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "rw",
+  "native": "Kinyarwanda",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "lg",
+  "native": "Luganda",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ },
+ {
+  "code": "ti",
+  "native": "ትግርኛ",
+  "dir": "ltr",
+  "status": "not started",
+  "reviewed_by_human": false
+ }
+]

@@ -99,7 +99,7 @@ jobs:
                      "sastamilaga.com/privacy-policy/" "sastamilaga.com/terms-conditions/" "sastamilaga.com/returns-refunds/" "sastamilaga.com/shipping-delivery/" \
                      "sastamilaga.com/track-order/" "sastamilaga.com/sell-with-us/" "sastamilaga.com/rewards-program/" "sastamilaga.com/refer-and-earn/" \
                      "sastamilaga.com/ur/" "sastamilaga.com/ur/privacy-policy/" "sastamilaga.com/ur/terms-conditions/" "sastamilaga.com/ur/returns-refunds/" \
-                     "sastamilaga.com/ur/shipping-delivery/" "sastamilaga.com/ur/sell-with-us/"; do attach "$pat" sastamilaga-redirects; done
+                     "sastamilaga.com/ur/shipping-delivery/" "sastamilaga.com/ur/sell-with-us/" "sastamilaga.com/blog/best-bags-to-buy-in-karachi-practical-shopping-guide/" "sastamilaga.com/blog/winter-kitchen-essentials-pakistan/" "sastamilaga.com/blog/best-academic-books-to-buy-in-karachi-practical-shopping-guide/" "sastamilaga.com/blog/best-audio-entertainment-to-buy-in-peshawar-practical-shopping-guide/" "sastamilaga.com/blog/online-earning-pakistan-content-sales-rewards/" "sastamilaga.com/blog/best-art-craft-materials-to-buy-in-rawalpindi-practical-shopping-guide/" "sastamilaga.com/blog/best-abayas-hijabs-to-buy-in-pakistan-practical-shopping-guide/" "sastamilaga.com/ur/travel/"; do attach "$pat" sastamilaga-redirects; done
           # The Worker on /global/p/* only accepts UUID-style ids (numeric ids return 404) and marks pages noindex; the full-catalogue Worker serves all 451,812.
           # Roll back: PUT the route again with the previous script printed above (sasta-global-product-recovery-v1).
           attach "sastamilaga.com/global/p/*" sastamilaga-global-pages
