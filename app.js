@@ -1794,6 +1794,15 @@ function syncPay() {
   }).catch(() => { if (my === _payReq) amt.textContent = 'Could not get today\'s exchange rate. Check your connection and reselect PayPal, or choose cash on delivery.'; });
 }
 document.addEventListener('change', e => { if (e.target.matches && e.target.matches('#checkoutForm select[name="payment_method"]')) syncPay(); });
+/* Window-capture handlers for the checkout buttons: on the store's own domain a site-wide script swallows these clicks at document level
+   ("static cart has not been synchronized"), so the order buttons are handled first (window comes before document in the event path). */
+window.addEventListener('click', e => {
+  const t = e.target, b = t && t.closest && t.closest('[data-pay], #smPlaceOrder'); if (!b || !document.getElementById('checkoutForm')) return;
+  e.preventDefault(); e.stopImmediatePropagation(); if (b.disabled) return;
+  const form = document.getElementById('checkoutForm'); if (!form.reportValidity()) return;
+  if (b.id === 'smPlaceOrder') window.placeOrder({ preventDefault() { } }); else window.placeOrder({ preventDefault() { } }, b.dataset.pay, b);
+}, true);
+window.addEventListener('submit', e => { if (e.target && e.target.id === 'checkoutForm') { e.preventDefault(); e.stopImmediatePropagation(); if (e.target.reportValidity()) window.placeOrder({ preventDefault() { } }); } }, true);
 document.addEventListener('click', e => {
   const b = e.target.closest && e.target.closest('[data-pay]'); if (!b || b.disabled) return;
   const form = document.getElementById('checkoutForm'); if (!form.reportValidity()) return;
