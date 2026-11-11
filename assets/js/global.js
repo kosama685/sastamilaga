@@ -49,7 +49,7 @@
   function gcHtml() {
     const l = gcGet(); if (!l.length) return '';
     const sub = l.reduce((a, x) => a + x.unit * x.qty, 0);
-    const lines = l.map(x => `<div class="cart-line"><img src="${esc(x.img)}" alt="${esc(x.name)}" width="88" height="88" onerror="this.src=window.fallbackImg"><div><b>${esc(x.name)}</b><p style="color:var(--muted);margin:4px 0">${x.vname ? esc(x.vname) + ' · ' : ''}${x.opt ? esc(x.opt) + ' · ' : ''}Global item</p><div class="price">${USD.format(x.unit)} <small class="sm-est">estimated each</small></div></div><div><div class="qty"><button type="button" data-gc="dec" data-k="${esc(gcKey(x))}" aria-label="Decrease">−</button><b>${x.qty}</b><button type="button" data-gc="inc" data-k="${esc(gcKey(x))}" aria-label="Increase">+</button></div><button type="button" class="ghost-btn" data-gc="rm" data-k="${esc(gcKey(x))}" style="margin-top:8px">Remove</button></div></div>`).join('');
+    const lines = l.map(x => `<div class="cart-line"><img src="${esc(x.img)}" alt="${esc(x.name)}" width="88" height="88" onerror="this.src=window.fallbackImg"><div><b>${esc(x.name)}</b><p style="color:var(--muted);margin:4px 0">${x.vname ? esc(x.vname) + ' · ' : ''}${x.opt ? esc(x.opt) + ' · ' : ''}Global item${x.ship ? '<br>Shipping: ' + esc(x.ship) : ''}</p><div class="price">${USD.format(x.unit)} <small class="sm-est">estimated each</small></div></div><div><div class="qty"><button type="button" data-gc="dec" data-k="${esc(gcKey(x))}" aria-label="Decrease">−</button><b>${x.qty}</b><button type="button" data-gc="inc" data-k="${esc(gcKey(x))}" aria-label="Increase">+</button></div><button type="button" class="ghost-btn" data-gc="rm" data-k="${esc(gcKey(x))}" style="margin-top:8px">Remove</button></div></div>`).join('');
     return `<section class="section sm-gcart" aria-labelledby="gcart-h"><div class="section-head"><div><h2 id="gcart-h">Global items</h2><p>Prepaid. Stock, options and shipping to your country are confirmed with you before you pay.</p></div></div>
       <div class="cart-layout"><div>${lines}</div><aside class="summary-box"><h2 style="margin:0 0 14px">Global order</h2><div class="summary-row"><span>Items (estimated)</span><b>${USD.format(sub)}</b></div><div class="summary-row"><span>Shipping</span><b>Confirmed on WhatsApp</b></div>
         <label class="sm-gcart__to"><span>Deliver to (country and city)</span><input id="gcTo" maxlength="120" value="${esc(gcTo())}" placeholder="e.g. Pakistan, Karachi" required></label>
@@ -58,7 +58,7 @@
   }
   function gcMessage(l, to) {
     const sub = l.reduce((a, x) => a + x.unit * x.qty, 0);
-    return `Assalam o Alaikum! I want to order these global items (prepaid):\n\n${l.map((x, i) => `${i + 1}. ${x.name}\n   SKU: ${x.sku}${x.vname ? '\n   Variant: ' + x.vname : ''}${x.opt ? '\n   Notes: ' + x.opt : ''}\n   Quantity: ${x.qty}\n   Estimated: ${USD.format(x.unit)} each\n   ${x.url}`).join('\n\n')}\n\nItems total (estimated): ${USD.format(sub)}\nDeliver to: ${to}\nPlease confirm stock, shipping and the final total.`;
+    return `Assalam o Alaikum! I want to order these global items (prepaid):\n\n${l.map((x, i) => `${i + 1}. ${x.name}\n   SKU: ${x.sku}${x.vname ? '\n   Variant: ' + x.vname : ''}${x.opt ? '\n   Notes: ' + x.opt : ''}${x.ship ? '\n   Shipping chosen: ' + x.ship : ''}\n   Quantity: ${x.qty}\n   Estimated: ${USD.format(x.unit)} each\n   ${x.url}`).join('\n\n')}\n\nItems total (estimated): ${USD.format(sub)}\nDeliver to: ${to}\nPlease confirm stock, shipping and the final total.`;
   }
   let gcBound = false;
   function gcBind() {
@@ -172,8 +172,8 @@
       <section class="section"><div class="section-head"><div><h2>More in ${esc(c.n)}</h2></div><a class="ghost-btn" href="#/global/c/${cs}">View all</a></div><div class="products-row">${related.map(x => card(cs, x)).join('')}</div></section>`);
     const chosen = { v: null };     /* the variant the customer picked (real CJ variants, when the CJ Worker is configured) */
     bindVariants(r, chosen);
-    bindShip(r, chosen);
-    const rowFrom = f => { const v = chosen.v; return { id: r[0], cs, sku: r[1], name: r[2], img: r[5], unit: (v ? v.price : (r[3] || 0)) * MARGIN, qty: Math.max(1, Math.min(99, parseInt(f.qty.value, 10) || 1)), opt: (f.opt.value || '').trim(), vkey: v ? (v.sku || v.key || '') : '', vname: v ? (v.key || v.name || '') : '', url: ownUrl(cs, r) }; };
+    (wpShip() ? bindShipWp : bindShip)(r, chosen);
+    const rowFrom = f => { const v = chosen.v; return { id: r[0], cs, sku: r[1], name: r[2], img: r[5], unit: (v ? v.price : (r[3] || 0)) * MARGIN, qty: Math.max(1, Math.min(99, parseInt(f.qty.value, 10) || 1)), opt: (f.opt.value || '').trim(), ship: ((document.querySelector('#greq [name=ship]:checked') || {}).value || ''), vkey: v ? (v.sku || v.key || '') : '', vname: v ? (v.key || v.name || '') : '', url: ownUrl(cs, r) }; };
     const addRow = () => { const f = document.getElementById('greq'); const row = rowFrom(f); if (!row.unit) { toast('This item has no listed price yet. Order it on WhatsApp and we will quote it.'); return null; } gcAdd(row); return row; };
     document.getElementById('gadd').addEventListener('click', () => { if (addRow()) toast('Added to cart'); });
     document.getElementById('gbuy').addEventListener('click', () => { if (addRow()) { A.go('cart'); } });   // quick buy: straight to the cart with the item added
@@ -187,7 +187,40 @@
     });
   }
   /* Live CJ shipping quote (workers/cj-shipping). Shown only when SM_CONFIG.cjShippingWorker is set. */
+
+  /* Live shipping quotes from the WordPress store (global-dropshipping-commerce): real carrier rates for the visitor's country,
+     already converted to the visitor's currency. Only on the store's own domain, where the session cookies are first-party. */
+  const wpShip = () => { const C = window.SM_CONFIG || {}; return !C.cjShippingWorker && C.wpApi && window.SMWoo && window.SMWoo.active; };
+  function shipBoxWp() {
+    const mk = window.SMMarket; let nm = ''; try { nm = mk ? mk.countryName(mk.state().country) : ''; } catch (e) { }
+    return `<fieldset class="sm-ship"><legend>Shipping cost</legend><div class="sm-ship__row"><span>Delivering to <b id="gship-to">${esc(nm || 'your country')}</b> <button type="button" class="sm-btn sm-btn--ghost" id="gship-chg">Change</button></span><button type="button" class="sm-btn sm-btn--ghost" id="gship-go">Get shipping cost</button></div>
+      <div id="gship-out" class="sm-ship__out" role="status" aria-live="polite"><small>Choose an option to see the carrier rates for your country.</small></div></fieldset>`;
+  }
+  function bindShipWp(r, chosen) {
+    const go = document.getElementById('gship-go'); if (!go) return;
+    const out = document.getElementById('gship-out'), api = (() => { try { return new URL(window.SM_CONFIG.wpApi).pathname; } catch (e) { return window.SM_CONFIG.wpApi; } })().replace(/\/$/, ''), chg = document.getElementById('gship-chg');
+    if (chg) chg.addEventListener('click', () => { if (window.SMMarket) window.SMMarket.open(); });
+    if (window.__shipMk) window.removeEventListener('sm:market', window.__shipMk);
+    window.__shipMk = () => { const t = document.getElementById('gship-to'), mk = window.SMMarket; try { if (t && mk) t.textContent = mk.countryName(mk.state().country); } catch (e) { } if (chosen && chosen.v) quoteSoon(); };
+    window.addEventListener('sm:market', window.__shipMk);
+    go.addEventListener('click', async () => {
+      if (!chosen.v) { out.innerHTML = '<small>Choose an option first.</small>'; return; }
+      const qty = Number(document.querySelector('#greq [name="qty"]').value) || 1;
+      go.disabled = true; out.textContent = 'Getting carrier rates for your country…';
+      try {
+        await window.SMWoo.sync();
+        const c = await (await fetch(`${api}/context`, { credentials: 'include' })).json();
+        const res = await fetch(`${api}/live/freight`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-GDCS-CSRF': c.csrf }, body: JSON.stringify({ pid: r[0], vid: chosen.v.vid, quantity: qty, csrf: c.csrf }) });
+        const d = await res.json().catch(() => null);
+        if (!res.ok || !d || !d.quotes || !d.quotes.length) { out.textContent = ((d && d.message) ? d.message.replace(/<[^>]+>/g, '') + ' ' : '') + 'We will confirm shipping on WhatsApp.'; return; }
+        const money = (n, cur) => { try { return new Intl.NumberFormat('en', { style: 'currency', currency: cur }).format(n); } catch (e) { return `${cur} ${n.toFixed(2)}`; } };
+        out.innerHTML = d.quotes.slice(0, 6).map((m, i) => { const val = `${neutral(m.service)}: ${money(m.cost, m.currency)}, ${m.estimate} days`; return `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(val)}"${i ? '' : ' checked'}> <span>${esc(neutral(m.service))}</span> <b>${esc(money(m.cost, m.currency))}</b> <small>${esc(m.estimate)} days</small></label>`; }).join('') + `<p class="sm-ship__note">Carrier price for ${qty} item${qty > 1 ? 's' : ''} shipped from ${esc((d.origins && d.origins[0] && d.origins[0].name) || 'our supplier')}, before any customs duties. The final total is confirmed before you pay.</p>`;
+      } catch (e) { out.textContent = 'Shipping prices are not available right now. We will confirm shipping on WhatsApp.'; }
+      finally { go.disabled = false; }
+    });
+  }
   function shipBox() {
+    if (wpShip()) return shipBoxWp();
     if (!(window.SM_CONFIG || {}).cjShippingWorker) return '';
     let names; try { names = new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) { names = null; }
     // Every country, with the visitor's own (detected) country selected: no manual choice needed.
@@ -210,7 +243,7 @@
     const C = window.SM_CONFIG || {}, W = (C.cjShippingWorker || '').replace(/\/$/, '');
     const pick = v => {
       chosen.v = v;
-      const price = document.querySelector('.buy-panel .big-price'); if (price) price.textContent = USD.format(v.price * MARGIN);
+      const price = document.querySelector('.buy-panel .big-price'); if (price) price.textContent = v.label || USD.format(v.price * MARGIN);
       const img = document.querySelector('.gallery-main img'); if (img && v.image) img.src = v.image;
       const vid = document.querySelector('.gallery-main video'); if (vid && v.image && vid.paused) vid.poster = v.image;   /* video products: the cover image follows the variant */
       const out = document.getElementById('gship-out'); if (out) out.textContent = '';   /* a new variant needs a new shipping quote */
@@ -218,14 +251,14 @@
     };
     /* Real options: the CJ Worker when configured, otherwise the WordPress store's live options (same CJ data, the store's own price). */
     const RATE = { USD: 1, SAR: 1 / 3.75, AED: 1 / 3.6725 };   // pegged currencies only; anything else keeps the catalogue price
-    const fromWp = d => ({ variants: ((d && d.options) || []).map(o => { const m = /([A-Z]{3})\s*([\d.,]+)/.exec(o.price_label || ''); const usd = m && RATE[m[1]] ? parseFloat(m[2].replace(/,/g, '')) * RATE[m[1]] : (r[3] || 0) * MARGIN; return { vid: o.vid, name: o.name, key: o.name, sku: o.sku, image: o.image || '', price: usd / MARGIN }; }) });
-    (W ? fetch(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`).then(x => x.json()) : fetch(`${C.wpApi.replace(/\/$/, '')}/live/options/${encodeURIComponent(r[0])}`).then(x => { if (!x.ok) throw new Error(x.status); return x.json(); }).then(fromWp)).then(d => {
+    const fromWp = d => ({ variants: ((d && d.options) || []).map(o => { const m = /([A-Z]{3})\s*([\d.,]+)/.exec(o.price_label || ''); const usd = m && RATE[m[1]] ? parseFloat(m[2].replace(/,/g, '')) * RATE[m[1]] : (r[3] || 0) * MARGIN; return { vid: o.vid, name: o.name, key: o.name, sku: o.sku, image: o.image || '', price: usd / MARGIN, label: o.price_label || '' }; }) });
+    (W ? fetch(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`).then(x => x.json()) : fetch(`${(window.SMWoo && window.SMWoo.active ? (() => { try { return new URL(C.wpApi).pathname; } catch (e) { return C.wpApi; } })() : C.wpApi).replace(/\/$/, '')}/live/options/${encodeURIComponent(r[0])}`).then(x => { if (!x.ok) throw new Error(x.status); return x.json(); }).then(fromWp)).then(d => {
       const list = (d && d.variants) || [];
       if (!list.length) { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Options will be confirmed on WhatsApp.</p>'; return; }
       if (list.length === 1) {
         box.innerHTML = `<legend>Option</legend><p class="sm-var__one"><b>${esc(list[0].key || list[0].name)}</b> <small>SKU ${esc(maskSku(list[0].sku))}</small></p>`; pick(list[0]); return;
       }
-      box.innerHTML = `<legend>Choose an option <small>(${list.length})</small></legend><div class="sm-var__grid" role="radiogroup">${list.map((v, i) => `<label class="sm-var__opt"><input type="radio" name="variant" value="${esc(v.vid)}" required><span class="sm-var__img">${v.image ? `<img src="${esc(v.image)}" alt="" width="44" height="44" loading="lazy">` : ''}</span><span class="sm-var__t"><b>${esc(v.key || v.name)}</b><small>${USD.format(v.price * MARGIN)}</small></span></label>`).join('')}</div>`;
+      box.innerHTML = `<legend>Choose an option <small>(${list.length})</small></legend><div class="sm-var__grid" role="radiogroup">${list.map((v, i) => `<label class="sm-var__opt"><input type="radio" name="variant" value="${esc(v.vid)}" required><span class="sm-var__img">${v.image ? `<img src="${esc(v.image)}" alt="" width="44" height="44" loading="lazy">` : ''}</span><span class="sm-var__t"><b>${esc(v.key || v.name)}</b><small>${v.label || USD.format(v.price * MARGIN)}</small></span></label>`).join('')}</div>`;
       box.addEventListener('change', e => { if (e.target.name === 'variant') pick(list.find(v => v.vid === e.target.value)); });
     }).catch(() => { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Options could not be loaded. Tell us your size or colour in the notes and we will confirm it on WhatsApp.</p>'; });
   }

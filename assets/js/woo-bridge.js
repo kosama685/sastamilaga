@@ -35,6 +35,7 @@
       return { ok: false, status: x.r.status, message: plain(x.j && x.j.message) || 'The cart could not be updated.', reason: (x.j && x.j.code) || 'error' };
     });
   }
+  W.sync = syncContext;
   W.add = function (sku, qty) {
     qty = Math.max(1, Math.min(99, parseInt(qty, 10) || 1));
     return loadIds().then(function (map) {
