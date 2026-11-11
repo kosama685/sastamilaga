@@ -93,9 +93,9 @@ jobs:
               fi
             fi
           }
-          for pat in "sastamilaga.com/product/*/" "sastamilaga.com/ur/product/*/" "sastamilaga.com/product-category/*" "sastamilaga.com/ur/product-category/*" \
+          for pat in "sastamilaga.com/product/*" "sastamilaga.com/ur/product/*" "sastamilaga.com/product-category/*" "sastamilaga.com/ur/product-category/*" \
                      "sastamilaga.com/product-tag/*" "sastamilaga.com/ur/product-tag/*" "sastamilaga.com/store/*" "sastamilaga.com/ur/store/*" \
-                     "sastamilaga.com/videos/*/" "sastamilaga.com/ur/videos/*/" "sastamilaga.com/visa/*/" "sastamilaga.com/ur/visa/*/" \
+                     "sastamilaga.com/videos/*" "sastamilaga.com/ur/videos/*" "sastamilaga.com/visa/*" "sastamilaga.com/ur/visa/*" \
                      "sastamilaga.com/privacy-policy/" "sastamilaga.com/terms-conditions/" "sastamilaga.com/returns-refunds/" "sastamilaga.com/shipping-delivery/" \
                      "sastamilaga.com/track-order/" "sastamilaga.com/sell-with-us/" "sastamilaga.com/rewards-program/" "sastamilaga.com/refer-and-earn/" \
                      "sastamilaga.com/ur/" "sastamilaga.com/ur/privacy-policy/" "sastamilaga.com/ur/terms-conditions/" "sastamilaga.com/ur/returns-refunds/" \

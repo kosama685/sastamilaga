@@ -124,9 +124,9 @@ async function productPage(cat, pid, given, env, cfg, ctx) {
     { '@type': 'Product', '@id': canonical + '#product', name, sku, mpn: id, image: [img], category: c.n, url: canonical, brand: { '@type': 'Brand', name: 'Sasta Milaga' },
       ...(video ? { subjectOf: { '@type': 'VideoObject', name, description: `${name} product video`, thumbnailUrl: img, contentUrl: video, uploadDate: m.snapshot } } : {}) },
     { '@type': 'BreadcrumbList', itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: `${cfg.site}/` },
-      { '@type': 'ListItem', position: 2, name: 'Global shop', item: `${cfg.site}/c/global/index.html` },
-      { '@type': 'ListItem', position: 3, name: c.n, item: `${cfg.site}/c/global/${cat}.html` },
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${cfg.self}/` },
+      { '@type': 'ListItem', position: 2, name: 'Global shop', item: `${cfg.self}/c/global/index.html` },
+      { '@type': 'ListItem', position: 3, name: c.n, item: `${cfg.self}/c/global/${cat}.html` },
       { '@type': 'ListItem', position: 4, name, item: canonical }] }] };
   const idx = rows.indexOf(r), related = rows.slice(Math.max(0, idx - 4), idx).concat(rows.slice(idx + 1, idx + 5)).slice(0, 8);
   const S = cfg.self, relUrl = x => `${S}/global/p/${cat}/${x[0]}/${slug(x[2])}`;
