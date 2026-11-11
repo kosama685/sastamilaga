@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-11T15:25:58Z",
+  "checked_at": "2026-11-11T15:35:01Z",
   "token": {
     "success": true,
     "status": "active"
@@ -283,28 +283,28 @@
       },
       {
         "id": "sastamilaga-cj-shipping",
-        "modified_on": "2026-11-11T15:24:35.735235Z",
+        "modified_on": "2026-11-11T15:33:43.668658Z",
         "created_on": "2026-11-11T03:54:36.589467Z",
         "usage_model": "standard",
         "compatibility_date": "2025-07-18"
       },
       {
         "id": "sastamilaga-global-pages",
-        "modified_on": "2026-11-11T15:24:45.71304Z",
+        "modified_on": "2026-11-11T15:33:54.745198Z",
         "created_on": "2026-11-11T03:54:44.151298Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-paypal",
-        "modified_on": "2026-11-11T15:24:41.781202Z",
+        "modified_on": "2026-11-11T15:33:49.630951Z",
         "created_on": "2026-11-11T03:54:41.174076Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-redirects",
-        "modified_on": "2026-11-11T15:24:51.038439Z",
+        "modified_on": "2026-11-11T15:33:58.988472Z",
         "created_on": "2026-11-11T05:14:22.59741Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
@@ -344,10 +344,6 @@
         "script": "sasta-cj-video-proxy"
       },
       {
-        "pattern": "sastamilaga.com/blog/*",
-        "script": "sasta-brand-pages-v1"
-      },
-      {
         "pattern": "sastamilaga.com/global-shop/sitemap.xml",
         "script": "sasta-global-product-pages"
       },
@@ -385,7 +381,7 @@
       },
       {
         "pattern": "sastamilaga.com/contact/*",
-        "script": "sasta-brand-pages-v1"
+        "script": "sastamilaga-redirects"
       },
       {
         "pattern": "sastamilaga.com/global/p/*",
@@ -525,6 +521,10 @@
       },
       {
         "pattern": "sastamilaga.com/blog/best-audio-entertainment-to-buy-in-peshawar-practical-shopping-guide/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/*",
         "script": "sastamilaga-redirects"
       }
     ]
