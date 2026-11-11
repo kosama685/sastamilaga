@@ -44,5 +44,46 @@
   };
   W.count = function () { return fetch(ROOT + 'wp-json/wc/store/v1/cart', { credentials: 'include' }).then(function (r) { return r.json(); }).then(function (j) { return (j && j.items_count) || 0; }).catch(function () { return 0; }); };
   W.badge = function () { if (!W.active) return; W.count().then(function (n) { document.querySelectorAll('.smh-cart__count').forEach(function (el) { el.textContent = n; el.setAttribute('data-n', n); }); }); };
+  /* Click handling. The domain's recovery layer listens for clicks on the document in the capture phase and swallows anything that looks
+     like a static checkout. The window sits above the document in the event path, so this capture listener runs first. */
+  function toast(html) {
+    var t = document.getElementById('sm-static-toast');
+    if (!t) { t = document.createElement('div'); t.id = 'sm-static-toast'; t.setAttribute('role', 'status'); t.setAttribute('aria-live', 'polite'); t.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:2147483600;background:#0B3B20;color:#fff;padding:12px 20px;border-radius:12px;font:600 15px/1.3 system-ui,sans-serif;box-shadow:0 14px 30px -12px rgba(0,0,0,.5);opacity:0;transition:opacity .25s;max-width:92vw'; document.body.appendChild(t); }
+    t.innerHTML = html; t.style.opacity = '1'; clearTimeout(t.__h); t.__h = setTimeout(function () { t.style.opacity = '0'; }, 4200);
+  }
+  function pageSku() {
+    var out = ''; document.querySelectorAll('script[type="application/ld+json"]').forEach(function (s) { try { var j = JSON.parse(s.textContent); (Array.isArray(j) ? j : j['@graph'] || [j]).forEach(function (x) { if (x['@type'] === 'Product' && x.sku) out = String(x.sku); }); } catch (e) {} });
+    return out;
+  }
+  function wa() { var a = document.querySelector('main a.sm-wa-btn'); return a ? a.href : ''; }
+  function run(sku, qty, buyNow, el) {
+    if (!sku || (el && el.getAttribute('aria-busy'))) return; if (el) el.setAttribute('aria-busy', 'true');
+    W.add(sku, qty).then(function (r) {
+      if (el) el.removeAttribute('aria-busy');
+      if (r.ok) { if (buyNow) location.href = '/checkout/'; else toast('Added to cart. <a href="/cart/" style="color:#FFB347;margin-left:8px">View cart</a>'); }
+      else if (r.reason === 'unmapped') toast('This item is ordered on WhatsApp.' + (wa() ? ' <a href="' + wa() + '" target="_blank" rel="noopener" style="color:#FFB347;margin-left:8px">Order on WhatsApp</a>' : ''));
+      else toast(r.message);
+    });
+  }
+  var remote = /\.github\.io$/.test(host);   // the GitHub copy cannot share a WooCommerce session with the store: it hands the shopper over to the store with the item
+  function go(sku, buyNow) { location.href = 'https://sastamilaga.com/?sm_do=' + (buyNow ? 'buy' : 'add') + '&sku=' + encodeURIComponent(sku); }
+  window.addEventListener('click', function (e) {
+    if (!W.active && !remote) return; var t = e.target; if (!t || !t.closest) return;
+    var card = t.closest('[data-add-cart]');   // product cards (home, shop, search, categories)
+    if (card) { e.preventDefault(); e.stopImmediatePropagation(); if (remote) go(card.getAttribute('data-add-cart'), false); else run(card.getAttribute('data-add-cart'), 1, false, card); return; }
+    var a = t.closest('main a[href*="#/product/"]'); if (!a) return;   // static product page buttons
+    var label = (a.textContent || '').trim().toLowerCase(), add = /^add to cart/.test(label), buy = /^buy now/.test(label); if (!add && !buy) return;
+    var sku = pageSku(); if (!sku) return;
+    e.preventDefault(); e.stopImmediatePropagation(); if (remote) go(sku, buy); else run(sku, 1, buy, a);
+  }, true);
+  // Arriving from the GitHub copy (or a shared link) with an item to add: do it, then clean the address.
+  if (W.active) {
+    var q = new URLSearchParams(location.search), act = q.get('sm_do'), want = q.get('sku');
+    if (act && want && /^[A-Za-z0-9_-]{3,40}$/.test(want)) {
+      history.replaceState(null, '', location.pathname);
+      var start = function () { W.add(want, 1).then(function (r) { if (r.ok) { if (act === 'buy') location.href = '/checkout/'; else { toast('Added to cart. <a href="/cart/" style="color:#FFB347;margin-left:8px">View cart</a>'); } } else if (r.reason === 'unmapped') toast('This item is ordered on WhatsApp.'); else toast(r.message); }); };
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+    }
+  }
   if (W.active) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', W.badge); else setTimeout(W.badge, 600); }
 })();
