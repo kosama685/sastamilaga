@@ -51,7 +51,20 @@ jobs:
             echo "## $id  bytes=$(wc -c < /tmp/w.js)" >> $out/code.txt
             grep -a -n -i -E "x-sasta|github|raw\.githubusercontent|content-length|max_?bytes|maxBytes|slice\(0, *[0-9]{4,}|\.xml|feeds/|cacheTtl" /tmp/w.js | sed -E 's/[A-Za-z0-9_-]{32,}/***/g' | cut -c1-220 | head -25 >> $out/code.txt || true
           done
-          # WordPress application password: who am I, what can I do (no values printed)
+          # Targeted, masked extracts from the Workers that matter for the product pages and the footer (names of patterns only)
+          : > docs/inventory-worker-probes.txt
+          probe() { # script, label, regex
+            curl -sS -m 60 -H "Authorization: Bearer $CF_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT/workers/scripts/$1" -o /tmp/p.js || return 0
+            echo "## $1 :: $2 (bytes=$(wc -c < /tmp/p.js))" >> docs/inventory-worker-probes.txt
+            grep -a -n -i -E "$3" /tmp/p.js | sed -E 's/[A-Za-z0-9_-]{40,}/***/g' | cut -c1-300 | head -${4:-30} >> docs/inventory-worker-probes.txt || true
+          }
+          probe sasta-global-product-recovery-v1 "id patterns and lookups" "global/p|match\(|RegExp|\[A-F|0-9a-f|uuid|not found|404|data/cj|shard|fetch\(" 40
+          probe sasta-canonical-sync-v11 "footer or html injection" "regional team|Choose a regional|footer|insertAdjacent|replace\(|HTMLRewriter|</body>|smwa" 40
+          probe sasta-account-links-v10 "footer or html injection" "regional team|Choose a regional|footer|HTMLRewriter|</body>|smwa|kind===" 30
+          probe sasta-brand-pages-v1 "footer or html injection" "regional team|Choose a regional|footer|HTMLRewriter|</body>" 20
+          probe sasta-github-static-primary-v4 "footer or html injection" "regional team|Choose a regional|footer|HTMLRewriter|</body>" 12
+          probe sasta-global-product-variants-v2 "id patterns" "global-shop/p|match\(|RegExp|\[A-F|uuid|404" 20
+          probe sasta-cj-variants-shipping "routes and key use" "pathname|/api/cj|CJ_|apiKey|env\." 24          # WordPress application password: who am I, what can I do (no values printed)
           WPB="${WP_URL%/}"
           curl -sS -m 60 -u "$WP_USER:$WP_PASS" "$WPB/wp-json/wp/v2/users/me?context=edit" | jq '{ok: (.id != null), id, roles, can: {manage_woocommerce: .capabilities.manage_woocommerce, manage_options: .capabilities.manage_options, edit_products: .capabilities.edit_products, install_plugins: .capabilities.install_plugins, upload_files: .capabilities.upload_files}, code: .code}' > $out/wp-user.json || echo '{"ok":false}' > $out/wp-user.json
           curl -sS -m 60 "$WPB/wp-json/" | jq '{namespaces}' > $out/wp-ns.json || echo '{}' > $out/wp-ns.json
@@ -59,10 +72,10 @@ jobs:
             $out/token.json $out/scripts.json $out/zone.json $out/routes.json $out/d1.json $out/pages.json $out/wp-user.json $out/wp-ns.json > docs/inventory.json
           mv $out/code.txt docs/inventory-worker-code-facts.txt; rm -rf $out
           # Never publish anything that looks like a secret
-          if grep -E -q "(Bearer [A-Za-z0-9_-]{20,}|[A-Za-z0-9]{4} [A-Za-z0-9]{4} [A-Za-z0-9]{4} [A-Za-z0-9]{4} [A-Za-z0-9]{4})" docs/inventory.json docs/inventory-worker-code-facts.txt; then echo "secret-looking text found; not publishing"; rm -f docs/inventory.json docs/inventory-worker-code-facts.txt; exit 1; fi
+          if grep -E -q "(Bearer [A-Za-z0-9_-]{20,}|[A-Za-z0-9]{4} [A-Za-z0-9]{4} [A-Za-z0-9]{4} [A-Za-z0-9]{4} [A-Za-z0-9]{4})" docs/inventory.json docs/inventory-worker-code-facts.txt docs/inventory-worker-probes.txt; then echo "secret-looking text found; not publishing"; rm -f docs/inventory.json docs/inventory-worker-code-facts.txt; exit 1; fi
       - name: Commit the inventory
         run: |
           git config user.name "inventory-bot"; git config user.email "inventory-bot@users.noreply.github.com"
-          git add docs/inventory.json docs/inventory-worker-code-facts.txt
+          git add docs/inventory.json docs/inventory-worker-code-facts.txt docs/inventory-worker-probes.txt
           git commit -m "Inventory (read-only): Cloudflare account and WordPress credential check [skip ci]" || echo "nothing to commit"
           git pull --rebase -q origin main && git push -q origin HEAD:main
