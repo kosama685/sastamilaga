@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/(\w:)/, '$1')), '..');
-const SRC = process.argv[2] || 'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8';
+const SRC = process.argv.slice(2).find(a => !a.startsWith('--')) || 'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8';
 const text = /^https?:/.test(SRC) ? await (await fetch(SRC)).text() : fs.readFileSync(SRC, 'utf8');
 if (!text.startsWith('#EXTM3U')) { console.error('Not an M3U playlist'); process.exit(1); }
 
@@ -39,6 +39,26 @@ for (let i = 0; i < lines.length; i++) {
   items.push({ id: ++id, name, logo: attr(l, 'tvg-logo'), cc, cat, type, src, ext, ...(src !== url ? { page: url } : {}),
     ...(marks.includes('Ⓖ') ? { geo: true } : {}), ...(marks.includes('Ⓢ') ? { part: true } : {}), group: attr(l, 'group-title') });
 }
+// Second source: the channels published in the WordPress Live TV plugin (data/livetv/wp-channels.json, a read-only export of its table).
+// Same classification as above. A channel whose stream address is already in the first source is not repeated.
+{
+  const wf = path.join(ROOT, 'data/livetv/wp-channels.json');
+  if (fs.existsSync(wf)) {
+    const norm = u => String(u).trim().replace(/^http:\/\//i, 'https://').replace(/[?#].*$/, '').toLowerCase();
+    const seen = new Set(items.map(c => norm(c.page || c.src))); let added = 0, dup = 0;
+    for (const w of JSON.parse(fs.readFileSync(wf, 'utf8'))) {
+      const url = String(w.src || '').trim(); if (!url) continue; if (seen.has(norm(url))) { dup++; continue; } seen.add(norm(url));
+      const https = url.startsWith('https://'); let type = 'hls', src = url, ext = true;
+      if (/youtu\.?be/.test(url)) { type = 'youtube'; ext = false; }
+      else if (https && /\.mpd(\?|$)/i.test(url)) { type = 'dash'; ext = false; }
+      else if (https && (w.type === 'mp4' || /\.mp4(\?|$)/i.test(url))) { type = 'mp4'; ext = false; }
+      else if (https) { type = 'hls'; ext = false; }
+      const cc = /^[A-Z]{2}$/.test(String(w.cc || '').toUpperCase()) ? String(w.cc).toUpperCase() : '';
+      items.push({ id: ++id, name: String(w.name || '').replace(/\s+/g, ' ').trim(), logo: String(w.logo || '').replace(/^http:\/\//i, 'https://'), cc, cat: w.cat || 'General', type, src, ext, group: '', wp: 1 }); added++;
+    }
+    console.log(`WordPress channels: ${added} added, ${dup} already in the playlist`);
+  }
+}
 /* --check: test each browser-playable stream the way a browser would (Origin header, playlist then first video segment).
    A stream that answers without CORS permission can never play on this site, so it goes straight to the VLC option instead of
    failing in the player. Nothing else is changed: unreachable ones are only marked (chk:"fail") because they may be region-locked. */
@@ -61,7 +81,9 @@ if (process.argv.includes('--check')) {
     } catch (e) { c.chk = 'fail'; }
   }
   const queue = items.filter(c => c.type === 'hls' && !c.ext); let done = 0;
-  await Promise.all(Array.from({ length: 16 }, async () => { while (queue.length) { await probe(queue.shift()); if (++done % 200 === 0) console.log(`checked ${done}`); } }));
+  // Each channel gets an overall limit (a stream that sends headers and then never finishes its body would otherwise block a worker forever).
+  const limited = async c => { let t; await Promise.race([probe(c), new Promise(res => { t = setTimeout(() => { c.chk = 'fail'; res(); }, 30000); })]); clearTimeout(t); };
+  await Promise.all(Array.from({ length: 32 }, async () => { while (queue.length) { await limited(queue.shift()); if (++done % 200 === 0) console.log(`checked ${done}`); } }));
   console.log(`check: ${items.filter(c => c.why === 'cors').length} need VLC (no CORS), ${items.filter(c => c.chk === 'fail').length} unreachable from here`);
 }
 const count = key => Object.entries(items.reduce((a, c) => (c[key] && (a[c[key]] = (a[c[key]] || 0) + 1), a), {})).map(([k, n]) => ({ k, n })).sort((a, b) => b.n - a.n);
