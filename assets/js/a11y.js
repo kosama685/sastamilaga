@@ -14,3 +14,6 @@
   run(); document.addEventListener('DOMContentLoaded', run);
   new MutationObserver(run).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['aria-hidden'] });
 })();
+
+/* Interface language (machine-translated languages chosen in the country/language chooser) */
+(function () { if (window.SMI18n || document.querySelector('script[src*=\"i18n.js\"]')) return; var me = document.currentScript; var s = document.createElement('script'); s.src = ((me && me.src) || '').replace(/a11y\.js.*$/, 'i18n.js'); if (!/i18n\.js$/.test(s.src)) return; s.defer = true; document.head.appendChild(s); })();

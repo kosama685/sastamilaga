@@ -263,6 +263,26 @@
 	api('facets').then(function (f) {
 		f.countries.forEach(function (c) { addOpt($('sltv-country'), c.k, region(c.k) + ' (' + c.n + ')'); });
 		f.categories.forEach(function (c) { addOpt(catSel, c.k, (catLabel[c.k] || c.k) + ' (' + c.n + ')'); });
+		defaultCountry();
 	}).catch(function () {});
+
+	/* Country default: the channels start filtered to the visitor's country (from the site's own country detection, the same one the shop uses).
+	   "All countries" or any other pick is remembered for the visit and wins over detection; the shareable ?country= link always wins. */
+	var cSel = $('sltv-country'), picked = null;
+	try { picked = sessionStorage.getItem('sltv_cc'); } catch (e) { }
+	cSel.addEventListener('change', function () { try { sessionStorage.setItem('sltv_cc', cSel.value); } catch (e) { } picked = cSel.value; hint(); });
+	function hint() {
+		var h = $('sltv-cc-hint'); if (!h) { h = el('p', 'sltv-cc-hint'); h.id = 'sltv-cc-hint'; h.setAttribute('role', 'status'); h.style.cssText = 'margin:8px 0 0;font-size:.9rem'; cSel.parentNode.appendChild(h); }
+		h.textContent = ''; if (!cSel.value || qCc) return;
+		var auto = picked === null; h.appendChild(document.createTextNode((auto ? 'Showing channels from ' : 'Country: ') + region(cSel.value) + '. '));
+		var b = el('button', '', 'Change'); b.type = 'button'; b.style.cssText = 'background:none;border:0;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit'; b.addEventListener('click', function () { drawer.hidden = false; allBtn.setAttribute('aria-expanded', 'true'); cSel.focus(); }); h.appendChild(b);
+	}
+	function defaultCountry() {
+		if (qCc || picked !== null) { hint(); return; }
+		var mk = window.SMMarket, cc = ''; try { cc = mk ? String(mk.state().country || '').toUpperCase() : ''; } catch (e) { }
+		if (!cc || !cSel.querySelector('option[value="' + CSS.escape(cc) + '"]')) return;
+		cSel.value = cc; drawer.hidden = false; allBtn.setAttribute('aria-expanded', 'true'); hint(); load(true);
+	}
+	window.addEventListener('sm:market', function () { if (picked === null && !qCc) defaultCountry(); });
 	load(true);
 })();

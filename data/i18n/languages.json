@@ -18,84 +18,96 @@
   "native": "العربية",
   "dir": "rtl",
   "status": "not started",
-  "reviewed_by_human": false
+  "reviewed_by_human": false,
+  "ui_machine_translated": true
  },
  {
   "code": "hi",
   "native": "हिन्दी",
   "dir": "ltr",
   "status": "not started",
-  "reviewed_by_human": false
+  "reviewed_by_human": false,
+  "ui_machine_translated": true
  },
  {
   "code": "bn",
   "native": "বাংলা",
   "dir": "ltr",
   "status": "not started",
-  "reviewed_by_human": false
+  "reviewed_by_human": false,
+  "ui_machine_translated": true
  },
  {
   "code": "pa",
   "native": "ਪੰਜਾਬੀ",
   "dir": "ltr",
   "status": "not started",
-  "reviewed_by_human": false
+  "reviewed_by_human": false,
+  "ui_machine_translated": true
  },
  {
   "code": "ps",
   "native": "پښتو",
   "dir": "rtl",
   "status": "not started",
-  "reviewed_by_human": false
+  "reviewed_by_human": false,
+  "ui_machine_translated": true
  },
  {
   "code": "sd",
   "native": "سنڌي",
   "dir": "rtl",
   "status": "not started",
-  "reviewed_by_human": false
+  "reviewed_by_human": false,
+  "ui_machine_translated": true
  },
  {
   "code": "fa",
   "native": "فارسی",
   "dir": "rtl",
   "status": "not started",
-  "reviewed_by_human": false
+  "reviewed_by_human": false,
+  "ui_machine_translated": true
  },
  {
   "code": "tr",
   "native": "Türkçe",
   "dir": "ltr",
   "status": "not started",
-  "reviewed_by_human": false
+  "reviewed_by_human": false,
+  "ui_machine_translated": true
  },
  {
   "code": "fr",
   "native": "Français",
   "dir": "ltr",
   "status": "not started",
-  "reviewed_by_human": false
+  "reviewed_by_human": false,
+  "ui_machine_translated": true
  },
  {
   "code": "de",
   "native": "Deutsch",
   "dir": "ltr",
   "status": "not started",
-  "reviewed_by_human": false
+  "reviewed_by_human": false,
+  "ui_machine_translated": true
  },
  {
   "code": "es",
   "native": "Español",
   "dir": "ltr",
   "status": "not started",
-  "reviewed_by_human": false
+  "reviewed_by_human": false,
+  "ui_machine_translated": true
  },
  {
   "code": "pt",
   "native": "Português",
   "dir": "ltr",
   "status": "not started",
-  "reviewed_by_human": false
+  "reviewed_by_human": false,
+  "ui_machine_translated": true
  },
  {
   "code": "it",
@@ -109,14 +121,16 @@
   "native": "Русский",
   "dir": "ltr",
   "status": "not started",
-  "reviewed_by_human": false
+  "reviewed_by_human": false,
+  "ui_machine_translated": true
  },
  {
   "code": "zh",
   "native": "中文",
   "dir": "ltr",
   "status": "not started",
-  "reviewed_by_human": false
+  "reviewed_by_human": false,
+  "ui_machine_translated": true
  },
  {
   "code": "ja",
@@ -137,7 +151,8 @@
   "native": "Bahasa Indonesia",
   "dir": "ltr",
   "status": "not started",
-  "reviewed_by_human": false
+  "reviewed_by_human": false,
+  "ui_machine_translated": true
  },
  {
   "code": "ms",
