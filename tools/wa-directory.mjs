@@ -26,7 +26,7 @@ export function waDirectory(variant) {
   const cards = REGIONS.map(r => `<li class="smwa__card" data-region="${r.k}"><img class="smwa__flag" src="https://flagcdn.com/w40/${r.flag}.png" srcset="https://flagcdn.com/w80/${r.flag}.png 2x" width="30" height="20" alt="" loading="lazy" decoding="async"><div class="smwa__txt"><strong>${r.name}</strong><a class="smwa__num" href="tel:+${r.n}" dir="ltr">${PH}<span>${r.t}</span></a></div><a class="smwa__btn" href="https://wa.me/${r.n}?text=${MSG}" target="_blank" rel="noopener" aria-label="Message the ${r.name} team on WhatsApp, ${r.t}">${WA}<span>Message on WhatsApp</span>${ARROW}</a></li>`).join('');
   const head = `<div class="smwa__head"><span class="smwa__badge">${WA.replace('width="18" height="18"', 'width="30" height="30"')}</span><div><h2 id="${id}">Phone and WhatsApp <em>worldwide</em></h2><p>We work with clients in every country. Choose your regional team below, or send an enquiry for any city.</p></div></div>`;
   return variant === 'footer'
-    ? `<section class="smwa smwa--footer" aria-labelledby="${id}" data-no-swap><div class="smh-wrap smwa__in">${head}<ul class="smwa__grid" role="list">${cards}</ul></div></section>`
+    ? `<section id="sasta-regional-footer" class="smwa smwa--footer" aria-labelledby="${id}" data-no-swap><div class="smh-wrap smwa__in">${head}<ul class="smwa__grid" role="list">${cards}</ul></div></section>`
     : `<section class="smwa smwa--page" aria-labelledby="${id}" data-no-swap>${head}<ul class="smwa__grid" role="list">${cards}</ul></section>`;
 }
 

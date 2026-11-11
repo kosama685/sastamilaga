@@ -111,7 +111,7 @@ const APP_BASE = (() => { try { return new URL('.', document.currentScript.src).
 const CLEAN_SECTIONS = ['shop', 'deals', 'videos', 'travel', 'live-tv', 'global', 'about', 'faq', 'contact', 'how-to-order', 'shipping',
   'returns', 'return-policy', 'privacy', 'terms', 'cookies', 'track', 'seller', 'earn-points', 'daily-spin', 'seller-rules', 'careers', 'press', 'sitemap',
   'cart', 'checkout', 'wishlist', 'account', 'thank-you',   /* private pages: real URLs but noindex and not in the sitemap */
-  'visa', 'rewards', 'search', 'global/all', 'global/videos', 'global/search', 'safe-shopping', 'tours'];
+  'visa', 'rewards', 'search', 'global/all', 'global/videos', 'global/search', 'safe-shopping', 'tours', 'global-shop'];
 /* Content pages whose text is in the page HTML itself (about/, faq/, ur/about/ …): the browser loads them as real pages; the app does not render them. */
 const STATIC_PAGES = new Set(['earn-points', 'daily-spin', 'seller-rules', 'about', 'contact', 'faq', 'how-to-order', 'privacy', 'terms', 'safe-shopping', 'tours']);
 /* Sections whose real URL may carry a query string (search text, page number, travel tab) without becoming another page. */
@@ -731,6 +731,7 @@ function route() {
   }
   const [path, qs] = raw.split('?');
   const parts = path.split('/').filter(Boolean);
+  if (parts[0] === 'global-shop') parts[0] = 'global';   // the old WordPress address of the global shop shows the same page
   window.__route = parts[0] || 'home';
 
   if (STATIC_PAGES.has(parts[0])) { location.replace(APP_BASE + parts[0] + '/'); return; }   // old #/about bookmark etc.: load the real page

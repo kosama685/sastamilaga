@@ -352,5 +352,5 @@
     manifest
   };
   /* app.js routed before this file loaded: render the global page now */
-  if (/^#\/global(\/|\?|$)/.test(location.hash) || /^global(\/|$)/.test((A.cleanRoute && A.cleanRoute(location.pathname)) || '')) A.route();
+  if (/^#\/global(\/|\?|$)/.test(location.hash) || /^global(-shop)?(\/|$)/.test((A.cleanRoute && A.cleanRoute(location.pathname)) || '')) A.route();
 })();

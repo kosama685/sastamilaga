@@ -21,6 +21,7 @@ const WP = { ...(exists('data/wp/pages.json') ? JSON.parse(read('data/wp/pages.j
 const PURE = new Set(['earn-points', 'daily-spin', 'seller-rules', 'about', 'contact', 'faq', 'how-to-order', 'privacy', 'terms', 'safe-shopping', 'tours']);   // content pages: their text is in the HTML and the app does not re-render them
 const SECTIONS = {
   shop: ['Shop all products', `Shop ${fmt(total)} products in PKR at Sasta Milaga with cash on delivery across Pakistan, plus ${fmt(M.total)} global products with worldwide delivery.`],
+  'global-shop': ['Global shop – worldwide delivery', `Browse ${fmt(M.total)} global products in ${M.cats.length} categories with worldwide delivery.`],
   global: ['Global shop – worldwide delivery', `Browse ${fmt(M.total)} global products in ${M.cats.length} categories with worldwide delivery. Prices are US$ estimates confirmed on WhatsApp before you pay.`],
   'global/all': [`All ${fmt(M.total)} global products`, `Browse every global product, page by page: ${fmt(M.total)} products in ${M.cats.length} categories with worldwide delivery.`],
   'global/videos': ['Global product videos', `Watch ${fmt(M.videos)} global product videos before you order from Sasta Milaga.`],
@@ -92,7 +93,7 @@ let [idx2, ni] = rewriteLinks(index); fs.writeFileSync(path.join(ROOT, 'index.ht
 let [chrome2, nc] = rewriteLinks(read('partials/chrome.json'), '\\"'); fs.writeFileSync(path.join(ROOT, 'partials/chrome.json'), chrome2);
 
 /* Phone and WhatsApp worldwide: footer band (index.html + chrome.json) and its CSS, inserted idempotently. */
-const BAND = /<section class="smwa smwa--footer"[\s\S]*?<\/section>/;
+const BAND = /<section[^>]*class="smwa smwa--footer"[\s\S]*?<\/section>/;
 const addBand = html => { const clean = html.replace(BAND, ''); const i = clean.indexOf('<div class="smf-bottom">'); return i < 0 ? clean : clean.slice(0, i) + waDirectory('footer') + clean.slice(i); };
 index = addBand(index); fs.writeFileSync(path.join(ROOT, 'index.html'), index);
 { const cj = JSON.parse(read('partials/chrome.json')); cj.footer = addBand(cj.footer); fs.writeFileSync(path.join(ROOT, 'partials/chrome.json'), JSON.stringify(cj)); }
@@ -137,7 +138,7 @@ const alt1 = (en, ur) => `<link rel="alternate" hreflang="en" href="${en}">${ur 
 let made2 = 0;
 for (const { key, title, desc } of pages) {
   // global/ shows the same content as the generated c/global/index.html, which stays the canonical page.
-  const url = key === 'global' ? `${SITE}/c/global/index.html` : `${SITE}/${key}/`, priv = PRODUCTION_PRIVATE(key);
+  const url = (key === 'global' || key === 'global-shop') ? `${SITE}/c/global/index.html` : `${SITE}/${key}/`, priv = PRODUCTION_PRIVATE(key);
   const rec = WP[key], pure = rec && PURE.has(key), urRec = WP['ur/' + key];
   const intro = `<section class="sm-page"><header class="sm-page-head"><h1>${esc(title.replace(/ \| Sasta Milaga$/, ''))}</h1><p>${esc(desc)}</p></header></section>`;
   // content pages use the cloned text and its own SEO title/description; shipping and returns keep the country-wise app and add the full policy under it
@@ -177,7 +178,7 @@ const smPath = path.join(ROOT, 'sitemap-pages.xml');
 if (fs.existsSync(smPath)) {
   let sm = fs.readFileSync(smPath, 'utf8'), added = 0;
   const today = new Date().toISOString().slice(0, 10);
-  const urls = pages.map(p => p.key).filter(k => k !== 'global' && !PRIVATE.has(k)).map(s => `${SITE}/${s}/`).concat(`${SITE}/b/`, Object.keys(WP).filter(k => k.startsWith('ur/')).map(k => `${SITE}/${k}/`));
+  const urls = pages.map(p => p.key).filter(k => k !== 'global' && k !== 'global-shop' && !PRIVATE.has(k)).map(s => `${SITE}/${s}/`).concat(`${SITE}/b/`, Object.keys(WP).filter(k => k.startsWith('ur/')).map(k => `${SITE}/${k}/`));
   for (const u of urls) if (!sm.includes(`<loc>${u}</loc>`)) { sm = sm.replace('</urlset>', `<url><loc>${u}</loc><lastmod>${today}</lastmod></url>\n</urlset>`); added++; }
   fs.writeFileSync(smPath, sm);
   console.log(`sitemap-pages.xml: ${added} section URLs added`);
