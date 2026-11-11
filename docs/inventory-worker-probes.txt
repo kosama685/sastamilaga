@@ -7,16 +7,17 @@
 26:if(!m||!PID.test(m[2].toUpperCase()))return formError(req,'Product not found',404);
 28:const pid=m[2].toUpperCase(),data=await load(pid,env).catch(()=>null);if(!data)return formError(req,'Product not found',404);
 35: const text=['Hello Sasta Milaga, please confirm the following product enquiry.','Product: '+(data.enriched?.title||data.row.name),'SKU: '+(data.enriched?.sku||data.row.sku),'Variation: '+(selected?selected.name+' ('+selected.sku+')':'Please confirm available variations'),'Quantity: '+qty,'Destin
-## sasta-canonical-sync-v11 :: footer or html injection (bytes=20386)
+## sasta-canonical-sync-v11 :: footer or html injection (bytes=20683)
 4:const SASTA_FOOTER_LABEL_SCRIPT="<script>(function(){function fix(){var f=document.querySelector('footer.smf .smf-contact');if(!f)return;var a=f.querySelector('a[href*=\"wa.me/\"]');if(a&&a.textContent.trim()==='+923432601806'){a.textContent='WhatsApp regional support';a.setAttribute('aria-label',
 5:const SASTA_REGIONAL_HTML="<section id=\"sasta-regional-footer\" class=\"smf-world\" aria-labelledby=\"smf-region-heading\"><h2 id=\"smf-region-heading\">☎ Phone and WhatsApp Worldwide</h2><p>Choose a regional team for an enquiry. Response times and availability may vary.</p><div class=\"smf-world
 13:const BLOCKER="<script>(function(){'use strict';var act=/^#\\/(?:account|my-account|login|register)(?:\\/|\\?|$)/i;if(act.test(location.hash))location.replace('/my-account/');function note(){var root=document.getElementById('sm-woo-cart-notice');if(!root){root=document.createElement('div');root.i
-33:  const body=plain?'Not found':'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow"><title>Page not found | Sasta Milaga</title></head><body style="font:16px/1.6 system-ui,Arial,
-46:   html=html.replace(/<\/head>/i,BLOCKER+SEO_CANONICAL_SYNC+'</head>');
-47:   if(html.includes('class=\"smf-bottom\"')&&!html.includes('id=\"sasta-regional-footer\"')){html=html.replace('<div class=\"smf-bottom\">',SASTA_REGIONAL_HTML+'<div class=\"smf-bottom\">');html=html.replace(/<\/head>/i,SASTA_REGIONAL_STYLE+'</head>');html=html.replaceAll('+923432601806</a>','Wha
-48:   html=html.replace(/<\/body>/i,SASTA_FOOTER_LABEL_SCRIPT+'</body>');
-60:     if(xml.includes('</sitemapindex>')&&!xml.includes(CANONICAL+'/blog/sitemap.xml'))xml=xml.replace('</sitemapindex>','<sitemap><loc>'+CANONICAL+'/blog/sitemap.xml</loc></sitemap></sitemapindex>');
-85: const html='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Sasta Milaga — Checkout temporarily unavailable</title><style>:root{color-scheme:light}body{font:16px/1.6 system-
+14:function stripInvalidJSONLD(html){return html.replace(/<script\b[^>]*type=[\"']application\/ld\+json[\"'][^>]*>[\s\S]*?<\/script>/gi,tag=>{const body=tag.replace(/^<script[^>]*>/i,'').replace(/<\/script>$/i,'');try{JSON.parse(body);return tag}catch{return ''}})}
+34:  const body=plain?'Not found':'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow"><title>Page not found | Sasta Milaga</title></head><body style="font:16px/1.6 system-ui,Arial,
+48:   html=html.replace(/<\/head>/i,BLOCKER+SEO_CANONICAL_SYNC+'</head>');
+49:   if(html.includes('class=\"smf-bottom\"')&&!html.includes('id=\"sasta-regional-footer\"')){html=html.replace('<div class=\"smf-bottom\">',SASTA_REGIONAL_HTML+'<div class=\"smf-bottom\">');html=html.replace(/<\/head>/i,SASTA_REGIONAL_STYLE+'</head>');html=html.replaceAll('+923432601806</a>','Wha
+50:   html=html.replace(/<\/body>/i,SASTA_FOOTER_LABEL_SCRIPT+'</body>');
+62:     if(xml.includes('</sitemapindex>')&&!xml.includes(CANONICAL+'/blog/sitemap.xml'))xml=xml.replace('</sitemapindex>','<sitemap><loc>'+CANONICAL+'/blog/sitemap.xml</loc></sitemap></sitemapindex>');
+87: const html='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Sasta Milaga — Checkout temporarily unavailable</title><style>:root{color-scheme:light}body{font:16px/1.6 system-
 ## sasta-account-links-v10 :: footer or html injection (bytes=12626)
 23:  const path=kind==='home'?'/':url.pathname==='/sitemap_index.xml'?'/sitemap.xml':url.pathname;
 24:  const target=BACKUP+path+(kind==='asset'?url.search:'');

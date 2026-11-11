@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-11T05:23:22Z",
+  "checked_at": "2026-11-11T15:25:58Z",
   "token": {
     "success": true,
     "status": "active"
@@ -101,7 +101,7 @@
       },
       {
         "id": "sasta-canonical-sync-v11",
-        "modified_on": "2026-11-11T04:27:07.55791Z",
+        "modified_on": "2026-11-11T05:31:53.596707Z",
         "created_on": "2026-11-10T03:24:18.728466Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-09"
@@ -227,7 +227,7 @@
       },
       {
         "id": "sasta-seo-origin-probe-v1",
-        "modified_on": "2026-11-11T05:12:44.949793Z",
+        "modified_on": "2026-11-11T05:32:57.095757Z",
         "created_on": "2026-11-11T05:12:43.62976Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-11"
@@ -283,29 +283,43 @@
       },
       {
         "id": "sastamilaga-cj-shipping",
-        "modified_on": "2026-11-11T05:22:15.249742Z",
+        "modified_on": "2026-11-11T15:24:35.735235Z",
         "created_on": "2026-11-11T03:54:36.589467Z",
         "usage_model": "standard",
         "compatibility_date": "2025-07-18"
       },
       {
         "id": "sastamilaga-global-pages",
-        "modified_on": "2026-11-11T05:22:24.087729Z",
+        "modified_on": "2026-11-11T15:24:45.71304Z",
         "created_on": "2026-11-11T03:54:44.151298Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-paypal",
-        "modified_on": "2026-11-11T05:22:20.773989Z",
+        "modified_on": "2026-11-11T15:24:41.781202Z",
         "created_on": "2026-11-11T03:54:41.174076Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-redirects",
-        "modified_on": "2026-11-11T05:22:29.006344Z",
+        "modified_on": "2026-11-11T15:24:51.038439Z",
         "created_on": "2026-11-11T05:14:22.59741Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-10-01"
+      },
+      {
+        "id": "sastamilaga-redirects-seo-preview",
+        "modified_on": "2026-11-11T05:29:12.070606Z",
+        "created_on": "2026-11-11T05:27:58.633966Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-10-01"
+      },
+      {
+        "id": "sastamilaga-redirects-seo-v2",
+        "modified_on": "2026-11-11T05:30:41.14259Z",
+        "created_on": "2026-11-11T05:30:41.14259Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       }
@@ -478,11 +492,39 @@
         "script": "sastamilaga-redirects"
       },
       {
-        "pattern": "sastamilaga.com/__seo-preview/*",
-        "script": "sasta-seo-product-preview-v1"
+        "pattern": "sastamilaga.com/product/*",
+        "script": "sastamilaga-redirects"
       },
       {
-        "pattern": "sastamilaga.com/product/*",
+        "pattern": "sastamilaga.com/blog/winter-kitchen-essentials-pakistan/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/travel/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/best-art-craft-materials-to-buy-in-rawalpindi-practical-shopping-guide/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/best-bags-to-buy-in-karachi-practical-shopping-guide/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/online-earning-pakistan-content-sales-rewards/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/best-academic-books-to-buy-in-karachi-practical-shopping-guide/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/best-abayas-hijabs-to-buy-in-pakistan-practical-shopping-guide/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/best-audio-entertainment-to-buy-in-peshawar-practical-shopping-guide/",
         "script": "sastamilaga-redirects"
       }
     ]

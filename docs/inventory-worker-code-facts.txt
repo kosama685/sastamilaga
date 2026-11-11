@@ -45,18 +45,18 @@
 25:  if(p==="/blog/sitemap.xml"){
 ## sasta-brand-pages-v1  bytes=21340
 22: if(p==='/blog/sitemap.xml'){const q=await env.BLOG_DB.prepare("SELECT slug,publish_date FROM blog_posts WHERE status='published' AND publish_date<=date('now') ORDER BY publish_date DESC LIMIT 1000").all();return resp
-## sasta-canonical-sync-v11  bytes=20386
+## sasta-canonical-sync-v11  bytes=20683
 8:const ROBOTS_TEXT="User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\nDisallow: /cart/\nDisallow: /checkout/\nDisallow: /my-account/\n\nUser-agent: GPTBot\nDisallow: /\nUser-agent: ClaudeBot\nDisallo
 9:const BACKUP='https://kosama685.github.io/sastamilaga',CANONICAL='https://sastamilaga.com';
-20: if(/^\/(?:sitemap\.xml|sitemap_index\.xml|sitemap-[a-z0-9-]+\.xml)$/i.test(url.pathname))return 'sitemap';
-27:  const path=kind==='home'?'/':url.pathname==='/sitemap_index.xml'?'/sitemap.xml':url.pathname;
-29:  const response=await fetch(target,{method:'GET',redirect:'follow',headers:{Accept:kind==='home'?'text/html':'*/*'},cf:{cacheEverything:true,cacheTtl:120}});
-34:  return new Response(req.method==='HEAD'?null:body,{status:404,headers:{'content-type':plain?'text/plain; charset=utf-8':'text/html; charset=utf-8','cache-control':'public,max-age=60,s-maxage=60','x-robots-tag':'noin
-41:  'x-sasta-recovery':'github-readonly','x-sasta-recovery-cause':String(cause).slice(0,40),'x-content-type-options':'nosniff'});
-50:   headers.set('x-sasta-checkout','disabled-during-origin-outage');
-56:   if(url.pathname==='/sitemap.xml'||url.pathname==='/sitemap_index.xml'){
-60:     if(xml.includes('</sitemapindex>')&&!xml.includes(CANONICAL+'/blog/sitemap.xml'))xml=xml.replace('</sitemapindex>','<sitemap><loc>'+CANONICAL+'/blog/sitemap.xml</loc></sitemap></sitemapindex>');
-123: if(kind==='home'||kind==='asset'||kind==='product'||kind==='sitemap'||kind==='public')return fallback(request,url,kind,'github_static_primary');
+21: if(/^\/(?:sitemap\.xml|sitemap_index\.xml|sitemap-[a-z0-9-]+\.xml)$/i.test(url.pathname))return 'sitemap';
+28:  const path=kind==='home'?'/':url.pathname==='/sitemap_index.xml'?'/sitemap.xml':url.pathname;
+30:  const response=await fetch(target,{method:'GET',redirect:'follow',headers:{Accept:kind==='home'?'text/html':'*/*'},cf:{cacheEverything:true,cacheTtl:120}});
+35:  return new Response(req.method==='HEAD'?null:body,{status:404,headers:{'content-type':plain?'text/plain; charset=utf-8':'text/html; charset=utf-8','cache-control':'public,max-age=60,s-maxage=60','x-robots-tag':'noin
+42:  'x-sasta-recovery':'github-readonly','x-sasta-recovery-cause':String(cause).slice(0,40),'x-content-type-options':'nosniff'});
+52:   headers.set('x-sasta-checkout','disabled-during-origin-outage');
+58:   if(url.pathname==='/sitemap.xml'||url.pathname==='/sitemap_index.xml'){
+62:     if(xml.includes('</sitemapindex>')&&!xml.includes(CANONICAL+'/blog/sitemap.xml'))xml=xml.replace('</sitemapindex>','<sitemap><loc>'+CANONICAL+'/blog/sitemap.xml</loc></sitemap></sitemapindex>');
+125: if(kind==='home'||kind==='asset'||kind==='product'||kind==='sitemap'||kind==='public')return fallback(request,url,kind,'github_static_primary');
 ## sasta-catalog-readonly-v1  bytes=5200
 4:const O=new Set(['https://kosama685.github.io','https://sastamilaga.com','https://www.sastamilaga.com']);
 25: if(sample&&String(sample.pid).toUpperCase()===r.cj_product_id){if(String(sample.description||'').trim()){desc=C(sample.description).slice(0,16000);origin='cj_connected_account_snapshot'};if(Array.isArray(sample.varia
@@ -220,6 +220,20 @@
 19:    const allowed = (env.ALLOWED_ORIGINS || "https://kosama685.github.io").split(",").map((s) => s.trim());
 70:  const r = await fetch(`${env.SITE_ORIGIN}/data/prices.json`, { cf: { cacheTtl: 600 } });
 81:  const r = await fetch("https://open.er-api.com/v6/latest/PKR", { cf: { cacheTtl: 3600 } });
-## sastamilaga-redirects  bytes=4620
+## sastamilaga-redirects  bytes=4890
 12:  const r = await fetch(`${env.SITE_ORIGIN}/data/redirects/${name}.json`, { cf: { cacheTtl: 3600, cacheEverything: true } });
 43:      const r = await fetch(`${env.SITE_ORIGIN}${q}/`, { cf: { cacheTtl: 300, cacheEverything: true } });
+## sastamilaga-redirects-seo-preview  bytes=10376
+10: const missing=(code,msg)=>new Response('<!doctype html><html><head><meta name="robots" content="noindex"><title>'+esc(msg)+'</title></head><body><h1>'+esc(msg)+'</h1><a href="/">Home</a></body></html>',{status:code,h
+13:  const r=await fetch(url,{redirect:'manual',headers:{Accept:'application/json'},signal:AbortSignal.timeout(7500),cf:{cacheEverything:true,cacheTtl:90}});
+24:  if(desc.length>40&&img){const pr={'@context':'https://schema.org','@type':'Product',name,image:[img.src],description:desc.slice(0,1300),url:canonical};if(sku)pr.sku=sku;schema.push(pr);}
+29:  return new Response(req.method==='HEAD'?null:html,{status:200,headers:{'content-type':'text/html; charset=utf-8','cache-control':'public,max-age=60,s-maxage=120','x-sasta-seo':preview?'preview-dynamic':'live-dynamic
+41:  const r = await fetch(`${env.SITE_ORIGIN}/data/redirects/${name}.json`, { cf: { cacheTtl: 3600, cacheEverything: true } });
+73:      const r = await fetch(`${env.SITE_ORIGIN}${q}/`, { cf: { cacheTtl: 300, cacheEverything: true } });
+## sastamilaga-redirects-seo-v2  bytes=10376
+10: const missing=(code,msg)=>new Response('<!doctype html><html><head><meta name="robots" content="noindex"><title>'+esc(msg)+'</title></head><body><h1>'+esc(msg)+'</h1><a href="/">Home</a></body></html>',{status:code,h
+13:  const r=await fetch(url,{redirect:'manual',headers:{Accept:'application/json'},signal:AbortSignal.timeout(7500),cf:{cacheEverything:true,cacheTtl:90}});
+24:  if(desc.length>40&&img){const pr={'@context':'https://schema.org','@type':'Product',name,image:[img.src],description:desc.slice(0,1300),url:canonical};if(sku)pr.sku=sku;schema.push(pr);}
+29:  return new Response(req.method==='HEAD'?null:html,{status:200,headers:{'content-type':'text/html; charset=utf-8','cache-control':'public,max-age=60,s-maxage=120','x-sasta-seo':preview?'preview-dynamic':'live-dynamic
+41:  const r = await fetch(`${env.SITE_ORIGIN}/data/redirects/${name}.json`, { cf: { cacheTtl: 3600, cacheEverything: true } });
+73:      const r = await fetch(`${env.SITE_ORIGIN}${q}/`, { cf: { cacheTtl: 300, cacheEverything: true } });
