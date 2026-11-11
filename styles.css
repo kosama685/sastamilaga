@@ -558,3 +558,22 @@ a[href$="all/"]>small{color:#1f6f40!important;opacity:1!important}
 }
 @media (prefers-reduced-motion:reduce){.smwa__card,.smwa__btn{transition:none}.smwa__card:hover{transform:none}}
 /*smwa:end*/
+
+/*smvar:start*/
+/* Variation picker: photo tiles, clear selected state */
+.sm-var__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px;margin-top:8px}
+.sm-var__opt{position:relative;display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid rgba(15,122,59,.2);border-radius:12px;background:#fff;cursor:pointer;transition:border-color .2s,box-shadow .25s,transform .25s}
+.sm-var__opt:hover{border-color:#0F7A3B;box-shadow:0 8px 18px -12px rgba(11,59,32,.55);transform:translateY(-1px)}
+.sm-var__opt input{position:absolute;opacity:0;pointer-events:none}
+.sm-var__opt:has(input:checked){border-color:#0F7A3B;box-shadow:0 0 0 2px rgba(15,122,59,.28),0 10px 20px -14px rgba(11,59,32,.6);background:#F3FBF6}
+.sm-var__opt:has(input:checked)::after{content:"";position:absolute;top:6px;right:8px;width:18px;height:18px;border-radius:50%;background:#0F7A3B url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.2 4.2L19 7'/%3E%3C/svg%3E") center/12px no-repeat}
+.sm-var__opt:has(input:focus-visible){outline:3px solid #FF8A00;outline-offset:2px}
+.sm-var__img{flex:none;display:block;width:56px;height:56px;border-radius:10px;overflow:hidden;background:#EAF6EE}
+.sm-var__img img{display:block;width:100%;height:100%;object-fit:cover}
+.sm-var__t{display:flex;flex-direction:column;min-width:0;gap:2px}
+.sm-var__t b{font-size:.86rem;line-height:1.25;color:#0B3B20;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sm-var__t small{font-size:.8rem;color:#355243;font-weight:600}
+@media(max-width:560px){.sm-var__grid{grid-template-columns:1fr 1fr}.sm-var__opt{padding:7px}.sm-var__img{width:48px;height:48px}}
+@media(prefers-reduced-motion:reduce){.sm-var__opt{transition:none}.sm-var__opt:hover{transform:none}}
+.gallery-thumbs .sm-var-thumb{border:2px solid #0F7A3B;border-radius:10px;padding:0;overflow:hidden;background:#fff;cursor:pointer;width:64px;height:64px}.gallery-thumbs .sm-var-thumb img{display:block;width:100%;height:100%;object-fit:cover}
+/*smvar:end*/

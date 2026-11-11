@@ -4,5 +4,5 @@ main = "worker.js"
 compatibility_date = "2025-07-18"
 
 [vars]
-ALLOWED_ORIGINS = "https://kosama685.github.io"
+ALLOWED_ORIGINS = "https://kosama685.github.io,https://sastamilaga.com,https://www.sastamilaga.com"
 START_COUNTRY = "CN"

@@ -75,6 +75,13 @@
       }
     });
   }
+  /* Gallery switcher for the global product page (the app's own switcher only knows its local product page): thumbnails swap the main slot between the photo and the video. */
+  document.addEventListener('click', e => {
+    const tb = e.target.closest && e.target.closest('.pdp .gallery-thumbs button[data-gallery]'); if (!tb) return;
+    const main = document.querySelector('.pdp .gallery-main'); if (!main) return; const u = tb.dataset.gallery, poster = (document.querySelector('.pdp .gallery-thumbs button[data-type="img"]:not(.sm-var-thumb) img') || {}).src || '';
+    main.innerHTML = tb.dataset.type === 'video' ? `<video src="${esc(u)}" poster="${esc(poster)}" controls playsinline preload="metadata"></video>` : `<img src="${esc(u)}" alt="" width="800" height="800">`;
+    document.querySelectorAll('.pdp .gallery-thumbs button').forEach(x => x.classList.toggle('active', x === tb));
+  });
   window.SMGCart = { count: gcCount, html: gcHtml, bind: gcBind, get: gcGet };
   gcBind();
   // global.js loads after the first route has rendered: refresh the header count, and the cart page if it is the page being shown
@@ -173,7 +180,7 @@
     const chosen = { v: null };     /* the variant the customer picked (real CJ variants, when the CJ Worker is configured) */
     bindVariants(r, chosen);
     (wpShip() ? bindShipWp : bindShip)(r, chosen);
-    const rowFrom = f => { const v = chosen.v; return { id: r[0], cs, sku: r[1], name: r[2], img: r[5], unit: (v ? v.price : (r[3] || 0)) * MARGIN, qty: Math.max(1, Math.min(99, parseInt(f.qty.value, 10) || 1)), opt: (f.opt.value || '').trim(), ship: ((document.querySelector('#greq [name=ship]:checked') || {}).value || ''), vkey: v ? (v.sku || v.key || '') : '', vname: v ? (v.key || v.name || '') : '', url: ownUrl(cs, r) }; };
+    const rowFrom = f => { const v = chosen.v; return { id: r[0], cs, sku: r[1], name: r[2], img: (v && v.image) || r[5], unit: (v ? v.price : (r[3] || 0)) * MARGIN, qty: Math.max(1, Math.min(99, parseInt(f.qty.value, 10) || 1)), opt: (f.opt.value || '').trim(), ship: ((document.querySelector('#greq [name=ship]:checked') || {}).value || ''), vkey: v ? (v.sku || v.key || '') : '', vname: v ? (v.key || v.name || '') : '', url: ownUrl(cs, r) }; };
     const addRow = () => { const f = document.getElementById('greq'); const row = rowFrom(f); if (!row.unit) { toast('This item has no listed price yet. Order it on WhatsApp and we will quote it.'); return null; } gcAdd(row); return row; };
     document.getElementById('gadd').addEventListener('click', () => { if (addRow()) toast('Added to cart'); });
     document.getElementById('gbuy').addEventListener('click', () => { if (addRow()) { A.go('cart'); } });   // quick buy: straight to the cart with the item added
@@ -245,7 +252,13 @@
       chosen.v = v;
       const price = document.querySelector('.buy-panel .big-price'); if (price) price.textContent = v.label || USD.format(v.price * MARGIN);
       const img = document.querySelector('.gallery-main img'); if (img && v.image) img.src = v.image;
-      const vid = document.querySelector('.gallery-main video'); if (vid && v.image && vid.paused) vid.poster = v.image;   /* video products: the cover image follows the variant */
+      const vid = document.querySelector('.gallery-main video'); if (vid && v.image && vid.paused) vid.poster = v.image;
+      // Products with a video: the main slot is the video, so the variation photo gets its own thumbnail, shown in the main slot (the video stays one click away).
+      const gt = document.querySelector('.gallery-thumbs');
+      if (v.image && gt && !document.querySelector('.gallery-main img')) {
+        let tb = gt.querySelector('.sm-var-thumb'); if (!tb) { tb = document.createElement('button'); tb.type = 'button'; tb.className = 'sm-var-thumb'; tb.dataset.type = 'img'; tb.innerHTML = '<img alt="" width="64" height="64">'; gt.appendChild(tb); }
+        tb.setAttribute('aria-label', 'Selected variation: ' + (v.key || v.name || '')); tb.dataset.gallery = v.image; tb.querySelector('img').src = v.image; tb.click();
+      }   /* video products: the cover image follows the variant */
       const out = document.getElementById('gship-out'); if (out) out.textContent = '';   /* a new variant needs a new shipping quote */
       quoteSoon();
     };
@@ -258,8 +271,18 @@
       if (list.length === 1) {
         box.innerHTML = `<legend>Option</legend><p class="sm-var__one"><b>${esc(list[0].key || list[0].name)}</b> <small>SKU ${esc(maskSku(list[0].sku))}</small></p>`; pick(list[0]); return;
       }
-      box.innerHTML = `<legend>Choose an option <small>(${list.length})</small></legend><div class="sm-var__grid" role="radiogroup">${list.map((v, i) => `<label class="sm-var__opt"><input type="radio" name="variant" value="${esc(v.vid)}" required><span class="sm-var__img">${v.image ? `<img src="${esc(v.image)}" alt="" width="44" height="44" loading="lazy">` : ''}</span><span class="sm-var__t"><b>${esc(v.key || v.name)}</b><small>${v.label || USD.format(v.price * MARGIN)}</small></span></label>`).join('')}</div>`;
+      box.innerHTML = `<legend>Choose an option <small>(${list.length})</small></legend><div class="sm-var__grid" role="radiogroup">${list.map((v, i) => `<label class="sm-var__opt"><input type="radio" name="variant" value="${esc(v.vid)}" required><span class="sm-var__img">${v.image ? `<img src="${esc(v.image)}" alt="" width="56" height="56" loading="lazy">` : ''}</span><span class="sm-var__t"><b>${esc(v.key || v.name)}</b><small>${v.label || USD.format(v.price * MARGIN)}</small></span></label>`).join('')}</div>`;
       box.addEventListener('change', e => { if (e.target.name === 'variant') pick(list.find(v => v.vid === e.target.value)); });
+      // Variation photos arrive a moment later from the image Worker: fill the tiles and keep the main picture in step with the choice.
+      (function enrich() {
+        const IW = (window.SM_CONFIG || {}).cjImageWorker; if (!IW || list.every(v => v.image)) return;
+        fetch(`${IW.replace(/\/$/, '')}/api/cj/product?pid=${encodeURIComponent(r[0])}`).then(x => (x.ok ? x.json() : null)).then(d => {
+          if (!d || !d.variants) return; const m = {}; d.variants.forEach(v => { if (v.image && /^https:\/\//.test(v.image)) m[v.vid] = v.image; });
+          list.forEach(v => { if (!v.image && m[v.vid]) v.image = m[v.vid]; });
+          box.querySelectorAll('.sm-var__opt').forEach((lab, i) => { const v = list[i], holder = lab.querySelector('.sm-var__img'); if (holder && v && v.image && !holder.firstChild) { const im = document.createElement('img'); im.src = v.image; im.alt = ''; im.width = 56; im.height = 56; im.loading = 'lazy'; im.onerror = () => im.remove(); holder.appendChild(im); } });
+          const sel = box.querySelector('input[name=variant]:checked'); if (sel) { const v = list.find(x => x.vid === sel.value), g = document.querySelector('.gallery-main img'); if (v && v.image && g) g.src = v.image; else if (v && v.image) sel.dispatchEvent(new Event('change', { bubbles: true })); }
+        }).catch(() => { });
+      })();
     }).catch(() => { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Options could not be loaded. Tell us your size or colour in the notes and we will confirm it on WhatsApp.</p>'; });
   }
   function bindShip(r, chosen) {

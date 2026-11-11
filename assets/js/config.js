@@ -18,6 +18,8 @@ window.SM_CONFIG = {
   cjShippingWorker: '',
   /* WordPress store REST API (global-dropshipping-commerce plugin). Public, read-only: live CJ options (variations) with the store's own prices. The CJ key stays on the WordPress server. */
   wpApi: 'https://sastamilaga.com/wp-json/gdcs/v1',
+  /* Variation photos: the store's options list has names, SKUs and prices but no photos. This Worker returns each variant's own photo (read-only, CJ key stays on the Worker). */
+  cjImageWorker: 'https://sastamilaga-cj-shipping.usamaestonia.workers.dev',
   /* Google Sheets order log (apps-script/Code.gs). sheetEndpoint = the web app /exec URL; sheetToken = the same text as
      the script property ORDER_TOKEN. Orders still go to orderEndpoint (Formspree) too. Leave empty to disable. */
   sheetEndpoint: '',
