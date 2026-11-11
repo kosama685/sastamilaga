@@ -36,6 +36,8 @@
     });
   }
   W.sync = syncContext;
+  // The store answers in 2-10 seconds, so everything a click needs is prepared in the background first (in this order: the country decides the session).
+  W.warm = function () { return loadIds().then(function () { return syncContext(); }).then(function () { return getNonce(false); }).catch(function () {}); };
   W.add = function (sku, qty) {
     qty = Math.max(1, Math.min(99, parseInt(qty, 10) || 1));
     return loadIds().then(function (map) {
@@ -59,6 +61,7 @@
   function wa() { var a = document.querySelector('main a.sm-wa-btn'); return a ? a.href : ''; }
   function run(sku, qty, buyNow, el) {
     if (!sku || (el && el.getAttribute('aria-busy'))) return; if (el) el.setAttribute('aria-busy', 'true');
+    toast(buyNow ? 'Preparing your checkout…' : 'Adding to cart…');
     W.add(sku, qty).then(function (r) {
       if (el) el.removeAttribute('aria-busy');
       if (r.ok) { if (buyNow) location.href = '/checkout/'; else toast('Added to cart. <a href="/cart/" style="color:#FFB347;margin-left:8px">View cart</a>'); }
@@ -86,5 +89,6 @@
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
     }
   }
+  if (W.active) { setTimeout(W.warm, 1200); }
   if (W.active) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', W.badge); else setTimeout(W.badge, 600); }
 })();
