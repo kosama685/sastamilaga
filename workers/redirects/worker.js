@@ -46,6 +46,10 @@ export default {
       if (/^\/contact\//.test(q)) return go('/contact/');
       if (ur && (q === '/videos' || q === '/visa')) return go(q + '/');
       if (q === '/product') return go('/shop/');
+      if (q === '/digital-marketing') return go('/contact/');
+      if (q === '/language-currency') return go('/global-shop/');
+      m0 = q.match(/^\/live-tv\/category\/([a-z0-9-]{2,40})$/);   // genre pages: the Live TV hub filters by genre (?category=)
+      if (m0) return go(`/live-tv/?category=${m0[1]}`, 302);
       if (ur && q === '/travel') return go('/travel/');
       m0 = q.match(/^\/blog\/([^/]+)$/);   // old WordPress blog posts (exact routes only: the /blog/* route itself belongs to another Worker)
       if (m0) { const t = (await data('blog', env))[decodeURIComponent(m0[1]).toLowerCase()]; return go(t ? `/${t}` : '/blog/'); }
