@@ -742,6 +742,9 @@ footer.smf .smf-pay svg{color:#fff}
 .pdp3 .buy-actions .primary-btn,.pdp3 #gadd{color:#1d1200!important}
 .pdp3 #gadd:hover,.pdp3 #gbuy:hover,.pdp3 .buy-actions .primary-btn:hover,.pdp3 .buy-actions .ghost-btn:hover{transform:translateY(-2px)}
 .pdp3 #gadd:focus-visible,.pdp3 #gbuy:focus-visible,.pdp3 .buy-actions a:focus-visible,.pdp3 .buy-actions button:focus-visible{outline:3px solid #fff;outline-offset:-5px;box-shadow:0 0 0 3px var(--g)}
+.sm-qty{display:inline-flex;align-items:center;gap:.6rem;margin:.6rem 0 0;padding:.35rem .5rem .35rem 1rem;border-radius:14px;border:1px solid var(--line);background:#fbfdfb;font-weight:700;color:var(--deep)}
+.sm-qty button{width:2.2rem;height:2.2rem;border-radius:10px;border:0;background:var(--mint);color:var(--deep);font:800 1.2rem/1 inherit;cursor:pointer}.sm-qty button:hover{background:#d6f0de}.sm-qty button:focus-visible{outline:3px solid var(--o);outline-offset:2px}.sm-qty b{min-width:1.6rem;text-align:center}
+.sm-gallery-fix{display:none}
 /* totals */
 .sm-total{margin:1rem 0 0;padding:.9rem 1rem;border-radius:16px;background:linear-gradient(160deg,#f1faf4,#fff);border:1px solid var(--line)}
 .sm-total dl{display:grid;gap:.35rem;margin:0}.sm-total dl div{display:flex;justify-content:space-between;gap:1rem;font-size:.93rem;color:#3b5546}.sm-total dt,.sm-total dd{margin:0}

@@ -1417,6 +1417,14 @@ function updatePdpTotal() {
   el.innerHTML = `<dl><div><dt>Price × ${q}</dt><dd>${PKR.format(sub)}</dd></div><div><dt>Delivery in Pakistan</dt><dd>${del ? PKR.format(del) : 'Free'}</dd></div><div class="sm-total__sum"><dt>Total</dt><dd>${PKR.format(sub + del)}</dd></div></dl><small>Cash on delivery. ${sub > free ? 'Your order qualifies for free delivery.' : `Add ${PKR.format(free - sub + 1)} more for free delivery.`}</small>`;
 }
 window.updatePdpTotal = updatePdpTotal;
+/* Add to cart and Save buttons: handled at window-capture, before the domain's site-wide click script (which swallows button clicks at document level) */
+window.addEventListener('click', e => {
+  const t = e.target; if (!t || !t.closest) return;
+  const add = t.closest('[data-add-cart]'), wish = !add && t.closest('[data-wish]');
+  if (!add && !wish) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  if (add) addToCart(add.dataset.addCart, Number(add.dataset.qty || 1)); else toggleWish(wish.dataset.wish);
+}, true);
 /* Tabs (product pages): window-capture so the domain's site-wide click script cannot swallow them */
 window.addEventListener('click', e => {
   const tab = e.target && e.target.closest && e.target.closest('.sm-tabs [role=tab]'); if (!tab) return;
@@ -1553,7 +1561,7 @@ function closeModal() {
 /* ============================================================
    CART / WISHLIST / CHECKOUT
    ============================================================ */
-function getCart() { try { return JSON.parse(localStorage.getItem('sm_cart') || '[]'); } catch(e){ return []; } }
+function getCart() { try { return JSON.parse(localStorage.getItem('sm_cart') || '[]').map(r => { const p = byHandle.get(slug(r.id)); return p && p.id !== r.id ? { ...r, id: p.id } : r; }); } catch(e){ return []; } }   /* ids are matched case-insensitively (static pages write the lower-case SKU) */
 function setCart(c){ try { localStorage.setItem('sm_cart', JSON.stringify(c)); } catch(e){} updateCounts(); }
 function getWish() { try { return JSON.parse(localStorage.getItem('sm_wish') || '[]'); } catch(e){ return []; } }
 function setWish(w){ try { localStorage.setItem('sm_wish', JSON.stringify(w)); } catch(e){} updateCounts(); }
@@ -1561,20 +1569,15 @@ function setWish(w){ try { localStorage.setItem('sm_wish', JSON.stringify(w)); }
 function addToCart(id, qty) {
   qty = Number(qty) || 1;
   const item = products.find(x => x.id === id);
-  if (window.SMWoo && window.SMWoo.active && item) {   // live domain: WooCommerce owns the cart
-    window.SMWoo.add(item.sku || item.id, qty).then(r => {
-      if (r.ok) toast('Added to cart');
-      else if (r.reason === 'unmapped') { toast('This item is ordered on WhatsApp'); window.open(waLink(orderText(item, qty)), '_blank', 'noopener'); }
-      else toast(r.message);
-    });
-    return;
-  }
-  if (item && !price(item)) { toast('This product has no listed price yet. Ask for the price on WhatsApp.'); return; }
+  /* The site's own cart feeds the site's checkout (order record + PayPal), so every product with a price can be added and bought.
+     (On the live domain the WooCommerce cart accepted none of 15 sampled products: 8 are not mapped to a WooCommerce product and 7 are "not available for purchase".) */
+  if (item && !price(item)) { toast('This product has no listed price yet. Ask for the price on WhatsApp.'); return false; }
   const cart = getCart();
   const row  = cart.find(x => x.id === id);
   if (row) row.qty += qty; else cart.push({ id, qty });
   setCart(cart);
   toast('Added to cart');
+  return true;
 }
 
 function toggleWish(id) {

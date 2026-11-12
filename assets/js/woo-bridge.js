@@ -46,7 +46,17 @@
     }).catch(function () { return { ok: false, reason: 'network', message: 'The store could not be reached. Please try again.' }; }).then(function (res) { if (res.ok) W.badge(); return res; });
   };
   W.count = function () { return fetch(ROOT + 'wp-json/wc/store/v1/cart', { credentials: 'include' }).then(function (r) { return r.json(); }).then(function (j) { return (j && j.items_count) || 0; }).catch(function () { return 0; }); };
-  W.badge = function () { if (!W.active) return; W.count().then(function (n) { document.querySelectorAll('.smh-cart__count').forEach(function (el) { el.textContent = n; el.setAttribute('data-n', n); }); }); };
+  W.badge = function () {
+    var sum = function (k) { try { return JSON.parse(localStorage.getItem(k) || '[]').reduce(function (a, x) { return a + (x.qty || 0); }, 0); } catch (e) { return 0; } }, n = sum('sm_cart') + sum('sm_gcart');
+    document.querySelectorAll('.smh-cart__count').forEach(function (el) { el.textContent = n; el.setAttribute('data-n', n); });
+  };
+  /* The site's own cart feeds the site's checkout (order record + PayPal). The WooCommerce cart accepted none of 15 sampled products
+     (8 are not mapped to a WooCommerce product, 7 are "not available for purchase"), so it is no longer the first choice. */
+  W.localAdd = function (sku, qty) {
+    qty = Math.max(1, Math.min(99, parseInt(qty, 10) || 1)); var cart = []; try { cart = JSON.parse(localStorage.getItem('sm_cart') || '[]'); } catch (e) {}
+    var row = cart.filter(function (x) { return String(x.id).toLowerCase() === String(sku).toLowerCase(); })[0]; if (row) row.qty = Math.min(99, (row.qty || 0) + qty); else cart.push({ id: sku, qty: qty });
+    try { localStorage.setItem('sm_cart', JSON.stringify(cart)); } catch (e) { return false; } W.badge(); return true;
+  };
   /* Click handling. The domain's recovery layer listens for clicks on the document in the capture phase and swallows anything that looks
      like a static checkout. The window sits above the document in the event path, so this capture listener runs first. */
   function toast(html) {
@@ -61,13 +71,10 @@
   function wa() { var a = document.querySelector('main a.sm-wa-btn'); return a ? a.href : ''; }
   function run(sku, qty, buyNow, el) {
     if (!sku || (el && el.getAttribute('aria-busy'))) return; if (el) el.setAttribute('aria-busy', 'true');
-    toast(buyNow ? 'Preparing your checkout…' : 'Adding to cart…');
-    W.add(sku, qty).then(function (r) {
-      if (el) el.removeAttribute('aria-busy');
-      if (r.ok) { if (buyNow) location.href = '/checkout/'; else toast('Added to cart. <a href="/cart/" style="color:#FFB347;margin-left:8px">View cart</a>'); }
-      else if (r.reason === 'unmapped') toast('This item is ordered on WhatsApp.' + (wa() ? ' <a href="' + wa() + '" target="_blank" rel="noopener" style="color:#FFB347;margin-left:8px">Order on WhatsApp</a>' : ''));
-      else toast(r.message);
-    });
+    qty = Math.max(1, parseInt((document.getElementById('pdpQty') || {}).textContent, 10) || qty || 1);
+    var ok = W.localAdd(sku, qty); if (el) el.removeAttribute('aria-busy');
+    if (!ok) { toast('The cart could not be updated.' + (wa() ? ' <a href="' + wa() + '" target="_blank" rel="noopener" style="color:#FFB347;margin-left:8px">Order on WhatsApp</a>' : '')); return; }
+    if (buyNow) { toast('Preparing your checkout…'); location.href = '/#/checkout'; } else toast('Added to cart. <a href="/cart/" style="color:#FFB347;margin-left:8px">View cart</a>');
   }
   var remote = /\.github\.io$/.test(host);   // the GitHub copy cannot share a WooCommerce session with the store: it hands the shopper over to the store with the item
   function go(sku, buyNow) { location.href = 'https://sastamilaga.com/?sm_do=' + (buyNow ? 'buy' : 'add') + '&sku=' + encodeURIComponent(sku); }
@@ -85,10 +92,9 @@
     var q = new URLSearchParams(location.search), act = q.get('sm_do'), want = q.get('sku');
     if (act && want && /^[A-Za-z0-9_-]{3,40}$/.test(want)) {
       history.replaceState(null, '', location.pathname);
-      var start = function () { W.add(want, 1).then(function (r) { if (r.ok) { if (act === 'buy') location.href = '/checkout/'; else { toast('Added to cart. <a href="/cart/" style="color:#FFB347;margin-left:8px">View cart</a>'); } } else if (r.reason === 'unmapped') toast('This item is ordered on WhatsApp.'); else toast(r.message); }); };
+      var start = function () { if (W.localAdd(want, 1)) { if (act === 'buy') location.href = '/#/checkout'; else toast('Added to cart. <a href="/cart/" style="color:#FFB347;margin-left:8px">View cart</a>'); } else toast('The cart could not be updated.'); };
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
     }
   }
-  if (W.active) { setTimeout(W.warm, 1200); }
   if (W.active) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', W.badge); else setTimeout(W.badge, 600); }
 })();

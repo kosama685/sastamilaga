@@ -63,31 +63,30 @@
       });
       return out;
     }
-    function addToSharedCart() {
-      var sku = productSku(); if (!sku) return false;
+    function addToSharedCart(n) {
+      var sku = productSku(); if (!sku) return false; n = Math.max(1, Number(n) || 1);
       var cart = []; try { cart = JSON.parse(localStorage.getItem('sm_cart') || '[]'); } catch (e) {}
-      var row = cart.filter(function (x) { return x.id === sku; })[0]; if (row) row.qty = (row.qty || 0) + 1; else cart.push({ id: sku, qty: 1 });
+      var row = cart.filter(function (x) { return String(x.id).toLowerCase() === sku.toLowerCase(); })[0]; if (row) row.qty = (row.qty || 0) + n; else cart.push({ id: sku, qty: n });
       try { localStorage.setItem('sm_cart', JSON.stringify(cart)); } catch (e) { return false; }
       badge(); return true;
     }
-    document.addEventListener('click', function (e) {
+    /* Window-capture: the live domain injects a click script at document level that swallows "Add to cart" / "Buy now" buttons;
+       window runs first. The item goes into the site's own cart, which feeds the site's checkout (order record and PayPal). */
+    window.addEventListener('click', function (e) {
       var a = e.target.closest && e.target.closest('main a[href*="#/product/"]'); if (!a) return;
       var label = (a.textContent || '').trim().toLowerCase(), isAdd = /^add to cart/.test(label), isBuy = /^buy now/.test(label); if (!isAdd && !isBuy) return;
-      if (window.SMWoo && window.SMWoo.active) {   // live domain: the real WooCommerce cart
-        var sku = productSku(); if (!sku) return; e.preventDefault();
-        if (a.getAttribute('aria-busy')) return; a.setAttribute('aria-busy', 'true');
-        window.SMWoo.add(sku, 1).then(function (r) {
-          a.removeAttribute('aria-busy');
-          if (r.ok) { if (isBuy) location.href = '/checkout/'; else toast('Added to cart. <a href="/cart/" style="color:#FFB347;margin-left:8px">View cart</a>'); }
-          else if (r.reason === 'unmapped') toast('This item is ordered on WhatsApp. <a href="' + (document.querySelector('main a.sm-wa-btn') || {}).href + '" target="_blank" rel="noopener" style="color:#FFB347;margin-left:8px">Order on WhatsApp</a>');
-          else toast(r.message);
-        });
-        return;
-      }
-      if (!addToSharedCart()) return;   // no product data on the page: fall back to the link
-      e.preventDefault();
-      if (isBuy) location.href = prefix + 'checkout/'; else toast('Added to cart. <a href="' + prefix + 'cart/" style="color:#FFB347;margin-left:8px">View cart</a>');
-    });
+      if (!addToSharedCart((document.getElementById('pdpQty') || {}).textContent)) return;   // no product data on the page: fall back to the link
+      e.preventDefault(); e.stopImmediatePropagation();
+      if (isBuy) location.href = prefix + '#/checkout'; else toast('Added to cart. <a href="' + prefix + 'cart/" style="color:#FFB347;margin-left:8px">View cart</a>');
+    }, true);
+    /* Tabs on product pages */
+    window.addEventListener('click', function (e) {
+      var tab = e.target.closest && e.target.closest('.sm-tabs [role=tab]'); if (!tab) return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      var box = tab.closest('.sm-tabs'); box.querySelectorAll('[role=tab]').forEach(function (x) { x.setAttribute('aria-selected', x === tab ? 'true' : 'false'); });
+      box.querySelectorAll('[role=tabpanel]').forEach(function (x) { x.hidden = x.id !== tab.getAttribute('data-tab'); });
+    }, true);
+    if (document.querySelector('main .pdp .buy-actions')) { var pd = document.createElement('script'); pd.src = prefix + 'assets/js/pdp-static.js'; pd.defer = true; document.head.appendChild(pd); }
     var site = document.createElement('script'); site.src = prefix + 'assets/js/site.min.js'; document.body.appendChild(site);
   }).catch(function () { /* the fallback logo header stays */ });
   /* WhatsApp order button on every product and video card */
