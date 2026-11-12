@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-11T19:34:35Z",
+  "checked_at": "2026-11-12T05:24:24Z",
   "token": {
     "success": true,
     "status": "active"
@@ -49,6 +49,20 @@
         "created_on": "2026-10-05T19:58:31.878958Z",
         "usage_model": "standard",
         "compatibility_date": null
+      },
+      {
+        "id": "bwd-project-brief-builder",
+        "modified_on": "2026-11-11T19:45:53.734582Z",
+        "created_on": "2026-11-11T19:45:53.734582Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-11"
+      },
+      {
+        "id": "bwd-public-discovery",
+        "modified_on": "2026-11-11T20:13:03.949422Z",
+        "created_on": "2026-11-11T20:13:03.949422Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-11"
       },
       {
         "id": "bwd-public-page-protection",
@@ -206,7 +220,7 @@
       },
       {
         "id": "sasta-live-tv-static-v2",
-        "modified_on": "2026-11-11T04:37:35.166936Z",
+        "modified_on": "2026-11-12T04:47:31.014407Z",
         "created_on": "2026-11-11T04:35:16.296202Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-11"
@@ -283,28 +297,28 @@
       },
       {
         "id": "sastamilaga-cj-shipping",
-        "modified_on": "2026-11-11T19:33:09.181471Z",
+        "modified_on": "2026-11-12T05:23:18.571343Z",
         "created_on": "2026-11-11T03:54:36.589467Z",
         "usage_model": "standard",
         "compatibility_date": "2025-07-18"
       },
       {
         "id": "sastamilaga-global-pages",
-        "modified_on": "2026-11-11T19:33:19.135678Z",
+        "modified_on": "2026-11-12T05:23:26.232729Z",
         "created_on": "2026-11-11T03:54:44.151298Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-paypal",
-        "modified_on": "2026-11-11T19:33:15.423629Z",
+        "modified_on": "2026-11-12T05:23:23.115532Z",
         "created_on": "2026-11-11T03:54:41.174076Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-redirects",
-        "modified_on": "2026-11-11T19:33:25.705507Z",
+        "modified_on": "2026-11-12T05:23:30.697206Z",
         "created_on": "2026-11-11T05:14:22.59741Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
@@ -546,6 +560,22 @@
       {
         "pattern": "sastamilaga.com/live-tv/category/*",
         "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/",
+        "script": "sasta-static-blog-reader"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/holiday-gift-budget-including-delivery-costs/",
+        "script": "sasta-static-blog-reader"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/bluetooth-speaker-watts-vs-real-world-loudness/",
+        "script": "sasta-static-blog-reader"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/sitemap.xml",
+        "script": "sasta-static-blog-reader"
       }
     ]
   },

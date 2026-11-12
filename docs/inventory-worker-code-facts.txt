@@ -17,6 +17,8 @@
 109:          else if(backup&&url.searchParams.get('download')==='1') {const data=await bucket.get(key);response=new Response(data.body,{headers:{'Cache-Control':'private,no-store','Content-Type':'application/octet-strea
 115:    const headers=new Headers(response.headers);if(request.headers.get('Origin')===ORIGIN){headers.set('Access-Control-Allow-Origin',ORIGIN);headers.set('Vary','Origin');headers.set('Access-Control-Expose-Headers','C
 ## bwd-performance-static  bytes=760
+## bwd-project-brief-builder  bytes=9577
+## bwd-public-discovery  bytes=1738
 ## bwd-public-page-protection  bytes=11969
 12:var PUBLIC_XML = /^\/(?:sitemap_index|[a-z0-9_-]+-sitemap[0-9]*|bwd-language-sitemap(?:-[a-z0-9-]+)?|bwd-world-sitemap(?:-[0-9]+)?)\.xml$/;
 34:  if (Number(response.headers.get("Content-Length") || 0) > max || !response.body) return null;
@@ -141,10 +143,11 @@
 ## sasta-global-product-recovery-v1  bytes=13468
 ## sasta-global-product-variants-v2  bytes=15696
 30: const isSitemap=url.pathname==='/global-shop/sitemap.xml';
-## sasta-live-tv-static-v2  bytes=3321
+## sasta-live-tv-static-v2  bytes=5154
 4:const SOURCE='https://kosama685.github.io/sastamilaga/live-tv/';
-15: try{source=await fetch(SOURCE,{redirect:'follow',headers:{'accept':'text/html'},cf:{cacheEverything:true,cacheTtl:60}});}
-31: const headers=new Headers({'content-type':'text/html; charset=utf-8','cache-control':'public,max-age=60,s-maxage=120','x-content-type-options':'nosniff','x-sasta-static-source':'github-live-tv','referrer-policy':'str
+17:   const upstream=await fetch('https://sastamilaga.com/wp-json/sltv/v1/m3u',{redirect:'follow',headers:{accept:'audio/x-mpegurl'},cf:{cacheEverything:true,cacheTtl:30}});
+33: try{source=await fetch(SOURCE,{redirect:'follow',headers:{'accept':'text/html'},cf:{cacheEverything:true,cacheTtl:60}});}
+52: const headers=new Headers({'content-type':'text/html; charset=utf-8','cache-control':'public,max-age=60,s-maxage=120','x-content-type-options':'nosniff','x-sasta-static-source':'github-live-tv','referrer-policy':'str
 ## sasta-origin-failover  bytes=4675
 4:const BACKUP="https://kosama685.github.io/sastamilaga/";
 19: const html='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Sasta Milaga — Temporary storefront backup</title><style>body{margin:0
@@ -220,7 +223,7 @@
 19:    const allowed = (env.ALLOWED_ORIGINS || "https://kosama685.github.io").split(",").map((s) => s.trim());
 70:  const r = await fetch(`${env.SITE_ORIGIN}/data/prices.json`, { cf: { cacheTtl: 600 } });
 81:  const r = await fetch("https://open.er-api.com/v6/latest/PKR", { cf: { cacheTtl: 3600 } });
-## sastamilaga-redirects  bytes=5502
+## sastamilaga-redirects  bytes=5401
 12:  const r = await fetch(`${env.SITE_ORIGIN}/data/redirects/${name}.json`, { cf: { cacheTtl: 3600, cacheEverything: true } });
 43:      const r = await fetch(`${env.SITE_ORIGIN}${q}/`, { cf: { cacheTtl: 300, cacheEverything: true } });
 54:      if (q === "/blog/sitemap.xml")
