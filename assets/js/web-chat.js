@@ -35,7 +35,7 @@
 		products.forEach(function (p) {
 			var card = document.createElement('article'); card.className = 'smwa-web__product';
 			var detailUrl = safeUrl(p.url); if (!detailUrl) return;
-			if (p.image) { var imgUrl = safeUrl(p.image); if (imgUrl) { var img = document.createElement('img'); img.src = imgUrl; img.alt = String(p.name || ''); img.loading = 'lazy'; img.width = 72; img.height = 72; card.appendChild(img); } }
+			if (p.image) { var imgUrl = safeUrl(p.image) || (/^https:\/\//.test(String(p.image)) ? String(p.image) : ''); if (imgUrl) { var img = document.createElement('img'); img.src = imgUrl; img.alt = String(p.name || ''); img.loading = 'lazy'; img.width = 72; img.height = 72; card.appendChild(img); } }
 			var body = document.createElement('div'), title = document.createElement('a'), price = document.createElement('small');
 			title.href = detailUrl; title.textContent = String(p.name || 'Product'); price.textContent = String(p.price || ''); body.append(title, price);
 			var action = document.createElement('a'); action.className = 'smwa-web__product-action'; action.href = safeUrl(p.cart_url) || detailUrl; action.textContent = String(p.cart_label || 'View product');
@@ -44,7 +44,7 @@
 		});
 		if (wrap.childElementCount) { log.appendChild(wrap); log.scrollTop = log.scrollHeight; }
 	}
-	function request(url, options) { return fetch(url, Object.assign({ credentials: 'same-origin', headers: { 'Content-Type': 'application/json' } }, options || {})).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.message || cfg.text.error); return j; }); }); }
+	function request(url, options) { options = options || {}; var headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {}); return fetch(url, Object.assign({ credentials: 'same-origin' }, options, { headers: headers })).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.message || cfg.text.error); return j; }); }); }
 	function saveState() { try { if (state) localStorage.setItem(storageKey, JSON.stringify(state)); } catch (e) {} }
 	function sessionHeaders() { return { 'X-SMWA-Session-Id': state.id, 'X-SMWA-Session': state.token }; }
 	function ensureSession() {
@@ -66,10 +66,21 @@
 	function closeChat() { panel.hidden = true; launcher.hidden = false; launcher.setAttribute('aria-expanded', 'false'); if (poller) { window.clearInterval(poller); poller = null; } launcher.focus(); }
 	launcher.addEventListener('click', openChat); close.addEventListener('click', closeChat);
 	document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !panel.hidden) closeChat(); });
+	/* The server's product list is empty for many messages: answer from the real catalogue (Pakistan products and the global shop). */
+	function catalogueAnswer(text) {
+		var S = window.SMCJSearch; if (!S || String(text).trim().length < 3) return Promise.resolve();
+		var ws = S.words(text).filter(function (w) { return w.length > 2; }); if (!ws.length) return Promise.resolve();
+		var out = [], usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
+		try { if (window.SMApp && window.SMApp.products) window.SMApp.products.filter(function (p) { return ws.every(function (w) { return p._search.indexOf(w) >= 0; }); }).slice(0, 2).forEach(function (p) { out.push({ name: p.n, price: window.SMApp.PKR.format(window.SMApp.price(p)), url: location.origin + '/#/product/' + p._slug, image: p.img || (p.imgs && p.imgs[0]) || '' }); }); } catch (e) {}
+		return S.products(ws, 3, 3).then(function (hits) {
+			hits.forEach(function (h) { out.push({ name: h.r[2], price: 'Global item, est. ' + usd.format((h.r[3] || 0) * 1.2), url: location.origin + '/global/p/' + h.cat + '/' + encodeURIComponent(h.r[0]), image: h.r[5], cart_label: 'View options' }); });
+			if (out.length) { bubble(lang === 'ar' ? 'هذه منتجات مطابقة لبحثك:' : 'Here are products that match "' + String(text).trim().slice(0, 60) + '":', 'out'); productCards(out); }
+		}).catch(function () {});
+	}
 	function send(text) {
 		text = String(text || '').trim(); if (!text || busy) return Promise.resolve(); busy = true;
 		return ensureSession().then(function () { return request(cfg.api + 'web-message', { method: 'POST', headers: sessionHeaders(), body: JSON.stringify({ message: text, language: lang, request_id: (window.crypto && crypto.randomUUID ? crypto.randomUUID() : ('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx').replace(/[xy]/g, function(c){var r=Math.random()*16|0;return (c==='x'?r:(r&3|8)).toString(16)})) }) }); }).then(function (j) {
-			return poll().then(function () { if (j.products) productCards(j.products); if (j.action === 'travel') showTravelForm(); });
+			return poll().then(function () { if (j.products && j.products.length) productCards(j.products); else if (j.action !== 'travel') return catalogueAnswer(text); if (j.action === 'travel') showTravelForm(); });
 		}).catch(function () { bubble(cfg.text.error, 'out'); }).finally(function () { busy = false; });
 	}
 	form.addEventListener('submit', function (e) { e.preventDefault(); if (form.elements.website.value) return; var text = input.value.trim(); if (!text) return; input.value = ''; send(text); });
