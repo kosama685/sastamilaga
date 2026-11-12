@@ -51,7 +51,8 @@ for (const lang of CODES) {
   } catch (e) { failed.push(`${lang}: ${e.message}`); }
   if (Object.keys(cur.strings).length) {
     fs.writeFileSync(file, JSON.stringify({ lang: cur.lang, status: 'machine-translated', reviewed_by_human: false, dir: cur.dir, native: cur.native, strings: cur.strings }, null, 0).replace(/,"strings"/, ',\n"strings"'));
-    if (!index.languages.some(l => l.code === lang)) index.languages.push({ code: lang, native: cur.native, dir: cur.dir });
+    index.drafts = index.drafts || [];   /* new languages are drafts: not offered to visitors until a person reviews them and moves them into index.languages */
+    if (!index.languages.some(l => l.code === lang) && !index.drafts.some(l => l.code === lang)) index.drafts.push({ code: lang, native: cur.native, dir: cur.dir });
   }
   console.log(`${lang}: ${Object.keys(cur.strings).length}/${source.length}`);
 }
