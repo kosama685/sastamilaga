@@ -6,7 +6,7 @@
 (function () {
   'use strict';
   if (window.SMI18n) return;
-  var MT = 'ar hi bn fr es de tr id fa ps sd pa ru zh pt'.split(' '), RTL = { ar: 1, fa: 1, ps: 1, sd: 1 };
+  var MT = 'ar hi bn fr es de tr id fa ps sd pa ru zh pt'.split(' '), RTL = { ar: 1, fa: 1, ps: 1, sd: 1, he: 1, yi: 1 };
   var NOTE = {
     ar: ['ترجمة آلية للواجهة، لم تُراجَع من قبل شخص.', 'عرض بالإنجليزية'], hi: ['इंटरफ़ेस का मशीन अनुवाद, किसी व्यक्ति ने समीक्षा नहीं की है।', 'अंग्रेज़ी में देखें'], bn: ['ইন্টারফেসের মেশিন অনুবাদ, কোনো ব্যক্তি পর্যালোচনা করেননি।', 'ইংরেজিতে দেখুন'],
     fr: ['Interface traduite automatiquement, non relue par une personne.', 'Voir en anglais'], es: ['Interfaz traducida automáticamente, no revisada por una persona.', 'Ver en inglés'], de: ['Maschinell übersetzte Oberfläche, nicht von einer Person geprüft.', 'Auf Englisch anzeigen'],
@@ -35,7 +35,7 @@
     busy = false;
   }
   function banner() {
-    if (document.getElementById('sm-mt-note')) return; var t = NOTE[lang]; if (!t) return;
+    if (document.getElementById('sm-mt-note')) return; var t = NOTE[lang] || ['Machine-translated interface, not reviewed by a person.', 'Show in English'];
     var d = document.createElement('div'); d.id = 'sm-mt-note'; d.setAttribute('role', 'status'); d.setAttribute('data-no-mt', ''); d.lang = lang; d.dir = RTL[lang] ? 'rtl' : 'ltr';
     d.style.cssText = 'position:fixed;z-index:99991;left:12px;right:12px;bottom:12px;max-width:560px;margin:0 auto;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;padding:10px 14px;border-radius:14px;background:#0B3B20;color:#fff;font:500 13px/1.5 system-ui,sans-serif;box-shadow:0 14px 30px -12px rgba(11,59,32,.6)';
     d.innerHTML = '<span></span><button type="button" style="min-height:34px;padding:0 14px;border:0;border-radius:999px;font:600 13px/1 inherit;cursor:pointer;background:#fff;color:#11261b"></button><button type="button" aria-label="Close" style="min-height:34px;width:34px;border:0;border-radius:50%;cursor:pointer;background:transparent;color:#fff;font-size:18px">×</button>';
@@ -45,8 +45,12 @@
     document.body.appendChild(d);
   }
   function start() {
-    var l = wanted(); if (!l) return; lang = l;
     var base = SELF ? SELF.replace(/assets\/js\/i18n\.js.*$/, '') : location.origin + '/';
+    /* the list of machine-translated languages grows with the weekly workflow: read it from the index file (the built-in 15 are the fallback) */
+    fetch(base + 'data/i18n/mt/index.json', { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (ix) { if (ix && ix.languages) MT = ix.languages.map(function (x) { return x.code; }); }).catch(function () { }).then(function () { run(base); });
+  }
+  function run(base) {
+    var l = wanted(); if (!l) return; lang = l;
     fetch(base + 'data/i18n/mt/' + l + '.json', { cache: 'force-cache' })
       .then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (j) {
         if (!j || !j.strings) return; map = {}; Object.keys(j.strings).forEach(function (k) { map[key(k)] = j.strings[k]; });
