@@ -9,7 +9,7 @@
  *   /visa/<country>/ , /ur/visa/<country>/        -> /visa/
  *   /privacy-policy/ , /returns-refunds/ …        -> /privacy/ , /returns/ …  (old page names)
  *   /product-tag/…, /store/…, …/feed/             -> 410 Gone (address types the new site does not have)
- *   a product that no longer exists               -> 302 to a search for its words (temporary, so nobody lands on an error)
+ *   a product that no longer exists               -> 410 Gone (was a 302 to a noindex search page = soft 404)
  * The matching data is data/redirects/*.json (built from a read-only export of the WordPress slugs). */
 
 const memo = {};
@@ -61,7 +61,7 @@ export default {
       if (m) {
         const slug = decodeURIComponent(m[1]).toLowerCase(), file = (await data('products', env))[slug];
         if (file) return go(`/p/${file}.html`);
-        return go(`/search/?q=${encodeURIComponent(slug.replace(/-\d{1,2}$/, '').split('-').slice(0, 5).join(' '))}`, 302);
+        return gone();   // retired / unmatched product: 410, never a 302 to a noindex search page (soft 404)
       }
       m = q.match(/^\/product-category\/(.+)$/);
       if (m) {
