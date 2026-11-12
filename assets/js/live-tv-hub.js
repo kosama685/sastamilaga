@@ -45,7 +45,7 @@
 	root.querySelector('.sltv-main').insertAdjacentElement('afterend', toolbar);
 	retryButton.disabled = liveButton.disabled = true;
 
-	function original(ch) { return ch.orig || ch.src; }
+	function original(ch) { return ch.httpSrc || ch.orig || ch.src; }
 	var dashP = null;
 	function loadDash() {
 		if (window.dashjs) return Promise.resolve();
@@ -125,6 +125,8 @@
 		var recent = store('recent').filter(function (i) { return i !== ch.id; }); recent.unshift(ch.id); store('recent', recent.slice(0, 30));
 		list.querySelectorAll('button[aria-current]').forEach(function (b) { b.removeAttribute('aria-current'); });
 		var selected = list.querySelector('button[data-id="' + ch.id + '"]'); if (selected) selected.setAttribute('aria-current', 'true');
+		/* Plain http:// streams cannot play on an https page. Some broadcasters also serve the same address over https: try that first (the original address stays available for VLC, the playlist file and the copy button). */
+		if (/^http:\/\//i.test(ch.src) && !ch.httpSrc && ch.why !== 'cors') return play(Object.assign({}, ch, { httpSrc: ch.src, src: ch.src.replace(/^http:/i, 'https:'), ext: false }), renewed);
 		if (ch.ext || /^http:\/\//i.test(ch.src)) { state.active = false; video.hidden = true; return external(ch, ch.why === 'cors' ? 'This broadcaster does not allow playback in web browsers. Open it in VLC or another player instead.' : 'A secure browser route is not available for this source.'); }
 		if (ch.type === 'youtube' || ch.type === 'iframe') {
 			var src = ch.type === 'youtube' ? (ytId(ch.src) ? 'https://www.youtube-nocookie.com/embed/' + ytId(ch.src) + '?autoplay=1' : null) : (allowed(ch.src) ? ch.src : null);
