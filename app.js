@@ -1656,55 +1656,76 @@ function renderCheckout() {
   const productIds = rows.map(({item}) => item.id);
   const totalAmount = sub;
 
-  renderApp(`<section class="section">
-    <div class="section-head">
-      <div><span class="eyebrow">Cart → Details → Payment → Confirm</span><h1>Checkout</h1><p>Cash on Delivery, bank transfer or wallet.</p></div>
-    </div>
-    <div class="checkout-layout">
-      <form id="checkoutForm" class="detail-panel form-grid" style="padding:20px" onsubmit="placeOrder(event)">
-        
-        <!-- Hidden Inputs for Formspree -->
+  const C0 = window.SM_CONFIG || {}, freeFrom = C0.freeDeliveryFrom || 5000, fee = C0.deliveryFee || 250, hasPP = !!C0.paypalEmail;
+  const ico = d => `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+  const tiles = [
+    !G.length && { v: 'Cash on Delivery (COD)', t: 'Cash on Delivery', i: ico('<rect x="2.5" y="6.5" width="19" height="11" rx="2"/><circle cx="12" cy="12" r="2.6"/>') },
+    !G.length && { v: 'EasyPaisa / JazzCash', t: 'EasyPaisa / JazzCash', i: ico('<rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18h3"/>') },
+    { v: 'Bank Transfer', t: 'Bank Transfer', i: ico('<path d="M3 9.5 12 4l9 5.5M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/>') },
+    hasPP && { v: 'PayPal / Card', t: 'PayPal or card', i: ico('<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/>') }
+  ].filter(Boolean);
+  const itemLines = [
+    ...rows.map(({ item, qty }) => ({ img: img(item), name: item.n, qty, amt: PKR.format(price(item) * qty) })),
+    ...G.map(x => ({ img: x.img, name: x.name + (x.vname ? ' · ' + x.vname : ''), qty: x.qty, amt: gFmt(x.unit * x.qty) + ' est.' }))
+  ];
+  const HERO = '<svg class="sm-co-hero__art" viewBox="0 0 560 190" fill="none" aria-hidden="true"><path d="M0 150c120-30 260-40 560-6V190H0z" fill="#0F7A3B" opacity=".92"/><path d="M0 162c160-34 330-30 560-4" stroke="#FF8A00" stroke-width="6" stroke-linecap="round"/><g fill="#0B3B20" opacity=".78"><rect x="300" y="64" width="14" height="86"/><path d="M307 30l7 34h-14z"/><rect x="332" y="92" width="38" height="58"/><path d="M332 92q19-34 38 0z"/><rect x="392" y="78" width="10" height="72"/><path d="M397 40l5 38h-10z"/><rect x="420" y="104" width="30" height="46"/><rect x="462" y="86" width="22" height="64"/><path d="M473 52l11 34h-22z"/><rect x="500" y="110" width="40" height="40"/></g><g transform="translate(120 22) rotate(-9)"><path d="M0 40 118 26l44-30c6-4 14-3 14 3 0 3-3 7-8 10l-30 22 26 46-12 4-42-34-52 8-16 14-10-2 6-20-18-6z" fill="#fff" stroke="#0F7A3B" stroke-width="3" stroke-linejoin="round"/></g></svg>';
+  renderApp(`<div class="sm-co">
+    <header class="sm-co-hero"><div class="sm-co-hero__txt"><p class="sm-co-hero__k">Secure checkout</p><h1>Complete your order</h1><p class="sm-co-hero__sub">Fast · Secure · Hassle-free</p>
+      <ul class="sm-co-badges" role="list"><li>${ico('<path d="M12 3 4.5 6v5.5c0 4.4 3.1 8.2 7.5 9.5 4.4-1.3 7.5-5.1 7.5-9.5V6z"/><path d="m9 12 2 2 4-4"/>')}<span><b>Secure payment options</b>PayPal, bank transfer, COD</span></li><li>${ico('<path d="M5 12.5 10 17.5 19 7"/>')}<span><b>Order saved first</b>Nothing is lost</span></li><li>${ico('<path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.6-4.3a8.5 8.5 0 1 1 15.4-4.6Z"/>')}<span><b>WhatsApp support</b>Regional teams</span></li></ul></div>${HERO}</header>
+    <div class="checkout-layout sm-co-layout">
+      <form id="checkoutForm" class="sm-co-form" onsubmit="placeOrder(event)">
         <input type="hidden" name="subject" value="New Order from Sasta Milaga">
         <input type="hidden" name="products" value="${esc(productSummary)}">
         <input type="hidden" name="total_amount" value="${totalAmount}">
-        
-        <!-- Hidden Inputs for Meta Pixel Tracking -->
         <input type="hidden" id="metaProductIds" value="${esc(JSON.stringify(productIds))}">
         <input type="hidden" id="metaOrderTotal" value="${totalAmount}">
-
-        <!-- User Inputs (Added 'name' attributes) -->
-        <input name="full_name" required placeholder="Full name" aria-label="Full name">
-        <input name="phone" required placeholder="Phone number" type="tel" aria-label="Phone number">
-        <input name="email" placeholder="Email (optional)" type="email" aria-label="Email">
-        ${globalBlock(G)}
-        <select name="payment_method" aria-label="Payment method">
-          ${G.length ? '' : '<option>Cash on Delivery (COD)</option>'}
-          <option>Bank Transfer</option>
-          ${G.length ? '' : '<option>EasyPaisa / JazzCash</option>'}
-          ${(window.SM_CONFIG || {}).paypalEmail ? `<option value="PayPal / Card">PayPal or debit/credit card (pay now in ${paypalCurrency()})</option>` : ''}
-        </select>
-        <textarea name="address" required placeholder="Complete delivery address" aria-label="Delivery address"></textarea>
-        <textarea name="notes" placeholder="Order notes (optional)" aria-label="Order notes"></textarea>
-
-        <section id="smPay" class="sm-pay" hidden aria-labelledby="smPayTitle" style="grid-column:1/-1">
-          <h3 id="smPayTitle">Pay now with PayPal</h3>
-          <p class="sm-pay__amt" id="smPayAmt" role="status" aria-live="polite">Getting today's exchange rate…</p>
-          <div class="sm-pay__btns">
-            <button type="button" class="sm-pay__btn sm-pay__btn--pp" data-pay="Login"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg><span>Pay with PayPal</span></button>
-            <button type="button" class="sm-pay__btn sm-pay__btn--card" data-pay="Billing"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/></svg><span>Pay by debit or credit card</span></button>
+        <section class="sm-co-step" aria-labelledby="co-s1"><header><span class="sm-co-n">1</span><div><h2 id="co-s1">Delivery details</h2><p>Enter your shipping information</p></div><span class="sm-co-lock">${ico('<rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>').replace('26', '16').replace('26', '16')} Your information is secure</span></header>
+          <div class="sm-co-grid">
+            <label><span class="screen-reader-text">Full name</span><input name="full_name" required placeholder="Full name" aria-label="Full name" autocomplete="name"></label>
+            <label><span class="screen-reader-text">Phone number</span><input name="phone" required placeholder="Phone number *" type="tel" aria-label="Phone number" autocomplete="tel"></label>
+            <label class="sm-co-wide"><span class="screen-reader-text">Email</span><input name="email" placeholder="Email address (optional)" type="email" aria-label="Email" autocomplete="email"></label>
+            <label class="sm-co-wide"><span class="screen-reader-text">Delivery address</span><textarea name="address" required placeholder="Complete delivery address" aria-label="Delivery address" autocomplete="street-address"></textarea></label>
+            <label class="sm-co-wide"><span class="screen-reader-text">Order notes</span><textarea name="notes" placeholder="Order notes (optional)" aria-label="Order notes"></textarea></label>
           </div>
-          <ul class="sm-pay__facts" role="list">
-            <li>Your order is saved first, so nothing is lost if you close the page.</li>
-            <li>PayPal opens in the next step. Card details are typed on PayPal's secure page; we never see or store them.</li>
-            <li>No PayPal account is needed for card payment where PayPal offers guest checkout in your country.</li>
-          </ul>
+          ${globalBlock(G)}
         </section>
-
-        <button type="submit" id="smPlaceOrder" class="primary-btn" style="grid-column:1/-1;padding:16px">Place order</button>
+        <section class="sm-co-step" aria-labelledby="co-s2"><header><span class="sm-co-n">2</span><div><h2 id="co-s2">Delivery</h2><p>How your order reaches you</p></div></header>
+          <div class="sm-co-ship">${ico('<path d="M3 6h11v10H3zM14 9h4l3 3v4h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/>')}<div><b>${G.length && !rows.length ? 'Global items ship from our supplier' : 'Standard delivery in Pakistan'}</b><small>${G.length && !rows.length ? 'The carrier you chose on the product page is added to your payment; delivery time is confirmed on WhatsApp.' : `Free over ${PKR.format(freeFrom)}, otherwise ${PKR.format(fee)}. Delivery time is confirmed on WhatsApp.`}</small></div><b class="sm-co-ship__p">${G.length && !rows.length ? 'Carrier price' : (sub > freeFrom ? 'Free' : PKR.format(fee))}</b></div>
+        </section>
+        <section class="sm-co-step" aria-labelledby="co-s3"><header><span class="sm-co-n">3</span><div><h2 id="co-s3">Payment method</h2><p>Select a payment method</p></div></header>
+          <div class="sm-co-tiles" role="radiogroup" aria-label="Payment method">${tiles.map((x, i) => `<button type="button" class="sm-co-tile" role="radio" aria-checked="${i ? 'false' : 'true'}" data-pm="${esc(x.v)}">${x.i}<span>${esc(x.t)}</span></button>`).join('')}</div>
+          <select name="payment_method" class="sm-co-select" aria-label="Payment method" tabindex="-1">
+            ${G.length ? '' : '<option>Cash on Delivery (COD)</option>'}
+            <option>Bank Transfer</option>
+            ${G.length ? '' : '<option>EasyPaisa / JazzCash</option>'}
+            ${hasPP ? `<option value="PayPal / Card">PayPal or debit/credit card (pay now in ${paypalCurrency()})</option>` : ''}
+          </select>
+          <section id="smPay" class="sm-pay" hidden aria-labelledby="smPayTitle">
+            <h3 id="smPayTitle">Pay now with PayPal</h3>
+            <p class="sm-pay__amt" id="smPayAmt" role="status" aria-live="polite">Getting today's exchange rate…</p>
+            <div class="sm-pay__btns">
+              <button type="button" class="sm-pay__btn sm-pay__btn--pp" data-pay="Login"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg><span>Pay with PayPal</span></button>
+              <button type="button" class="sm-pay__btn sm-pay__btn--card" data-pay="Billing"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/></svg><span>Pay by debit or credit card</span></button>
+            </div>
+            <ul class="sm-pay__facts" role="list">
+              <li>Your order is saved first, so nothing is lost if you close the page.</li>
+              <li>PayPal opens in the next step. Card details are typed on PayPal's secure page; we never see or store them.</li>
+              <li>No PayPal account is needed for card payment where PayPal offers guest checkout in your country.</li>
+            </ul>
+          </section>
+          <button type="submit" id="smPlaceOrder" class="sm-co-place">${ico('<rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>').replace('26', '20').replace('26', '20')}<span>Place order now</span></button>
+          <p class="sm-co-safe">Your order details are sent securely and saved before any payment step.</p>
+        </section>
       </form>
-      ${summaryBox(sub, true, G)}
+      <div class="sm-co-side">
+        ${summaryBox(sub, true, G)}
+        ${itemLines.length ? `<section class="sm-co-items" aria-label="Items in your order"><h2>In your order</h2><ul role="list">${itemLines.map(l => `<li><img src="${esc(l.img)}" alt="" width="56" height="56" loading="lazy" onerror="this.src=window.fallbackImg"><span><b>${esc(l.name)}</b><small>Qty ${l.qty}</small></span><em>${esc(l.amt)}</em></li>`).join('')}</ul></section>` : ''}
+        <section class="sm-co-conf" aria-labelledby="co-conf"><h2 id="co-conf">${ico('<path d="M12 3 4.5 6v5.5c0 4.4 3.1 8.2 7.5 9.5 4.4-1.3 7.5-5.1 7.5-9.5V6z"/><path d="m9 12 2 2 4-4"/>').replace('26', '30').replace('26', '30')} Shop with confidence</h2><ul role="list"><li>Secure payment options</li><li>7-day returns for damaged or wrong items (Pakistan)</li><li>WhatsApp support from regional teams</li></ul></section>
+        <a class="sm-co-promo" href="${APP_BASE}travel/"><b>Book your next adventure</b><small>Flights · Hotels · Umrah packages</small><span>Book now ›</span></a>
+      </div>
     </div>
-  </section>`);
+    <ul class="sm-co-strip" role="list"><li><b>Worldwide shipping</b><small>On global items</small></li><li><b>Cash on delivery</b><small>In Pakistan</small></li><li><b>7-day returns</b><small>Damaged or wrong items</small></li><li><b>WhatsApp support</b><small>Regional teams</small></li></ul>
+  </div>`);
 }
 
 function renderThankYou() {
@@ -1801,6 +1822,12 @@ window.addEventListener('click', e => {
   e.preventDefault(); e.stopImmediatePropagation(); if (b.disabled) return;
   const form = document.getElementById('checkoutForm'); if (!form.reportValidity()) return;
   if (b.id === 'smPlaceOrder') window.placeOrder({ preventDefault() { } }); else window.placeOrder({ preventDefault() { } }, b.dataset.pay, b);
+}, true);
+window.addEventListener('click', e => {
+  const tile = e.target && e.target.closest && e.target.closest('.sm-co-tile'), form = document.getElementById('checkoutForm'); if (!tile || !form) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  const sel = form.elements.payment_method; sel.value = tile.dataset.pm; sel.dispatchEvent(new Event('change', { bubbles: true }));
+  form.querySelectorAll('.sm-co-tile').forEach(x => x.setAttribute('aria-checked', x === tile ? 'true' : 'false'));
 }, true);
 window.addEventListener('submit', e => { if (e.target && e.target.id === 'checkoutForm') { e.preventDefault(); e.stopImmediatePropagation(); if (e.target.reportValidity()) window.placeOrder({ preventDefault() { } }); } }, true);
 document.addEventListener('click', e => {
