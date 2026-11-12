@@ -133,6 +133,13 @@ function shell({ key, keepHome = false, keepTv = false, lang = 'en', dir = 'ltr'
   else if (key === 'travel') h = h.replace(/<h1 class="wp-block-heading is-style-sm-accent">([\s\S]*?)<\/h1>/, '<h2 class="wp-block-heading is-style-sm-accent">$1</h2>');   // the travel page keeps the home hero: its heading must not be a second H1      // one H1 and no repeated home content on pages that do not need it
   if (!keepTv) h = emptyDiv(h, /<div id="view-livetv"[^>]*>/);
   h = h.replace('<div id="app" class="sm-app" hidden></div>', () => `<div id="app" class="sm-app"${isStatic ? ' data-static="1"' : ''}>${body}</div>`);
+  /* BreadcrumbList for every indexable page (Home > [Global shop >] page), so search results can show the path */
+  if (!/noindex/.test(robots || '') && key !== 'global' && key !== 'global-shop') {
+    const nm = s => String(s).replace(/ (\||–|-) (Sasta Milaga|global shop)$/i, '').replace(/ \| Sasta Milaga$/, '');
+    const trail = [[lang === 'ur' ? 'ہوم' : 'Home', `${SITE}/`], ...(/^global\/g\//.test(key) ? [['Global shop', `${SITE}/c/global/index.html`]] : []), [nm(title), url]];
+    const ld = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: trail.map(([name, item], i) => ({ '@type': 'ListItem', position: i + 1, name, item })) };
+    h = h.replace('</head>', () => `<script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}</script>\n</head>`);
+  }
   return h;
 }
 const alt1 = (en, ur) => `<link rel="alternate" hreflang="en" href="${en}">${ur ? `<link rel="alternate" hreflang="ur" href="${ur}">` : ''}<link rel="alternate" hreflang="x-default" href="${en}">`;
