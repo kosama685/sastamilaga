@@ -235,9 +235,15 @@
   async function workerQuote(r, chosen, qty, out, stale) {
     const C = window.SM_CONFIG || {}, W = (C.cjShippingWorker || C.cjImageWorker || '').replace(/\/$/, ''); if (!W) return false;
     let cc = 'PK'; try { cc = (window.SMMarket && window.SMMarket.state().country) || 'PK'; } catch (e) { }
+    const ck = `smq:${cc}:${(chosen && chosen.v && chosen.v.vid) || r[0]}:${qty}`; let d = null;
+    try { const c = JSON.parse(sessionStorage.getItem(ck) || 'null'); if (c && Date.now() - c.t < 30 * 60e3) d = c.d; } catch (e) { }   /* same country, option and quantity: no second call to the supplier (it allows one request per second) */
     try {
-      const res = await fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ country: cc, items: [{ pid: r[0], sku: r[1], qty, ...(chosen && chosen.v ? { vid: chosen.v.vid } : {}) }] }) });
-      const d = await res.json(); if (stale && stale()) return true; if (!res.ok || !d.methods || !d.methods.length) return false;
+      if (!d) {
+        const res = await fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ country: cc, items: [{ pid: r[0], sku: r[1], qty, ...(chosen && chosen.v ? { vid: chosen.v.vid } : {}) }] }) });
+        d = await res.json(); if (!res.ok || !d.methods || !d.methods.length) { if (stale && stale()) return true; return false; }
+        try { sessionStorage.setItem(ck, JSON.stringify({ t: Date.now(), d })); } catch (e) { }
+      }
+      if (stale && stale()) return true; if (!d.methods || !d.methods.length) return false;
       out.innerHTML = d.methods.slice(0, 6).map((m, i) => `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(`${neutral(m.name)}: ${USD.format(m.price)}, ${m.days} days`)}" data-amt="${esc(String(m.price))}" data-cur="USD"${i ? '' : ' checked'}> <span>${esc(neutral(m.name))}</span> <b>${USD.format(m.price)}</b> <small>${esc(m.days)} days</small></label>`).join('') + `<p class="sm-ship__note">Carrier price in US$ for ${qty} item${qty > 1 ? 's' : ''} to ${esc((window.SMMarket && window.SMMarket.countryName(cc)) || cc)}, before any customs duties. The final total is confirmed before you pay.</p>`;
       return true;
     } catch (e) { return false; }
