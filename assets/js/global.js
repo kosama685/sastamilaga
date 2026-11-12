@@ -231,12 +231,13 @@
      already converted to the visitor's currency. Only on the store's own domain, where the session cookies are first-party. */
   const wpShip = () => { const C = window.SM_CONFIG || {}; return !C.cjShippingWorker && C.wpApi && window.SMWoo && window.SMWoo.active; };
   /* Fallback quote: workers/cj-shipping (supplier carrier prices in US$) for the visitor's detected country. Returns true when quotes were shown. */
-  async function workerQuote(r, chosen, qty, out) {
+  let qSeq = 0;   /* only the newest quote request may write to the page (options can be clicked quickly) */
+  async function workerQuote(r, chosen, qty, out, stale) {
     const C = window.SM_CONFIG || {}, W = (C.cjShippingWorker || C.cjImageWorker || '').replace(/\/$/, ''); if (!W) return false;
     let cc = 'PK'; try { cc = (window.SMMarket && window.SMMarket.state().country) || 'PK'; } catch (e) { }
     try {
       const res = await fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ country: cc, items: [{ pid: r[0], sku: r[1], qty, ...(chosen && chosen.v ? { vid: chosen.v.vid } : {}) }] }) });
-      const d = await res.json(); if (!res.ok || !d.methods || !d.methods.length) return false;
+      const d = await res.json(); if (stale && stale()) return true; if (!res.ok || !d.methods || !d.methods.length) return false;
       out.innerHTML = d.methods.slice(0, 6).map((m, i) => `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(`${neutral(m.name)}: ${USD.format(m.price)}, ${m.days} days`)}" data-amt="${esc(String(m.price))}" data-cur="USD"${i ? '' : ' checked'}> <span>${esc(neutral(m.name))}</span> <b>${USD.format(m.price)}</b> <small>${esc(m.days)} days</small></label>`).join('') + `<p class="sm-ship__note">Carrier price in US$ for ${qty} item${qty > 1 ? 's' : ''} to ${esc((window.SMMarket && window.SMMarket.countryName(cc)) || cc)}, before any customs duties. The final total is confirmed before you pay.</p>`;
       return true;
     } catch (e) { return false; }
@@ -257,7 +258,10 @@
       if (!chosen.v) { out.innerHTML = '<small>Choose an option first.</small>'; return; }
       const qty = Number(document.querySelector('#greq [name="qty"]').value) || 1;
       go.disabled = true; out.textContent = 'Getting carrier rates for your country…';
+      const my = ++qSeq, stale = () => my !== qSeq;
       try {
+        /* the shipping Worker answers in a second or two: ask it first; the store's live feed is only the second source */
+        if (await workerQuote(r, chosen, qty, out, stale)) return;
         let res = null, d = null;
         try {
           await window.SMWoo.sync();
@@ -267,7 +271,6 @@
         } catch (e) { res = null; }
         if (!res || !res.ok || !d || !d.quotes || !d.quotes.length) {
           /* The store's live feed is down: ask the shipping Worker (same supplier, US$ prices) for the visitor's detected country. */
-          if (await workerQuote(r, chosen, qty, out)) return;
           out.textContent = 'Shipping prices could not be loaded just now. Please press "Get shipping cost" again in a moment, or place the order and we will confirm shipping on WhatsApp.'; return;
         }
         const money = (n, cur) => { try { return new Intl.NumberFormat('en', { style: 'currency', currency: cur }).format(n); } catch (e) { return `${cur} ${n.toFixed(2)}`; } };
