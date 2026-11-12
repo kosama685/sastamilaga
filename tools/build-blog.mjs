@@ -79,7 +79,7 @@ for (const p of posts) {
       author: { '@type': 'Organization', name: p.author }, publisher: { '@type': 'Organization', name: 'Sasta Milaga', logo: { '@type': 'ImageObject', url: `${SITE}/assets/brand/logo.png` } },
       mainEntityOfPage: url, image: img(p), keywords: (p.tags || []).join(', '), articleSection: p.category },
     ...(p.faq?.length ? [{ '@type': 'FAQPage', mainEntity: p.faq.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }] : []),
-    { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` }, { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE}/b/index.html` }, { '@type': 'ListItem', position: 3, name: p.title, item: url }] }] };
+    { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` }, { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE}/b/` }, { '@type': 'ListItem', position: 3, name: p.title, item: url }] }] };
   const body = `<article class="sm-page sm-article">
 <nav class="sm-crumbs" aria-label="Breadcrumb"><a href="../">Home</a> <span aria-hidden="true">/</span> <a href="index.html">Blog</a> <span aria-hidden="true">/</span> <span aria-current="page">${e(p.title)}</span></nav>
 <header class="sm-page-head"><h1>${e(p.title)}</h1><p><span class="sm-blog-meta"><span>${e(p.category)}</span> <time datetime="${p.publish}">${fmt(p.publish)}</time> · ${e(p.author)}</span></p></header>
@@ -91,12 +91,12 @@ ${more.length ? `<section class="section"><h2>More guides</h2><div class="sm-blo
 </article>`;
   fs.writeFileSync(path.join(dir, `${p.slug}.html`), page({ title: p.metaTitle || p.title, desc: p.description, url, image: img(p), schema, body }));
 }
-const listUrl = `${SITE}/b/index.html`;
+const listUrl = `${SITE}/b/`;   /* one canonical form for the blog index: /b/ (the sitemap and the canonical tag agree) */
 /* Blog listing: hero band, featured latest post, card grid and real paginated pages (b/index.html, b/page-2.html ...). */
 const PER = 12, pageCount = Math.max(1, Math.ceil((posts.length - 1) / PER));   // page 1 shows the featured post plus 12 cards
 const plain = h => String(h || '').replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, ' ').replace(/<[^>]+>/g, ' ').replace(/&[a-z#0-9]+;/gi, ' ').replace(/\s+/g, ' ').trim();
 const readMin = p => Math.max(1, Math.ceil(plain(bodyOf(p)).split(' ').filter(Boolean).length / 200));
-const pageHref = n => (n === 1 ? 'index.html' : `page-${n}.html`), pageUrl = n => `${SITE}/b/${pageHref(n)}`;
+const pageHref = n => (n === 1 ? 'index.html' : `page-${n}.html`), pageUrl = n => (n === 1 ? `${SITE}/b/` : `${SITE}/b/${pageHref(n)}`);
 const CAL = '<svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg>';
 const CLOCK = '<svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 const USER = '<svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.4 7-5.4s6.2 1.8 7 5.4"/></svg>';

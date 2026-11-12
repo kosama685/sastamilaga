@@ -1,0 +1,34 @@
+name: Weekly crawl (read-only) with delta report
+on:
+  schedule:
+    - cron: "40 4 * * 2"      # Tuesdays 04:40 UTC (the day after the Lighthouse run)
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: weekly-crawl
+  cancel-in-progress: false
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Crawl the sitemaps (GET only) and write docs/crawl/DELTA.md
+        id: crawl
+        continue-on-error: true
+        run: node tools/weekly-crawl.mjs
+      - name: Commit the report
+        run: |
+          git config user.name "crawl-bot"; git config user.email "crawl-bot@users.noreply.github.com"
+          git add docs/crawl
+          git commit -m "Weekly crawl report [skip ci]" || echo "nothing to commit"
+          git pull --rebase -q origin main && git push -q origin HEAD:main
+      - name: Release gate
+        if: steps.crawl.outcome == 'failure'
+        run: echo "::error::Weekly crawl found broken or non-canonical sitemap URLs. See docs/crawl/DELTA.md"; exit 1
