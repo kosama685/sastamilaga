@@ -1,0 +1,14 @@
+name: Check Workers AI access
+on: workflow_dispatch
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: One test translation (en to ur) with the Cloudflare token
+        env:
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          curl -sS -m 60 -X POST -H "Authorization: Bearer $CF_API_TOKEN" -H "Content-Type: application/json" \
+            --data '{"text":"Add to cart","source_lang":"english","target_lang":"urdu"}' \
+            "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/ai/run/@cf/meta/m2m100-1.2b" | jq -c '{success, errors, result}'
