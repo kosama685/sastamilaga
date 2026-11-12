@@ -209,6 +209,17 @@
   /* Live shipping quotes from the WordPress store (global-dropshipping-commerce): real carrier rates for the visitor's country,
      already converted to the visitor's currency. Only on the store's own domain, where the session cookies are first-party. */
   const wpShip = () => { const C = window.SM_CONFIG || {}; return !C.cjShippingWorker && C.wpApi && window.SMWoo && window.SMWoo.active; };
+  /* Fallback quote: workers/cj-shipping (supplier carrier prices in US$) for the visitor's detected country. Returns true when quotes were shown. */
+  async function workerQuote(r, chosen, qty, out) {
+    const C = window.SM_CONFIG || {}, W = (C.cjShippingWorker || C.cjImageWorker || '').replace(/\/$/, ''); if (!W) return false;
+    let cc = 'PK'; try { cc = (window.SMMarket && window.SMMarket.state().country) || 'PK'; } catch (e) { }
+    try {
+      const res = await fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ country: cc, items: [{ pid: r[0], sku: r[1], qty, ...(chosen && chosen.v ? { vid: chosen.v.vid } : {}) }] }) });
+      const d = await res.json(); if (!res.ok || !d.methods || !d.methods.length) return false;
+      out.innerHTML = d.methods.slice(0, 6).map((m, i) => `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(`${neutral(m.name)}: ${USD.format(m.price)}, ${m.days} days`)}" data-amt="${esc(String(m.price))}" data-cur="USD"${i ? '' : ' checked'}> <span>${esc(neutral(m.name))}</span> <b>${USD.format(m.price)}</b> <small>${esc(m.days)} days</small></label>`).join('') + `<p class="sm-ship__note">Carrier price in US$ for ${qty} item${qty > 1 ? 's' : ''} to ${esc((window.SMMarket && window.SMMarket.countryName(cc)) || cc)}, before any customs duties. The final total is confirmed before you pay.</p>`;
+      return true;
+    } catch (e) { return false; }
+  }
   function shipBoxWp() {
     const mk = window.SMMarket; let nm = ''; try { nm = mk ? mk.countryName(mk.state().country) : ''; } catch (e) { }
     return `<fieldset class="sm-ship"><legend>Shipping cost</legend><div class="sm-ship__row"><span>Delivering to <b id="gship-to">${esc(nm || 'your country')}</b> <button type="button" class="sm-btn sm-btn--ghost" id="gship-chg">Change</button></span><button type="button" class="sm-btn sm-btn--ghost" id="gship-go">Get shipping cost</button></div>
@@ -226,14 +237,21 @@
       const qty = Number(document.querySelector('#greq [name="qty"]').value) || 1;
       go.disabled = true; out.textContent = 'Getting carrier rates for your country…';
       try {
-        await window.SMWoo.sync();
-        const c = await (await fetch(`${api}/context`, { credentials: 'include' })).json();
-        const res = await fetch(`${api}/live/freight`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-GDCS-CSRF': c.csrf }, body: JSON.stringify({ pid: r[0], vid: chosen.v.vid, quantity: qty, csrf: c.csrf }) });
-        const d = await res.json().catch(() => null);
-        if (!res.ok || !d || !d.quotes || !d.quotes.length) { out.textContent = ((d && d.message) ? d.message.replace(/<[^>]+>/g, '') + ' ' : '') + 'We will confirm shipping on WhatsApp.'; return; }
+        let res = null, d = null;
+        try {
+          await window.SMWoo.sync();
+          const c = await (await fetch(`${api}/context`, { credentials: 'include' })).json();
+          res = await fetch(`${api}/live/freight`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json', 'X-GDCS-CSRF': c.csrf }, body: JSON.stringify({ pid: r[0], vid: chosen.v.vid, quantity: qty, csrf: c.csrf }) });
+          d = await res.json().catch(() => null);
+        } catch (e) { res = null; }
+        if (!res || !res.ok || !d || !d.quotes || !d.quotes.length) {
+          /* The store's live feed is down: ask the shipping Worker (same supplier, US$ prices) for the visitor's detected country. */
+          if (await workerQuote(r, chosen, qty, out)) return;
+          out.textContent = 'Shipping prices could not be loaded just now. Please press "Get shipping cost" again in a moment, or place the order and we will confirm shipping on WhatsApp.'; return;
+        }
         const money = (n, cur) => { try { return new Intl.NumberFormat('en', { style: 'currency', currency: cur }).format(n); } catch (e) { return `${cur} ${n.toFixed(2)}`; } };
         out.innerHTML = d.quotes.slice(0, 6).map((m, i) => { const val = `${neutral(m.service)}: ${money(m.cost, m.currency)}, ${m.estimate} days`; return `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(val)}" data-amt="${esc(String(m.cost))}" data-cur="${esc(String(m.currency || 'USD'))}"${i ? '' : ' checked'}> <span>${esc(neutral(m.service))}</span> <b>${esc(money(m.cost, m.currency))}</b> <small>${esc(m.estimate)} days</small></label>`; }).join('') + `<p class="sm-ship__note">Carrier price for ${qty} item${qty > 1 ? 's' : ''} shipped from ${esc((d.origins && d.origins[0] && d.origins[0].name) || 'our supplier')}, before any customs duties. The final total is confirmed before you pay.</p>`;
-      } catch (e) { out.textContent = 'Shipping prices are not available right now. We will confirm shipping on WhatsApp.'; }
+      } catch (e) { out.textContent = 'Shipping prices could not be loaded just now. Please press "Get shipping cost" again in a moment.'; }
       finally { go.disabled = false; }
     });
   }
