@@ -3,7 +3,7 @@
    Run: node tools/apply-footer-css.mjs */
 import fs from 'node:fs'; import path from 'node:path';
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/(\w:)/, '$1')), '..');
-const layers = [['footer-v2', ['styles.css', 'assets/theme/static-bundle.css']], ['checkout-v2', ['styles.css']]];
+const layers = [['footer-v2', ['styles.css', 'assets/theme/static-bundle.css']], ['checkout-v2', ['styles.css']], ['pdp-v2', ['styles.css']]];
 for (const [name, files] of layers) {
   const css = fs.readFileSync(path.join(ROOT, `assets/theme/${name}.css`), 'utf8').trim(), re = new RegExp(`\\n?\\/\\*${name}:start\\*\\/[\\s\\S]*?\\/\\*${name}:end\\*\\/`);
   for (const f of files) {

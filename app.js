@@ -1117,7 +1117,7 @@ function renderListing(type, val, qs) {
     : '';
 
   renderApp([
-    '<section class="hero" style="min-height:320px">',
+    '<section class="hero sm-shop-hero">',
       '<div class="hero-content">',
         `<span class="eyebrow">${type === 'tag' ? 'Tag page' : type === 'category' ? 'Category page' : 'Results'}</span>`,
         `<h1>${esc(title)}</h1>`,
@@ -1343,20 +1343,16 @@ function renderPDP(handle) {
     </button>`
   ).join('');
 
+  const C0 = window.SM_CONFIG || {}, freeFrom = C0.freeDeliveryFrom || 5000, fee = C0.deliveryFee || 250, unit = price(p);
+  const ic = (d, s = 22) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+  const TRUCK = '<path d="M3 6h11v10H3zM14 9h4l3 3v4h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/>';
+  const trust = [['<rect x="2.5" y="6.5" width="19" height="11" rx="2"/><circle cx="12" cy="12" r="2.6"/>', 'Cash on delivery'], ['<path d="M12 3 4.5 6v5.5c0 4.4 3.1 8.2 7.5 9.5 4.4-1.3 7.5-5.1 7.5-9.5V6z"/><path d="m9 12 2 2 4-4"/>', '7-day return requests'], [TRUCK, 'Delivery across Pakistan'], ['<path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.6-4.3a8.5 8.5 0 1 1 15.4-4.6Z"/>', 'WhatsApp support']];
   renderApp([
-    '<section class="pdp" aria-label="Product detail">',
-      '<div>',
-        '<div class="gallery-panel">',
-          `<div class="gallery-main" id="galleryMain">${mediaElement(first.u, first.type, p.n)}</div>`,
-          `<div class="gallery-thumbs" role="list" aria-label="Product images">${thumbsHtml}</div>`,
-        '</div>',
-        '<div class="detail-panel">',
-          breadcrumbHtml,
-          '<h2 style="margin-top:14px">Product Details</h2>',
-          `<p style="line-height:1.7;color:var(--muted2)">${esc(p.d || p.sd || p.seoD || 'Full product details at Sasta Milaga.')}</p>`,
-          (p.tags || []).length ? `<h3 style="font-size:1rem;margin:14px 0 8px;color:var(--muted2)">Tags</h3><div class="tags-wrap">${(p.tags || []).map(tagLink).join('')}</div>` : '',
-          p.sku ? `<p style="margin-top:14px;color:var(--muted);font-size:.82rem">SKU: <code>${esc(p.sku)}</code> &nbsp;|&nbsp; ID: <code>${esc(p.id)}</code></p>` : '',
-        '</div>',
+    breadcrumbHtml,
+    '<section class="pdp pdp3" aria-label="Product detail">',
+      '<div class="gallery-panel">',
+        `<div class="gallery-main" id="galleryMain">${mediaElement(first.u, first.type, p.n)}</div>`,
+        `<div class="gallery-thumbs" role="list" aria-label="Product images">${thumbsHtml}</div>`,
       '</div>',
 
       '<aside class="buy-panel" aria-label="Purchase options">',
@@ -1364,12 +1360,11 @@ function renderPDP(handle) {
         `<h1>${esc(p.n)}</h1>`,
         `<p class="product-meta">Sold by: <a href="#/store/${p._storeSlug}" style="color:var(--gold2)">${esc(p.store || SITE_NAME)}</a>${p.sku ? ` · SKU: ${esc(p.sku)}` : ''}</p>`,
         '<div style="margin:12px 0">',
-          `<span class="big-price">${price(p) ? PKR.format(price(p)) : 'Price on request'}</span>`,
-          oldPrice(p) > price(p) ? ` <span class="old-price">${PKR.format(oldPrice(p))}</span>` : '',
+          `<span class="big-price">${unit ? PKR.format(unit) : 'Price on request'}</span>`,
+          oldPrice(p) > unit ? ` <span class="old-price">${PKR.format(oldPrice(p))}</span>` : '',
           discount(p) ? ` <span class="discount" style="position:static;display:inline-block;margin-left:8px">-${discount(p)}%</span>` : '',
         '</div>',
         `<div class="tags-wrap" style="margin:10px 0">`,
-          discount(p) ? `<span class="tag-chip" style="background:rgba(200,169,110,.2);border-color:rgba(200,169,110,.4)">💰 ${discount(p)}% Off</span>` : '',
           `<span class="tag-chip">${(p.in || num(p.stock) > 0) ? 'In stock' : 'Check availability'}</span>`,
           (p.vids || []).length ? '<span class="tag-chip">Video available</span>' : '',
         '</div>',
@@ -1378,15 +1373,32 @@ function renderPDP(handle) {
           '<b id="qty" aria-live="polite">1</b>',
           '<button onclick="changeQty(1)" aria-label="Increase quantity">+</button>',
         '</div>',
+        unit ? `<div class="sm-total" id="pdpTotal" data-unit="${unit}" data-free="${freeFrom}" data-fee="${fee}" role="status" aria-live="polite"></div>` : '',
         '<div class="buy-actions">',
-          `<button class="primary-btn" data-add-cart="${esc(p.id)}" aria-label="Add to cart">Add to cart</button>`,
-          `<a class="ghost-btn" href="#/checkout" onclick="addToCart('${esc(p.id)}',Number((document.getElementById('qty')||{}).textContent||1))" aria-label="Buy now">Buy now</a>`,
+          `<button class="primary-btn" data-add-cart="${esc(p.id)}" aria-label="Add to cart">${ic('<circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M3 4h2.5l2.2 11h10.6L20.5 8H6.2"/>', 20)}&nbsp;Add to cart</button>`,
+          `<a class="ghost-btn" href="#/checkout" onclick="addToCart('${esc(p.id)}',Number((document.getElementById('qty')||{}).textContent||1))" aria-label="Buy now">${ic('<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>', 20)}&nbsp;Buy now</a>`,
         '</div>',
         `<a class="sm-wa-btn" data-wa-order="${esc(p.id)}" href="${esc(waLink(orderText(p, 1)))}" target="_blank" rel="noopener">Order on WhatsApp</a>`,
         `<button class="ghost-btn" style="width:100%;margin-top:8px" data-wish="${esc(p.id)}" aria-label="Save to wishlist">Save to wishlist</button>`,
-        `<ul class="sm-buy-facts" role="list"><li>Cash on delivery across Pakistan</li><li>Delivery charge shown at checkout</li><li>7-day return requests</li></ul>`,
-        buildShareBar(p),
+        `<ul class="sm-trust" role="list">${trust.map(([d, l]) => `<li>${ic(d, 24)}<span>${l}</span></li>`).join('')}</ul>`,
       '</aside>',
+
+      '<div class="pdp-side">',
+        `<section class="sm-del" aria-labelledby="del-h"><h2 id="del-h">${ic(TRUCK, 22)} Delivery information</h2>`,
+          `<div class="sm-del__row">${ic(TRUCK, 24)}<b>Standard delivery</b><small>Across Pakistan. Free on orders over ${PKR.format(freeFrom)}, otherwise ${PKR.format(fee)}. Delivery time is confirmed on WhatsApp.</small></div>`,
+          `<div class="sm-del__row">${ic('<rect x="2.5" y="6.5" width="19" height="11" rx="2"/><circle cx="12" cy="12" r="2.6"/>', 24)}<b>Pay on delivery</b><small>Cash on delivery across Pakistan, or bank transfer and PayPal at checkout.</small></div>`,
+          `<div class="sm-del__row">${ic('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>', 24)}<b>Outside Pakistan?</b><small>Browse the <a href="#/global">Global shop</a> for worldwide delivery with the carrier price for your country.</small></div>`,
+        '</section>',
+        `<section class="pdp-share"><h2>Share this product</h2>${buildShareBar(p)}</section>`,
+        `<a class="pdp-promo" href="${APP_BASE}travel/"><b>Book your next adventure</b><small>Flights · Hotels · Umrah packages</small><span>Book now ›</span></a>`,
+      '</div>',
+    '</section>',
+
+    '<section class="sm-tabs" aria-label="Product information">',
+      '<div role="tablist" aria-label="Product information tabs"><button type="button" role="tab" aria-selected="true" data-tab="tab-d">Description</button><button type="button" role="tab" aria-selected="false" data-tab="tab-s">Details</button><button type="button" role="tab" aria-selected="false" data-tab="tab-r">Delivery &amp; returns</button></div>',
+      `<div role="tabpanel" id="tab-d"><p style="margin:0">${esc(p.d || p.sd || p.seoD || 'Full product details at Sasta Milaga.')}</p></div>`,
+      `<div role="tabpanel" id="tab-s" hidden><p style="margin:0 0 .6rem">${p.sku ? `SKU: <code>${esc(p.sku)}</code> &nbsp;|&nbsp; ` : ''}ID: <code>${esc(p.id)}</code></p>${(p.tags || []).length ? `<div class="tags-wrap">${(p.tags || []).map(tagLink).join('')}</div>` : ''}</div>`,
+      `<div role="tabpanel" id="tab-r" hidden><p style="margin:0">Cash on delivery across Pakistan. Delivery is free on orders over ${PKR.format(freeFrom)}, otherwise ${PKR.format(fee)}. If an item arrives damaged or wrong, send us a return request within 7 days on WhatsApp.</p></div>`,
     '</section>',
 
     '<section class="section">',
@@ -1394,7 +1406,24 @@ function renderPDP(handle) {
       `<div class="products-row">${related.map(productCard).join('')}</div>`,
     '</section>'
   ].join(''));
+  updatePdpTotal();
 }
+
+/* "Total" box on the product page: price x quantity + delivery (same rule as the checkout). */
+function updatePdpTotal() {
+  const el = document.getElementById('pdpTotal'); if (!el) return;
+  const unit = Number(el.dataset.unit) || 0, free = Number(el.dataset.free), fee = Number(el.dataset.fee), q = Math.max(1, Number((document.getElementById('qty') || {}).textContent || 1) || 1);
+  const sub = unit * q, del = sub > free ? 0 : fee;
+  el.innerHTML = `<dl><div><dt>Price × ${q}</dt><dd>${PKR.format(sub)}</dd></div><div><dt>Delivery in Pakistan</dt><dd>${del ? PKR.format(del) : 'Free'}</dd></div><div class="sm-total__sum"><dt>Total</dt><dd>${PKR.format(sub + del)}</dd></div></dl><small>Cash on delivery. ${sub > free ? 'Your order qualifies for free delivery.' : `Add ${PKR.format(free - sub + 1)} more for free delivery.`}</small>`;
+}
+window.updatePdpTotal = updatePdpTotal;
+/* Tabs (product pages): window-capture so the domain's site-wide click script cannot swallow them */
+window.addEventListener('click', e => {
+  const tab = e.target && e.target.closest && e.target.closest('.sm-tabs [role=tab]'); if (!tab) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  const box = tab.closest('.sm-tabs'); box.querySelectorAll('[role=tab]').forEach(x => x.setAttribute('aria-selected', x === tab ? 'true' : 'false'));
+  box.querySelectorAll('[role=tabpanel]').forEach(x => { x.hidden = x.id !== tab.dataset.tab; });
+}, true);
 
 function crossTitle(p) {
   const m = (p.m || '').toLowerCase();
@@ -1409,6 +1438,7 @@ function crossTitle(p) {
 function changeQty(n) {
   const q = $('#qty');
   if (q) q.textContent = Math.max(1, Number(q.textContent || 1) + n);
+  updatePdpTotal();
 }
 window.changeQty = changeQty;
 
