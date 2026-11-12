@@ -1839,7 +1839,8 @@ window.placeOrder = function (e, landing, trigger) {
   data.set('order_subtotal', PKR.format(sub));
   data.set('order_delivery', delivery ? PKR.format(delivery) : 'Free');
   data.set('order_total', PKR.format(totalPkr));
-  const payPal = data.get('payment_method') === 'PayPal / Card' && C.paypalEmail;
+  const payPal = (data.get('payment_method') === 'PayPal / Card' || !!landing) && C.paypalEmail;   /* the "Pay with PayPal / Pay by card" buttons always mean PayPal */
+  if (payPal) data.set('payment_method', 'PayPal / Card');
 
   // PayPal / card: charge in the visitor's chosen currency when PayPal supports it, otherwise USD.
   const payCur = paypalCurrency();
