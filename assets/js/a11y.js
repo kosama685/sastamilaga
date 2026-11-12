@@ -17,3 +17,6 @@
 
 /* Interface language (machine-translated languages chosen in the country/language chooser) */
 (function () { if (window.SMI18n || document.querySelector('script[src*=\"i18n.js\"]')) return; var me = document.currentScript; var s = document.createElement('script'); s.src = ((me && me.src) || '').replace(/a11y\.js.*$/, 'i18n.js'); if (!/i18n\.js$/.test(s.src)) return; s.defer = true; document.head.appendChild(s); })();
+
+/* Search suggestions for the Pakistan and global catalogues (header search) */
+(function () { if (window.SMCJSearch || document.querySelector('script[src*="search-suggest.js"]')) return; var me = document.currentScript; var s = document.createElement('script'); s.src = ((me && me.src) || '').replace(/a11y\.js.*$/, 'search-suggest.js'); if (!/search-suggest\.js$/.test(s.src)) return; s.defer = true; document.head.appendChild(s); })();

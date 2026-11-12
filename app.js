@@ -754,7 +754,7 @@ function route() {
 
   if      (parts[0] === 'category') renderListing('category', parts[1] || '', qs);
   else if (parts[0] === 'tag')      renderListing('tag',      parts[1] || '', qs);
-  else if (parts[0] === 'search')   renderListing('search',   '',             qs);
+  else if (parts[0] === 'search')   { renderListing('search', '', qs); if (window.SMGlobal && window.SMGlobal.searchBlock) window.SMGlobal.searchBlock(qs); }   /* Pakistan results plus the global catalogue */
   else if (parts[0] === 'deals')    renderListing('deals',    '',             qs);
   else if (parts[0] === 'store')    renderListing('store',    parts[1] || '', qs);
   else if (parts[0] === 'product')  renderPDP(parts.slice(1).join('/'));

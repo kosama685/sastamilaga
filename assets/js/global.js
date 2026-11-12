@@ -24,7 +24,8 @@
   let manifestP = null;
   let searchToken = 0;
 
-  window.SM_CJ_SHARD = function (s, rows) { shards.set(s, rows); const p = pending.get(s); if (p) { p.resolve(rows); pending.delete(s); } };
+  const prevShard = window.SM_CJ_SHARD;
+  window.SM_CJ_SHARD = function (s, rows) { shards.set(s, rows); const p = pending.get(s); if (p) { p.resolve(rows); pending.delete(s); } if (prevShard) prevShard(s, rows); };
   function loadScript(src) {
     return new Promise((res, rej) => { const el = document.createElement('script'); el.src = src; el.async = true; el.onload = res; el.onerror = () => rej(new Error('load ' + src)); document.head.appendChild(el); });
   }
@@ -293,7 +294,7 @@
     };
     /* Real options: the CJ Worker when configured, otherwise the WordPress store's live options (same CJ data, the store's own price). */
     const RATE = { USD: 1, SAR: 1 / 3.75, AED: 1 / 3.6725 };   // pegged currencies only; anything else keeps the catalogue price
-    const fromWp = d => ({ variants: ((d && d.options) || []).map(o => { const m = /([A-Z]{3})\s*([\d.,]+)/.exec(o.price_label || ''); const usd = m && RATE[m[1]] ? parseFloat(m[2].replace(/,/g, '')) * RATE[m[1]] : (r[3] || 0) * MARGIN; return { vid: o.vid, name: o.name, key: o.name, sku: o.sku, image: o.image || '', price: usd / MARGIN, label: o.price_label || '' }; }) });
+    const fromWp = d => ({ variants: ((d && d.options) || []).map(o => { const m = /([A-Z]{3})\s*([\d.,]+)/.exec(o.price_label || ''); const usd = m && RATE[m[1]] ? parseFloat(m[2].replace(/,/g, '')) * RATE[m[1]] : (r[3] || 0) * MARGIN; return { vid: o.vid, name: o.name, key: o.name, sku: o.sku, image: o.image || '', price: usd / MARGIN, label: m ? o.price_label : '' }; }) });   /* a label without a price (feed down) is dropped: the tile shows the catalogue estimate, refined below from the supplier price */
     (W ? fetch(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`).then(x => x.json()) : (window.SMWoo && window.SMWoo.active ? window.SMWoo.sync() : Promise.resolve()).then(() => fetch(`${(window.SMWoo && window.SMWoo.active ? (() => { try { return new URL(C.wpApi).pathname; } catch (e) { return C.wpApi; } })() : C.wpApi).replace(/\/$/, '')}/live/options/${encodeURIComponent(r[0])}`).then(x => { if (!x.ok) throw new Error(x.status); return x.json(); }).then(fromWp))).then(d => {
       const list = (d && d.variants) || [];
       if (!list.length) { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Options will be confirmed on WhatsApp.</p>'; return; }
@@ -304,10 +305,12 @@
       box.addEventListener('change', e => { if (e.target.name === 'variant') pick(list.find(v => v.vid === e.target.value)); });
       // Variation photos arrive a moment later from the image Worker: fill the tiles and keep the main picture in step with the choice.
       (function enrich() {
-        const IW = (window.SM_CONFIG || {}).cjImageWorker; if (!IW || list.every(v => v.image)) return;
+        const IW = (window.SM_CONFIG || {}).cjImageWorker; if (!IW || list.every(v => v.image && v.label)) return;
         fetch(`${IW.replace(/\/$/, '')}/api/cj/product?pid=${encodeURIComponent(r[0])}`).then(x => (x.ok ? x.json() : null)).then(d => {
-          if (!d || !d.variants) return; const m = {}; d.variants.forEach(v => { if (v.image && /^https:\/\//.test(v.image)) m[v.vid] = v.image; });
-          list.forEach(v => { if (!v.image && m[v.vid]) v.image = m[v.vid]; });
+          if (!d || !d.variants) return; const m = {}, pm = {}; d.variants.forEach(v => { if (v.image && /^https:\/\//.test(v.image)) m[v.vid] = v.image; if (v.price > 0) pm[v.vid] = v.price; });
+          list.forEach(v => { if (!v.image && m[v.vid]) v.image = m[v.vid]; if (!v.label && pm[v.vid]) v.price = pm[v.vid]; });   /* supplier price per option; the page shows it with the same 20% margin */
+          box.querySelectorAll('.sm-var__opt').forEach((lab, i) => { const v = list[i], s = lab.querySelector('.sm-var__t small'); if (s && v && !v.label) s.textContent = 'est. ' + USD.format(v.price * MARGIN); });
+          { const sel0 = box.querySelector('input[name=variant]:checked'), v0 = sel0 && list.find(x => x.vid === sel0.value), bp = document.querySelector('.buy-panel .big-price'); if (v0 && !v0.label && bp) bp.textContent = USD.format(v0.price * MARGIN); }
           box.querySelectorAll('.sm-var__opt').forEach((lab, i) => { const v = list[i], holder = lab.querySelector('.sm-var__img'); if (holder && v && v.image && !holder.firstChild) { const im = document.createElement('img'); im.src = v.image; im.alt = ''; im.width = 56; im.height = 56; im.loading = 'lazy'; im.onerror = () => im.remove(); holder.appendChild(im); } });
           const sel = box.querySelector('input[name=variant]:checked'); if (sel) { const v = list.find(x => x.vid === sel.value), g = document.querySelector('.gallery-main img'); if (v && v.image && g) g.src = v.image; else if (v && v.image) sel.dispatchEvent(new Event('change', { bubbles: true })); }
         }).catch(() => { });
@@ -354,7 +357,8 @@
     if (!q) { document.getElementById('gstat').textContent = 'Type a product name or SKU.'; return; }
     const words = q.toLowerCase().split(/\s+/).filter(Boolean);
     const score = c => words.reduce((a, w) => a + (c.n.toLowerCase().includes(w) ? 2 : 0) + (c.g.toLowerCase().includes(w) ? 1 : 0), 0);
-    const order = m.cats.slice().sort((a, b) => score(b) - score(a) || b.c - a.c);
+    let order = m.cats.slice().sort((a, b) => score(b) - score(a) || b.c - a.c);
+    try { if (window.SMCJSearch) { const rk = await window.SMCJSearch.rank(words), mp = new Map(m.cats.map(c => [c.s, c])), seen = new Set(rk); order = rk.map(s => mp.get(s)).filter(Boolean).concat(m.cats.filter(c => !seen.has(c.s)).sort((a, b) => b.c - a.c)); } } catch (e) { }
     let found = 0, i = 0, cap = 120, scanned = 0;
     const grid = document.getElementById('ggrid'), stat = document.getElementById('gstat'), bar = document.getElementById('gbar'), more = document.getElementById('gmore');
     const run = async () => {
@@ -422,7 +426,27 @@
     return html + `<form id="gjump" class="sm-gpager__jump"><label for="gjump-p">Go to page</label><input id="gjump-p" name="p" type="number" min="1" max="${pages}" value="${page}"><button type="submit" class="sm-btn sm-btn--ghost">Go</button></form>`;
   }
 
+  /* Global results inside the main search page (#/search?q=): shown above the Pakistan listing, filled from the best-matching category files. */
+  let extToken = 0;
+  function searchBlock(qs) {
+    const q = (new URLSearchParams(qs || '').get('q') || '').trim(); if (!q) return;
+    const app = document.getElementById('app'); if (!app) return;
+    const old = document.getElementById('gext'); if (old) old.remove();
+    const sec = document.createElement('section'); sec.id = 'gext'; sec.className = 'section sm-gext';
+    sec.innerHTML = `<div class="section-head"><div><h2>Global shop results for “${esc(q)}”</h2><p id="gext-stat" role="status" aria-live="polite">Searching the global catalogue…</p></div><a class="ghost-btn" href="#/global/search?q=${encodeURIComponent(q)}">See all global results</a></div><div id="gext-grid" class="products-row"></div>`;
+    const shell = app.querySelector('.listing-shell'); if (shell && shell.parentNode) shell.parentNode.insertBefore(sec, shell); else app.appendChild(sec);
+    const my = ++extToken, grid = sec.querySelector('#gext-grid'), stat = sec.querySelector('#gext-stat'), words = q.toLowerCase().split(/\s+/).filter(Boolean);
+    let tries = 0;
+    const go = () => {
+      if (!window.SMCJSearch) { if (tries++ < 40) return setTimeout(go, 100); stat.textContent = 'Open the global shop search to see global results.'; return; }
+      window.SMCJSearch.products(words, 12, 8, hits => { if (my === extToken && document.body.contains(sec)) grid.innerHTML = hits.map(h => card(h.cat, h.r)).join(''); })
+        .then(hits => { if (my !== extToken || !document.body.contains(sec)) return; grid.innerHTML = hits.map(h => card(h.cat, h.r)).join(''); stat.textContent = hits.length ? `${hits.length} of the best matches from the global catalogue. Prices are estimates in US dollars.` : 'No global products matched all your words. Try fewer or different words.'; })
+        .catch(() => { stat.textContent = 'The global catalogue could not be searched just now.'; });
+    };
+    go();
+  }
   window.SMGlobal = {
+    searchBlock, shard,
     route(parts, qs) {
       searchToken++;
       const [a, b, c] = parts;
@@ -437,5 +461,5 @@
     manifest
   };
   /* app.js routed before this file loaded: render the global page now */
-  if (/^#\/global(\/|\?|$)/.test(location.hash) || /^global(-shop)?(\/|$)/.test((A.cleanRoute && A.cleanRoute(location.pathname)) || '')) A.route();
+  if (/^#\/global(\/|\?|$)/.test(location.hash) || /^global(-shop)?(\/|$)/.test((A.cleanRoute && A.cleanRoute(location.pathname)) || '') || /^#\/search/.test(location.hash) || /^search(\/|$)/.test((A.cleanRoute && A.cleanRoute(location.pathname)) || '')) A.route();
 })();
