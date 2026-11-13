@@ -39,5 +39,5 @@ Key facts:
 
 ## Data
 - [Sitemap index](https://sastamilaga.com/sitemap.xml)
-- [Verified global product sitemap](https://sastamilaga.com/global-shop/sitemap.xml): contains only supplier product pages with reviewed, sufficiently detailed product data; the broader supplier catalogue is not automatically eligible
+- [Verified global product sitemap](https://sastamilaga.com/sitemap-global-qualified.xml): contains only supplier product pages with reviewed, sufficiently detailed product data; the broader supplier catalogue is not automatically eligible
 - [Product catalogue CSV](https://sastamilaga.com/products.csv)

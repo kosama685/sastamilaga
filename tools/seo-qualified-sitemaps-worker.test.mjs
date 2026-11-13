@@ -55,3 +55,12 @@ test('HEAD omits body',async()=>{
   assert.equal(r.status,200);
   assert.equal(await r.text(),'');
 });
+
+test('scales to all 451,812 records only if each record passes D1 approval gate',async()=>{
+  const r=await worker.fetch(new Request(url+'/sitemap-global-qualified.xml'),env(451812));
+  assert.equal(r.status,200);
+  const xml=await r.text();
+  assert.match(xml,/global-qualified\/91\.xml/);
+  assert.doesNotMatch(xml,/global-qualified\/92\.xml/);
+  assert.equal((xml.match(/<sitemap>/g)||[]).length,91);
+});
