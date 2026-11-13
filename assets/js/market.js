@@ -108,7 +108,9 @@
       if (rs) rs.forEach(function (x) { out.push(fmt(parseFloat(x.replace(/[^\d.]/g, '')) * to, state.currency)); });
       else if (us && usd) { if (state.currency === 'USD') return; us.forEach(function (x) { out.push(fmt(parseFloat(x.replace(/[^\d.]/g, '')) / usd * to, state.currency)); }); }
       if (!out.length) return;
-      var extra = /est\./.test(t) ? ' <small class="sm-est">est.</small>' : '';
+      out[0] = '≈ ' + out[0];   /* converted amounts are estimates: say so */
+      var pkrNote = (rs && el.matches('.big-price')) ? ' <small class="sm-pkr">' + esc(rs[0].replace(/\s+/g, ' ') + ' · you pay in PKR') + '</small>' : '';   /* product page: the real PKR price stays visible next to the estimate */
+      var extra = (/est\./.test(t) ? ' <small class="sm-est">est.</small>' : '') + pkrNote;
       el.dataset.fx = state.currency;
       el.innerHTML = '<span class="sm-fx-orig" hidden>' + src + '</span><span class="sm-fx" title="Converted at today\'s rate from ' + (rs ? 'PKR' : 'USD') + '">' + esc(out.join(' – ')) + '</span>' + extra;
     });
@@ -144,7 +146,8 @@
       if (!origText.has(n)) origText.set(n, n.nodeValue);
       var o = origText.get(n), v = o;
       if (state.country !== 'PK' || cur !== 'PKR') {
-        v = v.replace(/Shopping for Pakistan/g, 'Shopping for ' + name).replace(/prices in PKR/g, 'prices in ' + cur);
+        /* the catalogue ships from Pakistan: say "Pakistan store" instead of implying local delivery abroad, and label converted prices as estimates */
+        v = v.replace(/Shopping for Pakistan/g, 'Shop our Pakistan store from ' + name).replace(/prices in PKR/g, 'estimated prices in ' + cur);
         // Destination card value ("Your shopping destination" → "Pakistan")
         if (o.trim() === 'Pakistan' && n.parentNode.previousElementSibling && /shopping destination/i.test(n.parentNode.previousElementSibling.textContent)) v = o.replace('Pakistan', name);
       }
@@ -283,7 +286,7 @@
     '.sm-mk__right select{width:100%;min-height:54px;border:1px solid #d5e0da;border-radius:999px;padding:0 18px;font-size:16px;background:#fff}.sm-mk__hint{margin:8px 4px 0;color:#5b6a62;font-size:13px;line-height:1.5}' +
     '.sm-mk__geo{display:flex;gap:10px;align-items:center;margin-top:18px}.sm-mk__status{min-height:1.4em;color:#0e7a5c;font-size:14px}' +
     '.sm-mk__save{margin-top:8px;width:100%;min-height:54px;border:0;border-radius:999px;background:#0e7a5c;color:#fff;font-weight:700;font-size:17px;cursor:pointer;box-shadow:0 8px 20px rgba(14,122,92,.28);transition:transform .2s}.sm-mk__save:hover{transform:translateY(-1px)}.sm-mk__save:active{transform:scale(.98)}.sm-mk__save:focus-visible{outline:3px solid #11261b;outline-offset:2px}' +
-    '.sm-fx{display:inline-block;margin-left:6px;color:#5b6a62;font-weight:500;font-size:.8em}.sm-flag-emoji{font-size:22px;line-height:1}' +
+    '.sm-pkr{display:block;color:#5b6a62;font-weight:500;font-size:.5em;line-height:1.4;margin-top:2px}.sm-fx{display:inline-block;margin-left:6px;color:#5b6a62;font-weight:500;font-size:.8em}.sm-flag-emoji{font-size:22px;line-height:1}' +
     '@media (max-width:820px){.sm-mk{border-radius:20px;overflow:auto}.sm-mk[open]{display:block}.sm-mk__body{grid-template-columns:1fr;overflow:visible}.sm-mk__left{border-right:0;border-bottom:1px solid #e6eee9}.sm-mk__head{padding:20px;gap:14px}.sm-mk__globe{width:56px;height:56px}.sm-mk__globe svg{width:30px;height:30px}.sm-mk__left,.sm-mk__right{padding:20px}.sm-mk__list{max-height:260px}}' +
     '@media (prefers-reduced-motion:reduce){.sm-mk *{transition:none!important}}';
   document.head.appendChild(css);
