@@ -1,6 +1,6 @@
 # Sasta Milaga
 
-> Sasta Milaga is an online store and travel desk for Pakistan and Pakistanis abroad. It sells 20,165 local products priced in Pakistani rupees (PKR) with cash on delivery across Pakistan, lists 451,812 global products that ship worldwide (prices are USD estimates confirmed before payment), takes flight, hotel, Umrah and visa requests, and offers a Live TV page with reviewed channels.
+> Sasta Milaga is an online store and travel desk for Pakistan and Pakistanis abroad. It sells 20,165 local products priced in Pakistani rupees (PKR) with cash on delivery across Pakistan, offers access to a catalogue of 451,812 global supplier product records (availability, supported destinations, variants, freight and final price are verified individually before an order), takes flight, hotel, Umrah and visa requests, and offers a Live TV page with reviewed channels.
 
 Key facts:
 - Local delivery in Pakistan: Rs 250 per order, free above Rs 5,000. Cash on delivery available for local products.
@@ -23,7 +23,7 @@ Key facts:
 - [Personal Care & Beauty](https://sastamilaga.com/c/personal-care-and-beauty.html): 272 products
 - [Home](https://sastamilaga.com/c/home.html): 191 products
 - [Toys & Games](https://sastamilaga.com/c/toys-and-games.html): 177 products
-- [Global shop](https://sastamilaga.com/c/global/index.html): 451,812 products in 572 categories
+- [Global shop](https://sastamilaga.com/c/global/index.html): catalogue of 451,812 supplier records in 572 categories; listing does not guarantee current stock or shipment to every country
 
 ## Help
 - [How to order](https://sastamilaga.com/#/how-to-order)
@@ -39,4 +39,5 @@ Key facts:
 
 ## Data
 - [Sitemap index](https://sastamilaga.com/sitemap.xml)
+- [Verified global product sitemap](https://sastamilaga.com/global-shop/sitemap.xml): contains only supplier product pages with reviewed, sufficiently detailed product data; the broader supplier catalogue is not automatically eligible
 - [Product catalogue CSV](https://sastamilaga.com/products.csv)
