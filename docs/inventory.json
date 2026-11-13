@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-12T05:24:24Z",
+  "checked_at": "2026-11-13T09:31:42Z",
   "token": {
     "success": true,
     "status": "active"
@@ -115,7 +115,7 @@
       },
       {
         "id": "sasta-canonical-sync-v11",
-        "modified_on": "2026-11-11T05:31:53.596707Z",
+        "modified_on": "2026-11-13T06:41:14.972293Z",
         "created_on": "2026-11-10T03:24:18.728466Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-09"
@@ -129,7 +129,7 @@
       },
       {
         "id": "sasta-cj-variants-shipping",
-        "modified_on": "2026-11-10T06:07:39.708911Z",
+        "modified_on": "2026-11-12T18:12:33.788575Z",
         "created_on": "2026-11-10T06:07:22.447045Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-10"
@@ -213,14 +213,14 @@
       },
       {
         "id": "sasta-global-product-variants-v2",
-        "modified_on": "2026-11-10T06:12:01.645264Z",
+        "modified_on": "2026-11-12T18:11:31.737444Z",
         "created_on": "2026-11-10T06:11:08.262897Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-10"
       },
       {
         "id": "sasta-live-tv-static-v2",
-        "modified_on": "2026-11-12T04:47:31.014407Z",
+        "modified_on": "2026-11-12T05:34:36.784621Z",
         "created_on": "2026-11-11T04:35:16.296202Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-11"
@@ -297,28 +297,28 @@
       },
       {
         "id": "sastamilaga-cj-shipping",
-        "modified_on": "2026-11-12T05:23:18.571343Z",
+        "modified_on": "2026-11-13T09:30:23.190644Z",
         "created_on": "2026-11-11T03:54:36.589467Z",
         "usage_model": "standard",
         "compatibility_date": "2025-07-18"
       },
       {
         "id": "sastamilaga-global-pages",
-        "modified_on": "2026-11-12T05:23:26.232729Z",
+        "modified_on": "2026-11-13T09:30:33.123091Z",
         "created_on": "2026-11-11T03:54:44.151298Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-paypal",
-        "modified_on": "2026-11-12T05:23:23.115532Z",
+        "modified_on": "2026-11-13T09:30:29.102942Z",
         "created_on": "2026-11-11T03:54:41.174076Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-redirects",
-        "modified_on": "2026-11-12T05:23:30.697206Z",
+        "modified_on": "2026-11-13T09:30:38.676544Z",
         "created_on": "2026-11-11T05:14:22.59741Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
@@ -336,6 +336,13 @@
         "created_on": "2026-11-11T05:30:41.14259Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
+      },
+      {
+        "id": "usama-telegram-free-bot",
+        "modified_on": "2026-11-12T15:06:02.99269Z",
+        "created_on": "2026-11-12T14:54:29.952908Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-01"
       }
     ]
   },
@@ -600,7 +607,7 @@
         "name": "sastamilaga",
         "uuid": "ac28088f-6a54-4d29-8c64-821661efe88f",
         "created_at": "2026-11-07T16:43:12.023Z",
-        "file_size": 323604480,
+        "file_size": 323612672,
         "num_tables": 0
       },
       {

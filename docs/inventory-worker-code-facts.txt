@@ -47,25 +47,27 @@
 25:  if(p==="/blog/sitemap.xml"){
 ## sasta-brand-pages-v1  bytes=21340
 22: if(p==='/blog/sitemap.xml'){const q=await env.BLOG_DB.prepare("SELECT slug,publish_date FROM blog_posts WHERE status='published' AND publish_date<=date('now') ORDER BY publish_date DESC LIMIT 1000").all();return resp
-## sasta-canonical-sync-v11  bytes=20683
-8:const ROBOTS_TEXT="User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\nDisallow: /cart/\nDisallow: /checkout/\nDisallow: /my-account/\n\nUser-agent: GPTBot\nDisallow: /\nUser-agent: ClaudeBot\nDisallo
-9:const BACKUP='https://kosama685.github.io/sastamilaga',CANONICAL='https://sastamilaga.com';
-21: if(/^\/(?:sitemap\.xml|sitemap_index\.xml|sitemap-[a-z0-9-]+\.xml)$/i.test(url.pathname))return 'sitemap';
-28:  const path=kind==='home'?'/':url.pathname==='/sitemap_index.xml'?'/sitemap.xml':url.pathname;
-30:  const response=await fetch(target,{method:'GET',redirect:'follow',headers:{Accept:kind==='home'?'text/html':'*/*'},cf:{cacheEverything:true,cacheTtl:120}});
-35:  return new Response(req.method==='HEAD'?null:body,{status:404,headers:{'content-type':plain?'text/plain; charset=utf-8':'text/html; charset=utf-8','cache-control':'public,max-age=60,s-maxage=60','x-robots-tag':'noin
-42:  'x-sasta-recovery':'github-readonly','x-sasta-recovery-cause':String(cause).slice(0,40),'x-content-type-options':'nosniff'});
-52:   headers.set('x-sasta-checkout','disabled-during-origin-outage');
-58:   if(url.pathname==='/sitemap.xml'||url.pathname==='/sitemap_index.xml'){
-62:     if(xml.includes('</sitemapindex>')&&!xml.includes(CANONICAL+'/blog/sitemap.xml'))xml=xml.replace('</sitemapindex>','<sitemap><loc>'+CANONICAL+'/blog/sitemap.xml</loc></sitemap></sitemapindex>');
-125: if(kind==='home'||kind==='asset'||kind==='product'||kind==='sitemap'||kind==='public')return fallback(request,url,kind,'github_static_primary');
+## sasta-canonical-sync-v11  bytes=54458
+17:const ROBOTS_TEXT="User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\nDisallow: /cart/\nDisallow: /checkout/\nDisallow: /my-account/\n\nUser-agent: GPTBot\nDisallow: /\nUser-agent: ClaudeBot\nDisall
+18:const BACKUP='https://kosama685.github.io/sastamilaga',CANONICAL='https://sastamilaga.com';
+30: if(/^\/(?:sitemap\.xml|sitemap_index\.xml|sitemap-[a-z0-9-]+\.xml)$/i.test(url.pathname))return 'sitemap';
+37:  const path=kind==='home'?'/':url.pathname==='/sitemap_index.xml'?'/sitemap.xml':url.pathname;
+39:  const response=await fetch(target,{method:'GET',redirect:'follow',headers:{Accept:kind==='home'?'text/html':'*/*'},cf:{cacheEverything:true,cacheTtl:120}});
+44:  return new Response(req.method==='HEAD'?null:body,{status:404,headers:{'content-type':plain?'text/plain; charset=utf-8':'text/html; charset=utf-8','cache-control':'public,max-age=60,s-maxage=60','x-robots-tag':'noin
+51:  'x-sasta-recovery':'github-readonly','x-sasta-recovery-cause':String(cause).slice(0,40),'x-content-type-options':'nosniff'});
+76:   headers.set('x-sasta-checkout','disabled-during-origin-outage');
+98:   if(url.pathname==='/sitemap-pages.xml'){
+108:   if(url.pathname==='/sitemap.xml'||url.pathname==='/sitemap_index.xml'){
+112:     if(xml.includes('</sitemapindex>')&&!xml.includes(CANONICAL+'/blog/sitemap.xml'))xml=xml.replace('</sitemapindex>','<sitemap><loc>'+CANONICAL+'/blog/sitemap.xml</loc></sitemap></sitemapindex>');
+175: if(kind==='home'||kind==='asset'||kind==='product'||kind==='sitemap'||kind==='public')return fallback(request,url,kind,'github_static_primary');
 ## sasta-catalog-readonly-v1  bytes=5200
 4:const O=new Set(['https://kosama685.github.io','https://sastamilaga.com','https://www.sastamilaga.com']);
 25: if(sample&&String(sample.pid).toUpperCase()===r.cj_product_id){if(String(sample.description||'').trim()){desc=C(sample.description).slice(0,16000);origin='cj_connected_account_snapshot'};if(Array.isArray(sample.varia
 29:return answer(req,{product:{sku:r.sku,source,pid:source==='cj'?r.cj_product_id:null,title:C(r.name),category:C(r.categories),images,videoUrls:Array.isArray(meta.video_urls)?meta.video_urls.filter(x=>/^https:\/\//.test
-## sasta-cj-variants-shipping  bytes=10821
-4:const CORS_ORIGINS=new Set(['https://sastamilaga.com','https://www.sastamilaga.com','https://kosama685.github.io']);
-34:  const size=Number(response.headers.get('content-length')||0);
+## sasta-cj-variants-shipping  bytes=12730
+15:  if(Number(r.headers.get('content-length')||0)>MAX_JSON_BYTES)throw new Error('provider_payload_too_large');
+33:const CORS_ORIGINS=new Set(['https://sastamilaga.com','https://www.sastamilaga.com','https://kosama685.github.io']);
+63:  const size=Number(response.headers.get('content-length')||0);
 ## sasta-cj-video-proxy  bytes=8825
 42:  for (const name of ['Content-Length','Content-Range','ETag','Last-Modified']) if(upstream.headers.has(name))h.set(name,upstream.headers.get(name));
 65:    // Cache API creates 206/304 from a complete cached object with Content-Length.
@@ -141,13 +143,13 @@
 ## sasta-global-product-pages  bytes=8475
 29: const isSitemap=url.pathname==='/global-shop/sitemap.xml';
 ## sasta-global-product-recovery-v1  bytes=13468
-## sasta-global-product-variants-v2  bytes=15696
-30: const isSitemap=url.pathname==='/global-shop/sitemap.xml';
-## sasta-live-tv-static-v2  bytes=5154
+## sasta-global-product-variants-v2  bytes=16532
+31: const isSitemap=url.pathname==='/global-shop/sitemap.xml';
+## sasta-live-tv-static-v2  bytes=6307
 4:const SOURCE='https://kosama685.github.io/sastamilaga/live-tv/';
 17:   const upstream=await fetch('https://sastamilaga.com/wp-json/sltv/v1/m3u',{redirect:'follow',headers:{accept:'audio/x-mpegurl'},cf:{cacheEverything:true,cacheTtl:30}});
 33: try{source=await fetch(SOURCE,{redirect:'follow',headers:{'accept':'text/html'},cf:{cacheEverything:true,cacheTtl:60}});}
-52: const headers=new Headers({'content-type':'text/html; charset=utf-8','cache-control':'public,max-age=60,s-maxage=120','x-content-type-options':'nosniff','x-sasta-static-source':'github-live-tv','referrer-policy':'str
+55: const headers=new Headers({'content-type':'text/html; charset=utf-8','cache-control':'public,max-age=60,s-maxage=120','x-content-type-options':'nosniff','x-sasta-static-source':'github-live-tv','referrer-policy':'str
 ## sasta-origin-failover  bytes=4675
 4:const BACKUP="https://kosama685.github.io/sastamilaga/";
 19: const html='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Sasta Milaga — Temporary storefront backup</title><style>body{margin:0
@@ -208,17 +210,17 @@
 223:    const response=outward(await refresh(),key&&cache?'MISS':'BYPASS');if(supportDiagnostic.reason)response.headers.set('X-Sasta-Support-Fallback',supportDiagnostic.reason);return response;
 ## sastamilaga-cj-shipping  bytes=7094
 13:    const allowed = (env.ALLOWED_ORIGINS || "https://kosama685.github.io").split(",").map((s) => s.trim());
-## sastamilaga-global-pages  bytes=15825
-18:Sitemap: ${cfg.self}/sitemap-global-products.xml
-20:      if (p === "/sitemap-global-products.xml")
-22:      let m = p.match(/^\/sitemaps\/global\/([a-z0-9-]+)\.xml$/);
-25:      if (p === "/feeds/google-merchant.xml")
-27:      if (p === "/feeds/global/index.json")
-29:      m = p.match(/^\/feeds\/global\/(\d{1,3})\.xml$/);
-57:    const r = await fetch(`${env.SITE_ORIGIN}/data/cj/${path}`, { cf: { cacheTtl: 86400, cacheEverything: true } });
-103:  const r = await fetch(`${env.SITE_ORIGIN}/feeds/google-merchant.xml`, { cf: { cacheTtl: 3600, cacheEverything: true } });
-128:  return text(JSON.stringify({ total: m.total, files: chunks.length, feeds: chunks.map((cs, i) => ({ url: `${cfg.self}/feeds/global/${i + 1}.xml`, products: cs.reduce((a, c) => a + c.c, 0), categories: cs.length })) 
-238:${m.cats.map((c) => `<sitemap><loc>${cfg.self}/sitemaps/global/${c.s}.xml</loc><lastmod>${m.snapshot}</lastmod></sitemap>`).join("\n")}
+## sastamilaga-global-pages  bytes=15920
+20:Sitemap: ${cfg.self}/sitemap-global-products.xml
+22:      if (p === "/sitemap-global-products.xml")
+24:      let m = p.match(/^\/sitemaps\/global\/([a-z0-9-]+)\.xml$/);
+27:      if (p === "/feeds/google-merchant.xml")
+29:      if (p === "/feeds/global/index.json")
+31:      m = p.match(/^\/feeds\/global\/(\d{1,3})\.xml$/);
+59:    const r = await fetch(`${env.SITE_ORIGIN}/data/cj/${path}`, { cf: { cacheTtl: 86400, cacheEverything: true } });
+105:  const r = await fetch(`${env.SITE_ORIGIN}/feeds/google-merchant.xml`, { cf: { cacheTtl: 3600, cacheEverything: true } });
+130:  return text(JSON.stringify({ total: m.total, files: chunks.length, feeds: chunks.map((cs, i) => ({ url: `${cfg.self}/feeds/global/${i + 1}.xml`, products: cs.reduce((a, c) => a + c.c, 0), categories: cs.length })) 
+240:${m.cats.map((c) => `<sitemap><loc>${cfg.self}/sitemaps/global/${c.s}.xml</loc><lastmod>${m.snapshot}</lastmod></sitemap>`).join("\n")}
 ## sastamilaga-paypal  bytes=8898
 19:    const allowed = (env.ALLOWED_ORIGINS || "https://kosama685.github.io").split(",").map((s) => s.trim());
 70:  const r = await fetch(`${env.SITE_ORIGIN}/data/prices.json`, { cf: { cacheTtl: 600 } });
@@ -242,3 +244,4 @@
 29:  return new Response(req.method==='HEAD'?null:html,{status:200,headers:{'content-type':'text/html; charset=utf-8','cache-control':'public,max-age=60,s-maxage=120','x-sasta-seo':preview?'preview-dynamic':'live-dynamic
 41:  const r = await fetch(`${env.SITE_ORIGIN}/data/redirects/${name}.json`, { cf: { cacheTtl: 3600, cacheEverything: true } });
 73:      const r = await fetch(`${env.SITE_ORIGIN}${q}/`, { cf: { cacheTtl: 300, cacheEverything: true } });
+## usama-telegram-free-bot  bytes=4283

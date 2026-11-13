@@ -7,17 +7,27 @@
 26:if(!m||!PID.test(m[2].toUpperCase()))return formError(req,'Product not found',404);
 28:const pid=m[2].toUpperCase(),data=await load(pid,env).catch(()=>null);if(!data)return formError(req,'Product not found',404);
 35: const text=['Hello Sasta Milaga, please confirm the following product enquiry.','Product: '+(data.enriched?.title||data.row.name),'SKU: '+(data.enriched?.sku||data.row.sku),'Variation: '+(selected?selected.name+' ('+selected.sku+')':'Please confirm available variations'),'Quantity: '+qty,'Destin
-## sasta-canonical-sync-v11 :: footer or html injection (bytes=20683)
-4:const SASTA_FOOTER_LABEL_SCRIPT="<script>(function(){function fix(){var f=document.querySelector('footer.smf .smf-contact');if(!f)return;var a=f.querySelector('a[href*=\"wa.me/\"]');if(a&&a.textContent.trim()==='+923432601806'){a.textContent='WhatsApp regional support';a.setAttribute('aria-label',
-5:const SASTA_REGIONAL_HTML="<section id=\"sasta-regional-footer\" class=\"smf-world\" aria-labelledby=\"smf-region-heading\"><h2 id=\"smf-region-heading\">☎ Phone and WhatsApp Worldwide</h2><p>Choose a regional team for an enquiry. Response times and availability may vary.</p><div class=\"smf-world
-13:const BLOCKER="<script>(function(){'use strict';var act=/^#\\/(?:account|my-account|login|register)(?:\\/|\\?|$)/i;if(act.test(location.hash))location.replace('/my-account/');function note(){var root=document.getElementById('sm-woo-cart-notice');if(!root){root=document.createElement('div');root.i
-14:function stripInvalidJSONLD(html){return html.replace(/<script\b[^>]*type=[\"']application\/ld\+json[\"'][^>]*>[\s\S]*?<\/script>/gi,tag=>{const body=tag.replace(/^<script[^>]*>/i,'').replace(/<\/script>$/i,'');try{JSON.parse(body);return tag}catch{return ''}})}
-34:  const body=plain?'Not found':'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow"><title>Page not found | Sasta Milaga</title></head><body style="font:16px/1.6 system-ui,Arial,
-48:   html=html.replace(/<\/head>/i,BLOCKER+SEO_CANONICAL_SYNC+'</head>');
-49:   if(html.includes('class=\"smf-bottom\"')&&!html.includes('id=\"sasta-regional-footer\"')){html=html.replace('<div class=\"smf-bottom\">',SASTA_REGIONAL_HTML+'<div class=\"smf-bottom\">');html=html.replace(/<\/head>/i,SASTA_REGIONAL_STYLE+'</head>');html=html.replaceAll('+923432601806</a>','Wha
-50:   html=html.replace(/<\/body>/i,SASTA_FOOTER_LABEL_SCRIPT+'</body>');
-62:     if(xml.includes('</sitemapindex>')&&!xml.includes(CANONICAL+'/blog/sitemap.xml'))xml=xml.replace('</sitemapindex>','<sitemap><loc>'+CANONICAL+'/blog/sitemap.xml</loc></sitemap></sitemapindex>');
-87: const html='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Sasta Milaga — Checkout temporarily unavailable</title><style>:root{color-scheme:light}body{font:16px/1.6 system-
+## sasta-canonical-sync-v11 :: footer or html injection (bytes=54458)
+4:const SASTA_LOCAL_MEDIA_RECOVERY="<script id=\"sasta-local-media-recovery-v1\">(function(){'use strict';function init(){document.querySelectorAll('section.pdp.sm-local-pdp').forEach(function(root){var gallery=root.querySelector('.gallery-panel'),bar=gallery&&gallery.querySelector('.gallery-thumbs'
+7:const SASTA_LOCAL_PDP_SCRIPT="<script id=\"sasta-local-product-gallery-v1\">(function(){\n\"use strict\";\nvar panels=document.querySelectorAll('section.pdp');if(!panels.length)return;\nfor(var c=0;c<panels.length;c++){(function(root){\nvar panel=root.querySelector('.gallery-panel'),box=panel&&pan
+9:const SASTA_LISTING_SCRIPT="<script id=\"sasta-static-filters-v1\">(function(){\n'use strict';if(document.querySelector('#sm-listing-tools'))return;\nvar main=document.querySelector('main .sm-app')||document.querySelector('main');if(!main)return;\nvar grid=main.querySelector('.products-row'),cards
+13:const SASTA_FOOTER_LABEL_SCRIPT="<script>(function(){function fix(){var f=document.querySelector('footer.smf .smf-contact');if(!f)return;var a=f.querySelector('a[href*=\"wa.me/\"]');if(a&&a.textContent.trim()==='+923432601806'){a.textContent='WhatsApp regional support';a.setAttribute('aria-label'
+14:const SASTA_REGIONAL_HTML="<section id=\"sasta-regional-footer\" class=\"smf-world\" aria-labelledby=\"smf-region-heading\"><h2 id=\"smf-region-heading\">☎ Phone and WhatsApp Worldwide</h2><p>Choose a regional team for an enquiry. Response times and availability may vary.</p><div class=\"smf-worl
+22:const BLOCKER="<script>(function(){'use strict';var act=/^#\\/(?:account|my-account|login|register)(?:\\/|\\?|$)/i;if(act.test(location.hash))location.replace('/my-account/');function note(){var root=document.getElementById('sm-woo-cart-notice');if(!root){root=document.createElement('div');root.i
+23:function stripInvalidJSONLD(html){return html.replace(/<script\b[^>]*type=[\"']application\/ld\+json[\"'][^>]*>[\s\S]*?<\/script>/gi,tag=>{const body=tag.replace(/^<script[^>]*>/i,'').replace(/<\/script>$/i,'');try{JSON.parse(body);return tag}catch{return ''}})}
+43:  const body=plain?'Not found':'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow"><title>Page not found | Sasta Milaga</title></head><body style="font:16px/1.6 system-ui,Arial,
+59:      html=html.replace(/<\/head>/i,SASTA_LOCAL_PDP_THEME+'</head>');
+60:      html=html.replace(/<\/body>/i,SASTA_LOCAL_PDP_SCRIPT+SASTA_LOCAL_MEDIA_RECOVERY+'</body>');
+64:      if(!html.includes('sasta-listing-ui-v1'))html=html.replace(/<\/head>/i,SASTA_LISTING_CSS+'</head>');
+65:      if(/^\/c\/.+\.html$/.test(url.pathname)&&!html.includes('sasta-static-filters-v1'))html=html.replace(/<\/body>/i,SASTA_LISTING_SCRIPT+'</body>');
+69:     html=html.replace('<main id="main" class="sm-main">','<main id="main" class="sm-main">'+SASTA_JACKETS_PARENT_LINK);
+72:   html=html.replace(/<\/head>/i,BLOCKER+SEO_CANONICAL_SYNC+SASTA_RTL_STYLE+'</head>');
+73:   if(html.includes('class=\"smf-bottom\"')&&!html.includes('id=\"sasta-regional-footer\"')){html=html.replace('<div class=\"smf-bottom\">',SASTA_REGIONAL_HTML+'<div class=\"smf-bottom\">');html=html.replace(/<\/head>/i,SASTA_REGIONAL_STYLE+'</head>');html=html.replaceAll('+923432601806</a>','Wha
+74:   html=html.replace(/<\/body>/i,SASTA_FOOTER_LABEL_SCRIPT+'</body>');
+87:        script=script.replace(anchor,SASTA_SHIPPING_BRIDGE+anchor);
+103:       xml=xml.replace('</urlset>','<url><loc>'+SASTA_JACKETS_PAGE+'</loc><lastmod>2026-11-12</lastmod></url></urlset>');
+112:     if(xml.includes('</sitemapindex>')&&!xml.includes(CANONICAL+'/blog/sitemap.xml'))xml=xml.replace('</sitemapindex>','<sitemap><loc>'+CANONICAL+'/blog/sitemap.xml</loc></sitemap></sitemapindex>');
+137: const html='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Sasta Milaga — Checkout temporarily unavailable</title><style>:root{color-scheme:light}body{font:16px/1.6 system
 ## sasta-account-links-v10 :: footer or html injection (bytes=12626)
 23:  const path=kind==='home'?'/':url.pathname==='/sitemap_index.xml'?'/sitemap.xml':url.pathname;
 24:  const target=BACKUP+path+(kind==='asset'?url.search:'');
@@ -38,37 +48,37 @@
 12:function hero(which){const contact=which==='contact';return '<section class="hero"><div class="shell hero-inner"><div class="hero-copy"><div class="crumb"><a href="/">Home</a> &gt; <span>'+ (contact?'Contact':'Blog')+'</span></div><h1>Sasta Milaga <span>'+ (contact?'Contact':'Blog')+'</span></h1>
 14:function shell(title,description,canonical,body,robots){return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0c3e25"><meta name="robots" content="'+esc(robots||'index, follow')+'"><
 ## sasta-github-static-primary-v4 :: footer or html injection (bytes=7959)
-## sasta-global-product-variants-v2 :: id patterns (bytes=15696)
-6:const ID=/^[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$/;
-7:const pathRe=/^\/global-shop\/p\/([a-f0-9-]{36})\/([a-z0-9-]{1,180})\/?$/i;
-13: const canonical=BASE+'/global-shop/p/'+id+'/'+slug+'/';
-31: const m=url.pathname.match(pathRe);
-32: if(!isSitemap&&!m)return error(404,'Page not found',request.method);
-37:  const rows=(q.results||[]).map(p=>'<url><loc>'+BASE+'/global-shop/p/'+escapeHTML(String(p.cj_product_id).toUpperCase())+'/'+slugify(p.name)+'/</loc></url>').join('');
-41: const pid=m[1].toUpperCase();if(!ID.test(pid))return error(404,'Product not found',request.method);
-43: if(!product)return error(404,'Product not found',request.method);
-## sasta-cj-variants-shipping :: routes and key use (bytes=10821)
-15: const lease=await db.prepare('UPDATE cj_request_gate SET next_allowed_ms=? WHERE name=? AND next_allowed_ms<=?').bind(now+1300,operation,now).run();
-17: await db.prepare('INSERT OR IGNORE INTO cj_request_budget(day,operation,used) VALUES(?,?,0)').bind(day,operation).run();
-18: const budget=await db.prepare('UPDATE cj_request_budget SET used=used+1 WHERE day=? AND operation=? AND used<?').bind(day,operation,maxPerDay).run();
-23: const token=String(env.CJ_ACCESS_TOKEN||'').trim();
-24: if(!token)throw new Error('missing_cj_secret');
-33:  if(!response.ok)throw new Error('cj_http_'+response.status);
-35:  if(size>MAX_JSON_BYTES)throw new Error('cj_payload_too_large');
-37:  if(raw.length>MAX_JSON_BYTES)throw new Error('cj_payload_too_large');
-39:  if(String(data.code)!=='200'||data.result===false)throw new Error('cj_business_error_'+String(data.code));
-68: const cached=await env.DB.prepare('SELECT variants_json,fetched_at,expires_at,source FROM cj_variant_cache WHERE product_id=?').bind(pid).first();
-73: if(!env.CJ_ACCESS_TOKEN){
-75:  throw new Error('missing_cj_secret');
-77: const gate=await reserve(env.DB,'variant',500);
-83: await env.DB.prepare("INSERT INTO cj_variant_cache(product_id,variants_json,fetched_at,expires_at,source) VALUES(?,?,?,?,?) ON CONFLICT(product_id) DO UPDATE SET variants_json=excluded.variants_json,fetched_at=excluded.fetched_at,expires_at=excluded.expires_at,source=excluded.source").bind(pid,v
-84: return {items,verifiedAt:now,stale:false,source:'cj_api'};
-89: const p=await env.DB.prepare('SELECT cj_product_id FROM catalog_products_cj WHERE cj_product_id=? LIMIT 1').bind(pid).first();
-98: }catch(e){console.log(JSON.stringify({event:'cj_variant_lookup_error',pid,error:e.message}));return json(request,{error:'variants_unavailable',detail:e.message==='missing_cj_secret'?'Worker token not configured':'Try again later'},503)}
-114: const cached=await env.DB.prepare('SELECT rates_json,expires_at,fetched_at FROM cj_shipping_cache WHERE cache_key=?').bind(key).first();
-118:  if(!env.CJ_ACCESS_TOKEN)return json(request,{error:'live_shipping_unavailable',message:'Secure CJ token must be configured; expired and unavailable quotes are never shown as current'},503);
-119:  const gate=await reserve(env.DB,'freight',300);
-125:   source='cj_api';
-126:   await env.DB.prepare("INSERT INTO cj_shipping_cache(cache_key,product_id,variant_id,country_code,quantity,zip_code,rates_json,fetched_at,expires_at,source) VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(cache_key) DO UPDATE SET rates_json=excluded.rates_json,fetched_at=excluded.fetched_at,expires_at
-127:  }catch(e){console.log(JSON.stringify({event:'cj_shipping_quote_failed',pid,country,reason:e.message}));return json(request,{error:'shipping_quote_unavailable',message:'Live carrier rate unavailable; no price will be estimated'},503)}
-143: if(!env.DB)return json(request,{error:'catalog_db_unavailable'},503);
+## sasta-global-product-variants-v2 :: id patterns (bytes=16532)
+7:const ID=/^[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$/;
+8:const pathRe=/^\/global-shop\/p\/([a-f0-9-]{36})\/([a-z0-9-]{1,180})\/?$/i;
+14: const canonical=BASE+'/global-shop/p/'+id+'/'+slug+'/';
+32: const m=url.pathname.match(pathRe);
+33: if(!isSitemap&&!m)return error(404,'Page not found',request.method);
+38:  const rows=(q.results||[]).map(p=>'<url><loc>'+BASE+'/global-shop/p/'+escapeHTML(String(p.cj_product_id).toUpperCase())+'/'+slugify(p.name)+'/</loc></url>').join('');
+42: const pid=m[1].toUpperCase();if(!ID.test(pid))return error(404,'Product not found',request.method);
+44: if(!product)return error(404,'Product not found',request.method);
+## sasta-cj-variants-shipping :: routes and key use (bytes=12730)
+6: if(!env.SHIPPING_PROVIDER)throw new Error('provider_missing');
+9:  const r=await env.SHIPPING_PROVIDER.fetch(new Request('https://service-cj.internal'+path,{
+22: const data=await secureProvider(env,'/api/cj/product?pid='+encodeURIComponent(pid));
+28: const r=await secureProvider(env,'/api/cj/shipping',{method:'POST',body:JSON.stringify(payload)});
+44: const lease=await db.prepare('UPDATE cj_request_gate SET next_allowed_ms=? WHERE name=? AND next_allowed_ms<=?').bind(now+1300,operation,now).run();
+46: await db.prepare('INSERT OR IGNORE INTO cj_request_budget(day,operation,used) VALUES(?,?,0)').bind(day,operation).run();
+47: const budget=await db.prepare('UPDATE cj_request_budget SET used=used+1 WHERE day=? AND operation=? AND used<?').bind(day,operation,maxPerDay).run();
+52: const token=String(env.CJ_ACCESS_TOKEN||'').trim();
+53: if(!token)throw new Error('missing_cj_secret');
+62:  if(!response.ok)throw new Error('cj_http_'+response.status);
+64:  if(size>MAX_JSON_BYTES)throw new Error('cj_payload_too_large');
+66:  if(raw.length>MAX_JSON_BYTES)throw new Error('cj_payload_too_large');
+68:  if(String(data.code)!=='200'||data.result===false)throw new Error('cj_business_error_'+String(data.code));
+97: const cached=await env.DB.prepare('SELECT variants_json,fetched_at,expires_at,source FROM cj_variant_cache WHERE product_id=?').bind(pid).first();
+102: if(!env.CJ_ACCESS_TOKEN&&!env.SHIPPING_PROVIDER){
+104:  throw new Error('missing_cj_secret');
+106: const gate=await reserve(env.DB,'variant',500);
+108: const raw=env.CJ_ACCESS_TOKEN?await cjFetch(env,'product/variant/query?pid='+encodeURIComponent(pid)):await providerVariants(env,pid);
+112: await env.DB.prepare("INSERT INTO cj_variant_cache(product_id,variants_json,fetched_at,expires_at,source) VALUES(?,?,?,?,?) ON CONFLICT(product_id) DO UPDATE SET variants_json=excluded.variants_json,fetched_at=excluded.fetched_at,expires_at=excluded.expires_at,source=excluded.source").bind(pid,
+113: return {items,verifiedAt:now,stale:false,source:'cj_api'};
+118: const p=await env.DB.prepare('SELECT cj_product_id FROM catalog_products_cj WHERE cj_product_id=? LIMIT 1').bind(pid).first();
+127: }catch(e){console.log(JSON.stringify({event:'cj_variant_lookup_error',pid,error:e.message}));return json(request,{error:'variants_unavailable',detail:e.message==='missing_cj_secret'?'Worker token not configured':'Try again later'},503)}
+143: const cached=await env.DB.prepare('SELECT rates_json,expires_at,fetched_at FROM cj_shipping_cache WHERE cache_key=?').bind(key).first();
+147:  if(!env.CJ_ACCESS_TOKEN&&!env.SHIPPING_PROVIDER)return json(request,{error:'live_shipping_unavailable',message:'Secure CJ live shipping provider must be configured; stale quotes are never shown as current'},503);
