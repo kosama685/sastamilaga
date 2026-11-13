@@ -24,3 +24,6 @@
 
 /* Voice fill: microphone button in every form field (assets/js/voice-fill.js) */
 (function () { if (window.__smVoiceFill || document.querySelector('script[src*="voice-fill.js"]')) return; var me = document.currentScript; var s = document.createElement('script'); s.src = ((me && me.src) || '').replace(/a11y\.js.*$/, 'voice-fill.js'); if (!/voice-fill\.js$/.test(s.src)) return; s.defer = true; document.head.appendChild(s); })();
+
+/* Mobile app pass stylesheet: support icon above the app bar, voice-fill, app-like phone rules (assets/theme/mobile-app.css) */
+(function () { if (document.querySelector('link[href*="mobile-app.css"]')) return; var me = document.currentScript, src = ((me && me.src) || ''); if (!/a11y\.js/.test(src)) return; var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = src.replace(/js\/a11y\.js.*$/, 'theme/mobile-app.css'); document.head.appendChild(l); })();
