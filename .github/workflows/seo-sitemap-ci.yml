@@ -1,0 +1,27 @@
+name: Validate qualified global product sitemaps
+on:
+  pull_request:
+    paths:
+      - tools/seo-qualified-sitemaps-worker.mjs
+      - tools/seo-qualified-sitemaps-worker.test.mjs
+      - .github/workflows/seo-sitemap-ci.yml
+  push:
+    branches: [main]
+    paths:
+      - tools/seo-qualified-sitemaps-worker.mjs
+      - tools/seo-qualified-sitemaps-worker.test.mjs
+      - .github/workflows/seo-sitemap-ci.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node --check tools/seo-qualified-sitemaps-worker.mjs
+      - run: node --test tools/seo-qualified-sitemaps-worker.test.mjs
