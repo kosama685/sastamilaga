@@ -6,4 +6,4 @@ Disallow: /backup/
 Disallow: /partials/
 
 Sitemap: https://sastamilaga.com/sitemap.xml
-Sitemap: https://sastamilaga.com/global-shop/sitemap.xml
+Sitemap: https://sastamilaga.com/sitemap-global-qualified.xml
