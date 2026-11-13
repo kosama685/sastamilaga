@@ -1,0 +1,44 @@
+# Read-only supplier-catalogue check. This workflow never creates a feed,
+# changes WordPress, publishes a product or modifies Cloudflare routes.
+name: D1 catalogue merchant readiness (read only)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - tools/catalog-readiness-d1.mjs
+      - .github/workflows/catalog-readiness.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sasta-catalog-readiness
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate audit script
+        run: node --check tools/catalog-readiness-d1.mjs
+      - name: Query catalogue aggregates (read-only)
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          SASTA_D1_DATABASE_ID: ac28088f-6a54-4d29-8c64-821661efe88f
+        run: node tools/catalog-readiness-d1.mjs
+      - name: Archive catalogue readiness evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sasta-d1-readiness
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 30
