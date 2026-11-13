@@ -20,7 +20,7 @@
     /* thumbnails: the main photo plus the others, all clickable */
     var main = gallery.querySelector('.gallery-main img'), strip = gallery.querySelector('.gallery-thumbs'), urls = [];
     if (main) urls.push({ u: main.getAttribute('src'), a: main.getAttribute('alt') || '' });
-    if (strip) strip.querySelectorAll('img').forEach(function (i) { urls.push({ u: i.getAttribute('src'), a: i.getAttribute('alt') || '' }); });
+    if (strip) strip.querySelectorAll('img').forEach(function (i) { var u = i.getAttribute('src'); if (u && !urls.some(function (x) { return x.u === u; })) urls.push({ u: u, a: i.getAttribute('alt') || '' }); });   /* no duplicates: the first photo is already the main image */
     if (strip && main && urls.length > 1) {
       strip.className = 'gallery-thumbs'; strip.innerHTML = urls.map(function (x, i) { return '<button type="button" class="' + (i ? '' : 'active') + '" data-u="' + x.u.replace(/"/g, '&quot;') + '" aria-label="Show image ' + (i + 1) + '"><img src="' + x.u.replace(/"/g, '&quot;') + '" alt="" width="70" height="70" loading="lazy"></button>'; }).join('');
       strip.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button[data-u]'); if (!b) return; e.preventDefault(); main.src = b.getAttribute('data-u'); strip.querySelectorAll('button').forEach(function (x) { x.classList.toggle('active', x === b); }); });
