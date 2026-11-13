@@ -2118,3 +2118,7 @@ footer.smf .smf-pay svg{color:#fff}
 .listing-shell .filter-panel>*:not(h2):not(p){margin-inline:1.1rem}
 .listing-shell .filter-panel>p{padding-inline:1.1rem}
 /*pdp-v2:end*/
+
+/* Product gallery: the Worker-injected theme (#sasta-local-pdp-theme-v1) sets display:contents on the first child of .pdp. After pdp-static.js moves the gallery there, that rule collapsed it and the main photo rendered underneath the buy box. */
+.sm-page-static section.pdp.sm-local-pdp.pdp3>.gallery-panel{display:grid!important;grid-template-columns:78px minmax(0,1fr)!important;gap:.8rem;align-items:start;grid-area:auto!important}
+@media(max-width:760px){.sm-page-static section.pdp.sm-local-pdp.pdp3>.gallery-panel{grid-template-columns:1fr!important}}
