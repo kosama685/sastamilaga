@@ -1,0 +1,35 @@
+name: Audit static category and product SEO (read only)
+on:
+  pull_request:
+    paths:
+      - tools/audit-static-global-seo.mjs
+      - .github/workflows/static-seo-audit.yml
+  push:
+    branches: [main]
+    paths:
+      - tools/audit-static-global-seo.mjs
+      - .github/workflows/static-seo-audit.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Syntax check
+        run: node --check tools/audit-static-global-seo.mjs
+      - name: Scan every checked-in global category and product HTML
+        run: node tools/audit-static-global-seo.mjs
+      - name: Archive coverage and issues
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sasta-static-seo-full-coverage
+          path: artifacts/seo-static-coverage.*
+          if-no-files-found: warn
+          retention-days: 30
