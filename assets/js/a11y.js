@@ -20,3 +20,7 @@
 
 /* Search suggestions for the Pakistan and global catalogues (header search) */
 (function () { if (window.SMCJSearch || document.querySelector('script[src*="search-suggest.js"]')) return; var me = document.currentScript; var s = document.createElement('script'); s.src = ((me && me.src) || '').replace(/a11y\.js.*$/, 'search-suggest.js'); if (!/search-suggest\.js$/.test(s.src)) return; s.defer = true; document.head.appendChild(s); })();
+
+
+/* Voice fill: microphone button in every form field (assets/js/voice-fill.js) */
+(function () { if (window.__smVoiceFill || document.querySelector('script[src*="voice-fill.js"]')) return; var me = document.currentScript; var s = document.createElement('script'); s.src = ((me && me.src) || '').replace(/a11y\.js.*$/, 'voice-fill.js'); if (!/voice-fill\.js$/.test(s.src)) return; s.defer = true; document.head.appendChild(s); })();
