@@ -60,4 +60,7 @@
   .pdp.pdp3{grid-template-columns:minmax(0,1fr)!important}
   .pdp.pdp3>.gallery-panel{position:static}
 }
-@media (max-width:480px){.sm-var__grid{grid-template-columns:1fr!important}}
+@media (max-width:480px){.sm-var__grid{grid-template-columns:1fr!important}}.sm-var .sm-var__opt>input{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;opacity:0!important;cursor:pointer;z-index:2}
+.sm-var .sm-var__opt>.sm-var__img{grid-column:1!important;grid-row:1!important}
+.sm-var .sm-var__opt>.sm-var__t{grid-column:2!important;grid-row:1!important}
+.sm-var .sm-var__opt{position:relative!important}
