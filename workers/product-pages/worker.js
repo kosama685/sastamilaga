@@ -15,6 +15,9 @@
  * so no Offer is published in structured data. */
 
 const MARGIN = 1.2;
+/* 2026-11-13: these pages are generated from supplier fields only (no description, no verified retail price or stock), so they are thin. Keep them out of the index until a category's products carry real text, photo and price; visitors can still open and order from them. */
+const INDEX_PAGES = false;
+const ROBOTS_META = INDEX_PAGES ? 'index, follow, max-image-preview:large' : 'noindex, follow';
 const memo = new Map();
 
 export default {
@@ -133,7 +136,7 @@ async function productPage(cat, pid, given, env, cfg, ctx) {
   const spa = `${S}/#/global/p/${cat}/${encodeURIComponent(id)}`;
   const html = `<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(name.slice(0, 90))} – ${esc(c.n)} | Sasta Milaga</title>
-<meta name="description" content="${esc(desc)}"><meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="description" content="${esc(desc)}"><meta name="robots" content="${ROBOTS_META}">
 <link rel="canonical" href="${esc(canonical)}"><link rel="alternate" hreflang="en" href="${esc(canonical)}"><link rel="alternate" hreflang="x-default" href="${esc(canonical)}">
 <meta property="og:type" content="product"><meta property="og:site_name" content="Sasta Milaga"><meta property="og:locale" content="en_PK">
 <meta property="og:title" content="${esc(name)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${esc(canonical)}"><meta property="og:image" content="${esc(img)}">
