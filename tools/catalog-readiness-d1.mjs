@@ -63,6 +63,9 @@ for (const sql of countsSql) {
 }
 const rows = await readOnlyQuery(detailsSql);
 if (rows.length !== 1) throw new Error('Unexpected D1 summary result');
+const enrichmentRows = await readOnlyQuery("SELECT COUNT(*) AS reviewed_rows, SUM(CASE WHEN seo_approved=1 AND LENGTH(COALESCE(description_text,''))>=100 THEN 1 ELSE 0 END) AS sitemap_eligible FROM cj_product_enrichment");
+if (enrichmentRows.length !== 1) throw new Error('Unexpected enrichment summary result');
+const enrichment = {reviewed_rows: Number(enrichmentRows[0].reviewed_rows)||0, sitemap_eligible: Number(enrichmentRows[0].sitemap_eligible)||0};
 const fields = Object.fromEntries(Object.entries(rows[0]).map(([k,v]) => [k, Number(v) || 0]));
 const cjCount = counts.find(x => x.source === 'cj').records;
 if (cjCount !== fields.records || cjCount === 0) throw new Error('Counts inconsistent: audit stopped');
@@ -73,6 +76,7 @@ const audit = {
   source: 'Cloudflare D1, read-only SQL; catalog_products_cj',
   counts,
   fields,
+  enrichment,
   merchant_automatic_publish_enabled: readyForMerchant,
   sitemap_automatic_publish_enabled: false,
   readiness: 'BLOCKED_PENDING_VERIFICATION',
@@ -106,6 +110,13 @@ const md = [
   '| Field | Rows with content / basic check passed |',
   '|---|---:|',
   ...Object.entries(fields).filter(([k]) => k !== 'records').map(([k,v]) => '| ' + k + ' | ' + v.toLocaleString('en-US') + ' |'),
+  '',
+  '## SEO-reviewed D1 supplier pages',
+  '',
+  '- Reviewed enrichment rows: ' + enrichment.reviewed_rows.toLocaleString('en-US'),
+  '- Qualified for /global-shop/sitemap.xml: ' + enrichment.sitemap_eligible.toLocaleString('en-US'),
+  '- Supplier records NOT qualified yet: ' + (fields.records-enrichment.sitemap_eligible).toLocaleString('en-US'),
+  '- Eligibility is based only on the current D1 Worker rule: seo_approved=1 and description_text length >= 100; it does NOT certify checkout, Merchant Center approval, or Google indexing.',
   '',
   '## Blocking verification requirements',
   '',
