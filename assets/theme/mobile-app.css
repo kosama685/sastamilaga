@@ -42,3 +42,22 @@
   main p,main li{overflow-wrap:break-word}
   pre,code{white-space:pre-wrap;word-break:break-word}
 }
+
+/* ===== product page columns and variation tiles (2026-11-13) ===== */
+/* variation tile: fixed photo column, text always beside it, never underneath */
+.sm-var__grid{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(210px,1fr))!important;gap:10px!important;max-height:min(58vh,440px)!important;overflow:auto!important;padding:4px!important;overscroll-behavior:contain}
+.sm-var .sm-var__opt,.sm-greq .sm-var__opt{display:grid!important;grid-template-columns:64px minmax(0,1fr)!important;align-items:center!important;gap:12px!important;padding:8px 12px!important;min-height:80px;overflow:hidden}
+.sm-var .sm-var__img{position:relative!important;display:block!important;width:64px!important;height:64px!important;margin:0!important;border-radius:10px;overflow:hidden;background:#eaf6ee}
+.sm-var .sm-var__img img{position:static!important;display:block!important;width:100%!important;height:100%!important;max-width:none!important;object-fit:cover;border-radius:0}
+.sm-var .sm-var__t{position:relative;z-index:1;display:grid!important;gap:2px;min-width:0;padding-inline-end:22px}
+.sm-var .sm-var__t b{display:block;overflow-wrap:anywhere;line-height:1.25}
+/* columns: the photo column follows the reader while the long buying column scrolls, so no blank block is left under the photo */
+@media (min-width:1025px){
+  .pdp.pdp3{align-items:start}
+  .pdp.pdp3>.gallery-panel{position:sticky;top:96px;align-self:start}
+}
+@media (max-width:1024px){
+  .pdp.pdp3{grid-template-columns:minmax(0,1fr)!important}
+  .pdp.pdp3>.gallery-panel{position:static}
+}
+@media (max-width:480px){.sm-var__grid{grid-template-columns:1fr!important}}

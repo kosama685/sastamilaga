@@ -277,7 +277,9 @@
         } catch (e) { res = null; }
         if (!res || !res.ok || !d || !d.quotes || !d.quotes.length) {
           /* The store's live feed is down: ask the shipping Worker (same supplier, US$ prices) for the visitor's detected country. */
-          out.textContent = 'Shipping prices could not be loaded just now. Please press "Get shipping cost" again in a moment, or place the order and we will confirm shipping on WhatsApp.'; return;
+          /* the supplier's one-request-per-second queue was busy: ask again twice on our own before giving up */
+          if ((go._tries = (go._tries || 0) + 1) <= 2) { out.textContent = 'The supplier is busy, trying again…'; go.disabled = false; setTimeout(() => { if (!stale()) go.click(); }, 2500 * go._tries); return; }
+          go._tries = 0; out.textContent = 'Shipping prices could not be loaded just now. Please press "Get shipping cost" again in a moment, or place the order and we will confirm shipping on WhatsApp.'; return;
         }
         const money = (n, cur) => { try { return new Intl.NumberFormat('en', { style: 'currency', currency: cur }).format(n); } catch (e) { return `${cur} ${n.toFixed(2)}`; } };
         out.innerHTML = d.quotes.slice(0, 6).map((m, i) => { const val = `${neutral(m.service)}: ${money(m.cost, m.currency)}, ${m.estimate} days`; return `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(val)}" data-amt="${esc(String(m.cost))}" data-cur="${esc(String(m.currency || 'USD'))}"${i ? '' : ' checked'}> <span>${esc(neutral(m.service))}</span> <b>${esc(money(m.cost, m.currency))}</b> <small>${esc(m.estimate)} days</small></label>`; }).join('') + `<p class="sm-ship__note">Carrier price for ${qty} item${qty > 1 ? 's' : ''} shipped from ${esc((d.origins && d.origins[0] && d.origins[0].name) || 'our supplier')}, before any customs duties. The final total is confirmed before you pay.</p>`;
@@ -304,6 +306,8 @@
   /* Automatic shipping quote for the visitor's country (re-run when the variant or the detected country changes). */
   let quoteTimer = null;
   function quoteSoon() { clearTimeout(quoteTimer); quoteTimer = setTimeout(() => { const go = document.getElementById('gship-go'); if (go && !go.disabled) go.click(); }, 250); }
+  /* The supplier allows one request per second for the whole shop, so a busy moment answers 503 once and succeeds a few seconds later (successes are cached for an hour). Ask again quietly before telling the visitor anything. */
+  function fetchRetry(u, n = 4) { return fetch(u).then(x => { if (!x.ok) throw new Error(x.status); return x; }).catch(e => (n > 0 ? new Promise(res => setTimeout(res, 1800 + (4 - n) * 1200)).then(() => fetchRetry(u, n - 1)) : Promise.reject(e))); }
   function bindVariants(r, chosen) {
     const box = document.getElementById('gvar'); if (!box) return;
     const C = window.SM_CONFIG || {}, W = (C.cjShippingWorker || '').replace(/\/$/, '');
@@ -325,7 +329,7 @@
     /* Real options: the CJ Worker when configured, otherwise the WordPress store's live options (same CJ data, the store's own price). */
     const RATE = { USD: 1, SAR: 1 / 3.75, AED: 1 / 3.6725 };   // pegged currencies only; anything else keeps the catalogue price
     const fromWp = d => ({ variants: ((d && d.options) || []).map(o => { const m = /([A-Z]{3})\s*([\d.,]+)/.exec(o.price_label || ''); const usd = m && RATE[m[1]] ? parseFloat(m[2].replace(/,/g, '')) * RATE[m[1]] : (r[3] || 0) * MARGIN; return { vid: o.vid, name: o.name, key: o.name, sku: o.sku, image: o.image || '', price: usd / MARGIN, label: m ? o.price_label : '' }; }) });   /* a label without a price (feed down) is dropped: the tile shows the catalogue estimate, refined below from the supplier price */
-    (W ? fetch(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`).then(x => x.json()) : (window.SMWoo && window.SMWoo.active ? window.SMWoo.sync() : Promise.resolve()).then(() => fetch(`${(window.SMWoo && window.SMWoo.active ? (() => { try { return new URL(C.wpApi).pathname; } catch (e) { return C.wpApi; } })() : C.wpApi).replace(/\/$/, '')}/live/options/${encodeURIComponent(r[0])}`).then(x => { if (!x.ok) throw new Error(x.status); return x.json(); }).then(fromWp))).then(d => {
+    (W ? fetch(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`).then(x => x.json()) : (window.SMWoo && window.SMWoo.active ? window.SMWoo.sync() : Promise.resolve()).then(() => fetchRetry(`${(window.SMWoo && window.SMWoo.active ? (() => { try { return new URL(C.wpApi).pathname; } catch (e) { return C.wpApi; } })() : C.wpApi).replace(/\/$/, '')}/live/options/${encodeURIComponent(r[0])}`).then(x => { if (!x.ok) throw new Error(x.status); return x.json(); }).then(fromWp))).then(d => {
       const list = (d && d.variants) || [];
       if (!list.length) { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Options will be confirmed on WhatsApp.</p>'; return; }
       if (list.length === 1) {
@@ -346,7 +350,7 @@
           const sel = box.querySelector('input[name=variant]:checked'); if (sel) { const v = list.find(x => x.vid === sel.value), g = document.querySelector('.gallery-main img'); if (v && v.image && g) g.src = v.image; else if (v && v.image) sel.dispatchEvent(new Event('change', { bubbles: true })); }
         }).catch(() => { });
       })();
-    }).catch(() => { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Options could not be loaded. Tell us your size or colour in the notes and we will confirm it on WhatsApp.</p>'; });
+    }).catch(() => { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Options could not be loaded just now. <button type="button" class="sm-btn sm-btn--ghost" id="gvar-retry">Try again</button> Or tell us your size or colour in the notes and we will confirm it on WhatsApp.</p>'; const b = document.getElementById('gvar-retry'); if (b) b.addEventListener('click', () => { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Loading the supplier\'s options…</p>'; bindVariants(r, chosen); }); });
   }
   function bindShip(r, chosen) {
     const go = document.getElementById('gship-go'); if (!go) return;
