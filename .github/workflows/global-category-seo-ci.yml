@@ -1,0 +1,38 @@
+name: Verify global category SEO rollout
+on:
+  pull_request:
+    paths:
+      - tools/enhance-global-category-seo.mjs
+      - .github/workflows/static.yml
+      - .github/workflows/global-category-seo-ci.yml
+  push:
+    branches: [main]
+    paths:
+      - tools/enhance-global-category-seo.mjs
+      - .github/workflows/global-category-seo-ci.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax validation
+        run: node --check tools/enhance-global-category-seo.mjs
+      - name: Validate every global category and expected change without writing
+        run: node tools/enhance-global-category-seo.mjs --check
+      - name: Apply generated changes to CI workspace
+        run: node tools/enhance-global-category-seo.mjs
+      - name: Verify repeatability and no accidental additional changes
+        run: node tools/enhance-global-category-seo.mjs
+      - name: Assert representative AEO content and crawlable sibling category links
+        run: |
+          grep -q 'id="sasta-global-qa-linking-v2"' c/global/earphones-and-headphones.html
+          grep -q 'href="https://sastamilaga.com/c/global/' c/global/earphones-and-headphones.html
+          grep -q 'not every product can ship to every country' c/global/earphones-and-headphones.html
+          ! grep -q 'Global items ship worldwide from our supplier network' c/global/earphones-and-headphones.html
