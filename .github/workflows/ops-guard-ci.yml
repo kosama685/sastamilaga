@@ -1,0 +1,27 @@
+name: Sasta SEO ops Cron guard tests
+on:
+  pull_request:
+    paths:
+      - tools/sasta-ops-guard-worker.mjs
+      - tools/sasta-ops-guard-worker.test.mjs
+      - .github/workflows/ops-guard-ci.yml
+  push:
+    branches: [main]
+    paths:
+      - tools/sasta-ops-guard-worker.mjs
+      - tools/sasta-ops-guard-worker.test.mjs
+      - .github/workflows/ops-guard-ci.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check tools/sasta-ops-guard-worker.mjs
+      - run: node --test tools/sasta-ops-guard-worker.test.mjs
