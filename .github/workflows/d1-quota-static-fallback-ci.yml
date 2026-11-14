@@ -1,0 +1,60 @@
+name: Critical D1 quota fallback & supplier lookup gate
+on:
+  pull_request:
+    paths:
+      - tools/build-cj-static-lookup.mjs
+      - tools/global-product-uuid-and-numeric-worker.mjs
+      - tools/global-product-uuid-and-numeric-worker.test.mjs
+      - tools/legacy-cj-product-canonical-redirect.mjs
+      - tools/legacy-cj-product-canonical-redirect.test.mjs
+      - tools/sasta-ops-guard-worker.mjs
+      - .github/workflows/static.yml
+      - .github/workflows/d1-quota-static-fallback-ci.yml
+  push:
+    branches: [main]
+    paths:
+      - tools/build-cj-static-lookup.mjs
+      - tools/sasta-ops-guard-worker.mjs
+      - .github/workflows/d1-quota-static-fallback-ci.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify JS syntax
+        run: |
+          node --check tools/build-cj-static-lookup.mjs
+          node --check tools/global-product-uuid-and-numeric-worker.mjs
+          node --check tools/legacy-cj-product-canonical-redirect.mjs
+          node --check tools/sasta-ops-guard-worker.mjs
+      - name: Test correct product URLs and fail-safe D1 outage recovery
+        run: node --test tools/global-product-uuid-and-numeric-worker.test.mjs tools/legacy-cj-product-canonical-redirect.test.mjs
+      - name: Build exact source-validated static supplier lookup for complete catalogue
+        run: node tools/build-cj-static-lookup.mjs
+      - name: Verify all index shard files and sample IDs
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import assert from 'node:assert/strict';
+          const d='data/cj/lookup/';
+          const m=JSON.parse(fs.readFileSync(d+'manifest.json','utf8'));
+          assert.equal(m.source_catalogue_rows,451812);
+          assert.equal(m.shards,1024);
+          assert.ok(m.unique_ids>=450000);
+          function slot(id){let h=2166136261;for(let i=0;i<id.length;i++)h=Math.imul(h^id.charCodeAt(i),16777619)>>>0;return(h>>>0)&1023}
+          for(const id of ['1830116277370114048','87FD613D-EEC7-474A-A408-02C9DCC6E9E2']){
+            const file=d+slot(id).toString(16).padStart(3,'0')+'.json';
+            const x=JSON.parse(fs.readFileSync(file,'utf8'));
+            assert.equal(x.snapshot,m.snapshot);
+            assert.ok(x.items[id]);
+          }
+          assert.equal(fs.readdirSync(d).filter(x=>x.endsWith('.json')).length,1025);
+          console.log(JSON.stringify({verified_products:m.unique_ids,shards:m.shards,bytes:m.bytes,duplicates:m.duplicates}));
+          JS
