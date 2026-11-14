@@ -1,0 +1,45 @@
+name: Audit Merchant candidate feed (no automatic submission)
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "33 4 * * 2"
+  pull_request:
+    paths:
+      - tools/build-merchant-feed.mjs
+      - tools/merchant-feed-preflight.mjs
+      - .github/workflows/merchant-feed-preflight.yml
+  push:
+    branches: [main]
+    paths:
+      - tools/build-merchant-feed.mjs
+      - tools/merchant-feed-preflight.mjs
+      - .github/workflows/merchant-feed-preflight.yml
+permissions:
+  contents: read
+concurrency:
+  group: merchant-candidate-preflight
+  cancel-in-progress: false
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+      - name: Generate candidate feed only in runner workspace
+        run: node tools/build-merchant-feed.mjs
+      - name: Validate candidate and record readiness blockers
+        run: node tools/merchant-feed-preflight.mjs
+      - name: Archive candidate output (not Merchant submission)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: merchant-candidate-preflight
+          path: |
+            feeds/google-merchant.xml
+            feeds/merchant-report.json
+            artifacts/merchant-candidate-preflight.json
+          retention-days: 14
+          if-no-files-found: warn
