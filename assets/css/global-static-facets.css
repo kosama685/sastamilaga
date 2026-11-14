@@ -1,0 +1,25 @@
+/* Corporate supplier-category sidebar; static-first, no JS dependency for product links. */
+.sm-static #app.sm-global-facets-layout{display:grid;grid-template-columns:minmax(220px,268px) minmax(0,1fr);column-gap:24px;row-gap:18px;align-items:start;max-width:1360px;margin-inline:auto;padding-inline:clamp(14px,2.5vw,32px)}
+.sm-static .sm-global-facets-layout>:not(.sm-global-facets):not(.products-row){grid-column:1/-1;min-width:0}
+.sm-static .sm-global-facets-layout>.sm-global-facets{grid-column:1;position:sticky;top:116px;align-self:start;background:#fff;border:1px solid #dce8df;border-radius:18px;box-shadow:0 12px 28px -24px rgba(11,59,32,.45);overflow:hidden}
+.sm-global-facets__head{background:#0b3b20;color:#fff;padding:17px 18px}
+.sm-global-facets__head h2{font:700 1.18rem/1.2 "Host Grotesk",system-ui,sans-serif;color:#fff;margin:0 0 5px}
+.sm-global-facets__head p{font:400 .78rem/1.55 system-ui,sans-serif;margin:0;color:#d9efe1}
+.sm-global-facets__fields{display:grid;gap:16px;padding:18px}
+.sm-global-facets__fields label{display:grid;gap:6px;font:700 .83rem/1.4 Inter,system-ui,sans-serif;color:#0b3b20}
+.sm-global-facets__fields input:not([type=checkbox]),.sm-global-facets__fields select{width:100%;min-width:0;min-height:42px;padding:9px 10px;border:1px solid #bdcfbf;border-radius:9px;background:white;color:#1e1e1e;font:400 .87rem/1.4 system-ui,sans-serif}
+.sm-global-facets__fields input:focus-visible,.sm-global-facets__fields select:focus-visible,.sm-global-facets__fields button:focus-visible{outline:3px solid #ff8a00;outline-offset:2px}
+.sm-global-facets__price{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sm-global-facets__fields label.sm-global-facets__check{display:flex;align-items:center;gap:10px}
+.sm-global-facets__check input{accent-color:#0f7a3b;width:18px;height:18px}
+.sm-global-facets__fields button{min-height:44px;background:#eaf6ee;color:#0b3b20;border:1px solid #a8c6b2;border-radius:10px;font:700 .87rem Inter,system-ui,sans-serif;cursor:pointer}
+.sm-global-facets__fields button:hover{background:#d6ecdf}
+.sm-global-facets__hint{font-size:.78rem;line-height:1.5;color:#55605b;margin:0}
+.sm-global-facets__hint a{color:#0b5e2e;text-decoration:underline;font-weight:700}
+.sm-static .sm-global-facets-layout>.products-row{grid-column:2;margin:0;align-self:start;min-width:0}
+.sm-global-facets-grid>.sm-card[hidden]{display:none!important}
+.sm-global-facets-count{margin:0;padding:0 18px 15px;color:#55605b;font-size:.78rem}
+.sm-global-facets-empty[hidden]{display:none!important}
+.sm-global-facets-empty{grid-column:1/-1;padding:24px;border:1px dashed #bdcfbf;border-radius:14px;text-align:center;color:#55605b}
+@media(max-width:880px){.sm-static #app.sm-global-facets-layout{grid-template-columns:1fr;gap:14px}.sm-static .sm-global-facets-layout>.sm-global-facets,.sm-static .sm-global-facets-layout>.products-row{grid-column:1}.sm-static .sm-global-facets-layout>.sm-global-facets{position:static}.sm-global-facets__fields{grid-template-columns:repeat(2,minmax(0,1fr))}.sm-global-facets__fields>.sm-global-facets__hint{grid-column:1/-1}}
+@media(max-width:520px){.sm-global-facets__fields{grid-template-columns:1fr}.sm-static .sm-global-facets-layout>.products-row{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}}
