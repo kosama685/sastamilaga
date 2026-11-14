@@ -31,6 +31,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: node tools/deploy-indexing-edge.mjs
       - uses: actions/upload-artifact@v6
+        if: always()
         with:
           name: encrypted-indexing-diagnostic
           path: artifacts/indexing-diagnostic.enc.json

@@ -17,7 +17,7 @@ async function update(name,patch,expected){
  const before=await api(base),modules=await before.formData();
  const entry=modules.get('worker.js');if(!entry)throw Error('Expected worker.js module missing');
  const source=typeof entry==='string'?entry:await entry.text();
- if(expected&&hash(source)!==expected)throw Error('Live source changed since review: '+name);
+ if(expected&&hash(source)!==expected)throw Error('Live source changed since review: '+name+' sha256='+hash(source));
  const next=patch(source);if(next===source)throw Error('Patch produced no change');
  fs.mkdirSync('artifacts',{recursive:true});fs.writeFileSync('artifacts/check-source.mjs',next);
  const {spawnSync}=await import('node:child_process');
@@ -32,7 +32,7 @@ async function update(name,patch,expected){
  if(!result.success)throw Error('Cloudflare did not confirm upload');
  receipts.push({worker:name,before_sha256:hash(source),after_sha256:hash(next),deployment_id:result.result?.deployment_id,at:new Date().toISOString()});
 }
-await update('sasta-canonical-sync-v11',patchIndexingSource,'bcaae6f02c112c56f58ed277dd38084e7d87676a231ff0bef0984f7bc0ae698b');
+await update('sasta-canonical-sync-v11',patchIndexingSource,'2b9f07e05ccf408745345708511a6beea8f53e34bb2b5805d225c08133e69959');
 // A genuine SKU match, verified HTTP 200 before this commit. No WooCommerce PDP.
 await update('sastamilaga-redirects',source=>{
  const anchor='    let m0;';if(source.split(anchor).length!==2)throw Error('Redirect Worker changed; inspect before applying');
