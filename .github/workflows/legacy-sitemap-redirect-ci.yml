@@ -1,0 +1,19 @@
+name: Verify legacy supplier sitemap redirects
+on:
+  pull_request:
+    paths: [tools/redirect-old-cj-sitemaps.mjs,tools/redirect-old-cj-sitemaps.test.mjs,.github/workflows/legacy-sitemap-redirect-ci.yml]
+  push:
+    branches: [main]
+    paths: [tools/redirect-old-cj-sitemaps.mjs,tools/redirect-old-cj-sitemaps.test.mjs,.github/workflows/legacy-sitemap-redirect-ci.yml]
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - run: node --check tools/redirect-old-cj-sitemaps.mjs
+      - run: node --test tools/redirect-old-cj-sitemaps.test.mjs
