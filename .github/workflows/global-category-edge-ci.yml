@@ -1,0 +1,27 @@
+name: Verify global category SEO Edge fallback
+on:
+  pull_request:
+    paths:
+      - tools/global-category-seo-edge.mjs
+      - tools/global-category-seo-edge.test.mjs
+      - .github/workflows/global-category-edge-ci.yml
+  push:
+    branches: [main]
+    paths:
+      - tools/global-category-seo-edge.mjs
+      - tools/global-category-seo-edge.test.mjs
+      - .github/workflows/global-category-edge-ci.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check tools/global-category-seo-edge.mjs
+      - run: node --test tools/global-category-seo-edge.test.mjs
