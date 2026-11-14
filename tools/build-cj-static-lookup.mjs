@@ -54,6 +54,6 @@ for(let i=0;i<COUNT;i++){
  fs.writeFileSync(f,payload);
  bytes+=Buffer.byteLength(payload);
 }
-const index={snapshot:m.snapshot,source_catalogue_rows:m.total,unique_ids:rowCount,duplicates,shards:COUNT,bytes,generated_utc:new Date().toISOString(),allow_indexing:false,note:'Static D1-failure recovery lookup only. Never evidence of live stock, approved content, pricing or product eligibility.'};
+const index={snapshot:m.snapshot,source_catalogue_rows:m.total,unique_ids:rowCount,duplicates,shards:COUNT,bytes,source_snapshot_date:m.snapshot,allow_indexing:false,note:'Static D1-failure recovery lookup only. Never evidence of live stock, approved content, pricing or product eligibility.'};
 fs.writeFileSync(path.join(DEST,'manifest.json'),JSON.stringify(index,null,2));
 console.log(JSON.stringify({status:'success',...index}));
