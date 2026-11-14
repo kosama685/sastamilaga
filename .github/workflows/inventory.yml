@@ -24,7 +24,7 @@ jobs:
       WP_USER: ${{ secrets.WORDPRESS_USERNAME }}
       WP_PASS: ${{ secrets.WORDPRESS_APP_PASSWORD }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: main
       - name: Collect

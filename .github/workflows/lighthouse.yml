@@ -14,8 +14,8 @@ jobs:
   lighthouse:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '20'
       - name: Run Lighthouse (mobile) on the main page types
@@ -36,7 +36,7 @@ jobs:
             const c=JSON.parse(fs.readFileSync('lh/'+f)).categories;
             console.log(f.replace('.report.json','').padEnd(40), Object.entries(c).map(([k,v])=>k.slice(0,4)+' '+Math.round(v.score*100)).join('  '));
           }"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: lighthouse-reports
           path: lh/

@@ -1,0 +1,28 @@
+name: Node 24 GitHub Actions runtime policy
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - 'tools/check-github-actions-runtime.mjs'
+      - '.github/dependabot.yml'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/**'
+      - 'tools/check-github-actions-runtime.mjs'
+      - '.github/dependabot.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate-action-runtimes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - run: node --check tools/check-github-actions-runtime.mjs
+      - run: node tools/check-github-actions-runtime.mjs

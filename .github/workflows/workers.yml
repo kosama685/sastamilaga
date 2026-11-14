@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
   push:
     branches: ["main"]
-    paths: ["workers/**", ".github/workflows/workers.yml"]
+    paths: ["workers/**"]  # CI-action upgrades must not redeploy live Cloudflare Workers
 
 permissions:
   contents: read
@@ -28,8 +28,8 @@ jobs:
       PAYPAL_CLIENT_SECRET: ${{ secrets.PAYPAL_CLIENT_SECRET }}
       PAYPAL_WEBHOOK_ID: ${{ secrets.PAYPAL_WEBHOOK_ID }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '20'
       - name: Check that the Cloudflare secrets exist
@@ -103,6 +103,11 @@ jobs:
           # Blog and contact in the site design: release both from the plain-design Worker (previous script is printed in the log for rollback)
           attach "sastamilaga.com/blog/*" sastamilaga-redirects
           attach "sastamilaga.com/contact/*" sastamilaga-redirects
-          # The Worker on /global/p/* only accepts UUID-style ids (numeric ids return 404) and marks pages noindex; the full-catalogue Worker serves all 451,812.
-          # Roll back: PUT the route again with the previous script printed above (sasta-global-product-recovery-v1).
-          attach "sastamilaga.com/global/p/*" sastamilaga-global-pages
+          # Preserve the recovery Worker currently attached to the legacy CJ path.
+          # This workflow must never roll /global/p/* back to a broken snapshot route.
+          legacy_present=$(echo "$ROUTES" | jq -r '[.result[]? | select(.pattern=="sastamilaga.com/global/p/*")] | length')
+          if [ "$legacy_present" = "0" ]; then
+            attach "sastamilaga.com/global/p/*" sastamilaga-global-pages
+          else
+            echo "Preserving existing /global/p/* Worker route; no overwrite"
+          fi

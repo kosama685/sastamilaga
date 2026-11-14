@@ -21,8 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with: {node-version: '22'}
       - run: node --check tools/external-commerce-health.mjs
       - run: node --test tools/external-commerce-health.test.mjs
@@ -32,14 +32,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with: {node-version: '22'}
       - name: Verify externally reachable routes; no purchase or state mutation
         run: node tools/external-commerce-health.mjs
       - name: Attach evidence even when external probe fails
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sasta-external-commerce-health
           path: artifacts/external-commerce-health.json

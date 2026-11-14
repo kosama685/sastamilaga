@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 4
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with: {node-version: '22'}
       - run: node --check tools/validate-live-catalog-coverage.mjs
   live:
@@ -29,14 +29,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with: {node-version: '22'}
       - name: Validate exactly 451812 source IDs, all 1024 lookup partitions, all 572 categories and 1024 live products
         run: node tools/validate-live-catalog-coverage.mjs
       - name: Keep exact test results even on failure
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sasta-catalog-health-coverage
           path: artifacts/catalog-health-coverage.json

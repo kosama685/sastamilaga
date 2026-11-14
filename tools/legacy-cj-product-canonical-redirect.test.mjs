@@ -5,7 +5,15 @@ test('numeric legacy video URL migrates to accurate D1 canonical with no player'
 test('UUID legacy video URL migrates',async()=>{const r=await app.fetch(new Request(base+'/global/p/woman-boots/C7D71805-6E93-45E7-87BB-81BEC63E129E/'),e);assert.equal(r.status,301);assert.match(r.headers.get('location'),/global-shop\/p\/C7D71805-6E93-45E7-87BB-81BEC63E129E/);});
 test('unknown items cannot return fake product 200',async()=>{const r=await app.fetch(new Request(base+'/global/p/shoes/1111111111111111111/fake'),e);assert.equal(r.status,404);assert.equal(r.headers.get('x-robots-tag'),'noindex,follow');});
 test('checkout and invalid paths are not handled',async()=>{for(const p of ['/cart/','/checkout/','/global/p/woman-boots/invalid-id/foo'])assert.equal((await app.fetch(new Request(base+p),e)).status,404)});
-test('D1 outage fails closed',async()=>{const r=await app.fetch(new Request(base+'/global/p/woman-boots/1830116277370114048/'),{});assert.equal(r.status,503);});
+test('D1 and static snapshot outage both fail closed, never a fake 200',async()=>{
+ const oldFetch=globalThis.fetch;
+ globalThis.fetch=async()=>{throw new Error('Test deliberately simulates a snapshot origin outage')};
+ try{
+  const r=await app.fetch(new Request(base+'/global/p/woman-boots/1830116277370114048/'),{});
+  assert.equal(r.status,503);
+  assert.match(r.headers.get('x-robots-tag')||'',/noindex/);
+ }finally{globalThis.fetch=oldFetch}
+});
 
 
 test('D1 daily-limit failure uses real static catalog for legacy redirect, not a blank 200',async()=>{
