@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - tools/enhance-global-category-seo.mjs
+      - tools/verify-global-schema-links.mjs
       - tools/global-static-facets.test.mjs
       - assets/js/global-static-facets.js
       - assets/js/global.js
@@ -48,6 +49,8 @@ jobs:
         run: node tools/enhance-global-category-seo.mjs
       - name: Verify repeatability and no accidental additional changes
         run: node tools/enhance-global-category-seo.mjs
+      - name: Verify all 572 categories have accurate ItemList URLs and semantic internal links
+        run: node tools/verify-global-schema-links.mjs
       - name: Assert representative AEO content and crawlable sibling category links
         run: |
           grep -q 'id="sasta-global-qa-linking-v2"' c/global/earphones-and-headphones.html
