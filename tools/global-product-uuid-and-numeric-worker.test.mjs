@@ -59,6 +59,11 @@ test('canonical product HTML offers verified CJ variant gallery, shipping and us
  assert.match(h,/class="gallery-panel"/);
  assert.match(h,/class="buy-panel"/);
  assert.match(h,/class="smh-nav"/);
+ assert.match(h,/class="smh-search"/);
+ assert.match(h,/action="\/search\/" method="get"/);
+ assert.match(h,/name="q"/);
+ assert.match(h,/logo-46\.png/);
+ assert.match(r.headers.get('content-security-policy')||'',/form-action 'self'/);
  assert.match(h,/property="og:title"/);
  assert.match(h,/name="twitter:card"/);
  assert.match(h,/Buying guide and product questions/);
