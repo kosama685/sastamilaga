@@ -25,6 +25,14 @@ while(queue.length&&seen.size<8){
  const name=queue.shift();if(seen.has(name))continue;seen.add(name);
  await get(name+'-source',`/accounts/${account}/workers/scripts/${name}`);
  const settings=await get(name+'-settings',`/accounts/${account}/workers/scripts/${name}/settings`);
+ if(name==='sasta-static-blog-reader'){
+  const db=settings?.result?.bindings?.find(b=>b.name==='BLOG_DB'&&b.type==='d1');
+  if(db?.id){
+   const r=await fetch(`https://api.cloudflare.com/client/v4/accounts/${account}/d1/database/${db.id}/query`,{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({sql:"SELECT slug,title,summary,content_html,seo_title,seo_description,publish_date,image_url,image_alt FROM blog_posts WHERE status='published' AND publish_date<=date('now') ORDER BY publish_date DESC LIMIT 70"}),signal:AbortSignal.timeout(25000)});
+   records['published-blog-snapshot']={status:r.status,type:r.headers.get('content-type'),text:await r.text()};
+   console.log('Bounded published blog snapshot: HTTP '+r.status);
+  }
+ }
  for(const binding of settings?.result?.bindings||[])if(binding.type==='service'&&binding.service)queue.push(binding.service);
 }
 const key=randomBytes(32),iv=randomBytes(12),cipher=createCipheriv('aes-256-gcm',key,iv);
