@@ -43,6 +43,11 @@ jobs:
         run: node tools/build-blog.mjs
       - name: Clean URLs (section pages, clean links, sitemap entries)
         run: node tools/build-sections.mjs
+      - name: Build lightweight shared header and footer runtime payload
+        run: |
+          node tools/build-chrome-runtime.mjs
+          node tools/build-chrome-runtime.mjs --check
+          node --test tools/build-chrome-runtime.test.mjs
       - name: Enhance all global category SEO with factual FAQ content and crawlable internal links
         run: node tools/enhance-global-category-seo.mjs
       - name: Verify all global category schema links before publishing
@@ -69,7 +74,7 @@ jobs:
           grep -q 'rel="canonical" href="https://sastamilaga.com/shop/"' shop/index.html
           grep -q 'noindex' search/index.html
           grep -q 'rel="canonical" href="https://sastamilaga.com/c/global/index.html"' global-shop/index.html
-          git add -f data/cj/lookup/ c/global/ shop/index.html search/index.html global-shop/index.html global/index.html global/all/index.html
+          git add -f data/cj/lookup/ c/global/ partials/chrome-runtime.json shop/index.html search/index.html global-shop/index.html global/index.html global/all/index.html
           if git diff --cached --quiet; then
             echo "Verified global category SEO, public storefront shells and CJ lookup unchanged."
           else
