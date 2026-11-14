@@ -5,6 +5,8 @@ on:
       - tools/enhance-global-category-seo.mjs
       - tools/global-static-facets.test.mjs
       - assets/js/global-static-facets.js
+      - assets/js/global.js
+      - styles.css
       - assets/css/global-static-facets.css
       - .github/workflows/static.yml
       - .github/workflows/global-category-seo-ci.yml
@@ -27,6 +29,15 @@ jobs:
           node-version: '22'
       - name: Syntax validation
         run: node --check tools/enhance-global-category-seo.mjs
+      - name: Validate SPA supplier sidebar and no deceptive video schema
+        run: |
+          node --check assets/js/global.js
+          grep -q 'sm-global-live-layout' assets/js/global.js
+          grep -q 'id="gmin"' assets/js/global.js
+          grep -q 'sm-global-live-layout' styles.css
+          ! grep -q "brand: { '@type': 'Brand', name: 'Sasta Milaga' }" assets/js/global.js
+          ! grep -q "subjectOf: { '@type': 'VideoObject'" assets/js/global.js
+
       - name: Validate filter behavior and price-safety cases
         run: |
           node --check assets/js/global-static-facets.js
