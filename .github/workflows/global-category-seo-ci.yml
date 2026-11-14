@@ -3,6 +3,9 @@ on:
   pull_request:
     paths:
       - tools/enhance-global-category-seo.mjs
+      - tools/global-static-facets.test.mjs
+      - assets/js/global-static-facets.js
+      - assets/css/global-static-facets.css
       - .github/workflows/static.yml
       - .github/workflows/global-category-seo-ci.yml
   push:
@@ -24,6 +27,10 @@ jobs:
           node-version: '22'
       - name: Syntax validation
         run: node --check tools/enhance-global-category-seo.mjs
+      - name: Validate filter behavior and price-safety cases
+        run: |
+          node --check assets/js/global-static-facets.js
+          node --test tools/global-static-facets.test.mjs
       - name: Validate every global category and expected change without writing
         run: node tools/enhance-global-category-seo.mjs --check
       - name: Apply generated changes to CI workspace
@@ -36,3 +43,12 @@ jobs:
           grep -q 'href="https://sastamilaga.com/c/global/' c/global/earphones-and-headphones.html
           grep -q 'not every product can ship to every country' c/global/earphones-and-headphones.html
           ! grep -q 'Global items ship worldwide from our supplier network' c/global/earphones-and-headphones.html
+
+      - name: Verify corporate sidebar, semantic product URLs and source-preserving sitemap rules
+        run: |
+          grep -q 'id="sm-global-facets-v1"' c/global/3d-pens.html
+          grep -q 'sm-global-facets-layout' c/global/3d-pens.html
+          grep -q 'global-static-facets.js' c/global/3d-pens.html
+          grep -q 'https://sastamilaga.com/global-shop/p/2011982827504136193/multi-color-3d-printing-pen/' c/global/3d-pens.html
+          ! grep -q 'href="../../#/global/p/' c/global/3d-pens.html
+          ! grep -q 'Global items are prepaid and delivered worldwide' c/global/3d-pens.html
