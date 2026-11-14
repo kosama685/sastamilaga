@@ -7,27 +7,35 @@
 26:if(!m||!PID.test(m[2].toUpperCase()))return formError(req,'Product not found',404);
 28:const pid=m[2].toUpperCase(),data=await load(pid,env).catch(()=>null);if(!data)return formError(req,'Product not found',404);
 35: const text=['Hello Sasta Milaga, please confirm the following product enquiry.','Product: '+(data.enriched?.title||data.row.name),'SKU: '+(data.enriched?.sku||data.row.sku),'Variation: '+(selected?selected.name+' ('+selected.sku+')':'Please confirm available variations'),'Quantity: '+qty,'Destin
-## sasta-canonical-sync-v11 :: footer or html injection (bytes=54458)
-4:const SASTA_LOCAL_MEDIA_RECOVERY="<script id=\"sasta-local-media-recovery-v1\">(function(){'use strict';function init(){document.querySelectorAll('section.pdp.sm-local-pdp').forEach(function(root){var gallery=root.querySelector('.gallery-panel'),bar=gallery&&gallery.querySelector('.gallery-thumbs'
-7:const SASTA_LOCAL_PDP_SCRIPT="<script id=\"sasta-local-product-gallery-v1\">(function(){\n\"use strict\";\nvar panels=document.querySelectorAll('section.pdp');if(!panels.length)return;\nfor(var c=0;c<panels.length;c++){(function(root){\nvar panel=root.querySelector('.gallery-panel'),box=panel&&pan
-9:const SASTA_LISTING_SCRIPT="<script id=\"sasta-static-filters-v1\">(function(){\n'use strict';if(document.querySelector('#sm-listing-tools'))return;\nvar main=document.querySelector('main .sm-app')||document.querySelector('main');if(!main)return;\nvar grid=main.querySelector('.products-row'),cards
-13:const SASTA_FOOTER_LABEL_SCRIPT="<script>(function(){function fix(){var f=document.querySelector('footer.smf .smf-contact');if(!f)return;var a=f.querySelector('a[href*=\"wa.me/\"]');if(a&&a.textContent.trim()==='+923432601806'){a.textContent='WhatsApp regional support';a.setAttribute('aria-label'
-14:const SASTA_REGIONAL_HTML="<section id=\"sasta-regional-footer\" class=\"smf-world\" aria-labelledby=\"smf-region-heading\"><h2 id=\"smf-region-heading\">☎ Phone and WhatsApp Worldwide</h2><p>Choose a regional team for an enquiry. Response times and availability may vary.</p><div class=\"smf-worl
-22:const BLOCKER="<script>(function(){'use strict';var act=/^#\\/(?:account|my-account|login|register)(?:\\/|\\?|$)/i;if(act.test(location.hash))location.replace('/my-account/');function note(){var root=document.getElementById('sm-woo-cart-notice');if(!root){root=document.createElement('div');root.i
-23:function stripInvalidJSONLD(html){return html.replace(/<script\b[^>]*type=[\"']application\/ld\+json[\"'][^>]*>[\s\S]*?<\/script>/gi,tag=>{const body=tag.replace(/^<script[^>]*>/i,'').replace(/<\/script>$/i,'');try{JSON.parse(body);return tag}catch{return ''}})}
-43:  const body=plain?'Not found':'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow"><title>Page not found | Sasta Milaga</title></head><body style="font:16px/1.6 system-ui,Arial,
-59:      html=html.replace(/<\/head>/i,SASTA_LOCAL_PDP_THEME+'</head>');
-60:      html=html.replace(/<\/body>/i,SASTA_LOCAL_PDP_SCRIPT+SASTA_LOCAL_MEDIA_RECOVERY+'</body>');
-64:      if(!html.includes('sasta-listing-ui-v1'))html=html.replace(/<\/head>/i,SASTA_LISTING_CSS+'</head>');
-65:      if(/^\/c\/.+\.html$/.test(url.pathname)&&!html.includes('sasta-static-filters-v1'))html=html.replace(/<\/body>/i,SASTA_LISTING_SCRIPT+'</body>');
-69:     html=html.replace('<main id="main" class="sm-main">','<main id="main" class="sm-main">'+SASTA_JACKETS_PARENT_LINK);
-72:   html=html.replace(/<\/head>/i,BLOCKER+SEO_CANONICAL_SYNC+SASTA_RTL_STYLE+'</head>');
-73:   if(html.includes('class=\"smf-bottom\"')&&!html.includes('id=\"sasta-regional-footer\"')){html=html.replace('<div class=\"smf-bottom\">',SASTA_REGIONAL_HTML+'<div class=\"smf-bottom\">');html=html.replace(/<\/head>/i,SASTA_REGIONAL_STYLE+'</head>');html=html.replaceAll('+923432601806</a>','Wha
-74:   html=html.replace(/<\/body>/i,SASTA_FOOTER_LABEL_SCRIPT+'</body>');
-87:        script=script.replace(anchor,SASTA_SHIPPING_BRIDGE+anchor);
-103:       xml=xml.replace('</urlset>','<url><loc>'+SASTA_JACKETS_PAGE+'</loc><lastmod>2026-11-12</lastmod></url></urlset>');
-112:     if(xml.includes('</sitemapindex>')&&!xml.includes(CANONICAL+'/blog/sitemap.xml'))xml=xml.replace('</sitemapindex>','<sitemap><loc>'+CANONICAL+'/blog/sitemap.xml</loc></sitemap></sitemapindex>');
-137: const html='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Sasta Milaga — Checkout temporarily unavailable</title><style>:root{color-scheme:light}body{font:16px/1.6 system
+## sasta-canonical-sync-v11 :: footer or html injection (bytes=78489)
+6: const x=SASTA_TRAVEL_HUB_DATA[path],base='https://sastamilaga.com',url=base+path,es=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+10: const styles='*{box-sizing:border-box}body{font:16px/1.7 system-ui,Segoe UI,sans-serif;margin:0;background:#f5faf7;color:#173f2b}a{color:#08713e}a:focus-visible{outline:3px solid orange}header{background:white;border-bottom:1px solid #d6e5db;padding:14px 20px}nav{max-width:1050px;margin:auto;dis
+11: return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+es(x.title)+'</title><meta name="description" content="'+es(x.desc)+'"><meta name="robots" content="index, follow, max-image-preview:large"><link rel="ca
+13:const SASTA_WORLD_GUIDE_HTML="<!doctype html><html lang=\"en\" dir=\"ltr\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Worldwide Shopping & International Delivery Guide | Sasta Milaga</title><meta name=\"description\" content=\"Shop
+15:const SASTA_LOCAL_MEDIA_RECOVERY="<script id=\"sasta-local-media-recovery-v1\">(function(){'use strict';function init(){document.querySelectorAll('section.pdp.sm-local-pdp').forEach(function(root){var gallery=root.querySelector('.gallery-panel'),bar=gallery&&gallery.querySelector('.gallery-thumbs
+18:const SASTA_LOCAL_PDP_SCRIPT="<script id=\"sasta-local-product-gallery-v1\">(function(){\n\"use strict\";\nvar panels=document.querySelectorAll('section.pdp');if(!panels.length)return;\nfor(var c=0;c<panels.length;c++){(function(root){\nvar panel=root.querySelector('.gallery-panel'),box=panel&&pa
+20:const SASTA_LISTING_SCRIPT="<script id=\"sasta-static-filters-v1\">(function(){\n'use strict';if(document.querySelector('#sm-listing-tools'))return;\nvar main=document.querySelector('main .sm-app')||document.querySelector('main');if(!main)return;\nvar grid=main.querySelector('.products-row'),card
+24:const SASTA_FOOTER_LABEL_SCRIPT="<script>(function(){function fix(){var f=document.querySelector('footer.smf .smf-contact');if(!f)return;var a=f.querySelector('a[href*=\"wa.me/\"]');if(a&&a.textContent.trim()==='+923432601806'){a.textContent='WhatsApp regional support';a.setAttribute('aria-label'
+25:const SASTA_REGIONAL_HTML="<section id=\"sasta-regional-footer\" class=\"smf-world\" aria-labelledby=\"smf-region-heading\"><h2 id=\"smf-region-heading\">☎ Phone and WhatsApp Worldwide</h2><p>Choose a regional team for an enquiry. Response times and availability may vary.</p><div class=\"smf-worl
+33:const BLOCKER="<script>(function(){'use strict';var act=/^#\\/(?:account|my-account|login|register)(?:\\/|\\?|$)/i;if(act.test(location.hash))location.replace('/my-account/');function note(){var root=document.getElementById('sm-woo-cart-notice');if(!root){root=document.createElement('div');root.i
+34:function stripInvalidJSONLD(html){return html.replace(/<script\b[^>]*type=[\"']application\/ld\+json[\"'][^>]*>[\s\S]*?<\/script>/gi,tag=>{const body=tag.replace(/^<script[^>]*>/i,'').replace(/<\/script>$/i,'');try{JSON.parse(body);return tag}catch{return ''}})}
+54:  const body=plain?'Not found':'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow"><title>Page not found | Sasta Milaga</title></head><body style="font:16px/1.6 system-ui,Arial,
+67:   html=stripInvalidJSONLD(html); if(['/','/travel/','/tours/'].includes(url.pathname)&&!html.includes('sasta-guide-links-2026'))html=html.replace(/<\/main>/i,SASTA_GUIDE_LINKS_2026+'</main>');
+68:   if((kind==='home'||['/shop/','/c/global/index.html','/shipping/'].includes(url.pathname))&&!html.includes('sm-worldwide-guide-link-v1'))html=html.replace(/<\/main>/i,SASTA_WORLD_GUIDE_LINK+'</main>');
+71:      html=html.replace(/<\/head>/i,SASTA_LOCAL_PDP_THEME+'</head>');
+72:      html=html.replace(/<\/body>/i,SASTA_LOCAL_PDP_SCRIPT+SASTA_LOCAL_MEDIA_RECOVERY+'</body>');
+76:      if(!html.includes('sasta-listing-ui-v1'))html=html.replace(/<\/head>/i,SASTA_LISTING_CSS+'</head>');
+77:      if(/^\/c\/.+\.html$/.test(url.pathname)&&!html.includes('sasta-static-filters-v1'))html=html.replace(/<\/body>/i,SASTA_LISTING_SCRIPT+'</body>');
+81:     html=html.replace('<main id="main" class="sm-main">','<main id="main" class="sm-main">'+SASTA_JACKETS_PARENT_LINK);
+84:   html=html.replace(/<\/head>/i,BLOCKER+SEO_CANONICAL_SYNC+SASTA_RTL_STYLE+'</head>');
+85:   if(html.includes('class=\"smf-bottom\"')&&!html.includes('id=\"sasta-regional-footer\"')){html=html.replace('<div class=\"smf-bottom\">',SASTA_REGIONAL_HTML+'<div class=\"smf-bottom\">');html=html.replace(/<\/head>/i,SASTA_REGIONAL_STYLE+'</head>');html=html.replaceAll('+923432601806</a>','Wha
+86:   html=html.replace(/<\/body>/i,SASTA_FOOTER_LABEL_SCRIPT+'</body>');
+99:        script=script.replace(anchor,SASTA_SHIPPING_BRIDGE+anchor);
+115:       xml=xml.replace('</urlset>','<url><loc>'+SASTA_JACKETS_PAGE+'</loc><lastmod>2026-11-12</lastmod></url></urlset>');
+117:if(!xml.includes(SASTA_WORLD_GUIDE_URL))xml=xml.replace('</urlset>','<url><loc>'+SASTA_WORLD_GUIDE_URL+'</loc><lastmod>2026-11-13</lastmod></url></urlset>');
+118:          for(const path of ['/guides/','/umrah/','/flights/']){const loc=CANONICAL+path;if(!xml.includes('<loc>'+loc+'</loc>'))xml=xml.replace('</urlset>','<url><loc>'+loc+'</loc><lastmod>2026-11-13</lastmod></url></urlset>');}     return new Response(req.method==='HEAD'?null:xml,{status:200,he
+125:     if(xml.includes('</sitemapindex>')&&!xml.includes(CANONICAL+'/blog/sitemap.xml'))xml=xml.replace('</sitemapindex>','<sitemap><loc>'+CANONICAL+'/blog/sitemap.xml</loc></sitemap></sitemapindex>');
+150: const html='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Sasta Milaga — Checkout temporarily unavailable</title><style>:root{color-scheme:light}body{font:16px/1.6 system
 ## sasta-account-links-v10 :: footer or html injection (bytes=12626)
 23:  const path=kind==='home'?'/':url.pathname==='/sitemap_index.xml'?'/sitemap.xml':url.pathname;
 24:  const target=BACKUP+path+(kind==='asset'?url.search:'');
