@@ -74,3 +74,27 @@ test('approved numeric CJ product IDs are eligible for sitemap XML when D1 gate 
  assert.match(await res.text(),/global-shop\/p\/1449637195303489536\/simulation-flame-mute-aroma-diffuser-humidifier\//);
  assert.ok(e.calls.every(q=>q.includes('cj_product_id')||q.includes('COUNT')));
 });
+
+
+test('D1 free tier quota error serves only last-reviewed supplier URLs as temporary XML',async()=>{
+ const db={prepare(){throw new Error("Your account has exceeded D1 free tier daily row read limit")}};
+ const e={DB:db};
+ const a=await worker.fetch(new Request(url+'/sitemap-global-qualified.xml'),e);
+ assert.equal(a.status,200);
+ assert.equal(a.headers.get('x-sasta-sitemap-source'),'last-reviewed-2026-11-14');
+ const ix=await a.text();assert.match(ix,/<sitemapindex/);assert.match(ix,/global-qualified\/1.xml/);
+ const page=await worker.fetch(new Request(url+'/sitemaps/global-qualified/1.xml'),e);
+ assert.equal(page.status,200);
+ const xml=await page.text();
+ assert.equal((xml.match(/<url>/g)||[]).length,2);
+ assert.match(xml,/solar-simulation-anti-theft-warning-light/);
+ assert.match(xml,/simulation-flame-mute-aroma-diffuser-humidifier/);
+ assert.doesNotMatch(xml,/1111111111111111111/);
+ const extraPage=await worker.fetch(new Request(url+'/sitemaps/global-qualified/2.xml'),e);
+ assert.equal(extraPage.status,404);
+});
+test('missing DB no longer breaks the last-reviewed qualified sitemap index',async()=>{
+ const r=await worker.fetch(new Request(url+'/sitemap-global-qualified.xml'),{});
+ assert.equal(r.status,200);
+ assert.match(await r.text(),/sitemapindex/);
+});
