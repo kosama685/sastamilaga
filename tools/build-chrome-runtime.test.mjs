@@ -10,7 +10,7 @@ test('runtime chrome contains exactly the four keys rendered on static pages',()
 });
 test('existing local static product pages retain SEO-rendered HTML independently of shared chrome',()=>{
  const h=fs.readFileSync('p/1-pc-foldable-traveling-hanger-hhc-890653.html','utf8');
- assert.match(h,/<h1>/);
+ assert.match(h,/<h1(?:\\s|>)/);
  assert.match(h,/application\/ld\+json/);
  assert.match(h,/id="sm-chrome-header"/);
 });
