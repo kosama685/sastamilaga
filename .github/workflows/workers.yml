@@ -41,6 +41,9 @@ jobs:
           else
             echo "ok=true" >> "$GITHUB_OUTPUT"
           fi
+      - name: Stage canonical CJ video-capable shipping provider
+        if: steps.chk.outputs.ok == 'true'
+        run: cp tools/cj-video-provider.mjs workers/cj-shipping/worker.js
       - name: Deploy CJ shipping and variants Worker
         if: steps.chk.outputs.ok == 'true'
         working-directory: workers/cj-shipping
