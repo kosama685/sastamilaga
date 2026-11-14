@@ -11,7 +11,7 @@ on:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -47,6 +47,17 @@ jobs:
         run: node tools/enhance-local-product-links.mjs
       - name: Build and validate quota-safe CJ product recovery index from all 451812 snapshot rows
         run: node tools/build-cj-static-lookup.mjs
+      - name: Persist exact CJ recovery index in repository for both Pages deployment paths
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f data/cj/lookup/
+          if git diff --cached --quiet; then
+            echo "Verified static catalogue lookup unchanged."
+          else
+            git commit -m "data: persist complete CJ recovery lookup [skip ci]"
+            git push origin HEAD:main
+          fi
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
