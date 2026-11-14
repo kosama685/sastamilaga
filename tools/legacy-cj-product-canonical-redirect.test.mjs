@@ -11,7 +11,7 @@ test('D1 and static snapshot outage both fail closed, never a fake 200',async()=
  try{
   const r=await app.fetch(new Request(base+'/global/p/woman-boots/1830116277370114048/'),{});
   assert.equal(r.status,503);
-  assert.match(r.headers.get('x-robots-tag')||'','noindex');
+  assert.match(r.headers.get('x-robots-tag')||'',/noindex/);
  }finally{globalThis.fetch=oldFetch}
 });
 
