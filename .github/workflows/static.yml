@@ -47,15 +47,21 @@ jobs:
         run: node tools/enhance-local-product-links.mjs
       - name: Build and validate quota-safe CJ product recovery index from all 451812 snapshot rows
         run: node tools/build-cj-static-lookup.mjs
-      - name: Persist exact CJ recovery index in repository for both Pages deployment paths
+      - name: Persist validated CJ recovery index and enriched supplier categories for BOTH GitHub Pages deployment paths
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f data/cj/lookup/
+          # The GitHub native Pages branch build may deploy after the Actions artifact
+          # and otherwise replace our enhanced HTML with the stale tracked files.
+          # Persist exactly the 572 validated category outputs as stable source.
+          test "$(find c/global -maxdepth 1 -name '*.html' | wc -l)" -eq 573
+          grep -q 'id="sm-global-facets-v1"' c/global/3d-pens.html
+          grep -q 'https://sastamilaga.com/global-shop/p/' c/global/3d-pens.html
+          git add -f data/cj/lookup/ c/global/
           if git diff --cached --quiet; then
-            echo "Verified static catalogue lookup unchanged."
+            echo "Verified static supplier category SEO and lookup unchanged."
           else
-            git commit -m "data: persist complete CJ recovery lookup [skip ci]"
+            git commit -m "data: persist source-validated CJ lookup and global category SEO [skip ci]"
             git push origin HEAD:main
           fi
       - name: Setup Pages
