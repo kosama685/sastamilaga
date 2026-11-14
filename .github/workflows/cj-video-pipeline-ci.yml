@@ -1,0 +1,35 @@
+name: CJ official video pipeline checks
+on:
+  pull_request:
+    paths:
+      - "tools/cj-video-provider.mjs"
+      - "tools/cj-video-provider.test.mjs"
+      - "tools/cj-video-proxy.mjs"
+      - "tools/cj-video-proxy.test.mjs"
+      - "tools/global-product-uuid-and-numeric-worker.mjs"
+      - "tools/global-product-uuid-and-numeric-worker.test.mjs"
+      - ".github/workflows/cj-video-pipeline-ci.yml"
+  push:
+    branches: ["main"]
+    paths:
+      - "tools/cj-video-provider.mjs"
+      - "tools/cj-video-proxy.mjs"
+      - ".github/workflows/cj-video-pipeline-ci.yml"
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+      - name: Syntax check
+        run: |
+          node --check tools/cj-video-provider.mjs
+          node --check tools/cj-video-proxy.mjs
+          node --check tools/global-product-uuid-and-numeric-worker.mjs
+      - name: Probe licensing, signed links, CJ Referer, snapshots
+        run: node --test tools/cj-video-provider.test.mjs tools/cj-video-proxy.test.mjs tools/global-product-uuid-and-numeric-worker.test.mjs
