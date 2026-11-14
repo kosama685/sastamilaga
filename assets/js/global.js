@@ -109,16 +109,16 @@
       <div class="smqb-actions"><a class="smqb-opt sm-btn--ghost" href="${detailHash(cat, r)}"><span>View options</span></a></div></div></article>`;
   }
   function globalNote() {
-    return `<p class="sm-global-note">Global items ship worldwide from our supplier network. Prices are estimates in US dollars; we confirm stock, options, shipping and the final total with you before you pay.</p>`;
+    return `<p class="sm-global-note">Global delivery is checked per product and destination. Prices are estimates in US dollars; we confirm stock, options, shipping and the final total with you before you pay.</p>`;
   }
 
   /* ---------- pages ---------- */
   async function home() {
     const m = await manifest();
-    setSEO({ title: 'Global shop – worldwide delivery', description: `Browse ${m.total.toLocaleString()} global products in ${m.cats.length} categories with worldwide delivery. Prices are estimates in USD and confirmed before you pay.`, url: `${A.SITE_URL}/c/global/index.html`,
+    setSEO({ title: 'Global shop – destination-dependent delivery', description: `Browse ${m.total.toLocaleString()} global products in ${m.cats.length} categories with destination-dependent delivery. Prices are estimates in USD and confirmed before you pay.`, url: `${A.SITE_URL}/c/global/index.html`,
       ldJson: { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Sasta Milaga Global shop', url: `${A.SITE_URL}/c/global/index.html`,
         mainEntity: { '@type': 'ItemList', numberOfItems: m.groups.length, itemListElement: m.groups.map((g, i) => ({ '@type': 'ListItem', position: i + 1, name: g.n, url: `${A.SITE_URL}/#/global/g/${g.s}` })) } } });
-    renderApp(`<section class="sm-page sm-page--wide">${pageHead('Global shop', `${m.total.toLocaleString()} products in ${m.cats.length} categories, delivered worldwide.`)}
+    renderApp(`<section class="sm-page sm-page--wide">${pageHead('Global shop', `${m.total.toLocaleString()} products in ${m.cats.length} categories, shipping subject to destination eligibility.`)}
       ${searchBox('')}${globalNote()}
       <ul class="sm-cats sm-cats--global" role="list">${m.groups.map(g => { const c = m.cats.find(x => x.g === g.n); return `<li><a class="sm-cat" href="#/global/g/${g.s}"><span class="sm-cat__img"><img src="${esc(c ? c.img : '')}" alt="${esc(g.n)}" width="300" height="300" loading="lazy" onerror="this.src=window.fallbackImg"></span><span class="sm-cat__name">${esc(g.n)}</span><span class="sm-cat__count">${g.c.toLocaleString()} products</span></a></li>`; }).join('')}</ul>
       <p class="sm-page-actions"><a class="sm-btn sm-btn--ghost" href="#/global/videos">Watch ${m.videos.toLocaleString()} product videos</a></p></section>`);
@@ -127,35 +127,41 @@
   async function group(gs) {
     const m = await manifest(); const g = m.groups.find(x => x.s === gs); if (!g) return home();
     const cats = m.cats.filter(c => c.g === g.n);
-    setSEO({ title: `${g.n} – global shop`, description: `${g.c.toLocaleString()} ${g.n} products in ${cats.length} categories with worldwide delivery from Sasta Milaga.`, url: `${A.SITE_URL}/#/global/g/${gs}` });
+    setSEO({ title: `${g.n} – global shop`, description: `${g.c.toLocaleString()} ${g.n} products in ${cats.length} categories with destination-dependent delivery from Sasta Milaga.`, url: `${A.SITE_URL}/#/global/g/${gs}` });
     renderApp(`<section class="sm-page sm-page--wide">${pageHead(g.n, `${g.c.toLocaleString()} products in ${cats.length} categories.`, ['<a href="#/global">Global shop</a>'])}
       <ul class="sm-cats sm-cats--global" role="list">${cats.map(c => `<li><a class="sm-cat" href="#/global/c/${c.s}"><span class="sm-cat__img"><img src="${esc(c.img)}" alt="${esc(c.n)}" width="300" height="300" loading="lazy" onerror="this.src=window.fallbackImg"></span><span class="sm-cat__name">${esc(c.n)}</span><span class="sm-cat__count">${c.c.toLocaleString()} products</span></a></li>`).join('')}</ul></section>`);
   }
   async function category(cs, qs) {
     const m = await manifest(); const c = m.cats.find(x => x.s === cs); if (!c) return home();
     const g = m.groups.find(x => x.n === c.g);
-    setSEO({ title: `${c.n} – buy online with worldwide delivery`, description: `Shop ${c.c.toLocaleString()} ${c.n} products from the Sasta Milaga global shop. Estimated prices from ${USD.format(c.lo * MARGIN)}; final price confirmed before payment.`, url: `${A.SITE_URL}/c/global/${cs}.html` });
+    setSEO({ title: `${c.n} – buy online with destination-dependent delivery`, description: `Shop ${c.c.toLocaleString()} ${c.n} products from the Sasta Milaga global shop. Estimated prices from ${USD.format(c.lo * MARGIN)}; final price confirmed before payment.`, url: `${A.SITE_URL}/c/global/${cs}.html` });
     renderApp(`<section class="sm-page sm-page--wide">${pageHead(c.n, `${c.c.toLocaleString()} products${c.v ? ` · ${c.v.toLocaleString()} with video` : ''}.`, ['<a href="#/global">Global shop</a>', g ? `<a href="#/global/g/${g.s}">${esc(g.n)}</a>` : ''].filter(Boolean))}
       ${globalNote()}
-      <div class="sm-gfilters" role="search"><label><span>Search in ${esc(c.n)}</span><input id="gq" type="search" placeholder="Name or SKU"></label>
-        <label><span>Max price (USD)</span><input id="gmax" type="number" min="0" inputmode="decimal"></label>
+      <div class="sm-global-live-layout"><aside class="sm-gfilters sm-global-live-sidebar" role="search" aria-label="Filter supplier products">
+        <h2 class="sm-global-live-sidebar__title">Refine results</h2>
+        <p class="sm-global-live-sidebar__hint">Browse the full category by name, estimated price and available media.</p>
+        <label><span>Search in ${esc(c.n)}</span><input id="gq" type="search" placeholder="Name or SKU"></label>
+        <label><span>Min estimate (USD)</span><input id="gmin" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Any"></label>
+        <label><span>Max estimate (USD)</span><input id="gmax" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Any"></label>
         <label><span>Sort by</span><select id="gsort"><option value="">Recommended</option><option value="low">Lowest price</option><option value="high">Highest price</option><option value="az">Name A–Z</option></select></label>
-        <label class="sm-gcheck"><input id="gvid" type="checkbox"> With video</label></div>
+        <label class="sm-gcheck"><input id="gvid" type="checkbox"> Video-labelled listings</label>
+        <button type="button" class="ghost-btn" id="gclear">Clear all filters</button></aside><div class="sm-global-live-results">
       <p id="gcount" class="sm-gcount" role="status" aria-live="polite">Loading products…</p><div id="ggrid" class="products-row"></div>
-      <div class="load-more-wrap"><button type="button" class="ghost-btn" id="gmore" hidden>Load more products</button></div></section>`);
+      <div class="load-more-wrap"><button type="button" class="ghost-btn" id="gmore" hidden>Load more products</button></div></div></div></section>`);
     let rows;
     try { rows = await shard(cs); } catch (e) { document.getElementById('gcount').textContent = 'This category could not be loaded. Check your connection and reload the page.'; return; }
     let limit = 60;
     const q0 = new URLSearchParams(qs || '').get('q') || ''; const gq = document.getElementById('gq'); gq.value = q0;
     const draw = () => {
-      const q = gq.value.trim().toLowerCase(), max = parseFloat(document.getElementById('gmax').value) || 0, vid = document.getElementById('gvid').checked, sort = document.getElementById('gsort').value;
-      let list = rows.filter(r => (!q || r[2].toLowerCase().includes(q) || r[1].toLowerCase().includes(q)) && (!max || r[3] * MARGIN <= max) && (!vid || r[6]));
+      const q = gq.value.trim().toLowerCase(), minField = document.getElementById('gmin').value, maxField = document.getElementById('gmax').value, min = minField === '' ? NaN : Number(minField), max = maxField === '' ? NaN : Number(maxField), vid = document.getElementById('gvid').checked, sort = document.getElementById('gsort').value;
+      let list = rows.filter(r => (!q || r[2].toLowerCase().includes(q) || r[1].toLowerCase().includes(q)) && (Number.isNaN(min) || (r[3] > 0 && r[3] * MARGIN >= min)) && (Number.isNaN(max) || (r[3] > 0 && r[3] * MARGIN <= max)) && (!vid || r[6]));
       if (sort === 'low') list = list.slice().sort((a, b) => a[3] - b[3]); else if (sort === 'high') list = list.slice().sort((a, b) => b[4] - a[4]); else if (sort === 'az') list = list.slice().sort((a, b) => a[2].localeCompare(b[2]));
       document.getElementById('gcount').textContent = `${list.length.toLocaleString()} matching products`;
       document.getElementById('ggrid').innerHTML = list.slice(0, limit).map(r => card(cs, r)).join('');
       document.getElementById('gmore').hidden = list.length <= limit;
     };
-    ['gq', 'gmax', 'gsort', 'gvid'].forEach(id => document.getElementById(id).addEventListener('input', () => { limit = 60; draw(); }));
+    ['gq', 'gmin', 'gmax', 'gsort', 'gvid'].forEach(id => document.getElementById(id).addEventListener('input', () => { limit = 60; draw(); }));
+    document.getElementById('gclear').onclick = () => { gq.value = ''; document.getElementById('gmin').value = ''; document.getElementById('gmax').value = ''; document.getElementById('gsort').value = ''; document.getElementById('gvid').checked = false; limit = 60; draw(); };
     document.getElementById('gmore').onclick = () => { limit += 60; draw(); };
     draw();
   }
@@ -170,8 +176,7 @@
       // canonical points to the real static category page that lists them. Real product pages need workers/product-pages.
       url: `${A.SITE_URL}/c/global/${cs}.html`, robots: 'noindex, follow',
       ldJson: { '@context': 'https://schema.org', '@graph': [
-        { '@type': 'Product', name: r[2], sku: maskSku(r[1]), image: [r[5]], category: c.n, brand: { '@type': 'Brand', name: 'Sasta Milaga' }, url: ownUrl(cs, r),
-          ...(r[6] ? { subjectOf: { '@type': 'VideoObject', name: r[2], description: `${r[2]} product video`, thumbnailUrl: r[5], contentUrl: r[6], uploadDate: m.snapshot } } : {}) },
+        { '@type': 'Product', name: r[2], sku: maskSku(r[1]), image: [r[5]], category: c.n, url: ownUrl(cs, r) },
         { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: `${A.SITE_URL}/` }, { '@type': 'ListItem', position: 2, name: 'Global shop', item: `${A.SITE_URL}/c/global/index.html` }, { '@type': 'ListItem', position: 3, name: c.n, item: `${A.SITE_URL}/c/global/${cs}.html` }, { '@type': 'ListItem', position: 4, name: r[2] }] }] } });
     const related = rows.filter(x => x !== r).slice(0, 8);
     renderApp(`<nav class="sm-crumbs" aria-label="Breadcrumb"><a href="./">Home</a> <span aria-hidden="true">/</span> <a href="#/global">Global shop</a>${g ? ` <span aria-hidden="true">/</span> <a href="#/global/g/${g.s}">${esc(g.n)}</a>` : ''} <span aria-hidden="true">/</span> <a href="#/global/c/${cs}">${esc(c.n)}</a></nav>
@@ -183,7 +188,7 @@
           <div class="sm-total" id="gtotal" role="status" aria-live="polite"></div>
           <div class="sm-gactions"><button type="button" class="primary-btn" id="gadd">Add to cart</button><button type="button" class="primary-btn sm-buynow" id="gbuy">Buy now</button></div>
           <button type="submit" class="sm-wa-btn">Order on WhatsApp</button></form>
-        <ul class="sm-trust" role="list"><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.4 3.1 8.2 7.5 9.5 4.4-1.3 7.5-5.1 7.5-9.5V6z"/><path d="m9 12 2 2 4-4"/></svg><span>Stock confirmed before you pay</span></li><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19"/></svg><span>Card or PayPal</span></li><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg><span>Worldwide shipping</span></li><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.6-4.3a8.5 8.5 0 1 1 15.4-4.6Z"/></svg><span>WhatsApp support</span></li></ul>
+        <ul class="sm-trust" role="list"><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.4 3.1 8.2 7.5 9.5 4.4-1.3 7.5-5.1 7.5-9.5V6z"/><path d="m9 12 2 2 4-4"/></svg><span>Stock confirmed before you pay</span></li><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19"/></svg><span>Card or PayPal</span></li><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg><span>Destination-dependent shipping</span></li><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.6-4.3a8.5 8.5 0 1 1 15.4-4.6Z"/></svg><span>WhatsApp support</span></li></ul>
         <p class="product-meta">More like this: <a href="#/global/c/${cs}">${esc(c.n)}</a>${g ? ` · <a href="#/global/g/${g.s}">${esc(g.n)}</a>` : ''}</p></aside>
       <div class="pdp-side">
         <section class="sm-ship-card" aria-labelledby="gdel-h"><h2 id="gdel-h"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/></svg> Delivery information</h2>${shipBox()}</section>
@@ -191,7 +196,7 @@
         <a class="pdp-promo" href="${A.APP_BASE}travel/"><b>Book your next adventure</b><small>Flights · Hotels · Umrah packages</small><span>Book now ›</span></a></div></section>
       <section class="sm-tabs" aria-label="Product information"><div role="tablist" aria-label="Product information tabs"><button type="button" role="tab" aria-selected="true" data-tab="gtab-d">Details</button><button type="button" role="tab" aria-selected="false" data-tab="gtab-s">Delivery &amp; payment</button></div>
         <div role="tabpanel" id="gtab-d"><dl class="sm-gdl"><div><dt>Product</dt><dd>${esc(r[2])}</dd></div><div><dt>Reference</dt><dd>${esc(maskSku(r[1]))}</dd></div><div><dt>Category</dt><dd>${esc(c.n)}${g ? ` · ${esc(g.n)}` : ''}</dd></div><div><dt>Estimated price</dt><dd>${est(r)} per item (US dollars; final price confirmed before payment)</dd></div><div><dt>Product video</dt><dd>${r[6] ? 'Available on this page' : 'Not available for this item'}</dd></div><div><dt>Options</dt><dd>${(window.SM_CONFIG || {}).cjShippingWorker || (window.SM_CONFIG || {}).wpApi ? 'Choose from the options above (live supplier options)' : 'Colour, size and other options are confirmed with you before you pay. Add them in the notes field.'}</dd></div></dl></div>
-        <div role="tabpanel" id="gtab-s" hidden><p style="margin:0">Worldwide delivery from our supplier. The carrier prices shown are for your country and added to your total. Stock, options and the final total are confirmed with you before you pay by card or PayPal link. Delivery time depends on the carrier and your country; customs duties may apply.</p></div></section>
+        <div role="tabpanel" id="gtab-s" hidden><p style="margin:0">International shipping is offered only where the selected supplier and product support the destination. The carrier prices shown are for your country and added to your total. Stock, options and the final total are confirmed with you before you pay by card or PayPal link. Delivery time depends on the carrier and your country; customs duties may apply.</p></div></section>
       <section class="section"><div class="section-head"><div><h2>More in ${esc(c.n)}</h2></div><a class="ghost-btn" href="#/global/c/${cs}">View all</a></div><div class="products-row">${related.map(x => card(cs, x)).join('')}</div></section>`);
     const chosen = { v: null };
     const gTotal = () => {
@@ -433,7 +438,7 @@
   async function all(qs) {
     const m = await manifest(), PER = 60, pages = Math.ceil(m.total / PER);
     const page = Math.min(pages, Math.max(1, parseInt(new URLSearchParams(qs || '').get('page'), 10) || 1));
-    setSEO({ title: `All ${m.total.toLocaleString()} global products${page > 1 ? ` – page ${page}` : ''}`, description: `Browse all ${m.total.toLocaleString()} global products in ${m.cats.length} categories with worldwide delivery. Prices are US$ estimates confirmed before you pay.`, url: `${A.SITE_URL}/#/global/all${page > 1 ? '?page=' + page : ''}` });
+    setSEO({ title: `All ${m.total.toLocaleString()} global products${page > 1 ? ` – page ${page}` : ''}`, description: `Browse all ${m.total.toLocaleString()} global products in ${m.cats.length} categories with destination-dependent delivery. Prices are US$ estimates confirmed before you pay.`, url: `${A.SITE_URL}/#/global/all${page > 1 ? '?page=' + page : ''}` });
     const sw = window.SMCatalogueSwitch ? window.SMCatalogueSwitch('global') : '';
     renderApp(`<section class="sm-page sm-page--wide">${pageHead('All global products', `${m.total.toLocaleString()} products in ${m.cats.length} categories, from ${m.csvFiles || 452} supplier files. Page ${page.toLocaleString()} of ${pages.toLocaleString()}.`, ['<a href="#/global">Global shop</a>'])}
       ${sw}${globalNote()}<p id="gcount" class="sm-gcount" role="status">Loading products…</p><div id="ggrid" class="products-row"></div>
