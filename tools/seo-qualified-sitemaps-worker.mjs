@@ -17,7 +17,7 @@ const INDEX_PATH = '/sitemap-global-qualified.xml';
 const CHILD_PATH = /^\/sitemaps\/global-qualified\/([1-9][0-9]{0,3})\.xml$/;
 const PAGE_SIZE = 5000;
 const MAX_PAGES = 1000;
-const FILTER = "FROM cj_product_enrichment e INNER JOIN catalog_products_cj p ON p.cj_product_id=e.cj_product_id WHERE e.seo_approved=1 AND LENGTH(COALESCE(e.description_text,''))>=100 AND LENGTH(TRIM(COALESCE(p.name,'')))>0 AND p.images LIKE 'https://%'";
+const FILTER = "FROM cj_product_enrichment e INNER JOIN catalog_products_cj p ON p.cj_product_id=e.cj_product_id WHERE e.seo_approved=1 AND LENGTH(COALESCE(e.description_text,''))>=100 AND LENGTH(TRIM(COALESCE(p.name,'')))>0 AND p.images LIKE 'https://%' AND ((LENGTH(p.cj_product_id)=19 AND p.cj_product_id NOT GLOB '*[^0-9]*') OR (LENGTH(p.cj_product_id)=36 AND SUBSTR(p.cj_product_id,9,1)='-' AND SUBSTR(p.cj_product_id,14,1)='-' AND SUBSTR(p.cj_product_id,19,1)='-' AND SUBSTR(p.cj_product_id,24,1)='-' AND REPLACE(p.cj_product_id,'-','') NOT GLOB '*[^0-9A-Fa-f]*'))";
 const XML_DECL = '<?xml version="1.0" encoding="UTF-8"?>';
 const XML_NS = 'http://www.sitemaps.org/schemas/sitemap/0.9';
 
@@ -76,7 +76,7 @@ export default {
       if(records.length>PAGE_SIZE) throw Error('too_many_rows');
       const urls=records.map(p=>{
         const id=String(p.id || '').toUpperCase();
-        if(!/^[A-F0-9]{8}-(?:[A-F0-9]{4}-){3}[A-F0-9]{12}$/.test(id)){
+        if(!/^(?:[A-F0-9]{8}-(?:[A-F0-9]{4}-){3}[A-F0-9]{12}|[0-9]{19})$/.test(id)){
           throw Error('bad_product_id');
         }
         return '<url><loc>'+xmlEscape(ORIGIN+'/global-shop/p/'+id+'/'+slugify(p.name)+'/')+'</loc></url>';
