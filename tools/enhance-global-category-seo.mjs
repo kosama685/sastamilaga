@@ -15,6 +15,7 @@ const ROOT=path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/
 const SITE='https://sastamilaga.com';
 const CATDIR=path.join(ROOT,'c/global');
 const MARKER='sasta-global-qa-linking-v2';
+const FACET_ID='sm-global-facets-v1';
 const CHECK=process.argv.includes('--check');
 const raw=fs.readFileSync(path.join(ROOT,'data/cj/manifest.js'),'utf8');
 const start=raw.indexOf('{'),end=raw.lastIndexOf('}');
@@ -52,6 +53,44 @@ function replaceContentAttr(h,identity,value){
  if(!rx.test(h))throw Error('Missing '+identity);
  return h.replace(rx,(_m,start,_old,end)=>start+esc(value)+end);
 }
+function productSlug(input){
+ return xmlText(String(input||'')).replace(/<[^>]+>/g,' ').replace(/&(?:[a-z]+|#\d+|#x[0-9a-f]+);/gi,' ')
+  .normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-')
+  .replace(/^-+|-+$/g,'').slice(0,125).replace(/-+$/,'')||'product';
+}
+function facetedSidebar(c){
+ const full='../../#/global/c/'+encodeURIComponent(c.s);
+ return '<aside id="'+FACET_ID+'" class="sm-global-facets" aria-label="Filter displayed supplier listings">'+
+ '<div class="sm-global-facets__head"><h2>Refine your selection</h2>'+
+ '<p>Browse supplier listings by name, estimated price and media.</p></div>'+
+ '<div class="sm-global-facets__fields">'+
+ '<label for="sm-gf-q">Product name <input id="sm-gf-q" type="search" autocomplete="off" placeholder="Search displayed products"></label>'+
+ '<div class="sm-global-facets__price"><label for="sm-gf-min">Min estimate (USD)<input id="sm-gf-min" type="number" min="0" step="0.01" placeholder="Any"></label>'+
+ '<label for="sm-gf-max">Max estimate (USD)<input id="sm-gf-max" type="number" min="0" step="0.01" placeholder="Any"></label></div>'+
+ '<label for="sm-gf-sort">Sort displayed listings<select id="sm-gf-sort"><option value="original">Recommended order</option>'+
+ '<option value="low">Price: low to high</option><option value="high">Price: high to low</option>'+
+ '<option value="az">Name: A to Z</option></select></label>'+
+ '<label class="sm-global-facets__check"><input id="sm-gf-video" type="checkbox"> Show video-labelled items only</label>'+
+ '<button type="button" id="sm-gf-reset">Clear all filters</button>'+
+ '<p class="sm-global-facets__hint">These filters apply to products displayed here. '+
+ '<a href="'+full+'">Search and filter the complete category</a> ('+Number(c.c).toLocaleString('en-US')+' supplier records).</p>'+
+ '</div><p id="sm-gf-count" class="sm-global-facets-count" role="status" aria-live="polite">Product listings loading…</p>'+
+ '<p id="sm-gf-empty" class="sm-global-facets-empty" hidden>No displayed listings match. Clear filters to browse again.</p></aside>';
+}
+function replaceCardHashLinks(h){
+ let count=0;
+ const html=h.replace(/<article class="sm-card">[\s\S]*?<\/article>/gi,article=>{
+  const title=article.match(/<h3 class="sm-card__title"><a[^>]*>([\s\S]*?)<\/a><\/h3>/i);
+  if(!title)return article;
+  const slug=productSlug(title[1]);
+  return article.replace(/href="\.\.\/\.\.\/#\/global\/p\/[a-z0-9-]+\/([a-z0-9-]+)"/gi,(_match,id)=>{
+   count++;
+   return 'href="'+SITE+'/global-shop/p/'+encodeURIComponent(id)+'/'+encodeURIComponent(slug)+'/\"';
+  });
+ });
+ return {html,count};
+}
+
 function update(h,c){
  const expected=SITE+'/c/global/'+c.s+'.html';
  if(!h.includes('rel="canonical" href="'+expected+'"'))throw Error('Wrong canonical in '+c.s);
@@ -64,6 +103,25 @@ function update(h,c){
  if(h.includes('name="twitter:description"'))h=replaceContentAttr(h,'twitter:description',d);
  h=h.replace(/Global items ship worldwide from our supplier network\./g,'International delivery depends on the selected item and destination.');
  h=h.replace(/Global items are prepaid and delivered worldwide\./g,'Order and delivery methods depend on the supplier, product and destination.');
+
+ // Apply the same editorial treatment to every checked-in category, not just SPA views.
+ // Re-run safety: remove only our own enhancement before inserting the single copy.
+ h=h.replace(/<aside id="sm-global-facets-v1"[\s\S]*?<\/aside>\s*/i,'');
+ h=h.replace(/<link rel="stylesheet" href="\.\.\/\.\.\/assets\/css\/global-static-facets\.css"\s*\/?>\s*/i,'');
+ h=h.replace(/<script src="\.\.\/\.\.\/assets\/js\/global-static-facets\.js" defer><\/script>\s*/i,'');
+ h=h.replace('class="sm-app sm-global-facets-layout"','class="sm-app"');
+ const grid='<div class="products-row">';
+ if(!h.includes(grid))throw Error('Missing static product grid '+c.s);
+ const converted=replaceCardHashLinks(h);
+ h=converted.html;
+ h=h.replace(grid,facetedSidebar(c)+grid);
+ if(!h.includes('<div id="app" class="sm-app">'))throw Error('Missing category app wrapper '+c.s);
+ h=h.replace('<div id="app" class="sm-app">','<div id="app" class="sm-app sm-global-facets-layout">');
+ if(!h.includes('</head>')||!h.includes('</body>'))throw Error('Missing document envelope '+c.s);
+ h=h.replace('</head>','<link rel="stylesheet" href="../../assets/css/global-static-facets.css"></head>');
+ h=h.replace('</body>','<script src="../../assets/js/global-static-facets.js" defer></script></body>');
+ if((h.match(/id="sm-global-facets-v1"/g)||[]).length!==1)throw Error('Sidebar duplicate '+c.s);
+
  h=h.replace(/<\/main>/,guide(c)+'</main>');
  if(!h.includes('id="'+MARKER+'"'))throw Error('Guide insertion failed '+c.s);
  const links=related(c);
@@ -85,4 +143,4 @@ for(const c of all){
 }
 if(errors.length){console.error(JSON.stringify({errors:errors.slice(0,35),total_errors:errors.length}));process.exit(1);}
 if(count!==all.length)throw Error('Category coverage incomplete');
-console.log(JSON.stringify({mode:CHECK?'check':'deploy',categories:count,pages_rewritten:changed,related_category_links:links,shipping_claims:'reworded_to_conditional',source:'checked-in_supplier_category_manifest',version:MARKER}));
+console.log(JSON.stringify({mode:CHECK?'check':'deploy',categories:count,pages_rewritten:changed,related_category_links:links,shipping_claims:'reworded_to_conditional',faceted_sidebar:'all_categories',product_card_links:'crawlable_canonical_worker_urls',source:'checked-in_supplier_category_manifest',version:MARKER}));
