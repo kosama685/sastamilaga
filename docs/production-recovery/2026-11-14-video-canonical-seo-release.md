@@ -101,3 +101,19 @@
 - **Not started:** Authorized live customer-like sandbox payment, owner-reviewed title/spec discrepancy resolution, full CJ catalog enrichment and a controlled Action Scheduler recovery.
 
 The existence of a Worker, sitemap or Merchant feed is not evidence of approval, Google inclusion, licensed playback or successful checkout.
+
+## 8. Independent external-vantage commerce monitoring — TESTED — LIMITED SCOPE
+**Issue:** Half-hour Cloudflare ops guard's internal cart HTTP probe returned status 0 at 09:30, 10:00, and 10:30 UTC while a separate public site inspection returned HTTP 200 for `/cart/`. In an internal self-fetch the network path can fail; this is not proof of a customer-facing HTTP failure.
+
+**Changed code:** [PR #21](https://github.com/kosama685/sastamilaga/pull/21), merge `28e2ee13f3676598600b1fea72de3425a9cb6ad4`, `tools/external-commerce-health.mjs`, `.github/workflows/external-commerce-health.yml`. Adds independent GitHub Actions read-only checks every two hours, writes a 14-day JSON health artifact for route checks, and fails on unexpected HTTP statuses/redirects. No paid transaction, no webhook replay and no customer data used. The existing `sasta-ops-guard-v1` schedule remains `*/30 * * * *`.
+
+**Test evidence:** [CI run 43587221921](https://github.com/kosama685/sastamilaga/actions/runs/43587221921) passed on the PR; it verified healthy fixtures, cart 503 detection and wrong canonical redirects. **The first scheduled external probe has not been observed yet** and must not be marked live monitoring complete based on code alone.
+
+**Unresolved dependency:** Actual scheduled GitHub runner evidence and external-vs-internal discrepancy classification; headless cart persistence and sandbox payment were not tested.
+
+**Rollback:** Revert merge `28e2ee13f3676598600b1fea72de3425a9cb6ad4` or disable `external-commerce-health.yml`; do not remove the Cloudflare 30-minute monitor.
+
+**Accountable next action:** Engineering review first scheduled JSON artifact and investigate recurring divergent cart probes.
+
+**Queue reconciliation:** The most recent read-only Action Scheduler query found **31,929 overdue pending actions**, including 19,678 webhook deliveries and 11,586 attribute updates. No bulk queue action performed.
+
