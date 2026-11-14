@@ -1,0 +1,24 @@
+name: WooCommerce cart and checkout smoke (no purchase)
+on:
+  pull_request:
+    paths:
+      - tools/smoke-woo-cart-checkout.sh
+      - .github/workflows/woo-cart-smoke.yml
+  push:
+    branches: [main]
+    paths:
+      - tools/smoke-woo-cart-checkout.sh
+      - .github/workflows/woo-cart-smoke.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Bash syntax
+        run: bash -n tools/smoke-woo-cart-checkout.sh
+      - name: Test anonymous cart and checkout without placing an order
+        run: bash tools/smoke-woo-cart-checkout.sh
