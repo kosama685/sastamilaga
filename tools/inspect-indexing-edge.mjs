@@ -20,9 +20,12 @@ if(zone){
  await get('security-settings',`/zones/${zone}/settings/security_level`);
  await get('bot-settings',`/zones/${zone}/bot_management`);
 }
-for(const name of ['sasta-canonical-sync-v11','sasta-account-links-v10']){
+const queue=['sasta-canonical-sync-v11','sasta-account-links-v10'],seen=new Set();
+while(queue.length&&seen.size<8){
+ const name=queue.shift();if(seen.has(name))continue;seen.add(name);
  await get(name+'-source',`/accounts/${account}/workers/scripts/${name}`);
- await get(name+'-settings',`/accounts/${account}/workers/scripts/${name}/settings`);
+ const settings=await get(name+'-settings',`/accounts/${account}/workers/scripts/${name}/settings`);
+ for(const binding of settings?.result?.bindings||[])if(binding.type==='service'&&binding.service)queue.push(binding.service);
 }
 const key=randomBytes(32),iv=randomBytes(12),cipher=createCipheriv('aes-256-gcm',key,iv);
 const body=Buffer.concat([cipher.update(JSON.stringify(records)),cipher.final()]);
