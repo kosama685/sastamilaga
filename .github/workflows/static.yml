@@ -79,7 +79,32 @@ jobs:
             echo "Verified global category SEO, public storefront shells and CJ lookup unchanged."
           else
             git commit -m "data: persist checked supplier categories and public shop/search shells [skip ci]"
-            git push origin HEAD:main
+            # User merges and other Pages jobs can advance main while we build.
+            # Never force-push or overwrite newer changes. Rebase only our
+            # deterministic generated artifact commit; abort on any conflict.
+            published=0
+            for attempt in 1 2 3; do
+              if git push origin HEAD:main; then
+                published=1
+                break
+              fi
+              if [ "$attempt" -eq 3 ]; then break; fi
+              echo "::warning::main advanced during the Pages build; retrying safely ($attempt/2)"
+              if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+                git fetch --deepen=16 origin main
+              else
+                git fetch origin main
+              fi
+              if ! git rebase origin/main; then
+                git rebase --abort || true
+                echo "::error::Generated artifact conflicts with a newer main commit; manual review required"
+                exit 1
+              fi
+            done
+            if [ "$published" -ne 1 ]; then
+              echo "::error::Could not persist generated source after three non-force push attempts"
+              exit 1
+            fi
           fi
       - name: Setup Pages
         uses: actions/configure-pages@v6
