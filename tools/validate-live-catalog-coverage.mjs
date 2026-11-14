@@ -32,13 +32,27 @@ for(const c of m.cats)jobs.push({kind:'global_category',name:c.s,url:BASE+'/c/gl
 for(const [name,p,status] of [['cart','/cart/',200],['qualified_sitemap','/sitemap-global-qualified.xml',200],['qualified_sitemap_page1','/sitemaps/global-qualified/1.xml',200],['homepage','/',200]]){
  jobs.push({kind:'critical_route',name,url:BASE+p,expected:status});
 }
+// Screenshot regression: a real product URL must remain HTTP 200 even with
+// analytics/tracking query parameters. Check the actual HTML canonical and
+// error text, not merely the status code. Unknown IDs still correctly 404.
+const QA_CANONICAL=BASE+'/global-shop/p/1830116277370114048/retro-square-heel-pointed-toe-ankle-boots-fashion-versatile-chelsea-boot-women-s-shoes/';
+const QA_PRODUCT_PATTERN=/<link rel="canonical" href="https:\/\/sastamilaga\.com\/global-shop\/p\/1830116277370114048\//;
+for(const [name,tail] of [
+ ['shoe_no_query',''],
+ ['shoe_tracking_query','?utm_source=regression&utm_medium=qa&utm_campaign=error-screenshot'],
+ ['shoe_extra_query','?utm_source=qa&fbclid=tracking-reference&utm_id=20261114'],
+]){
+ jobs.push({kind:'screenshot_regression',name,url:QA_CANONICAL+tail,expected:200,pattern:QA_PRODUCT_PATTERN});
+}
+jobs.push({kind:'screenshot_regression',name:'legacy_shoe_follows_permanent_canonical',url:BASE+'/global/p/woman-boots/1830116277370114048/old-supplier-video-slug?utm_source=qa',expected:200,pattern:QA_PRODUCT_PATTERN});
+
 async function verify(job) {
  const start=Date.now();let last;
  for(let attempt=0;attempt<3;attempt++){
   try{
    const res=await fetch(job.url,{method:job.pattern?'GET':'HEAD',redirect:'follow',headers:{'user-agent':'SastaMilaga-Catalog-Recovery-QA/1.0','accept':'text/html,application/xml,*/*;q=0.8'},signal:AbortSignal.timeout(16000)});
    const html=job.pattern?(await res.text()).slice(0,15000):'';
-   const pass=res.status===job.expected&&(!job.pattern||job.pattern.test(html))&&!/Catalog(?:ue)? temporarily unavailable/i.test(html);
+   const pass=res.status===job.expected&&(!job.pattern||job.pattern.test(html))&&!/Catalog(?:ue)? (?:temporarily |recovery temporarily )?unavailable/i.test(html);
    const entry={kind:job.kind,name:job.name,status:res.status,pass,latency_ms:Date.now()-start};
    if(pass||![429,500,502,503,504].includes(res.status))return entry;
    last=entry;
