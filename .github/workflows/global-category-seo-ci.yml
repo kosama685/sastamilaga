@@ -63,3 +63,14 @@ jobs:
           grep -q 'https://sastamilaga.com/global-shop/p/2011982827504136193/multi-color-3d-printing-pen/' c/global/3d-pens.html
           ! grep -q 'href="../../#/global/p/' c/global/3d-pens.html
           ! grep -q 'Global items are prepaid and delivered worldwide' c/global/3d-pens.html
+
+      - name: Verify live sample category pages expose the sidebar and real supplier URLs
+        run: |
+          for slug in 3d-pens earphones-and-headphones; do
+            url="https://sastamilaga.com/c/global/${slug}.html"
+            curl -fsSL --retry 3 --retry-delay 2 --connect-timeout 12 --max-time 35 "$url" -o "/tmp/${slug}.html"
+            grep -q 'id="sm-global-facets-v1"' "/tmp/${slug}.html"
+            grep -q 'sm-global-facets-layout' "/tmp/${slug}.html"
+            grep -q 'https://sastamilaga.com/global-shop/p/' "/tmp/${slug}.html"
+            echo "Live category verified: $url"
+          done
