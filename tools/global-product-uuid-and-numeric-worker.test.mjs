@@ -58,6 +58,11 @@ test('canonical product HTML offers verified CJ variant gallery, shipping and us
  assert.match(h,/class="pdp pdp3"/); 
  assert.match(h,/class="gallery-panel"/);
  assert.match(h,/class="buy-panel"/);
+ assert.match(h,/Request availability on WhatsApp/);
+ assert.ok(h.includes('https://wa.me/966510451995?text='));
+ assert.match(h,/2011982827504136193/);
+ assert.match(h,/aria-label="Shop links"/);
+ assert.match(h,/aria-label="Customer support"/);
  assert.match(h,/class="smh-nav"/);
  assert.match(h,/class="smh-search"/);
  assert.match(h,/action="\/search\/" method="get"/);
