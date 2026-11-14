@@ -1,3 +1,4 @@
+// Real signed CJ video and a video-free product — production acceptance probe (2026-11-14).
 // Checks a real authorized CJ video and a real video-free product.
 // No CJ secrets or direct supplier URLs are exposed to GitHub Actions.
 const site='https://sastamilaga.com';
