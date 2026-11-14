@@ -41,6 +41,8 @@ jobs:
         run: node tools/build-blog.mjs
       - name: Clean URLs (section pages, clean links, sitemap entries)
         run: node tools/build-sections.mjs
+      - name: Enhance all global category SEO with factual FAQ content and crawlable internal links
+        run: node tools/enhance-global-category-seo.mjs
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
