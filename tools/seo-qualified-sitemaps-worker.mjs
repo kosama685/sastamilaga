@@ -40,6 +40,33 @@ function response(body, status=200, method='GET', contentType='application/xml; 
     }
   });
 }
+
+/* Emergency D1 free-tier read-limit recovery: only two independently documented
+ * 2026-11-14 editorial-approved IDs. Keep expiry short; never map the 451k
+ * unreviewed supplier rows to XML as indexable URLs.
+ * Product pages may independently degrade to noindex while D1 is unavailable.
+ * Do not treat this checkpoint as Google/Merchant approval.
+ */
+const LAST_REVIEWED_UTC='2026-11-14T10:00:00Z';
+const RECOVERY_EXPIRES_AT=Date.parse('2026-11-17T00:00:00Z');
+const LAST_REVIEWED_URLS=[
+ ORIGIN+'/global-shop/p/87FD613D-EEC7-474A-A408-02C9DCC6E9E2/solar-simulation-anti-theft-warning-light/',
+ ORIGIN+'/global-shop/p/1449637195303489536/simulation-flame-mute-aroma-diffuser-humidifier/'
+];
+function reviewedRecovery(method,isIndex,match){
+ if(Date.now()>=RECOVERY_EXPIRES_AT)return response('Sitemap data temporarily unavailable',503,method,'text/plain; charset=utf-8');
+ const n=match?Number(match[1]):0;
+ if(!isIndex&&n!==1)return response('Not found',404,method,'text/plain; charset=utf-8');
+ const xml=isIndex?
+  XML_DECL+'<sitemapindex xmlns="'+XML_NS+'"><sitemap><loc>'+ORIGIN+'/sitemaps/global-qualified/1.xml</loc></sitemap></sitemapindex>':
+  XML_DECL+'<urlset xmlns="'+XML_NS+'">'+LAST_REVIEWED_URLS.map(link=>'<url><loc>'+xmlEscape(link)+'</loc></url>').join('')+'</urlset>';
+ const r=response(xml,200,method);
+ r.headers.set('Cache-Control','public,max-age=120,s-maxage=120');
+ r.headers.set('X-Sasta-Sitemap-Source','last-reviewed-2026-11-14');
+ r.headers.set('X-Sasta-Review-At',LAST_REVIEWED_UTC);
+ return r;
+}
+
 async function eligibleCount(db) {
   const res = await db.prepare('SELECT COUNT(*) AS n ' + FILTER).first();
   const n=Number(res?.n);
@@ -52,10 +79,10 @@ export default {
     if(method!=='GET'&&method!=='HEAD') {
       return new Response(null,{status:405,headers:{Allow:'GET, HEAD','Cache-Control':'no-store'}});
     }
-    if(!env.DB) return response('Catalogue unavailable',503,method,'text/plain; charset=utf-8');
     const isIndex=u.pathname===INDEX_PATH;
     const match=u.pathname.match(CHILD_PATH);
     if(!isIndex&&!match) return response('Not found',404,method,'text/plain; charset=utf-8');
+    if(!env.DB) return reviewedRecovery(method,isIndex,match);
     try {
       const n=await eligibleCount(env.DB);
       const pages=Math.ceil(n/PAGE_SIZE);
@@ -83,8 +110,8 @@ export default {
       });
       return response(XML_DECL+'<urlset xmlns="'+XML_NS+'">'+urls.join('')+'</urlset>',200,method);
     }catch(e){
-      console.error(JSON.stringify({event:'qualified_sitemap_error',reason:String(e?.message||'unknown')}));
-      return response('Catalogue temporarily unavailable',503,method,'text/plain; charset=utf-8');
+      console.error(JSON.stringify({event:'qualified_sitemap_d1_fallback',reason:String(e?.message||'unknown')}));
+      return reviewedRecovery(method,isIndex,match);
     }
   }
 };
