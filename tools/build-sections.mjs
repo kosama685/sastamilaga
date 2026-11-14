@@ -20,11 +20,11 @@ const fmt = n => n.toLocaleString('en');
 const WP = { ...(exists('data/wp/pages.json') ? JSON.parse(read('data/wp/pages.json')) : {}), ...(exists('data/wp/pages-own.json') ? JSON.parse(read('data/wp/pages-own.json')) : {}) };   // pages cloned from sastamilaga.com (tools: see data/wp)
 const PURE = new Set(['earn-points', 'daily-spin', 'seller-rules', 'about', 'contact', 'faq', 'how-to-order', 'privacy', 'terms', 'safe-shopping', 'tours']);   // content pages: their text is in the HTML and the app does not re-render them
 const SECTIONS = {
-  shop: ['Shop all products', `Shop ${fmt(total)} products in PKR at Sasta Milaga with cash on delivery across Pakistan, plus ${fmt(M.total)} global products with worldwide delivery.`],
-  'global-shop': ['Global shop – worldwide delivery', `Browse ${fmt(M.total)} global products in ${M.cats.length} categories with worldwide delivery.`],
-  global: ['Global shop – worldwide delivery', `Browse ${fmt(M.total)} global products in ${M.cats.length} categories with worldwide delivery. Prices are US$ estimates confirmed on WhatsApp before you pay.`],
-  'global/all': [`All ${fmt(M.total)} global products`, `Browse every global product, page by page: ${fmt(M.total)} products in ${M.cats.length} categories with worldwide delivery.`],
-  'global/videos': ['Global product videos', `Watch ${fmt(M.videos)} global product videos before you order from Sasta Milaga.`],
+  shop: ['Shop all products', `Shop ${fmt(total)} products in PKR at Sasta Milaga with cash on delivery across Pakistan, plus ${fmt(M.total)} global products with destination-dependent delivery.`],
+  'global-shop': ['Global supplier catalogue', `Browse ${fmt(M.total)} global supplier listings in ${M.cats.length} categories. Verify destination shipping per item.`],
+  global: ['Global supplier catalogue', `Browse ${fmt(M.total)} global supplier listings in ${M.cats.length} categories. Verify destination shipping per item. Prices are US$ estimates confirmed on WhatsApp before you pay.`],
+  'global/all': [`All ${fmt(M.total)} global products`, `Browse every global product, page by page: ${fmt(M.total)} supplier listings in ${M.cats.length} categories. Verify destination shipping per item.`],
+  'global/videos': ['Global product videos', `Explore ${fmt(M.videos)} supplier products with video references; playback and licensing depend on source availability.`],
   deals: ['Deals and discounts', 'Today\'s best prices at Sasta Milaga: discounted products in PKR with cash on delivery across Pakistan.'],
   videos: ['Product videos – watch before you buy', 'Watch product videos before you buy at Sasta Milaga. Prices in PKR, cash on delivery in Pakistan.'],
   travel: ['Flights, hotels, Umrah and visas', 'Search flights and hotels, and request Umrah, tours and visa services from Pakistan with Sasta Milaga.'],
@@ -35,7 +35,7 @@ const SECTIONS = {
   faq: ['Frequently asked questions', 'Answers about ordering, cash on delivery, delivery charges, returns, global items and travel bookings at Sasta Milaga.'],
   contact: ['Contact Sasta Milaga', 'Contact Sasta Milaga on WhatsApp +966510451995 for orders, delivery, returns and travel requests.'],
   'how-to-order': ['How to order', 'How to order at Sasta Milaga: add to cart, choose cash on delivery, bank transfer, EasyPaisa/JazzCash or PayPal, or order on WhatsApp.'],
-  shipping: ['Shipping and delivery by country', 'Delivery in Pakistan is Rs 250, free above Rs 5,000. Global items ship worldwide: supplier shipping methods, prices and transit times for your country.'],
+  shipping: ['Shipping and delivery by country', 'Delivery in Pakistan is Rs 250, free above Rs 5,000. Global delivery depends on product and destination; verify freight and transit times before payment.'],
   returns: ['Returns and refunds by country', '7-day returns for Sasta Milaga Local products in Pakistan; return terms for global products depend on the supplier and your country.'],
   'return-policy': ['Return and refund policy', 'Sasta Milaga return policy: 7-day returns, free for damaged or wrong items.'],
   privacy: ['Privacy policy', 'How Sasta Milaga collects and uses your information.'],
@@ -63,7 +63,7 @@ const SECTIONS = {
 const PRODUCTION_PRIVATE = k => PRIVATE.has(k);
 const PRIVATE = new Set(['cart', 'checkout', 'wishlist', 'account', 'thank-you', 'search', 'global/search']);
 // One page per global group (Fashion & Apparel, Electronics …), indexable.
-const GROUPS = M.groups.map(g => ({ key: `global/g/${g.s}`, title: `${g.n} – global shop`, desc: `${fmt(g.c)} ${g.n} products in ${M.cats.filter(c => c.g === g.n).length} categories with worldwide delivery from Sasta Milaga.` }));
+const GROUPS = M.groups.map(g => ({ key: `global/g/${g.s}`, title: `${g.n} – global shop`, desc: `${fmt(g.c)} ${g.n} products in ${M.cats.filter(c => c.g === g.n).length} categories with destination-dependent delivery from CJ suppliers.` }));
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const wpArticle = rec => `<article class="sm-page sm-page--wide"><header class="sm-page-head"><h1>${esc(rec.title)}</h1></header><div class="sm-prose">${rec.body}</div></article>`;
 const titleTag = t => (/Sasta Milaga/i.test(t) ? t : `${t} | Sasta Milaga`);
