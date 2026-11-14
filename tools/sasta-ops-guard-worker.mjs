@@ -11,7 +11,7 @@
  */
 const ORIGIN='https://sastamilaga.com';
 const DB_TABLE='sasta_ops_guard_runs';
-const VER='2026-11-14.1';
+const VER='2026-11-14.2-d1-budget-guard';
 const MONITOR_URLS={
  sitemap: '/sitemap-global-qualified.xml',
  product: '/global-shop/p/87FD613D-EEC7-474A-A408-02C9DCC6E9E2/solar-simulation-anti-theft-warning-light/',
@@ -39,7 +39,7 @@ function safeJson(obj,status=200){
 async function observe(env,date){
  if(!env.DB)throw Error('D1_binding_missing');
  const [total,approved,checks]=await Promise.all([
-  readCount(env.DB,'SELECT COUNT(*) AS n FROM catalog_products_cj'),
+  Promise.resolve(451812), // 2026-11-05 static manifest baseline; no 451,812-row D1 table scan every 30 minutes.
   readCount(env.DB,"SELECT COUNT(*) AS n FROM cj_product_enrichment WHERE seo_approved=1 AND LENGTH(COALESCE(description_text,''))>=100"),
   Promise.all(Object.entries(MONITOR_URLS).map(async([key,url])=>[key,await probe(url,key==='feed'?'HEAD':'GET')]))
  ]);
@@ -73,10 +73,10 @@ export default {
    const row=await env.DB.prepare("SELECT recorded_at,catalog_total,seo_approved,sitemap_status,product_status,cart_status,feed_status,healthy,errors_json FROM "+DB_TABLE+" ORDER BY recorded_at DESC LIMIT 1").first();
    if(!row)return safeJson({status:'awaiting_first_cron_run',version:VER},200);
    const body={version:VER,status:row.healthy?'routes_reachable':'investigation_required',last_run_utc:row.recorded_at,
-     supplier_records:row.catalog_total,seo_approved_product_pages:row.seo_approved,
+     supplier_snapshot_records:row.catalog_total,seo_approved_product_pages:row.seo_approved,
      route_checks:{sitemap_http:row.sitemap_status,product_http:row.product_status,cart_http:row.cart_status,merchant_feed_http:row.feed_status},
      errors:JSON.parse(row.errors_json||'[]'),
-     caveats:['Cart HTTP 200 does not prove session persistence or a completed order.','Sitemaps do not guarantee Google indexing.','Merchant approval and Search Console authorization are not checked by this cron.','WordPress Action Scheduler is deliberately not replayed by this monitor.']};
+     caveats:['Supplier record count is a snapshot baseline, not a live D1 recount; full-table D1 scans are disabled to protect daily quota.','Cart HTTP 200 does not prove session persistence or a completed order.','Sitemaps do not guarantee Google indexing.','Merchant approval and Search Console authorization are not checked by this cron.','WordPress Action Scheduler is deliberately not replayed by this monitor.']};
    return safeJson(body);
   }catch(e){return safeJson({status:'monitor_unavailable',reason:'database_query_failed'},503)}
  }

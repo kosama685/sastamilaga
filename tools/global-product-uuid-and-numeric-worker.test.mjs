@@ -60,3 +60,28 @@ test('canonical product HTML offers verified CJ variant gallery, shipping and us
  assert.doesNotMatch(h,/VideoObject/);
  assert.match(h,/noindex, follow/);
 });
+
+
+test('no-D1 snapshot fallback gives real existing supplier product HTTP 200, noindex, factual recovery guidance',async()=>{
+ const old=globalThis.fetch;
+ globalThis.fetch=async url=>{assert.match(String(url),/\/data\/cj\/lookup\/[0-9a-f]{3}\.json$/);return new Response(JSON.stringify({snapshot:'2026-11-05',items:{[numeric]:['CJJT1321500','Simulation Flame Mute Aroma Diffuser Humidifier','Home Office Storage','home-office-storage','https://cf.cjdropshipping.com/test.jpg']}}),{status:200,headers:{'content-type':'application/json'}})};
+ try{
+  const r=await worker.fetch(new Request(BASE+numeric+'/simulation-flame-mute-aroma-diffuser-humidifier/?utm_campaign=test'),{});
+  assert.equal(r.status,200);
+  assert.equal(r.headers.get('x-sasta-catalog-source'),'snapshot-recovery-2026-11-05');
+  assert.equal(r.headers.get('x-robots-tag'),'noindex, follow');
+  const h=await r.text();assert.match(h,/Supplier catalogue recovery mode/);assert.match(h,/Simulation Flame Mute Aroma Diffuser Humidifier/);
+  assert.doesNotMatch(h,/id="cj-widget"/);
+  assert.doesNotMatch(h,/<video[^>]*src=/);
+  assert.match(h,/rel="canonical"/);
+ }finally{globalThis.fetch=old}
+});
+test('D1 quota exception falls back to snapshot and nonexistent reference stays 404',async()=>{
+ const old=globalThis.fetch;
+ globalThis.fetch=async()=>new Response(JSON.stringify({snapshot:'2026-11-05',items:{[numeric]:['SKU','Simulation Flame Mute Aroma Diffuser Humidifier','Home Office Storage','home-office-storage','https://cf.cjdropshipping.com/test.jpg']}}),{status:200});
+ const envQuota={DB:{prepare(){throw Error('D1 daily rows read budget exhausted')}}};
+ try{
+  const ok=await worker.fetch(new Request(BASE+numeric+'/simulation-flame-mute-aroma-diffuser-humidifier/'),envQuota);assert.equal(ok.status,200);
+  const unknown=await worker.fetch(new Request(BASE+'1111111111111111111/nonexistent/'),envQuota);assert.equal(unknown.status,404);
+ }finally{globalThis.fetch=old}
+});

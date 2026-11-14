@@ -8,7 +8,7 @@ function fakeEnv(){
   prepare(sql){
    return {
     async first(){
-     if(sql.includes('catalog_products_cj'))return {n:451812};
+     if(sql.includes('catalog_products_cj'))throw new Error('Unsafe 451k-row table scan in cron');
      if(sql.includes('cj_product_enrichment'))return {n:1};
      if(sql.includes('ORDER BY recorded_at DESC'))return {recorded_at:'2026-11-14T06:00:00.000Z',catalog_total:451812,seo_approved:1,sitemap_status:200,product_status:200,cart_status:200,feed_status:200,healthy:1,errors_json:'[]'};
      return {};
@@ -23,7 +23,8 @@ test('health endpoint is read only and caveats avoid asserting checkout success'
  const res=await worker.fetch(new Request('https://sastamilaga.com/__ops-health.json'),e);
  assert.equal(res.status,200);
  const json=await res.json();
- assert.equal(json.supplier_records,451812);
+ assert.equal(json.supplier_snapshot_records,451812);
+ assert.ok(json.caveats.some(x=>x.includes('snapshot baseline')));
  assert.ok(json.caveats.some(x=>x.includes('does not prove')));
  assert.equal(e.writes.length,0);
 });

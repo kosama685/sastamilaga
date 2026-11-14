@@ -45,6 +45,8 @@ jobs:
         run: node tools/enhance-global-category-seo.mjs
       - name: Build factual internal links for all indexable static product pages
         run: node tools/enhance-local-product-links.mjs
+      - name: Build and validate quota-safe CJ product recovery index from all 451812 snapshot rows
+        run: node tools/build-cj-static-lookup.mjs
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
