@@ -47,7 +47,7 @@ jobs:
         run: node tools/enhance-local-product-links.mjs
       - name: Build and validate quota-safe CJ product recovery index from all 451812 snapshot rows
         run: node tools/build-cj-static-lookup.mjs
-      - name: Persist validated CJ recovery index and enriched supplier categories for BOTH GitHub Pages deployment paths
+      - name: Persist validated supplier categories, storefront entrypoints and CJ lookup for both Pages paths
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -57,11 +57,19 @@ jobs:
           test "$(find c/global -maxdepth 1 -name '*.html' | wc -l)" -eq 573
           grep -q 'id="sm-global-facets-v1"' c/global/3d-pens.html
           grep -q 'https://sastamilaga.com/global-shop/p/' c/global/3d-pens.html
-          git add -f data/cj/lookup/ c/global/
+          # Both native Pages branch deployments and Actions artifact deployments
+          # must expose identical indexable shop/global and noindex search shells.
+          for file in shop/index.html search/index.html global-shop/index.html global/index.html global/all/index.html; do
+            test -s "$file" || { echo "::error::Missing public storefront entrypoint $file"; exit 1; }
+          done
+          grep -q 'rel="canonical" href="https://sastamilaga.com/shop/"' shop/index.html
+          grep -q 'noindex' search/index.html
+          grep -q 'rel="canonical" href="https://sastamilaga.com/c/global/index.html"' global-shop/index.html
+          git add -f data/cj/lookup/ c/global/ shop/index.html search/index.html global-shop/index.html global/index.html global/all/index.html
           if git diff --cached --quiet; then
-            echo "Verified static supplier category SEO and lookup unchanged."
+            echo "Verified global category SEO, public storefront shells and CJ lookup unchanged."
           else
-            git commit -m "data: persist source-validated CJ lookup and global category SEO [skip ci]"
+            git commit -m "data: persist checked supplier categories and public shop/search shells [skip ci]"
             git push origin HEAD:main
           fi
       - name: Setup Pages
