@@ -52,7 +52,7 @@ test('canonical product HTML offers verified CJ variant gallery, shipping and us
  assert.match(h,/sasta-verified-gallery-v1/);
  assert.match(h,/sm-cj-video-player-v1/);
  assert.ok(h.includes('cjv/resolve'));
- assert.match(h,/media-src/);
+ assert.match(res.headers.get('content-security-policy')||'',/media-src/);
  assert.match(h,/sasta:cjvariants/);
  assert.match(h,/cj-quote/);
  assert.match(h,/class="pdp pdp3"/); 
