@@ -9,7 +9,7 @@ on:
       stage:
         description: Reviewed deployment stage
         type: choice
-        options: [initial, links]
+        options: [initial, links, blog]
         default: initial
 permissions:
   contents: read
@@ -28,7 +28,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: node tools/inspect-indexing-edge.mjs
       - name: Verify the reviewed policy
-        run: node --test tools/indexing-edge-policy.test.mjs
+        run: node --test tools/indexing-edge-policy.test.mjs tools/indexing-blog-recovery.test.mjs
       - name: Apply reviewed indexing fixes
         if: inputs.apply
         env:
