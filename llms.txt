@@ -10,7 +10,7 @@ Key facts:
 - Contact: WhatsApp +966510451995, info@sastamilaga.com. Main store: https://sastamilaga.com/
 
 ## Shop
-- [All local products](https://sastamilaga.com/#/shop): 20,165 products in 64 categories
+- [All local products](https://sastamilaga.com/shop/): 20,165 products in 64 categories
 - [Home & Living](https://sastamilaga.com/c/home-and-living.html): 4,933 products
 - [Fashion & Apparel](https://sastamilaga.com/c/fashion-and-apparel.html): 4,486 products
 - [Health & Beauty](https://sastamilaga.com/c/health-and-beauty.html): 4,445 products
@@ -26,16 +26,16 @@ Key facts:
 - [Global shop](https://sastamilaga.com/c/global/index.html): catalogue of 451,812 supplier records in 572 categories; listing does not guarantee current stock or shipment to every country
 
 ## Help
-- [How to order](https://sastamilaga.com/#/how-to-order)
-- [Shipping & delivery](https://sastamilaga.com/#/shipping)
-- [Returns & refunds](https://sastamilaga.com/#/returns)
-- [Track your order](https://sastamilaga.com/#/track)
-- [Contact](https://sastamilaga.com/#/contact)
+- [How to order](https://sastamilaga.com/how-to-order/)
+- [Shipping & delivery](https://sastamilaga.com/shipping/)
+- [Returns & refunds](https://sastamilaga.com/returns/)
+- [Track your order](https://sastamilaga.com/track/)
+- [Contact](https://sastamilaga.com/contact/)
 
 ## Travel and media
-- [Flights, hotels, Umrah and visas](https://sastamilaga.com/#/travel)
-- [Live TV](https://sastamilaga.com/#/live-tv)
-- [Blog and guides](https://sastamilaga.com/b/index.html)
+- [Flights, hotels, Umrah and visas](https://sastamilaga.com/travel/)
+- [Live TV](https://sastamilaga.com/live-tv/)
+- [Blog and guides](https://sastamilaga.com/b/)
 
 ## Data
 - [Sitemap index](https://sastamilaga.com/sitemap.xml)
