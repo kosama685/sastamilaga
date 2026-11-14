@@ -69,6 +69,17 @@ jobs:
           for slug in 3d-pens earphones-and-headphones; do
             url="https://sastamilaga.com/c/global/${slug}.html"
             curl -fsSL --retry 3 --retry-delay 2 --connect-timeout 12 --max-time 35 "$url" -o "/tmp/${slug}.html"
+
+            echo "=== Public category HTTP and HTML diagnostics: $url ==="
+            curl -sSIL --max-time 22 "$url" | grep -iE '^HTTP/|^cf-cache-status:|^cache-control:|^x-sasta-|^content-type:|^age:' || true
+            echo "live_bytes=$(wc -c < /tmp/${slug}.html)"
+            printf 'live_sidebar_count='; (grep -o 'sm-global-facets-v1' "/tmp/${slug}.html" || true) | wc -l
+            printf 'live_hashed_supplier_links='; (grep -o 'href="../../#/global/p/' "/tmp/${slug}.html" || true) | wc -l
+            printf 'live_canonical_supplier_links='; (grep -o 'https://sastamilaga.com/global-shop/p/' "/tmp/${slug}.html" || true) | wc -l
+            ref="https://kosama685.github.io/sastamilaga/c/global/${slug}.html"
+            curl -fsSL --connect-timeout 12 --max-time 35 "$ref" -o "/tmp/${slug}-github.html"
+            echo "github_bytes=$(wc -c < /tmp/${slug}-github.html)"
+            printf 'github_sidebar_count='; (grep -o 'sm-global-facets-v1' "/tmp/${slug}-github.html" || true) | wc -l
             grep -q 'id="sm-global-facets-v1"' "/tmp/${slug}.html"
             grep -q 'sm-global-facets-layout' "/tmp/${slug}.html"
             grep -q 'https://sastamilaga.com/global-shop/p/' "/tmp/${slug}.html"
