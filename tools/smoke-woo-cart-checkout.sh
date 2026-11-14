@@ -6,6 +6,22 @@ BASE="https://sastamilaga.com"
 PRODUCT_ID="15" # live published, simple, in-stock sample
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
+# Use the legitimate user-facing country selector. This is a Pakistan-only
+# HHC product, so testing it from a non-Pakistan runner without setting the
+# market would be an EXPECTED block, not proof that WooCommerce is broken.
+context_code="$(curl -sS --max-time 35 -A "SastaMilaga-QA/1.0" -c "$WORK/cookies" -b "$WORK/cookies" -o "$WORK/context.json" -w '%{http_code}' "$BASE/wp-json/gdcs/v1/context?light=1")"
+if [[ "$context_code" != "200" ]]; then echo 'FAIL: cannot initialize public country selector'; exit 6; fi
+csrf="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("csrf",""))' "$WORK/context.json")"
+if [[ -z "$csrf" ]]; then echo 'FAIL: missing market CSRF token'; exit 6; fi
+market_code="$(curl -sS --max-time 35 -A "SastaMilaga-QA/1.0" \
+  -c "$WORK/cookies" -b "$WORK/cookies" -o "$WORK/market.json" -w '%{http_code}' \
+  -H "Origin: https://sastamilaga.com" -H "Content-Type: application/json" \
+  -H "X-GDCS-CSRF: $csrf" -X POST \
+  --data '{"country":"PK","language":"en","currency":"PKR","geo_opt_in":false}' \
+  "$BASE/wp-json/gdcs/v1/context")"
+if [[ "$market_code" != "200" ]]; then echo "FAIL: country selection returned HTTP $market_code"; exit 6; fi
+python3 -c 'import json,sys; a=json.load(open(sys.argv[1])); assert a.get("saved") and a.get("context",{}).get("country")=="PK"' "$WORK/market.json"
+echo 'Official country selection: PK (CSRF verified, value not logged).'
 printf 'Anonymous cart test for existing product %s. No order/payment submitted.\n' "$PRODUCT_ID"
 add_status="$(curl -sS -L --max-time 35 --retry 1 --retry-delay 1 -A "SastaMilaga-QA/1.0" -c "$WORK/cookies" -b "$WORK/cookies" -o "$WORK/add.html" -w '%{http_code}' "$BASE/cart/?add-to-cart=$PRODUCT_ID")"
 printf 'Add-to-cart final HTTP %s\n' "$add_status"
