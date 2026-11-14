@@ -50,6 +50,9 @@ test('canonical product HTML offers verified CJ variant gallery, shipping and us
  assert.equal(res.status,200);
  const h=await res.text();
  assert.match(h,/sasta-verified-gallery-v1/);
+ assert.match(h,/sm-cj-video-player-v1/);
+ assert.ok(h.includes('cjv/resolve'));
+ assert.match(res.headers.get('content-security-policy')||'',/media-src/);
  assert.match(h,/sasta:cjvariants/);
  assert.match(h,/cj-quote/);
  assert.match(h,/class="pdp pdp3"/); 
@@ -76,7 +79,7 @@ test('no-D1 snapshot fallback gives real existing supplier product HTTP 200, noi
   assert.equal(r.status,200);
   assert.equal(r.headers.get('x-sasta-catalog-source'),'snapshot-recovery-2026-11-05');
   assert.equal(r.headers.get('x-robots-tag'),'noindex, follow');
-  const h=await r.text();assert.match(h,/class="pdp pdp3"/);assert.match(h,/Supplier catalogue recovery mode/);assert.match(h,/Simulation Flame Mute Aroma Diffuser Humidifier/);
+  const h=await r.text();assert.match(h,/class="pdp pdp3"/);assert.match(h,/sm-cj-video-player-v1/);assert.match(h,/Supplier catalogue recovery mode/);assert.match(h,/Simulation Flame Mute Aroma Diffuser Humidifier/);
   assert.doesNotMatch(h,/id="cj-widget"/);
   assert.doesNotMatch(h,/<video[^>]*src=/);
   assert.match(h,/rel="canonical"/);
