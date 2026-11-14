@@ -20,7 +20,7 @@ if(zone){
  await get('security-settings',`/zones/${zone}/settings/security_level`);
  await get('bot-settings',`/zones/${zone}/bot_management`);
 }
-const queue=['sasta-canonical-sync-v11','sasta-account-links-v10'],seen=new Set();
+const queue=['sasta-canonical-sync-v11','sasta-account-links-v10','sastamilaga-redirects'],seen=new Set();
 while(queue.length&&seen.size<8){
  const name=queue.shift();if(seen.has(name))continue;seen.add(name);
  await get(name+'-source',`/accounts/${account}/workers/scripts/${name}`);

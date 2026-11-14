@@ -1,9 +1,16 @@
-# Sasta Milaga static store (GitHub Pages project site).
-# Note: crawlers read robots.txt only at a host root; submit https://sastamilaga.com/sitemap.xml in Search Console.
 User-agent: *
 Allow: /
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+Disallow: /wp-login.php
+Disallow: /wp-json/
+Disallow: /api/
+Disallow: /wc-api/
+Disallow: /admin/
 Disallow: /backup/
-Disallow: /partials/
+Disallow: /private/
+Disallow: /staging/
+Disallow: /test/
+Disallow: /.git/
 
 Sitemap: https://sastamilaga.com/sitemap.xml
-Sitemap: https://sastamilaga.com/sitemap-global-qualified.xml
