@@ -1,0 +1,1762 @@
+[
+  {
+    "url": "https://sastamilaga.com/app.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/app.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/app.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/data/blog-wp.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/data/blog-wp.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/data/blog-wp.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/data/blog.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/data/blog.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/data/blog.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/data/products-lite.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/data/products-lite.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/data/products-lite.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/a11y.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/a11y.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/a11y.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/blog.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/blog.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/blog.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/checkout.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/checkout.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/checkout.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/chrome.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/chrome.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/chrome.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/config.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/config.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/config.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/contact.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/contact.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/contact.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/dialogs.min.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/dialogs.min.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/dialogs.min.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/forms.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/forms.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/forms.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/global.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/global.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/global.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/local-api.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/local-api.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/local-api.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/market.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/market.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/market.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/pages.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/pages.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/pages.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/site.min.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/site.min.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/site.min.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/travel.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/travel.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/travel.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/voice-fill.js?ver=20261113",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/voice-fill.js?ver=20261113"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/voice-fill.js?ver=20261113"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/wa-cards.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/wa-cards.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/wa-cards.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/web-chat.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/web-chat.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/web-chat.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/js/woo-bridge.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/woo-bridge.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/js/woo-bridge.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/global-dropshipping-commerce-language-settings.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/global-dropshipping-commerce-language-settings.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/global-dropshipping-commerce-language-settings.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/global-dropshipping-commerce-live-catalog.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/global-dropshipping-commerce-live-catalog.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/global-dropshipping-commerce-live-catalog.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/global-dropshipping-commerce-localization-entry.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/global-dropshipping-commerce-localization-entry.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/global-dropshipping-commerce-localization-entry.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/global-dropshipping-commerce-storefront.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/global-dropshipping-commerce-storefront.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/global-dropshipping-commerce-storefront.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/live-tv-hub.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/live-tv-hub.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/live-tv-hub.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/mobile-app.css?ver=20261113",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/mobile-app.css?ver=20261113"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/mobile-app.css?ver=20261113"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/sasta-category-experience-navigation.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/sasta-category-experience-navigation.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/sasta-category-experience-navigation.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/sastamilaga-core-assistant.min.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/sastamilaga-core-assistant.min.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/sastamilaga-core-assistant.min.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/sm-global-travel-travel.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/sm-global-travel-travel.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/sm-global-travel-travel.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/sm-growth-growth.min.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/sm-growth-growth.min.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/sm-growth-growth.min.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/sm-quick-buy-quick-buy.min.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/sm-quick-buy-quick-buy.min.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/sm-quick-buy-quick-buy.min.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/sm-quick-buy-ux.min.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/sm-quick-buy-ux.min.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/sm-quick-buy-ux.min.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/sm-whatsapp-crm-web-chat.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/sm-whatsapp-crm-web-chat.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/sm-whatsapp-crm-web-chat.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/static-bundle.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/static-bundle.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/static-bundle.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/theme-brand.min.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/theme-brand.min.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/theme-brand.min.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/theme-forms.min.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/theme-forms.min.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/theme-forms.min.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/theme-navigation.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/theme-navigation.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/theme-navigation.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/theme-site.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/theme-site.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/theme-site.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/assets/theme/wp-hhcdropshipping-public-css-hhc-dropshipping-public.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/wp-hhcdropshipping-public-css-hhc-dropshipping-public.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/assets/theme/wp-hhcdropshipping-public-css-hhc-dropshipping-public.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript",
+        "final_url": "https://sastamilaga.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript",
+        "final_url": "https://sastamilaga.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/products.js",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/products.js"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "application/javascript; charset=utf-8",
+        "final_url": "https://sastamilaga.com/products.js"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/styles.css",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/styles.css"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=utf-8",
+        "final_url": "https://sastamilaga.com/styles.css"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/mu-plugins/sm-customer-access/access.css?ver=1792465949",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/mu-plugins/sm-customer-access/access.css?ver=1792465949"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/mu-plugins/sm-customer-access/access.css?ver=1792465949"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/mu-plugins/sm-customer-access/access.js?ver=1792465971",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/mu-plugins/sm-customer-access/access.js?ver=1792465971"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/mu-plugins/sm-customer-access/access.js?ver=1792465971"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/mu-plugins/sm-customer-access/password-strength-meter-7.1.3.min.js?ver=7.1.3",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/mu-plugins/sm-customer-access/password-strength-meter-7.1.3.min.js?ver=7.1.3"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/mu-plugins/sm-customer-access/password-strength-meter-7.1.3.min.js?ver=7.1.3"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/facebook-for-woocommerce/assets/js/facebook-for-woocommerce-signals.js?ver=3.7.8",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/facebook-for-woocommerce/assets/js/facebook-for-woocommerce-signals.js?ver=3.7.8"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/facebook-for-woocommerce/assets/js/facebook-for-woocommerce-signals.js?ver=3.7.8"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/facebook-for-woocommerce/assets/js/frontend/pixel-events.js?ver=3.7.8",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/facebook-for-woocommerce/assets/js/frontend/pixel-events.js?ver=3.7.8"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/facebook-for-woocommerce/assets/js/frontend/pixel-events.js?ver=3.7.8"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/language-settings.css?ver=1.9.5-modal",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/language-settings.css?ver=1.9.5-modal"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/language-settings.css?ver=1.9.5-modal"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/live-catalog.css?ver=1.9.5-9382e73193",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/live-catalog.css?ver=1.9.5-9382e73193"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/live-catalog.css?ver=1.9.5-9382e73193"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/live-catalog.js?ver=1.9.5-6002ce24d7",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/live-catalog.js?ver=1.9.5-6002ce24d7"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/live-catalog.js?ver=1.9.5-6002ce24d7"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/localization-entry.css?ver=1.9.5",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/localization-entry.css?ver=1.9.5"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/localization-entry.css?ver=1.9.5"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/localization.js?ver=1.9.5.f9ed76f1",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/localization.js?ver=1.9.5.f9ed76f1"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/localization.js?ver=1.9.5.f9ed76f1"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/native-cj-video.js?ver=1.9.5",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/native-cj-video.js?ver=1.9.5"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/native-cj-video.js?ver=1.9.5"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/storefront.css?ver=1.9.5.a2bb9bd0",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/storefront.css?ver=1.9.5.a2bb9bd0"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/storefront.css?ver=1.9.5.a2bb9bd0"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/storefront.js?ver=1.9.5.1f1c6f20",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/storefront.js?ver=1.9.5.1f1c6f20"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/global-dropshipping-commerce/assets/storefront.js?ver=1.9.5.1f1c6f20"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/google-listings-and-ads/js/build/gtag-events.js?ver=6972d3af2e3be67de9f1",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/google-listings-and-ads/js/build/gtag-events.js?ver=6972d3af2e3be67de9f1"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/google-listings-and-ads/js/build/gtag-events.js?ver=6972d3af2e3be67de9f1"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/official-facebook-pixel/core/../js/facebook_signal.js?ver=5.2.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/official-facebook-pixel/js/facebook_signal.js?ver=5.2.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/official-facebook-pixel/js/facebook_signal.js?ver=5.2.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/sasta-category-experience/navigation.css?ver=1.2.3",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sasta-category-experience/navigation.css?ver=1.2.3"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sasta-category-experience/navigation.css?ver=1.2.3"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/sasta-category-experience/navigation.js?ver=1.2.3",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sasta-category-experience/navigation.js?ver=1.2.3"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sasta-category-experience/navigation.js?ver=1.2.3"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/sastamilaga-core/assets/assistant.js?ver=1793478322",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sastamilaga-core/assets/assistant.js?ver=1793478322"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sastamilaga-core/assets/assistant.js?ver=1793478322"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/sastamilaga-core/assets/assistant.min.css?ver=1792466054&sm_build=5a1694c538b1",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sastamilaga-core/assets/assistant.min.css?ver=1792466054&sm_build=5a1694c538b1"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sastamilaga-core/assets/assistant.min.css?ver=1792466054&sm_build=5a1694c538b1"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/sm-growth/assets/growth.min.css?ver=1792466405&sm_build=226ff342aa29",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-growth/assets/growth.min.css?ver=1792466405&sm_build=226ff342aa29"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-growth/assets/growth.min.css?ver=1792466405&sm_build=226ff342aa29"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/sm-growth/assets/menu.min.js?ver=1792466382&sm_build=4d215f4dcf49",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-growth/assets/menu.min.js?ver=1792466382&sm_build=4d215f4dcf49"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-growth/assets/menu.min.js?ver=1792466382&sm_build=4d215f4dcf49"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/sm-quick-buy/assets/quick-buy.min.css?ver=1792466398&sm_build=a08c24facdd4",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-quick-buy/assets/quick-buy.min.css?ver=1792466398&sm_build=a08c24facdd4"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-quick-buy/assets/quick-buy.min.css?ver=1792466398&sm_build=a08c24facdd4"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/sm-quick-buy/assets/quick-buy.min.js?ver=1792466386&sm_build=99576c07a64a",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-quick-buy/assets/quick-buy.min.js?ver=1792466386&sm_build=99576c07a64a"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-quick-buy/assets/quick-buy.min.js?ver=1792466386&sm_build=99576c07a64a"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/sm-quick-buy/assets/ux.min.css?ver=1792466381&sm_build=26dcb8ff6180",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-quick-buy/assets/ux.min.css?ver=1792466381&sm_build=26dcb8ff6180"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-quick-buy/assets/ux.min.css?ver=1792466381&sm_build=26dcb8ff6180"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/sm-quick-buy/assets/ux.min.js?ver=1792466412&sm_build=8a0943cbbab5",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-quick-buy/assets/ux.min.js?ver=1792466412&sm_build=8a0943cbbab5"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-quick-buy/assets/ux.min.js?ver=1792466412&sm_build=8a0943cbbab5"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/sm-rewards/assets/qrcode.min.js?ver=1.4.4&sm_build=4b6133cbb5a1",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-rewards/assets/qrcode.min.js?ver=1.4.4&sm_build=4b6133cbb5a1"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-rewards/assets/qrcode.min.js?ver=1.4.4&sm_build=4b6133cbb5a1"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/sm-rewards/assets/rewards.js?ver=1793385538",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-rewards/assets/rewards.js?ver=1793385538"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-rewards/assets/rewards.js?ver=1793385538"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/sm-rewards/assets/rewards.min.css?ver=1792466384&sm_build=033cdb422be2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-rewards/assets/rewards.min.css?ver=1792466384&sm_build=033cdb422be2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-rewards/assets/rewards.min.css?ver=1792466384&sm_build=033cdb422be2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/sm-sellers/assets/sellers.css?ver=1792816026",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-sellers/assets/sellers.css?ver=1792816026"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/sm-sellers/assets/sellers.css?ver=1792816026"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce-paypal-payments/assets/ppcp-blocks-css-mini-cart-buttons.css?ver=4.2.0",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce-paypal-payments/assets/ppcp-blocks-css-mini-cart-buttons.css?ver=4.2.0"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce-paypal-payments/assets/ppcp-blocks-css-mini-cart-buttons.css?ver=4.2.0"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce-paypal-payments/assets/ppcp-local-alternative-payment-methods-css-gateway.css?ver=4.2.0",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce-paypal-payments/assets/ppcp-local-alternative-payment-methods-css-gateway.css?ver=4.2.0"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce-paypal-payments/assets/ppcp-local-alternative-payment-methods-css-gateway.css?ver=4.2.0"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce-paypal-payments/assets/ppcp-sdk-v6-css-gateway.css?ver=92513ba5f86fcb39a044",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce-paypal-payments/assets/ppcp-sdk-v6-css-gateway.css?ver=92513ba5f86fcb39a044"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce-paypal-payments/assets/ppcp-sdk-v6-css-gateway.css?ver=92513ba5f86fcb39a044"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce-paypal-payments/assets/ppcp-sdk-v6-js-boot.js?ver=6b644ce76a8cddf1dd24",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce-paypal-payments/assets/ppcp-sdk-v6-js-boot.js?ver=6b644ce76a8cddf1dd24"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce-paypal-payments/assets/ppcp-sdk-v6-js-boot.js?ver=6b644ce76a8cddf1dd24"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce-paypal-payments/assets/ppcp-wc-gateway-js-fraudnet.js?ver=4.2.0",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce-paypal-payments/assets/ppcp-wc-gateway-js-fraudnet.js?ver=4.2.0"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce-paypal-payments/assets/ppcp-wc-gateway-js-fraudnet.js?ver=4.2.0"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/client/blocks/wc-blocks.css?ver=wc-11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/client/blocks/wc-blocks.css?ver=wc-11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/client/blocks/wc-blocks.css?ver=wc-11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/css/select2.css?ver=11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/css/select2.css?ver=11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/css/select2.css?ver=11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/css/woocommerce-blocktheme.css?ver=11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/css/woocommerce-blocktheme.css?ver=11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/css/woocommerce-blocktheme.css?ver=11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/css/woocommerce-smallscreen.css?ver=11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/css/woocommerce-smallscreen.css?ver=11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/css/woocommerce-smallscreen.css?ver=11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/account-i18n.min.js?ver=11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/account-i18n.min.js?ver=11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/account-i18n.min.js?ver=11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/add-to-cart.min.js?ver=11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/add-to-cart.min.js?ver=11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/add-to-cart.min.js?ver=11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/address-i18n.min.js?ver=11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/address-i18n.min.js?ver=11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/address-i18n.min.js?ver=11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/cart-fragments.min.js?ver=11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/cart-fragments.min.js?ver=11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/cart-fragments.min.js?ver=11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/cart.min.js?ver=11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/cart.min.js?ver=11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/cart.min.js?ver=11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/country-select.min.js?ver=11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/country-select.min.js?ver=11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/country-select.min.js?ver=11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/order-attribution.min.js?ver=11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/order-attribution.min.js?ver=11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/order-attribution.min.js?ver=11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/password-strength-meter.min.js?ver=11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/password-strength-meter.min.js?ver=11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/password-strength-meter.min.js?ver=11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/woocommerce.min.js?ver=11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/woocommerce.min.js?ver=11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/frontend/woocommerce.min.js?ver=11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/jquery-blockui/jquery.blockUI.min.js?ver=2.7.0-wc.11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/jquery-blockui/jquery.blockUI.min.js?ver=2.7.0-wc.11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/jquery-blockui/jquery.blockUI.min.js?ver=2.7.0-wc.11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/js-cookie/js.cookie.min.js?ver=2.1.4-wc.11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/js-cookie/js.cookie.min.js?ver=2.1.4-wc.11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/js-cookie/js.cookie.min.js?ver=2.1.4-wc.11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/selectWoo/selectWoo.full.min.js?ver=1.0.9-wc.11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/selectWoo/selectWoo.full.min.js?ver=1.0.9-wc.11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/selectWoo/selectWoo.full.min.js?ver=1.0.9-wc.11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/sourcebuster/sourcebuster.min.js?ver=11.1.2",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/sourcebuster/sourcebuster.min.js?ver=11.1.2"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/woocommerce/assets/js/sourcebuster/sourcebuster.min.js?ver=11.1.2"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/wp-hhcdropshipping/public/css/hhc-dropshipping-public.css?ver=1.0.6",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/wp-hhcdropshipping/public/css/hhc-dropshipping-public.css?ver=1.0.6"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/wp-hhcdropshipping/public/css/hhc-dropshipping-public.css?ver=1.0.6"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/plugins/wp-hhcdropshipping/public/js/hhc-dropshipping-public.js?ver=1.0.6",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/wp-hhcdropshipping/public/js/hhc-dropshipping-public.js?ver=1.0.6"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/plugins/wp-hhcdropshipping/public/js/hhc-dropshipping-public.js?ver=1.0.6"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/css/account-layout.min.css?ver=1792467508&sm_build=ff56579c74ca",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/css/account-layout.min.css?ver=1792467508&sm_build=ff56579c74ca"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/css/account-layout.min.css?ver=1792467508&sm_build=ff56579c74ca"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/css/brand.min.css?ver=1792467582&sm_build=5a5ce4f1e313",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/css/brand.min.css?ver=1792467582&sm_build=5a5ce4f1e313"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/css/brand.min.css?ver=1792467582&sm_build=5a5ce4f1e313"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/css/forms.min.css?ver=1792467541&sm_build=39bb8df7638a",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/css/forms.min.css?ver=1792467541&sm_build=39bb8df7638a"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/css/forms.min.css?ver=1792467541&sm_build=39bb8df7638a"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/css/navigation.css?ver=1792816690",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/css/navigation.css?ver=1792816690"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/css/navigation.css?ver=1792816690"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/css/site.css?ver=1792696287",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/css/site.css?ver=1792696287"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/css; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/css/site.css?ver=1792696287"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/js/dialogs.min.js?ver=1792467509&sm_build=82ed57e240aa",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/js/dialogs.min.js?ver=1792467509&sm_build=82ed57e240aa"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/js/dialogs.min.js?ver=1792467509&sm_build=82ed57e240aa"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/js/forms.js?ver=1792467538",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/js/forms.js?ver=1792467538"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/js/forms.js?ver=1792467538"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/js/site.min.js?ver=1792467492&sm_build=63389b082337",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/js/site.min.js?ver=1792467492&sm_build=63389b082337"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-content/themes/sastamilaga/assets/js/site.min.js?ver=1792467492&sm_build=63389b082337"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-includes/js/dist/hooks.min.js?ver=f0f188028580e8dc1255",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-includes/js/dist/hooks.min.js?ver=f0f188028580e8dc1255"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-includes/js/dist/hooks.min.js?ver=f0f188028580e8dc1255"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-includes/js/dist/i18n.min.js?ver=1dfe7db3940c23ea9216",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-includes/js/dist/i18n.min.js?ver=1dfe7db3940c23ea9216"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-includes/js/dist/i18n.min.js?ver=1dfe7db3940c23ea9216"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-includes/js/jquery/jquery.min.js?ver=3.7.1",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-includes/js/jquery/jquery.min.js?ver=3.7.1"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-includes/js/jquery/jquery.min.js?ver=3.7.1"
+      }
+    }
+  },
+  {
+    "url": "https://sastamilaga.com/wp-includes/js/zxcvbn-async.min.js?ver=1.0",
+    "googlebot_robots_allowed": true,
+    "checks": {
+      "user": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-includes/js/zxcvbn-async.min.js?ver=1.0"
+      },
+      "googlebot-simulation": {
+        "status": 200,
+        "content_type": "text/javascript; charset=UTF-8",
+        "final_url": "https://sastamilaga.com/wp-includes/js/zxcvbn-async.min.js?ver=1.0"
+      }
+    }
+  }
+]

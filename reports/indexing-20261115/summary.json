@@ -1,0 +1,32 @@
+{
+  "recorded_at_utc": "2026-11-14T22:07:40Z",
+  "input_examples": 794,
+  "literal_url_examples": 791,
+  "wildcard_patterns": 3,
+  "by_group": {
+    "Indexed, though blocked by robots.txt": 3,
+    "Blocked due to access forbidden (403)": 567,
+    "Page with redirect": 4,
+    "Alternate page with proper canonical tag": 21,
+    "Blocked by robots.txt": 199
+  },
+  "user_statuses": {
+    "200": 747,
+    "410": 43,
+    "404": 1,
+    "pattern": 3
+  },
+  "googlebot_ua_statuses": {
+    "200": 747,
+    "410": 43,
+    "404": 1,
+    "pattern": 3
+  },
+  "confirmed_200_both_agents": 747,
+  "gsc_authenticated": false,
+  "gsc_live_tests_run": false,
+  "sitemap_submitted_to_gsc": false,
+  "gsc_validations_started": false,
+  "payment_capture_tested": false,
+  "note": "Googlebot UA simulations are not requests from verified Google IPs and are not GSC Live URL Inspection."
+}
