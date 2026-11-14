@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {ROBOTS,indexingHead,indexingRedirect,patchIndexingSource} from './indexing-edge-policy.mjs';
+import {ROBOTS,indexingHead,indexingRedirect,patchIndexingSource,patchIndexingLinks} from './indexing-edge-policy.mjs';
 test('public and transactional pages can be crawled to read their index policy',()=>{
  assert.ok(ROBOTS.includes('Sitemap: https://sastamilaga.com/sitemap.xml'));
  for(const route of ['/assets/','/cart/','/checkout/','/my-account/','/p/','/c/'])assert.ok(!ROBOTS.includes('Disallow: '+route));
@@ -16,7 +16,7 @@ test('one canonical is emitted inside head without changing body or scripts',()=
  assert.ok(result.includes(body));
 });
 test('aliases consolidate in one step and retain filters',()=>{
- for(const [from,to] of [['/global-shop/','/c/global/index.html'],['/index.html','/'],['/shop?sort=price','/shop/?sort=price']]){
+ for(const [from,to] of [['/global/','/c/global/index.html'],['/global-shop/','/c/global/index.html'],['/index.html','/'],['/shop?sort=price','/shop/?sort=price']]){
   const r=indexingRedirect(new Request('http://www.sastamilaga.com'+from));
   assert.equal(r.status,301);assert.equal(r.headers.get('Location'),'https://sastamilaga.com'+to);
  }
@@ -28,3 +28,9 @@ test('checkout, callbacks, sessions and non-GET requests are untouched',()=>{
  assert.equal(indexingRedirect(new Request('https://sastamilaga.com/global-shop/',{method:'POST',body:'test'})),null);
 });
 test('patch fails closed against an unknown live source',()=>assert.throws(()=>patchIndexingSource('export default {}')));
+test('link patch preserves product paths and modifies only known HTML aliases',()=>{
+ const source="if(path==='/global-shop'||path==='/global-shop/')path='/c/global/index.html';"+'<a href="/global-shop/">Global</a><a href="/global-shop/p/123/item/">Item</a>';
+ const result=patchIndexingLinks(source);
+ assert.ok(result.includes('href="/c/global/index.html"'));
+ assert.ok(result.includes('href="/global-shop/p/123/item/"'));
+});

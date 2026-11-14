@@ -6,6 +6,11 @@ on:
         description: Apply the reviewed indexing patch after backing up live configuration
         type: boolean
         default: false
+      stage:
+        description: Reviewed deployment stage
+        type: choice
+        options: [initial, links]
+        default: initial
 permissions:
   contents: read
 jobs:
@@ -27,6 +32,7 @@ jobs:
       - name: Apply reviewed indexing fixes
         if: inputs.apply
         env:
+          INDEXING_STAGE: ${{ inputs.stage }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: node tools/deploy-indexing-edge.mjs

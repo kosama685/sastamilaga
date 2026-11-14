@@ -2,7 +2,7 @@
 // payment/shipping Workers, WAF rules, secrets, sessions or origin configuration.
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
-import {patchIndexingSource} from './indexing-edge-policy.mjs';
+import {patchIndexingSource,patchIndexingLinks} from './indexing-edge-policy.mjs';
 const token=process.env.CLOUDFLARE_API_TOKEN,account=process.env.CLOUDFLARE_ACCOUNT_ID;
 if(!token||!account)throw Error('Existing Cloudflare CI credentials required');
 const hash=s=>createHash('sha256').update(s).digest('hex');
@@ -32,6 +32,9 @@ async function update(name,patch,expected){
  if(!result.success)throw Error('Cloudflare did not confirm upload');
  receipts.push({worker:name,before_sha256:hash(source),after_sha256:hash(next),deployment_id:result.result?.deployment_id,at:new Date().toISOString()});
 }
+if(process.env.INDEXING_STAGE==='links'){
+ await update('sasta-canonical-sync-v11',patchIndexingLinks,'3602fd1a699444ff9b006827249554f602008dc3a09d820689f320b0c3496c1d');
+}else{
 await update('sasta-canonical-sync-v11',patchIndexingSource,'2b9f07e05ccf408745345708511a6beea8f53e34bb2b5805d225c08133e69959');
 // A genuine SKU match, verified HTTP 200 before this commit. No WooCommerce PDP.
 await update('sastamilaga-redirects',source=>{
@@ -41,5 +44,6 @@ await update('sastamilaga-redirects',source=>{
 `;
  return source.replace(anchor,fixes+anchor);
 });
+}
 fs.writeFileSync('artifacts/indexing-deployment.json',JSON.stringify({receipts},null,2));
 console.log(JSON.stringify({receipts}));

@@ -25,7 +25,7 @@ export function indexingRedirect(request) {
  if(/^\/(?:cart|checkout|my-account|wp-json|wp-admin|api|smcs-oauth)(?:\/|$)/i.test(u.pathname))return null;
  let path=u.pathname;
  if(path==='/index.html')path='/';
- if(path==='/global-shop'||path==='/global-shop/')path='/c/global/index.html';
+ if(['/global','/global/','/global-shop','/global-shop/'].includes(path))path='/c/global/index.html';
  if(/^\/(?:shop|about|contact|privacy|terms|returns|shipping|videos|visa|travel|tours|faq|wishlist|search)$/.test(path))path+='/';
  if(u.protocol==='https:'&&u.hostname==='sastamilaga.com'&&path===u.pathname)return null;
  if(!['sastamilaga.com','www.sastamilaga.com'].includes(u.hostname))return null;
@@ -56,5 +56,18 @@ export function patchIndexingSource(source) {
  replaceOnce("   headers.set('content-security-policy',", "   html=indexingHead(html,url);\n   headers.set('content-security-policy',");
  replaceOnce('export default {async fetch(request,env,ctx){',
   indexingRedirect.toString()+'\n'+indexingHead.toString()+'\nexport default {async fetch(request,env,ctx){\n const canonicalRedirect=indexingRedirect(request);if(canonicalRedirect)return canonicalRedirect;');
+ return source;
+}
+
+export function patchIndexingLinks(source) {
+ const old="if(path==='/global-shop'||path==='/global-shop/')path='/c/global/index.html';";
+ const next="if(['/global','/global/','/global-shop','/global-shop/'].includes(path))path='/c/global/index.html';";
+ if(source.split(old).length!==2)throw Error('Expected reviewed global alias guard missing');
+ source=source.replace(old,next);
+ // Handle literal HTML as well as JSON-encoded HTML constants in the live renderer.
+ for(const from of ['/global-shop/','/global/']){
+  source=source.replaceAll('href="'+from+'"','href="/c/global/index.html"');
+  source=source.replaceAll('href=\\"'+from+'\\"','href=\\"/c/global/index.html\\"');
+ }
  return source;
 }
