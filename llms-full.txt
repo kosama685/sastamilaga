@@ -1,0 +1,59 @@
+# Sasta Milaga — Source and Site Navigation Guide
+
+> This document describes public shopping and content resources. It is provided for readers and AI-powered retrieval systems. It does not grant permission to train on content, guarantee search placement, confirm product availability or replace checkout verification.
+
+## What this store offers
+
+Sasta Milaga operates a Pakistan local catalogue and a separate global CJ supplier enquiry catalogue. Local prices and stock may differ from global supplier estimates. A global supplier listing does not, by itself, indicate that a product can be delivered to a particular country or that it is ready for online payment.
+
+The global supplier catalogue is intended for product discovery and enquiry. On each product, verify the selected variant, country-specific shipping option, current stock and final delivered price before offering payment. Unreviewed supplier detail pages may be marked noindex and excluded from the qualified product sitemap.
+
+## Canonical shopping destinations
+
+- [Home](https://sastamilaga.com/)
+- [Local shop](https://sastamilaga.com/shop/)
+- [Global supplier category index](https://sastamilaga.com/c/global/index.html)
+- [3D pens example category](https://sastamilaga.com/c/global/3d-pens.html)
+- [Global category and product search](https://sastamilaga.com/global-shop/)
+- [Shopping instructions](https://sastamilaga.com/how-to-order/)
+- [Shipping information](https://sastamilaga.com/shipping/)
+- [Returns](https://sastamilaga.com/returns/)
+- [Order tracking](https://sastamilaga.com/track/)
+- [Contact](https://sastamilaga.com/contact/)
+
+## Product and category URLs
+
+Static local product pages use canonical product HTML under /p/. Global category pages are public HTML at /c/global/<category-slug>.html. Global supplier product detail pages use /global-shop/p/<CJ-product-id>/<product-slug>/ and preserve the supplier ID for stable reconciliation.
+
+Category product cards and Product ItemList structured data must reference the same canonical supplier URL. Fragment-based legacy URLs such as /#/global/p/... are not canonical product URLs. Filter and search state should not be mistaken for independently verified indexable pages.
+
+## Editorial, SEO and accuracy standards
+
+Descriptions should reflect known product and variant details, not invent certifications, reviews, delivery promises, stock quantities or comparison-test results. Product structured data must not contain fictional offers, prices, stock, ratings or VideoObject entries. Supplier videos are displayed only where CJ offers eligible media and playback validation succeeds. Users must verify important details before purchase.
+
+Product types and destinations differ. Information about fulfilment, taxes, shipping delays, or supported carriers is specific to the selected destination and product. Information shown on a page may become outdated as CJ supplier data changes.
+
+## Editorial content
+
+- [Guides and blog](https://sastamilaga.com/b/)
+- [Travel information](https://sastamilaga.com/travel/)
+- [Live TV directory](https://sastamilaga.com/live-tv/)
+
+Other public site sections may include media and travel requests. Do not interpret listings, television-stream references, or transport information as promises of rights, availability, or fixed prices.
+
+## Machine-readable discovery
+
+- [Sitemap index](https://sastamilaga.com/sitemap.xml)
+- [Qualified CJ supplier-product sitemap](https://sastamilaga.com/sitemap-global-qualified.xml)
+- [Short site description](https://sastamilaga.com/llms.txt)
+- [Robots.txt](https://sastamilaga.com/robots.txt)
+
+The qualified supplier-product sitemap is deliberately a subset of the much larger global catalogue: it must not be used to imply that all supplier records are approved, in-stock, purchasable, or indexed.
+
+## Contact and accuracy corrections
+
+- [Contact](https://sastamilaga.com/contact/)
+- [Shipping](https://sastamilaga.com/shipping/)
+- [Returns](https://sastamilaga.com/returns/)
+
+For current product specifications and orders, use the store's customer service and verified checkout flow instead of relying on cached summaries.
