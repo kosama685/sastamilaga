@@ -1,0 +1,44 @@
+name: Verify all global categories and one live PDP per supplier lookup bucket
+on:
+  pull_request:
+    paths:
+      - tools/validate-live-catalog-coverage.mjs
+      - .github/workflows/catalog-live-coverage.yml
+  push:
+    branches: [main]
+    paths:
+      - tools/validate-live-catalog-coverage.mjs
+      - .github/workflows/catalog-live-coverage.yml
+  workflow_dispatch:
+  schedule:
+    - cron: '31 4 * * *'
+permissions:
+  contents: read
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - run: node --check tools/validate-live-catalog-coverage.mjs
+  live:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    needs: syntax
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Validate exactly 451812 source IDs, all 1024 lookup partitions, all 572 categories and 1024 live products
+        run: node tools/validate-live-catalog-coverage.mjs
+      - name: Keep exact test results even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sasta-catalog-health-coverage
+          path: artifacts/catalog-health-coverage.json
+          if-no-files-found: warn
+          retention-days: 14
