@@ -4,7 +4,7 @@ import worker from './seo-qualified-sitemaps-worker.mjs';
 
 const id='87FD613D-EEC7-474A-A408-02C9DCC6E9E2';
 const name='Solar simulation anti-theft warning light';
-function env(n=1){
+function env(n=1,row={id,name}){
   const calls=[];
   const db={prepare(sql) {
     calls.push(sql);
@@ -12,7 +12,7 @@ function env(n=1){
       async first(){return {n}},
       bind(...args){
         assert.deepEqual(args,[5000,0]);
-        return {async all(){return {results:[{id,name}]}}};
+        return {async all(){return {results:[row]}}};
       }
     };
   }};
@@ -63,4 +63,14 @@ test('scales to all 451,812 records only if each record passes D1 approval gate'
   assert.match(xml,/global-qualified\/91\.xml/);
   assert.doesNotMatch(xml,/global-qualified\/92\.xml/);
   assert.equal((xml.match(/<sitemap>/g)||[]).length,91);
+});
+
+test('approved numeric CJ product IDs are eligible for sitemap XML when D1 gate passes',async()=>{
+ const numeric='1449637195303489536';
+ const row={id:numeric,name:'Simulation Flame Mute Aroma Diffuser Humidifier'};
+ const e=env(1,row);
+ const res=await worker.fetch(new Request(url+'/sitemaps/global-qualified/1.xml'),e);
+ assert.equal(res.status,200);
+ assert.match(await res.text(),/global-shop\/p\/1449637195303489536\/simulation-flame-mute-aroma-diffuser-humidifier\//);
+ assert.ok(e.calls.every(q=>q.includes('cj_product_id')||q.includes('COUNT')));
 });
