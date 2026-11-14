@@ -3,6 +3,10 @@ on:
   schedule:
     - cron: "17 */6 * * *"
   workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - "tools/cj-video-health.mjs"
 permissions:
   contents: read
 concurrency:
