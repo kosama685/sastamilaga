@@ -44,3 +44,19 @@ test('noncommerce endpoints reject unrecognized paths',async()=>{
  const res=await worker.fetch(new Request('https://sastamilaga.com/checkout/'),env());
  assert.equal(res.status,404);
 });
+
+test('canonical product HTML offers verified CJ variant gallery, shipping and useful AEO links without blocked video',async()=>{
+ const res=await worker.fetch(new Request(BASE+numeric+'/simulation-flame-mute-aroma-diffuser-humidifier/'),env());
+ assert.equal(res.status,200);
+ const h=await res.text();
+ assert.match(h,/sasta-verified-gallery-v1/);
+ assert.match(h,/sasta:cjvariants/);
+ assert.match(h,/cj-quote/);
+ assert.match(h,/Buying guide and product questions/);
+ assert.match(h,/BreadcrumbList/);
+ assert.match(h,/\/worldwide-shopping\//);
+ assert.doesNotMatch(h,/<video[^>]+src=/i);
+ assert.doesNotMatch(h,/"@type":"Offer"/);
+ assert.doesNotMatch(h,/VideoObject/);
+ assert.match(h,/noindex, follow/);
+});
