@@ -1,0 +1,36 @@
+name: Validate indexable product internal linking
+on:
+  pull_request:
+    paths:
+      - tools/enhance-local-product-links.mjs
+      - .github/workflows/static.yml
+      - .github/workflows/local-product-linking-ci.yml
+  push:
+    branches: [main]
+    paths:
+      - tools/enhance-local-product-links.mjs
+      - .github/workflows/local-product-linking-ci.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Node syntax
+        run: node --check tools/enhance-local-product-links.mjs
+      - name: Validate every product page without changing files
+        run: node tools/enhance-local-product-links.mjs --check
+      - name: Generate related links from real category and shared title terms
+        run: node tools/enhance-local-product-links.mjs
+      - name: Check idempotence
+        run: node tools/enhance-local-product-links.mjs
+      - name: Spot-check indexable HTML
+        run: |
+          grep -q 'id="sasta-related-product-links-v1"' p/01-pair-silicone-foot-care-socks-anti-cracking-moisturizing-gel-socks-cracked-de-hhc-2391183.html
+          grep -q 'href="https://sastamilaga.com/c/' p/01-pair-silicone-foot-care-socks-anti-cracking-moisturizing-gel-socks-cracked-de-hhc-2391183.html
