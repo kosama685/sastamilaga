@@ -1,0 +1,47 @@
+name: Independent external commerce route health
+on:
+  push:
+    branches: [main]
+    paths:
+      - tools/external-commerce-health.mjs
+      - tools/external-commerce-health.test.mjs
+      - .github/workflows/external-commerce-health.yml
+  pull_request:
+    paths:
+      - tools/external-commerce-health.mjs
+      - tools/external-commerce-health.test.mjs
+      - .github/workflows/external-commerce-health.yml
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */2 * * *'
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - run: node --check tools/external-commerce-health.mjs
+      - run: node --test tools/external-commerce-health.test.mjs
+  external:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify externally reachable routes; no purchase or state mutation
+        run: node tools/external-commerce-health.mjs
+      - name: Attach evidence even when external probe fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sasta-external-commerce-health
+          path: artifacts/external-commerce-health.json
+          if-no-files-found: warn
+          retention-days: 14
