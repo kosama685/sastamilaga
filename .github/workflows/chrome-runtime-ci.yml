@@ -1,0 +1,39 @@
+name: Verify compact shared chrome and single cart handler
+on:
+  pull_request:
+    paths:
+      - "assets/js/chrome.js"
+      - "tools/build-chrome-runtime.mjs"
+      - "tools/build-chrome-runtime.test.mjs"
+      - ".github/workflows/static.yml"
+      - ".github/workflows/chrome-runtime-ci.yml"
+  push:
+    branches: ["main"]
+    paths:
+      - "assets/js/chrome.js"
+      - "tools/build-chrome-runtime.mjs"
+      - "tools/build-chrome-runtime.test.mjs"
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+      - name: Validate code syntax
+        run: |
+          node --check assets/js/chrome.js
+          node --check tools/build-chrome-runtime.mjs
+      - name: Generate header runtime and verify idempotence
+        run: |
+          node tools/build-chrome-runtime.mjs
+          node tools/build-chrome-runtime.mjs --check
+      - name: Verify identical source and avoid duplicate listeners
+        run: |
+          node --test tools/build-chrome-runtime.test.mjs
+          grep -q "partials/chrome-runtime.json" assets/js/chrome.js
+          ! grep -q "function addToSharedCart" assets/js/chrome.js
