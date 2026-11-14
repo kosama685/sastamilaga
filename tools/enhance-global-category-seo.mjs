@@ -28,12 +28,19 @@ function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 function xmlText(s){return String(s).replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>');}
 function truncate(s,max){const t=String(s).replace(/\s+/g,' ').trim();if(t.length<=max)return t;return t.slice(0,max+1).replace(/\s+\S*$/,'').replace(/[.,;:!? -]+$/,'');}
 function description(c){return truncate('Explore '+c.n+' supplier listings at Sasta Milaga. Compare options, check destination availability and confirm stock, shipping and final price before ordering.',159);}
+const SEMANTIC_STOP=new Set(['and','for','the','with','other','miscellaneous','accessories','product','products','supplies','parts','set','sets','items','item','equipment']);
+function semanticTerms(name){
+ return new Set((String(name||'').toLowerCase().match(/[a-z0-9]+/g)||[])
+  .filter(w=>w.length>=2&&!SEMANTIC_STOP.has(w)&&!(/^\d+$/.test(w)))
+  .map(w=>w.length>5&&w.endsWith('ies')?w.slice(0,-3)+'y':w.length>5&&w.endsWith('s')?w.slice(0,-1):w));
+}
 function related(c){
- const words=new Set(c.n.toLowerCase().match(/[a-z]{4,}/g)||[]);
- return all.filter(x=>x.s!==c.s&&x.g===c.g)
-  .map(x=>({x,rel:[...(x.n.toLowerCase().match(/[a-z]{4,}/g)||[])].filter(w=>words.has(w)).length}))
-  .sort((a,b)=>b.rel-a.rel||b.x.c-a.x.c||a.x.s.localeCompare(b.x.s))
-  .slice(0,6).map(x=>x.x);
+ const words=semanticTerms(c.n);
+ return all.filter(x=>x.s!==c.s).map(x=>{
+  const common=[...semanticTerms(x.n)].filter(w=>words.has(w));
+  if(!common.length)return null;
+  return {x,score:common.reduce((n,w)=>n+Math.min(w.length,10),0)+(x.g===c.g?2:0)};
+ }).filter(Boolean).sort((a,b)=>b.score-a.score||b.x.c-a.x.c||a.x.s.localeCompare(b.x.s)).slice(0,6).map(v=>v.x);
 }
 function guide(c){
  const rel=related(c);
@@ -44,7 +51,7 @@ function guide(c){
  '<h3>Can I order from my country?</h3><p>Delivery depends on the product, selected variant, supplier and destination. Check the destination and shipping options for the exact item; not every product can ship to every country.</p>'+
  '<h3>Are the displayed prices final?</h3><p>Supplier catalogue prices are estimates, not an all-inclusive checkout quote. Verify the product price, available variants, freight, taxes where applicable and the final currency before confirming an order.</p>'+
  '<h3>What should I check before ordering?</h3><p>Confirm the real item images, dimensions, materials where supplied, variant selection, current stock, destination shipping and the returns policy. Contact the store if important product details are missing.</p>'+
- '<nav aria-label="Related global shopping categories"><h3>Related categories</h3><ul>'+links+'</ul></nav>'+
+ (rel.length?'<nav aria-label="Semantically related global shopping categories"><h3>Related categories</h3><ul>'+links+'</ul></nav>':'')+
  '<p><a href="'+SITE+'/worldwide-shopping/">Worldwide shopping guidance</a> · <a href="'+SITE+'/shipping/">Shipping by destination</a> · <a href="'+SITE+'/returns/">Returns and refunds</a> · <a href="'+SITE+'/c/global/index.html">All global categories</a></p>'+
  '</div></section>';
 }
@@ -91,6 +98,40 @@ function replaceCardHashLinks(h){
  return {html,count};
 }
 
+/* Match Product ItemList structured links to the same canonical URLs in HTML cards. */
+function alignProductItemList(h,c){
+ const canonById=new Map();
+ for(const m of h.matchAll(/href="(https:\/\/sastamilaga\.com\/global-shop\/p\/([A-Za-z0-9-]+)\/[a-z0-9-]+\/)"/g))canonById.set(m[2].toUpperCase(),m[1]);
+ let updated=0,items=0;
+ h=h.replace(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g,(whole,json)=>{
+  let schema;
+  try{schema=JSON.parse(json);}catch(e){throw Error('Invalid JSON-LD in '+c.s+': '+e.message);}
+  const nodes=Array.isArray(schema['@graph'])?schema['@graph']:[schema];
+  let changed=false;
+  for(const node of nodes){
+   if(!node||node['@type']!=='CollectionPage')continue;
+   const list=node.mainEntity;
+   if(!list||list['@type']!=='ItemList'||!Array.isArray(list.itemListElement))continue;
+   for(const item of list.itemListElement){
+    const old=String(item?.url||'');
+    if(!old)throw Error('Missing ItemList URL in '+c.s);
+    const legacy=old.match(/^https:\/\/sastamilaga\.com\/#\/global\/p\/[^/]+\/([A-Za-z0-9-]+)$/);
+    if(legacy){
+     const canonical=canonById.get(legacy[1].toUpperCase());
+     if(!canonical)throw Error('No product card for ItemList id '+legacy[1]+' in '+c.s);
+     item.url=canonical;changed=true;updated++;
+    }else if(!/^https:\/\/sastamilaga\.com\/global-shop\/p\/[A-Za-z0-9-]+\/[a-z0-9-]+\/$/.test(old)){
+     throw Error('Noncanonical ItemList link in '+c.s+': '+old.slice(0,120));
+    }
+    const productId=(item.url.match(/\/global-shop\/p\/([A-Za-z0-9-]+)\//)||[])[1];
+    if(!productId||canonById.get(productId.toUpperCase())!==item.url)throw Error('Schema and visible card disagree in '+c.s);
+    items++;
+   }
+  }
+  return changed?'<script type="application/ld+json">'+JSON.stringify(schema)+'</script>':whole;
+ });
+ return {html:h,updated,items};
+}
 function update(h,c){
  const expected=SITE+'/c/global/'+c.s+'.html';
  if(!h.includes('rel="canonical" href="'+expected+'"'))throw Error('Wrong canonical in '+c.s);
@@ -114,6 +155,8 @@ function update(h,c){
  if(!h.includes(grid))throw Error('Missing static product grid '+c.s);
  const converted=replaceCardHashLinks(h);
  h=converted.html;
+ const structured=alignProductItemList(h,c);
+ h=structured.html;
  h=h.replace(grid,facetedSidebar(c)+grid);
  if(!h.includes('<div id="app" class="sm-app">'))throw Error('Missing category app wrapper '+c.s);
  h=h.replace('<div id="app" class="sm-app">','<div id="app" class="sm-app sm-global-facets-layout">');
@@ -125,11 +168,11 @@ function update(h,c){
  h=h.replace(/<\/main>/,guide(c)+'</main>');
  if(!h.includes('id="'+MARKER+'"'))throw Error('Guide insertion failed '+c.s);
  const links=related(c);
- if(!links.length)throw Error('No related categories '+c.s);
+ // Do not fabricate related categories for a topic with no close semantic match.
  if((h.match(/<h1(?:\s|>)/gi)||[]).length!==1)throw Error('Unexpected H1 count '+c.s);
- return {html:h,description:d,related:links.length};
+ return {html:h,description:d,related:links.length,schemaItems:structured.items,schemaFixed:structured.updated};
 }
-let count=0,changed=0,links=0;const errors=[];
+let count=0,changed=0,links=0,schemaItems=0,schemaFixed=0;const errors=[];
 for(const c of all){
  const f=path.join(CATDIR,c.s+'.html');
  if(!fs.existsSync(f)){errors.push('missing category '+c.s);continue;}
@@ -137,10 +180,10 @@ for(const c of all){
  try{
   const next=update(original,c);
   if(next.description.length>160)throw Error('Meta description too long');
-  count++;links+=next.related;
+  count++;links+=next.related;schemaItems+=next.schemaItems;schemaFixed+=next.schemaFixed;
   if(next.html!==original){changed++;if(!CHECK)fs.writeFileSync(f,next.html);}
  }catch(e){errors.push(c.s+': '+e.message);}
 }
 if(errors.length){console.error(JSON.stringify({errors:errors.slice(0,35),total_errors:errors.length}));process.exit(1);}
 if(count!==all.length)throw Error('Category coverage incomplete');
-console.log(JSON.stringify({mode:CHECK?'check':'deploy',categories:count,pages_rewritten:changed,related_category_links:links,shipping_claims:'reworded_to_conditional',faceted_sidebar:'all_categories',product_card_links:'crawlable_canonical_worker_urls',source:'checked-in_supplier_category_manifest',version:MARKER}));
+console.log(JSON.stringify({mode:CHECK?'check':'deploy',categories:count,pages_rewritten:changed,related_category_links:links,structured_product_links:schemaItems,legacy_schema_links_corrected:schemaFixed,shipping_claims:'reworded_to_conditional',faceted_sidebar:'all_categories',product_card_links:'crawlable_canonical_worker_urls',source:'checked-in_supplier_category_manifest',version:MARKER}));
