@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
 import {patchIndexingSource,patchIndexingLinks} from './indexing-edge-policy.mjs';
-import {patchBlogRecovery} from './indexing-blog-recovery.mjs';
+import {patchBlogRecovery,patchBlogSnapshot} from './indexing-blog-recovery.mjs';
 const token=process.env.CLOUDFLARE_API_TOKEN,account=process.env.CLOUDFLARE_ACCOUNT_ID;
 if(!token||!account)throw Error('Existing Cloudflare CI credentials required');
 const hash=s=>createHash('sha256').update(s).digest('hex');
@@ -33,7 +33,9 @@ async function update(name,patch,expected){
  if(!result.success)throw Error('Cloudflare did not confirm upload');
  receipts.push({worker:name,before_sha256:hash(source),after_sha256:hash(next),deployment_id:result.result?.deployment_id,at:new Date().toISOString()});
 }
-if(process.env.INDEXING_STAGE==='blog'){
+if(process.env.INDEXING_STAGE==='blog-snapshot'){
+ await update('sasta-static-blog-reader',patchBlogSnapshot,'33f3832c06370ad48ea317cc0523733e9cc28cb879b611168abacf4486bce61d');
+}else if(process.env.INDEXING_STAGE==='blog'){
  await update('sasta-static-blog-reader',patchBlogRecovery,'ce09400a869c48995e44c26f7ddef9d41bca779a0c4f95fc01cf2d4b78d34faf');
 }else if(process.env.INDEXING_STAGE==='links'){
  await update('sasta-canonical-sync-v11',patchIndexingLinks,'3602fd1a699444ff9b006827249554f602008dc3a09d820689f320b0c3496c1d');

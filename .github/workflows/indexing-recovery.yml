@@ -9,7 +9,7 @@ on:
       stage:
         description: Reviewed deployment stage
         type: choice
-        options: [initial, links, blog]
+        options: [initial, links, blog, blog-snapshot]
         default: initial
 permissions:
   contents: read

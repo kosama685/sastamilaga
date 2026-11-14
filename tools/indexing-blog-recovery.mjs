@@ -8,16 +8,16 @@ export async function cachedBlogFetch(request,env,ctx,original){
  if(cache){try{const saved=await cache.match(key);if(saved)return outward(saved);}catch{}}
  const getRequest=request.method==='HEAD'?new Request(request.url,{headers:request.headers}):request;
  let result=await original.fetch(getRequest,env,ctx);
- if(result.status===503&&u.pathname==='/blog/'){
+ const snapshots={'/blog/':'index.html','/blog/sitemap.xml':'sitemap.xml','/blog/holiday-gift-budget-including-delivery-costs/':'holiday-gift-budget-including-delivery-costs.html','/blog/bluetooth-speaker-watts-vs-real-world-loudness/':'bluetooth-speaker-watts-vs-real-world-loudness.html'};
+ if(result.status===503&&Object.hasOwn(snapshots,u.pathname)){
   try{
-   const r=await fetch('https://kosama685.github.io/sastamilaga/b/index.html',{headers:{Accept:'text/html'},cf:{cacheTtl:300,cacheEverything:true},signal:AbortSignal.timeout(8000)});
-   if(r.ok&&r.headers.get('content-type')?.includes('text/html')){
+   const xml=u.pathname==='/blog/sitemap.xml';
+   const r=await fetch('https://kosama685.github.io/sastamilaga/data/blog-fallback/'+snapshots[u.pathname],{cf:{cacheTtl:300,cacheEverything:true},signal:AbortSignal.timeout(8000)});
+   if(r.ok){
     let html=await r.text();
-    if(html.length>200&&html.length<500000&&html.includes('Sasta Milaga')&&/<\/head>/i.test(html)){
-     html=html.replace(/<script\b(?![^>]*type=["']application\/ld\+json["'])[^>]*>[\s\S]*?<\/script>/gi,'');
-     html=html.replace(/<link\b(?=[^>]*rel=["']canonical["'])[^>]*>/gi,'');
-     html=html.replace(/<\/head>/i,'<link rel="canonical" href="https://sastamilaga.com/blog/"></head>');
-     result=new Response(html,{headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'public,max-age=60,s-maxage=300','X-Sasta-Blog':'published-archive-fallback','X-Content-Type-Options':'nosniff'}});
+    const valid=xml?html.startsWith('<?xml')&&html.includes('<urlset')&&html.includes('https://sastamilaga.com/blog/'):html.includes('Sasta Milaga')&&html.includes('<link rel="canonical" href="https://sastamilaga.com'+u.pathname+'">');
+    if(html.length>200&&html.length<500000&&valid){
+     result=new Response(html,{headers:{'Content-Type':xml?'application/xml; charset=utf-8':'text/html; charset=utf-8','Cache-Control':'public,max-age=60,s-maxage=300','X-Sasta-Blog':'verified-published-snapshot','X-Content-Type-Options':'nosniff',"Content-Security-Policy":"default-src 'none';style-src 'unsafe-inline';img-src https: data:;font-src 'self';base-uri 'none';form-action 'none'"}});
     }
    }
   }catch{}
@@ -32,4 +32,9 @@ export function patchBlogRecovery(source){
  const anchor='export default {async fetch(request,env){';
  if(source.split(anchor).length!==2)throw Error('Blog source changed since review');
  return source.replace(anchor,'const blogReader = {async fetch(request,env){')+'\n'+cachedBlogFetch.toString()+'\nexport default {fetch(request,env,ctx){return cachedBlogFetch(request,env,ctx,blogReader)}};\n';
+}
+export function patchBlogSnapshot(source){
+ const start=source.indexOf('async function cachedBlogFetch('),end=source.indexOf('\nexport default {fetch(request,env,ctx)');
+ if(start<0||end<=start)throw Error('Reviewed blog wrapper not found');
+ return source.slice(0,start)+cachedBlogFetch.toString()+source.slice(end);
 }
