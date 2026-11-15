@@ -89,17 +89,41 @@
       selector.innerHTML='';
       variants.forEach((v,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=String(v.key||v.name||v.sku);selector.add(o);});
       qty.value='1';controls.hidden=false;status.textContent='Choose the exact supplier option before ordering.';
+      let isMapped=null, optionSeq=0;
       const update=()=>{
-        const v=variants[Number(selector.value)]||variants[0];
+        const v=variants[Number(selector.value)]||variants[0],seq=++optionSeq;
+        isMapped=null;
         estimate.textContent='Estimated '+money.format(Number(v.price)*1.2)+' each · '+money.format(Number(v.price)*1.2*(Math.min(99,Math.max(1,Number(qty.value)||1))))+' items subtotal, excluding delivery';
         wa.href=waHref(r[2],url,String(v.key||v.name||v.sku));
+        confirm.disabled=true;
+        confirm.textContent='Checking checkout availability…';
+        if(!window.SMWoo?.active||typeof window.SMWoo?.hasSKU!=='function'){
+          isMapped=false;confirm.disabled=false;confirm.textContent='Request this option on WhatsApp';
+          status.textContent='This variation is not connected to secure checkout. Please request availability on WhatsApp.';
+          return;
+        }
+        window.SMWoo.hasSKU(v.sku).then(mapped=>{
+          if(seq!==optionSeq||!dialog.open)return;
+          isMapped=mapped;
+          confirm.disabled=false;
+          confirm.textContent=mapped===true?(action==='buy'?'Quick Buy — continue to checkout':'Add to cart'):'Request this option on WhatsApp';
+          status.textContent=mapped===true
+            ? 'This option is linked to WooCommerce. The cart will confirm the final availability.'
+            : 'This CJ variation is not yet available in WooCommerce checkout. You can request the exact option on WhatsApp.';
+        });
       };
       selector.onchange=update;qty.oninput=update;update();
-      confirm.textContent=action==='buy'?'Quick Buy — continue to checkout':'Add to cart';
       onConfirm=async()=>{
         const v=variants[Number(selector.value)]||variants[0],n=Number(qty.value);
         if(!Number.isInteger(n)||n<1||n>99){status.textContent='Please enter a quantity between 1 and 99.';return;}
         if(!v?.sku||!v?.vid){status.textContent='This supplier option cannot be verified. Please use WhatsApp.';return;}
+        // An unmapped supplier item cannot be silently inserted into WooCommerce.
+        // Route this *direct click* to the existing prefilled WhatsApp order.
+        if(isMapped!==true){
+          if(isMapped===null){status.textContent='Checking checkout availability. Please retry.';return;}
+          window.open(wa.href,'_blank','noopener,noreferrer');
+          return;
+        }
         const woo=window.SMWoo;
         if(!woo?.active||typeof woo.add!=='function'){
           status.textContent='WooCommerce checkout is only available on the main store. Use WhatsApp to request this exact variation.';
@@ -115,7 +139,8 @@
             const reason=saved?.reason==='unmapped'
               ? 'This CJ variation has not been synchronized with WooCommerce.'
               : (saved?.message||'WooCommerce could not accept this variation.');
-            status.textContent=reason+' No order has been created. Select WhatsApp order to request stock, shipping and the final price.';
+            status.textContent=reason+' No order has been created. Request this variation on WhatsApp for stock, shipping and final price.';
+            if(saved?.reason==='unmapped'){isMapped=false;confirm.textContent='Request this option on WhatsApp';}
             return;
           }
           dialog.close();

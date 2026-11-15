@@ -4,6 +4,8 @@ on:
     paths:
       - assets/js/cj-home-rails.js
       - tools/cj-cart-handoff.test.mjs
+      - tools/cj-sku-awareness.test.mjs
+      - assets/js/woo-bridge.js
       - .github/workflows/cj-cart-handoff.yml
   push:
     branches: [main]
@@ -23,4 +25,5 @@ jobs:
       - uses: actions/setup-node@v7
         with: {node-version: '22'}
       - run: node --check assets/js/cj-home-rails.js
-      - run: node --test tools/cj-cart-handoff.test.mjs
+      - run: node --check assets/js/woo-bridge.js
+      - run: node --test tools/cj-cart-handoff.test.mjs tools/cj-sku-awareness.test.mjs
