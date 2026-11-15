@@ -15,7 +15,7 @@ window.SM_CONFIG = {
   paypalWorker: '',
   /* URL of the deployed CJ shipping Worker (workers/cj-shipping), e.g. 'https://sastamilaga-cj-shipping.<account>.workers.dev'.
      When set, global product pages show live supplier shipping prices. The CJ key stays in Cloudflare. */
-  cjShippingWorker: '',
+  cjShippingWorker: 'https://sastamilaga-cj-shipping.usamaestonia.workers.dev',
   /* WordPress store REST API (global-dropshipping-commerce plugin). Public, read-only: live CJ options (variations) with the store's own prices. The CJ key stays on the WordPress server. */
   wpApi: 'https://sastamilaga.com/wp-json/gdcs/v1',
   /* Variation photos: the store's options list has names, SKUs and prices but no photos. This Worker returns each variant's own photo (read-only, CJ key stays on the Worker). */
