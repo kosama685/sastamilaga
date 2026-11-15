@@ -25,7 +25,7 @@
     const name=String(r[2]),url='/global/p/'+encodeURIComponent(cat.s)+'/'+encodeURIComponent(r[0]);
     const groupKey=cat.s+'|'+String(r[0]);records.set(groupKey,{cat,r,url});
     const price=Number(r[3]),amt=price>0?money.format(price*1.2):'Confirm price';
-    return '<article class="sm-cj-rail-card" data-cj-card="'+escape(groupKey)+'"><a class="sm-cj-card-link" href="'+escape(url)+'" aria-label="View '+escape(name)+'">'
+    return '<article class="sm-cj-rail-card" data-cj-video="'+escape(String(r[0]))+'" data-cj-video-hint="'+(r[6] ? '1' : '0')+'" data-cj-card="'+escape(groupKey)+'"><a class="sm-cj-card-link" href="'+escape(url)+'" aria-label="View '+escape(name)+'">'
       +'<img src="'+escape(r[5])+'" alt="'+escape(name)+'" width="280" height="280" loading="lazy" decoding="async">'
       +'<span class="sm-cj-rail-name">'+escape(name)+'</span></a>'
       +'<span class="sm-cj-rail-price">'+escape(amt)+' <small>catalogue estimate · final total confirmed</small></span>'
