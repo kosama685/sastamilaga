@@ -107,7 +107,7 @@
   const fallback = window.fallbackImg || '';
 
   function card(cat, r) {
-    return `<article class="sm-card"><a class="sm-card__media" href="${detailHash(cat, r)}" tabindex="-1" aria-hidden="true"><img src="${esc(r[5])}" alt="${esc(r[2])}" width="480" height="480" loading="lazy" decoding="async" onerror="this.src=window.fallbackImg">${r[6] ? '<span class="sm-card__badge">Video</span>' : ''}</a>
+    return `<article class="sm-card" data-cj-video="${esc(String(r[0]))}" data-cj-video-hint="${r[6] ? '1' : '0'}"><a class="sm-card__media" href="${detailHash(cat, r)}" tabindex="-1" aria-hidden="true"><img src="${esc(r[5])}" alt="${esc(r[2])}" width="480" height="480" loading="lazy" decoding="async" onerror="this.src=window.fallbackImg">${r[6] ? '<span class="sm-card__badge">Video</span>' : ''}</a>
       <div class="sm-card__body"><h3 class="sm-card__title"><a href="${detailHash(cat, r)}">${esc(r[2])}</a></h3><p class="sm-card__price">${est(r)} <small class="sm-est">est.</small></p>
       <div class="smqb-actions"><a class="smqb-opt sm-btn--ghost" href="${detailHash(cat, r)}"><span>View options</span></a></div></div></article>`;
   }
@@ -505,6 +505,14 @@
         .catch(() => { stat.textContent = 'The global catalogue could not be searched just now.'; });
     };
     go();
+  }
+  /* Clean-URL static pages were exported before the video module existed.
+     Load the same additive card player there; homepage has an explicit deferred tag. */
+  if (![...document.scripts].some(el=>/\/cj-card-video\.js(?:\?|$)/.test(el.src||''))) {
+    const videoScript=document.createElement('script');
+    videoScript.src=new URL('assets/js/cj-card-video.js?v=20261115-1',document.baseURI).href;
+    videoScript.dataset.smCjCardVideo='1';
+    document.head.appendChild(videoScript);
   }
   window.SMGlobal = {
     searchBlock, shard,
