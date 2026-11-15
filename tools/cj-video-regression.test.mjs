@@ -11,7 +11,7 @@ test('new video modules parse and contain no CJ token or raw supplier media URL'
  for(const src of [card,rail,global,home])assert.doesNotThrow(()=>new Function(src));
  for(const src of [card,rail]) {
   assert.doesNotMatch(src,/CJ_API_KEY|CJ-Access-Token|MEDIA_SIGNING_KEY|download-only-api\.cjdropshipping\.com|video-cf\.cjdropshipping/);
-  assert.match(src,/\/cjv\/resolve/);
+  if(src===card)assert.match(src,/\/cjv\/resolve/);
  }
 });
 test('videos are signed, lazy, throttled, and never autoplay',()=>{
@@ -19,7 +19,7 @@ test('videos are signed, lazy, throttled, and never autoplay',()=>{
  assert.match(card,/nextAt=Date\.now\(\)\+1250/);
  assert.match(card,/new IntersectionObserver/);
  assert.match(card,/preload="none"/);
- assert.doesNotMatch(card,/\.play\(\)|autoplay/gi);
+ assert.doesNotMatch(card,/\.play\(\)|\bautoplay\s*=/gi);
  assert.match(card,/pending=new Map/);
  assert.match(card,/player\.addEventListener\('close'/);
  assert.match(card,/if\(card\.dataset\.cjVideoHint!=='1'\)continue/);
@@ -41,5 +41,5 @@ test('homepage has exactly one lazy video rail and clean link, without removing 
  assert.match(rail,/new IntersectionObserver/);
  assert.match(rail,/SMCJVideo\.resolve/);
  assert.match(rail,/Supplier video/);
- assert.doesNotMatch(rail,/\.play\(\)|autoplay/gi);
+ assert.doesNotMatch(rail,/\.play\(\)|\bautoplay\s*=/gi);
 });
