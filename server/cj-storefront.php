@@ -7,12 +7,13 @@ namespace Sasta\CJ;
 defined('ABSPATH') || exit;
 
 final class Bridge {
+    private static array $currentTrace=[];
     const VERSION='2026.11.15.1';
     const NS='sm-cj/v1';
     const OPS=[
         'settings'=>['setting/get','GET',[],3600,'admin'],
         'categories'=>['product/getCategory','GET',[],3600,'public'],
-        'list'=>['product/listV2','GET',[],180,'public'],
+        'list'=>['product/listV2','GET',[],300,'public'],
         'warehouses'=>['product/globalWarehouseList','GET',[],3600,'public'],
         'product'=>['product/query','GET',['pid'],300,'public'],
         'variants'=>['product/variant/query','GET',['pid'],300,'public'],
@@ -23,28 +24,30 @@ final class Bridge {
         'freight'=>['logistic/freightCalculate','POST',['startCountryCode','endCountryCode','products'],120,'quote'],
         'freight-accurate'=>['logistic/freightCalculateTip','POST',['reqDTOS'],120,'quote'],
         'freight-diagnostics'=>['logistic/unavailableShippingMethods','POST',['reqDTOS'],120,'admin'],
-        'shipping-methods'=>['logistic/getAvailableLogistics','POST',[],300,'admin'],
-        'shipping-countries'=>['logistic/getReachableCountry','POST',[],3600,'admin'],
+        'shipping-methods'=>['logistic/getAvailableLogistics','POST',['sku','startCountryCode'],300,'admin'],
+        'shipping-countries'=>['logistic/getReachableCountry','POST',['sku','logisticsName'],3600,'admin'],
         'tracking'=>['logistic/trackInfo','GET',['trackNumber'],60,'admin'],
-        'tracking-replacement'=>['logistic/getOrderTrackHistory','POST',[],60,'admin'],
+        'tracking-replacement'=>['logistic/getOrderTrackHistory','POST',['trackNumbers'],60,'admin'],
         'create-v3'=>['shopping/order/createOrderV3','POST',['orderNumber','products','payType'],0,'admin'],
         'create-v2'=>['shopping/order/createOrderV2','POST',['orderNumber','products','payType'],0,'admin'],
         'orders'=>['shopping/order/list','GET',[],0,'admin'],
         'order'=>['shopping/order/getOrderDetail','GET',['orderId'],0,'admin'],
         'confirm-order'=>['shopping/order/confirmOrder','PATCH',['orderId'],0,'admin'],
         'balance'=>['shopping/pay/getBalance','GET',[],0,'admin'],
-        'pay-balance'=>['shopping/pay/payBalanceV2','POST',[],0,'admin'],
+        'pay-balance'=>['shopping/pay/payBalanceV2','POST',['shipmentOrderId'],0,'admin'],
         'dispute-products'=>['disputes/disputeProducts','GET',['orderId'],0,'admin'],
-        'dispute-confirm'=>['disputes/disputeConfirmInfo','POST',['orderId'],0,'admin'],
-        'dispute-create'=>['disputes/create','POST',['orderId','businessDisputeId'],0,'admin'],
+        'dispute-confirm'=>['disputes/disputeConfirmInfo','POST',['orderId','productInfoList'],0,'admin'],
+        'dispute-create'=>['disputes/create','POST',['orderId','businessDisputeId','disputeReasonId','expectType','refundType','messageText','productInfoList'],0,'admin'],
+        'dispute-upload'=>['disputes/uploadFile','POST',['fileUrl'],0,'admin'],
         'dispute-cancel'=>['disputes/cancel','POST',['orderId','disputeId'],0,'admin'],
         'disputes'=>['disputes/getDisputeList','GET',[],0,'admin'],
-        'order-logs'=>['shopping/order/queryOrderLog','POST',[],0,'admin'],
+        'order-logs'=>['shopping/order/queryOrderLog','POST',['orderCode'],0,'admin'],
         'api-logs'=>['apiCallLog/queryPage','POST',[],0,'admin'],
         'connection-logs'=>['product/conn/connectionLog/queryPage','POST',[],0,'admin'],
     ];
     const LIST_KEYS=['keyWord','page','size','categoryId','lv2categoryList','lv3categoryList','countryCode','startSellPrice','endSellPrice','addMarkStatus','productType','productFlag','startWarehouseInventory','endWarehouseInventory','verifiedWarehouse','timeStart','timeEnd','zonePlatform','isWarehouse','sort','orderBy','features','supplierId','hasCertification','isSelfPickup','customization'];
     static function boot(): void {
+        add_action('woocommerce_after_checkout_validation',[self::class,'checkout_stock'],100,2);
         add_action('rest_api_init',static function(){
             foreach(['bootstrap','home','listing','detail','inventory','shipping','sitemap'] as $name) register_rest_route(self::NS,'/'.$name,['methods'=>$name==='shipping'?'POST':'GET','permission_callback'=>$name==='shipping'?[\GDCS\Storefront::class,'csrf_check']:'__return_true','callback'=>static function($r)use($name){return self::response($name,$r);}]);
             register_rest_route(self::NS,'/merchant/(?P<operation>[a-z0-9-]+)',['methods'=>'GET,POST','permission_callback'=>[\GDCS\Rest::class,'permission'],'callback'=>static function($r){return self::merchant($r);}]);
@@ -55,7 +58,7 @@ final class Bridge {
         add_action('init',static function(){if(!wp_next_scheduled('sm_cj_refresh_home'))wp_schedule_event(time()+300,'sm_cj_five_minutes','sm_cj_refresh_home');});
     }
     static function id($id): string {if(!is_scalar($id)||!preg_match('/^[A-Za-z0-9-]{1,100}$/D',(string)$id))throw new \InvalidArgumentException('Invalid supplier identifier.');return (string)$id;}
-    static function trace(): array {return (array)get_option('gdcs_last_api',[]);}
+    static function trace(): array {return self::$currentTrace?:((array)get_option('gdcs_last_api',[]));}
     static function call(string $op,array $params=[],bool $fresh=false): array {
         if(!isset(self::OPS[$op]))throw new \InvalidArgumentException('Unsupported operation.');
         [$path,$method,$required,$ttl,$access]=self::OPS[$op];
@@ -68,7 +71,7 @@ final class Bridge {
             throw new \RuntimeException('This supplier request is already running. Retry shortly.');
         }
         try{
-            $data=(new \GDCS\Api())->request($path,$params,$method);
+            $api=new \GDCS\Api();try{$data=$api->request($path,$params,$method);}finally{self::$currentTrace=method_exists($api,'last_response')?$api->last_response():(array)get_option('gdcs_last_api',[]);}
             $trace=self::trace();$result=['data'=>$data,'checked_at'=>gmdate('c'),'expires_at'=>gmdate('c',time()+$ttl),'requestId'=>$trace['request_id']??null,'endpoint'=>$path,'cache'=>'miss'];
             if($ttl)set_transient($key,$result,$ttl);
             return $result;
@@ -111,15 +114,16 @@ final class Bridge {
     static function bootstrap(): array {
         $categories=self::call('categories');$warehouses=self::call('warehouses');
         $rates=[];foreach(\GDCS\Currency::supported() as $c){try{$rates[$c]=\GDCS\Currency::rate_info($c);}catch(\Throwable $e){}}
-        return ['version'=>self::VERSION,'categories'=>$categories,'warehouses'=>$warehouses,'currencies'=>array_keys($rates),'exchange_rates'=>$rates,'countries'=>WC()->countries->get_countries(),'currency_source'=>'store exchange-rate provider','checkout_ready'=>\GDCS\VirtualCheckout::ready()];
+        $country_currency=[];foreach(WC()->countries->get_countries() as $code=>$label){$currency=\GDCS\Currency::suggest($code);$country_currency[$code]=$code!=='PK'&&$currency==='PKR'?'USD':$currency;}
+        return ['version'=>self::VERSION,'categories'=>$categories,'warehouses'=>$warehouses,'currencies'=>array_keys($rates),'exchange_rates'=>$rates,'countries'=>WC()->countries->get_countries(),'country_currency'=>$country_currency,'currency_source'=>'store exchange-rate provider','checkout_ready'=>\GDCS\VirtualCheckout::ready()];
     }
     static function listing(array $params): array {
         $params=self::listing_params($params);$params['features']=$params['features']??['enable_category','enable_description'];$r=self::call('list',$params);$d=(array)$r['data'];$items=[];$related=[];
         foreach($d['content']??[] as $group){foreach($group['productList']??[] as $p)$items[]=self::row($p);foreach($group['relatedCategoryList']??[] as $c)$related[]=$c;}
         $r['data']=['items'=>$items,'relatedCategoryList'=>$related,'page'=>(int)($d['pageNumber']??$params['page']),'size'=>(int)($d['pageSize']??$params['size']),'total'=>min(6000,(int)($d['totalRecords']??0)),'pages'=>min(1000,(int)($d['totalPages']??0)),'filters'=>$params];return $r;
     }
-    static function home(string $origin=''): array {
-        update_option('smcj_home_last_view',time(),false);$tree=self::call('categories');$sections=[];
+    static function home(string $origin='',bool $mark_view=true): array {
+        if($mark_view)update_option('smcj_home_last_view',time(),false);$tree=self::call('categories');$sections=[];
         foreach($tree['data'] as $first){
             $seconds=(array)($first['categoryFirstList']??[]);$ids=array_column($seconds,'categorySecondId');
             $params=['page'=>1,'size'=>10,'features'=>['enable_category','enable_description']];
@@ -129,7 +133,8 @@ final class Bridge {
             try{$listing=self::listing($params);$sections[]=['category'=>$first,'listing'=>$listing];if(count($listing['data']['items'])!==10)\GDCS\Logger::write('info','storefront.short_category',['category_id'=>$first['categoryFirstId']??'','count'=>count($listing['data']['items']),'request_id'=>$listing['requestId']]);}
             catch(\Throwable $e){$sections[]=['category'=>$first,'error'=>self::error($e)];}
         }
-        return ['categories'=>$tree,'sections'=>$sections,'origin'=>$origin,'checked_at'=>gmdate('c')];
+        $expiries=array_map(static fn($s)=>strtotime($s['listing']['expires_at']??'now'),$sections);
+        return ['categories'=>$tree,'sections'=>$sections,'origin'=>$origin,'checked_at'=>gmdate('c'),'expires_at'=>gmdate('c',min($expiries?:[time()]))];
     }
     static function detail(string $pid): array {
         $r=self::call('product',['pid'=>self::id($pid)]);$d=$r['data'];
@@ -171,23 +176,58 @@ final class Bridge {
             return new \WP_REST_Response($result,200,['Cache-Control'=>$name==='inventory'||$name==='shipping'?'private,no-store':'public,max-age=60,s-maxage=180','X-Sasta-CJ'=>self::VERSION]);
         }catch(\Throwable $e){return new \WP_REST_Response(self::error($e),$e instanceof \InvalidArgumentException?400:($e instanceof \OutOfBoundsException?404:503),['Cache-Control'=>'no-store','Retry-After'=>'30']);}
     }
-    static function warm(): void {if((int)get_option('smcj_home_last_view',0)<time()-900)return;try{self::home();}catch(\Throwable $e){\GDCS\Logger::write('error','storefront.warm_failed',self::error($e));}}
+    static function warm(): void {
+        if((int)get_option('smcj_home_last_view',0)<time()-900)return;
+        try{foreach(self::call('categories')['data'] as $first){
+            $ids=array_column((array)($first['categoryFirstList']??[]),'categorySecondId');if(!$ids)continue;
+            $p=self::listing_params(['page'=>1,'size'=>10,'features'=>['enable_category','enable_description'],'lv2categoryList'=>$ids]);ksort($p);$hit=get_transient('smcj_'.md5('list'.wp_json_encode($p)));
+            if($hit===false||strtotime($hit['expires_at'])<time()+65)self::call('list',$p,true);
+        }}catch(\Throwable $e){\GDCS\Logger::write('error','storefront.warm_failed',self::error($e));}
+    }
+    static function checkout_stock($data,$errors): void {
+        if(!WC()->cart||!\GDCS\Shipping::has_cj())return;
+        foreach(WC()->cart->get_cart() as $row){
+            $s=$row['gdcs_virtual']??null;$product=$row['data']??null;
+            $vid=$s['vid']??($product?$product->get_meta('_gdcs_cj_variant_id'):'');if(!$vid)continue;
+            $origin=$s['origin']??($product?$product->get_meta('_gdcs_origin'):'');
+            try{$stock=self::call('stock',['vid'=>self::id($vid)],true);\GDCS\VirtualCheckout::available_origin((array)$stock['data'],(int)$row['quantity'],(string)$origin);}
+            catch(\Throwable $e){$ref=self::error($e);$errors->add('smcj_stock_changed','Supplier stock could not be confirmed for the selected option and origin. Review your cart before paying. Reference: '.($ref['requestId']??$ref['code']));}
+        }
+    }
     static function merchant($r){
         try{
             $op=(string)$r['operation'];if(!isset(self::OPS[$op]))throw new \InvalidArgumentException('Unknown operation.');
             $params=(array)($r->get_json_params()['params']??[]);
             if(self::OPS[$op][1]!=='GET'&&$r->get_method()!=='POST')throw new \InvalidArgumentException('Use the confirmed action form.');
             if(self::OPS[$op][1]!=='GET'&&($r->get_json_params()['confirmed']??false)!==true)throw new \InvalidArgumentException('Explicit merchant confirmation is required.');
-            if(in_array($op,['create-v2','create-v3'],true)&&($params['payType']??null)!==3)throw new \InvalidArgumentException('Store orders are create-only. Supplier settlement remains a separate merchant action.');
+            $settles=$op==='pay-balance'||(in_array($op,['create-v2','create-v3'],true)&&(int)($params['payType']??0)===2);
+            if($settles){if(!current_user_can('manage_options')||($r->get_json_params()['authorize_supplier_settlement']??false)!==true)throw new \InvalidArgumentException('A store administrator must explicitly authorize supplier balance spending for this action.');define('SM_CJ_CONFIRMED_SETTLEMENT',true);}
+            if(in_array($op,['create-v2','create-v3'],true))return new \WP_REST_Response(self::create_order($op,$params),200,['Cache-Control'=>'private,no-store']);
             return new \WP_REST_Response(self::call($op,$params,true),200,['Cache-Control'=>'private,no-store']);
         }catch(\Throwable $e){return new \WP_REST_Response(self::error($e),422,['Cache-Control'=>'private,no-store']);}
+    }
+    static function create_order(string $op,array $p): array {
+        $number=(string)($p['orderNumber']??'');if($number===''||strlen($number)>50||!preg_match('/^[A-Za-z0-9_-]+$/D',$number))throw new \InvalidArgumentException('Use a unique order number of up to 50 letters, digits, hyphens or underscores.');
+        if(!in_array((int)($p['payType']??0),[2,3],true))throw new \InvalidArgumentException('Choose create-only or explicitly authorized balance payment.');
+        $products=(array)($p['products']??[]);if(!$products||count($products)>20)throw new \InvalidArgumentException('Use 1 to 20 product lines.');
+        $origin=strtoupper((string)($p['fromCountryCode']??''));if(!preg_match('/^[A-Z]{2}$/D',$origin))throw new \InvalidArgumentException('Choose one verified ship-from country per supplier order.');
+        foreach($products as $product){$vid=self::id($product['vid']??'');$quantity=filter_var($product['quantity']??0,FILTER_VALIDATE_INT);if(!$quantity||$quantity<1||$quantity>100)throw new \InvalidArgumentException('Invalid supplier quantity.');self::call('variant',['vid'=>$vid],true);$stock=self::call('stock',['vid'=>$vid],true);\GDCS\VirtualCheckout::available_origin((array)$stock['data'],$quantity,$origin);}
+        $key='smcj_order_'.md5($number);if(!add_option($key,['state'=>'started','at'=>time()],'','no'))throw new \RuntimeException('This supplier order number already started. Reconcile it before attempting another submission.');
+        $attempts=[];
+        try{$r=self::call($op,$p,true);$attempts[]=['version'=>$op,'requestId'=>$r['requestId']];}
+        catch(\GDCS\ApiException $e){$attempts[]=['version'=>$op,'error'=>$e->reason,'requestId'=>self::trace()['request_id']??null];
+            // Only an explicit V3 parameter rejection proves that no order was accepted.
+            if($op!=='create-v3'||$e->reason!=='cj_1600100'){update_option($key,['state'=>'reconcile','attempts'=>$attempts,'at'=>time()],false);throw $e;}
+            $r=self::call('create-v2',$p,true);$attempts[]=['version'=>'create-v2','requestId'=>$r['requestId']];
+        }
+        update_option($key,['state'=>'created','orderId'=>$r['data']['orderId']??null,'attempts'=>$attempts,'at'=>time()],false);$r['attempts']=$attempts;return $r;
     }
     static function admin(): void {
         if(!current_user_can('manage_woocommerce'))return;
         echo '<div class="wrap"><h1>CJ API operations</h1><p>Merchant-only diagnostics. Customer orders and payments remain in WooCommerce. Supplier write actions require an explicit confirmation and the existing settlement policy.</p><label>Operation <select id="smcj-op">';
         foreach(self::OPS as $op=>[$path,$method])echo '<option value="'.esc_attr($op).'">'.esc_html($method.' '.$path).'</option>';
-        echo '</select></label><p><label>Parameters (JSON)<br><textarea id="smcj-json" rows="12" cols="100">{}</textarea></label></p><p><label><input type="checkbox" id="smcj-confirm"> I confirm this merchant operation and its effects.</label></p><button class="button button-primary" id="smcj-run">Run operation</button><pre id="smcj-result" style="white-space:pre-wrap"></pre><h2>Last supplier response</h2><pre>'.esc_html(wp_json_encode(self::trace(),JSON_PRETTY_PRINT)).'</pre></div>';
-        echo '<script>document.getElementById("smcj-run").onclick=async function(){let out=document.getElementById("smcj-result");try{let op=document.getElementById("smcj-op").value,params=JSON.parse(document.getElementById("smcj-json").value),r=await fetch('.wp_json_encode(rest_url(self::NS.'/merchant/')).'+op,{method:"POST",headers:{"Content-Type":"application/json","X-WP-Nonce":'.wp_json_encode(wp_create_nonce('wp_rest')).'},body:JSON.stringify({params,confirmed:document.getElementById("smcj-confirm").checked})});out.textContent=JSON.stringify(await r.json(),null,2);}catch(e){out.textContent=e.message;}};</script>';
+        echo '</select></label><p><label>Parameters (JSON)<br><textarea id="smcj-json" rows="12" cols="100">{}</textarea></label></p><p><label><input type="checkbox" id="smcj-confirm"> I confirm this merchant operation and its effects.</label></p><p><label><input type="checkbox" id="smcj-settlement"> Authorize supplier balance settlement for this action. This can spend store funds.</label></p><button class="button button-primary" id="smcj-run">Run operation</button><pre id="smcj-result" style="white-space:pre-wrap"></pre><h2>Last supplier response</h2><pre>'.esc_html(wp_json_encode(self::trace(),JSON_PRETTY_PRINT)).'</pre></div>';
+        echo '<script>document.getElementById("smcj-run").onclick=async function(){let out=document.getElementById("smcj-result");try{let op=document.getElementById("smcj-op").value,params=JSON.parse(document.getElementById("smcj-json").value),r=await fetch('.wp_json_encode(rest_url(self::NS.'/merchant/')).'+op,{method:"POST",headers:{"Content-Type":"application/json","X-WP-Nonce":'.wp_json_encode(wp_create_nonce('wp_rest')).'},body:JSON.stringify({params,confirmed:document.getElementById("smcj-confirm").checked,authorize_supplier_settlement:document.getElementById("smcj-settlement").checked})});out.textContent=JSON.stringify(await r.json(),null,2);}catch(e){out.textContent=e.message;}};</script>';
     }
 }
 Bridge::boot();

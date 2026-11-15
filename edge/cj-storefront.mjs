@@ -13,10 +13,14 @@ export function mapParams(search){
 export async function bridge(env,operation,params={},request){
  const url=new URL(API+operation,SITE);for(const[k,v]of Object.entries(params)){if(Array.isArray(v))v.forEach(x=>url.searchParams.append(k+'[]',x));else if(v!==undefined&&v!==null&&v!=='')url.searchParams.set(k,String(v));}
  const headers=new Headers({'Accept':'application/json'});if(request?.headers.get('CF-Connecting-IP'))headers.set('CF-Connecting-IP',request.headers.get('CF-Connecting-IP'));
+ const modelCache=globalThis.caches?.default,cacheable=['bootstrap','home','listing','detail'].includes(operation),key=new Request('https://sastamilaga.com/.smcj-model-cache/v1/'+operation+url.search);
+ if(cacheable&&modelCache){const hit=await modelCache.match(key);if(hit)return hit.json();}
  const r=await env.ORIGIN.fetch(new Request(url,{headers,signal:AbortSignal.timeout(55000)}));
  const length=Number(r.headers.get('content-length')||0);if(length>3_000_000)throw Object.assign(Error('Supplier response exceeds the rendering budget.'),{status:502,code:'oversize_response'});
  let d;try{d=await r.json();}catch{throw Object.assign(Error('Supplier service did not return JSON.'),{status:502,code:'invalid_supplier_response'});}
- if(!r.ok)throw Object.assign(Error(d.message||'Supplier service unavailable.'),{status:r.status,code:d.code,requestId:d.requestId});return d;
+ if(!r.ok)throw Object.assign(Error(d.message||'Supplier service unavailable.'),{status:r.status,code:d.code,requestId:d.requestId});
+ if(cacheable&&modelCache){const deadline=Date.parse(d.expires_at||d.product?.expires_at||d.categories?.expires_at||new Date(Date.now()+60000).toISOString()),age=Math.min(operation==='bootstrap'?180:60,Math.floor((deadline-Date.now())/1000));if(age>0)await modelCache.put(key,new Response(JSON.stringify(d),{headers:{'Content-Type':'application/json','Cache-Control':'public,max-age='+age}}));}
+ return d;
 }
 function pageResponse(html,{status=200,privatePage=false}={}){return new Response(html,{status,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':privatePage?'private,no-store':status===200?'public,max-age=0,s-maxage=30':'no-store','X-Sasta-Renderer':'cj-ssr-v1','X-Content-Type-Options':'nosniff','Referrer-Policy':'strict-origin-when-cross-origin','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https://*.cjdropshipping.com https://*.cjstatic.com https://*.aliyuncs.com data:; connect-src 'self'; media-src 'self' https://*.cjdropshipping.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'",...(status>=500?{'Retry-After':'30'}:{})}});}
 const firstNode=(nodes,id)=>nodes.find(n=>n.level===1&&n.id===id);
@@ -121,11 +125,39 @@ async function discovery(env,request,path){
  if(path==='/llms-full.txt')text+='\n## Direct answers\n'+q.map(x=>'### '+x.q+'\n'+x.a).join('\n\n')+'\n\n## Category comparison checklists\n'+first.map(n=>'### '+n.name+'\nVerify '+(TOPICS[slug(n.name)]||['dimensions','materials','compatibility','care']).join('; ')+'. Select the exact supplier option and review its current stock, price and delivery route.\nGuide: '+SITE+guideUrl(n)).join('\n\n');
  return new Response(text,{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=60,s-maxage=180','X-Sasta-Renderer':'cj-ssr-v1','X-Content-Type-Options':'nosniff'}});
 }
+async function accountPage(env,request,path){
+ const match=path.match(/^\/account\/(orders|order|tracking|disputes|settings)\/(?:([0-9]+)\/)?$/);if(!match)return null;
+ const view=match[1],number=match[2]||'',url=new URL('/',SITE);url.searchParams.set('smcj_account_data',view);if(number)url.searchParams.set('smcj_order',number);
+ const result=await env.ORIGIN.fetch(new Request(url,{headers:request.headers,signal:AbortSignal.timeout(60000)}));let account;try{account=await result.json();}catch{throw Object.assign(Error('Your account could not be loaded.'),{status:503});}
+ if(!result.ok)throw Object.assign(Error(account.message||'This order is unavailable.'),{status:result.status,requestId:account.requestId});
+ const bootstrap=await bridge(env,'bootstrap',{},request);let body='<div class="cj-wrap"><nav class="cj-category-strip" aria-label="Account pages"><a href="/account/orders/">Orders</a><a href="/account/tracking/">Tracking</a><a href="/account/disputes/">Support cases</a><a href="/account/settings/">Settings</a></nav>';
+ const title=view==='settings'?'Your account settings':view==='disputes'?'Order support and supplier cases':view==='tracking'?'Track your orders':number?'Order '+(account.order?.number||number):'Your orders';
+ body+='<h1>'+esc(title)+'</h1>';
+ if(!account.authenticated)body+='<section class="cj-empty"><h2>Sign in to view your orders</h2><p>Your orders, tracking and support cases are private.</p><a class="cj-btn" href="/my-account/">Sign in or create an account</a></section>';
+ else if(view==='settings')body+='<p>Signed in as '+esc(account.display_name)+'.</p><a class="cj-btn" href="'+esc(account.account_url)+'">Edit your account</a>';
+ else if(account.order){
+  const o=account.order;body+='<p>Store order status: <strong>'+esc(o.status_label)+'</strong> · '+esc(o.currency)+' '+esc(o.total)+'</p><ul>'+o.items.map(i=>'<li>'+esc(i.name)+' × '+i.quantity+'</li>').join('')+'</ul>';
+  if(!account.shipments?.length)body+='<p>Supplier shipment details are not available yet. Your store order remains available in your account.</p>';
+  for(const s of account.shipments||[]){body+='<section class="cj-section cj-empty"><h2>Shipment from '+esc(bootstrap.countries[s.origin]||s.origin)+'</h2><p>Shipment status: '+esc(s.supplier_status??s.state)+'</p>';
+   if(s.error)body+='<p>'+esc(s.error.message)+' Reference: '+esc(s.error.requestId||s.error.code)+'</p>';
+   if(s.tracking_number)body+='<p>Tracking number: '+esc(s.tracking_number)+'</p>';
+   if(s.timeline?.length)body+='<ol>'+s.timeline.map(t=>'<li><strong>'+esc(t.status)+'</strong> · '+esc(t.time)+'<p>'+esc(t.message)+'</p></li>').join('')+'</ol>';
+   if(s.has_supplier_order){body+='<button class="cj-btn cj-btn-light" type="button" data-case-start data-order="'+esc(o.id)+'" data-shipment="'+esc(s.id)+'">Check support eligibility</button><div data-case-holder></div>';}
+   if(s.disputes?.length)body+='<h3>Supplier cases</h3><ul>'+s.disputes.map(d=>'<li>'+esc(d.disputeReason||'Supplier case')+' · '+esc(d.status)+' <button type="button" data-case-cancel data-order="'+esc(o.id)+'" data-shipment="'+esc(s.id)+'" data-dispute="'+esc(d.disputeId)+'">Request cancellation</button></li>').join('')+'</ul>';
+   body+='</section>';
+  }
+ }else if(account.orders?.length)body+='<div class="cj-table-wrap"><table class="cj-specs"><thead><tr><th>Order</th><th>Date</th><th>Store status</th><th>Total</th><th>Details</th></tr></thead><tbody>'+account.orders.map(o=>'<tr><td>'+esc(o.number)+'</td><td>'+esc(o.created_at?.slice(0,10)||'')+'</td><td>'+esc(o.status_label)+'</td><td>'+esc(o.currency)+' '+esc(o.total)+'</td><td><a href="/account/order/'+esc(o.id)+'/">Order, tracking and support</a></td></tr>').join('')+'</tbody></table></div>';
+ else body+='<section class="cj-empty"><h2>No orders to show</h2><p>Your purchases will appear here after they are placed through WooCommerce.</p><a class="cj-btn" href="/shop/">Explore products</a></section>';
+ body+='<p class="cj-reading">Supplier case outcomes and store payment refunds are separate processes. Support reviews any buyer refund against the original store order and payment.</p></div>';
+ const schemas=account.order?[{'@context':'https://schema.org','@type':'Order',orderNumber:account.order.number,price:account.order.total,priceCurrency:account.order.currency,merchant:{'@type':'Organization',name:'Sasta Milaga'},url:SITE+path}]:[];
+ return pageResponse(shell({title:title+' | Sasta Milaga',description:'Private order history, shipment tracking and support.',canonical:SITE+path,body,css,tree:bootstrap.categories.data,schemas,robots:'noindex,nofollow',boot:{type:'account',bootstrap,account_nonce:account.nonce}}),{privatePage:true});
+}
 export default {
  async fetch(request,env,ctx){
   const u=new URL(request.url),path=routePath(u);
   if(path==='/assets/js/cj-storefront.js')return new Response(client,{headers:{'Content-Type':'application/javascript; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
   if(request.method!=='GET'&&request.method!=='HEAD'||RESERVED.some(k=>u.searchParams.has(k)))return env.FALLBACK.fetch(request);
+  if(path.startsWith('/account/'))try{return await accountPage(env,request,path)||env.FALLBACK.fetch(request);}catch(e){return pageResponse(shell({title:'Private order unavailable | Sasta Milaga',description:'Sign in to review your private orders.',canonical:SITE+path,robots:'noindex,nofollow',css,body:'<div class="cj-wrap"><h1>This private order is unavailable</h1><p>'+esc(e.message)+'</p><a href="/account/orders/">Your orders</a></div>'}),{status:e.status===404?404:503,privatePage:true});}
   if(['/sitemap-cj.xml','/llms.txt','/llms-full.txt'].includes(path))try{return await discovery(env,request,path);}catch(e){return new Response('Live discovery data unavailable. Retry shortly.',{status:503,headers:{'Cache-Control':'no-store','Retry-After':'30'}});}
   if(path==='/shipping-policy/')return Response.redirect(SITE+'/shipping/',301);
   const supported=path==='/'||/^\/(?:shop|search)(?:\/|$)/.test(path)||/^\/(?:category|ships-from|brand|product|guides|faq)\//.test(path);
