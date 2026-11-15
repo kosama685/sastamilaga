@@ -7,7 +7,7 @@
 26:if(!m||!PID.test(m[2].toUpperCase()))return formError(req,'Product not found',404);
 28:const pid=m[2].toUpperCase(),data=await load(pid,env).catch(()=>null);if(!data)return formError(req,'Product not found',404);
 35: const text=['Hello Sasta Milaga, please confirm the following product enquiry.','Product: '+(data.enriched?.title||data.row.name),'SKU: '+(data.enriched?.sku||data.row.sku),'Variation: '+(selected?selected.name+' ('+selected.sku+')':'Please confirm available variations'),'Quantity: '+qty,'Destin
-## sasta-canonical-sync-v11 :: footer or html injection (bytes=78489)
+## sasta-canonical-sync-v11 :: footer or html injection (bytes=79241)
 6: const x=SASTA_TRAVEL_HUB_DATA[path],base='https://sastamilaga.com',url=base+path,es=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 10: const styles='*{box-sizing:border-box}body{font:16px/1.7 system-ui,Segoe UI,sans-serif;margin:0;background:#f5faf7;color:#173f2b}a{color:#08713e}a:focus-visible{outline:3px solid orange}header{background:white;border-bottom:1px solid #d6e5db;padding:14px 20px}nav{max-width:1050px;margin:auto;dis
 11: return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+es(x.title)+'</title><meta name="description" content="'+es(x.desc)+'"><meta name="robots" content="index, follow, max-image-preview:large"><link rel="ca
@@ -30,12 +30,15 @@
 84:   html=html.replace(/<\/head>/i,BLOCKER+SEO_CANONICAL_SYNC+SASTA_RTL_STYLE+'</head>');
 85:   if(html.includes('class=\"smf-bottom\"')&&!html.includes('id=\"sasta-regional-footer\"')){html=html.replace('<div class=\"smf-bottom\">',SASTA_REGIONAL_HTML+'<div class=\"smf-bottom\">');html=html.replace(/<\/head>/i,SASTA_REGIONAL_STYLE+'</head>');html=html.replaceAll('+923432601806</a>','Wha
 86:   html=html.replace(/<\/body>/i,SASTA_FOOTER_LABEL_SCRIPT+'</body>');
-99:        script=script.replace(anchor,SASTA_SHIPPING_BRIDGE+anchor);
-115:       xml=xml.replace('</urlset>','<url><loc>'+SASTA_JACKETS_PAGE+'</loc><lastmod>2026-11-12</lastmod></url></urlset>');
-117:if(!xml.includes(SASTA_WORLD_GUIDE_URL))xml=xml.replace('</urlset>','<url><loc>'+SASTA_WORLD_GUIDE_URL+'</loc><lastmod>2026-11-13</lastmod></url></urlset>');
-118:          for(const path of ['/guides/','/umrah/','/flights/']){const loc=CANONICAL+path;if(!xml.includes('<loc>'+loc+'</loc>'))xml=xml.replace('</urlset>','<url><loc>'+loc+'</loc><lastmod>2026-11-13</lastmod></url></urlset>');}     return new Response(req.method==='HEAD'?null:xml,{status:200,he
-125:     if(xml.includes('</sitemapindex>')&&!xml.includes(CANONICAL+'/blog/sitemap.xml'))xml=xml.replace('</sitemapindex>','<sitemap><loc>'+CANONICAL+'/blog/sitemap.xml</loc></sitemap></sitemapindex>');
-150: const html='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Sasta Milaga — Checkout temporarily unavailable</title><style>:root{color-scheme:light}body{font:16px/1.6 system
+100:        script=script.replace(anchor,SASTA_SHIPPING_BRIDGE+anchor);
+116:       xml=xml.replace('</urlset>','<url><loc>'+SASTA_JACKETS_PAGE+'</loc><lastmod>2026-11-12</lastmod></url></urlset>');
+118:if(!xml.includes(SASTA_WORLD_GUIDE_URL))xml=xml.replace('</urlset>','<url><loc>'+SASTA_WORLD_GUIDE_URL+'</loc><lastmod>2026-11-13</lastmod></url></urlset>');
+119:          for(const path of ['/guides/','/umrah/','/flights/']){const loc=CANONICAL+path;if(!xml.includes('<loc>'+loc+'</loc>'))xml=xml.replace('</urlset>','<url><loc>'+loc+'</loc><lastmod>2026-11-13</lastmod></url></urlset>');}     return new Response(req.method==='HEAD'?null:xml,{status:200,he
+126:     if(xml.includes('</sitemapindex>')&&!xml.includes(CANONICAL+'/blog/sitemap.xml'))xml=xml.replace('</sitemapindex>','<sitemap><loc>'+CANONICAL+'/blog/sitemap.xml</loc></sitemap></sitemapindex>');
+151: const html='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Sasta Milaga — Checkout temporarily unavailable</title><style>:root{color-scheme:light}body{font:16px/1.6 system
+174: return html.replace(/(<head\b[^>]*>)([\s\S]*?)(<\/head>)/i,(_,open,head,close)=>{
+175:  head=head.replace(/<link\b(?=[^>]*\brel\s*=\s*["']canonical["'])[^>]*>/gi,'');
+176:  return open+head+'<link rel="canonical" href="'+canonical.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')+'">'+close;
 ## sasta-account-links-v10 :: footer or html injection (bytes=12626)
 23:  const path=kind==='home'?'/':url.pathname==='/sitemap_index.xml'?'/sitemap.xml':url.pathname;
 24:  const target=BACKUP+path+(kind==='asset'?url.search:'');
