@@ -105,6 +105,8 @@
 149:    // Cache API creates 206/304 from a complete cached object with Content-Length.
 164:      const h=cleanHeaders(upstream,claim), length=Number(h.get('Content-Length'));
 173:      if(selected){h.set('Content-Range',`bytes ${selected.start}-${selected.end}/${size}`);h.set('Content-Length',String(selected.end-selected.start+1));return new Response(slice(upstream.body,selected.start,selecte
+## sasta-clean-global-route-v1  bytes=1481
+12:return new Response(req.method==='HEAD'?null:html,{status:200,headers:{'content-type':'text/html; charset=utf-8','Cache-Control':'public,max-age=0,s-maxage=60','X-Sasta-Global-Route':product?'dynamic-product':'static-
 ## sasta-commerce-safe-v9  bytes=11297
 4:const ROBOTS_TEXT="User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\nDisallow: /cart/\nDisallow: /checkout/\nDisallow: /my-account/\n\nUser-agent: GPTBot\nDisallow: /\nUser-agent: ClaudeBot\nDisallo
 5:const BACKUP='https://kosama685.github.io/sastamilaga',CANONICAL='https://sastamilaga.com';
