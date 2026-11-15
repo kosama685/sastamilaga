@@ -9,7 +9,9 @@ function add_action(...$a){}function add_filter(...$a){}
 function wp_json_encode($x){return json_encode($x);}
 function get_transient($key){return $GLOBALS['smcj_test_cache'][$key]??false;}
 function set_transient($key,$value,$ttl){$GLOBALS['smcj_test_cache'][$key]=$value;}
-function get_option($key,$default=[]){return $default;}
+function get_option($key,$default=[]){return $GLOBALS['test_options'][$key]??$default;}
+function add_option($key,$value,...$rest){if(isset($GLOBALS['test_options'][$key]))return false;$GLOBALS['test_options'][$key]=$value;return true;}
+function update_option($key,$value,...$rest){$GLOBALS['test_options'][$key]=$value;}
 function current_user_can($cap){return false;}
 class WP_REST_Response {public function __construct(public $data,public $status=200,public $headers=[]) {}}
 require __DIR__.'/../server/cj-storefront.php';
@@ -24,5 +26,6 @@ foreach(\Sasta\CJ\Bridge::OPS as $op=>[$path,$method,$required]){
 }
 $bad=[['freight-accurate',['reqDTOS'=>[['srcAreaCode'=>'CN','destAreaCode'=>'SA','weight'=>0,'volume'=>1,'productProp'=>['COMMON']]]]],['freight',['startCountryCode'=>'CN','endCountryCode'=>'SA','products'=>[['vid'=>'VID-1','quantity'=>0]]]],['disputes',['startDate'=>0,'endDate'=>91*86400000]],['disputes',['updateDateFrom'=>0,'updateDateTo'=>32*86400000]]];
 foreach($bad as [$op,$p]){try{\Sasta\CJ\Bridge::call($op,$p,true);throw new \RuntimeException('Invalid operational payload accepted.');}catch(\InvalidArgumentException $e){}}
+\Sasta\CJ\Bridge::settle(['shipmentOrderId'=>'MOCK-SHIPMENT']);$before=count(\GDCS\Api::$calls);try{\Sasta\CJ\Bridge::settle(['shipmentOrderId'=>'MOCK-SHIPMENT']);throw new \RuntimeException('Duplicate supplier settlement accepted.');}catch(\RuntimeException $e){if(count(\GDCS\Api::$calls)!==$before)throw new \RuntimeException('Duplicate supplier payment reached provider.');}
 echo $checked." endpoint contracts checked, including methods, mandatory fields and request references. Invalid freight, stock quantity and dispute date windows rejected before network I/O.\n";
 }

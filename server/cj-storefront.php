@@ -202,6 +202,7 @@ final class Bridge {
             $row=['srcAreaCode'=>$origin,'destAreaCode'=>$dest,'weight'=>$weight*$qty,'volume'=>$volume*$qty,'productProp'=>array_values($prop),'totalGoodsAmount'=>(float)($v['variantSellPrice']??0)*$qty,'freightTrialSkuList'=>[['skuQuantity'=>$qty,'sku'=>$v['variantSku']??'']]];
             try{$accurate=self::call('freight-accurate',['reqDTOS'=>[$row]]);}catch(\Throwable $e){$accurate_error=self::error($e);}
         }else $accurate_error=['code'=>'missing_supplier_shipping_properties','message'=>'An accurate quote requires supplier weight, volume and logistics properties. The simple quote is shown separately.','requestId'=>$detail['requestId']];
+        if($accurate){$accurate['data']=array_values(array_map(static fn($r)=>['service'=>$r['option']['enName']??$r['channel']['enName']??'','transit'=>$r['arrivalTime']??'','quote'=>$r['discountFee']??null,'postage'=>$r['postage']??null,'remoteFee'=>$r['remoteFee']??null,'note'=>sanitize_text_field($r['message']??$r['tip']??''),'restriction'=>sanitize_text_field($r['errorEn']??'')],(array)$accurate['data']));}
         $diagnostics=null;if(empty($simple['data'])&&isset($row))try{$diagnostics=self::call('freight-diagnostics',['reqDTOS'=>[$row]]);}catch(\Throwable $e){$diagnostics=['error'=>self::error($e)];}
         return ['simple'=>$simple,'simple_error'=>$simple_error,'diagnostics'=>$diagnostics,'accurate'=>$accurate,'accurate_error'=>$accurate_error,'origin'=>$origin,'country'=>$dest,'stock'=>$inventory['stock'],'fees_included'=>false];
     }
@@ -244,9 +245,16 @@ final class Bridge {
             if(self::OPS[$op][1]!=='GET'&&($r->get_json_params()['confirmed']??false)!==true)throw new \InvalidArgumentException('Explicit merchant confirmation is required.');
             $settles=$op==='pay-balance'||(in_array($op,['create-v2','create-v3'],true)&&(int)($params['payType']??0)===2);
             if($settles){if(!current_user_can('manage_options')||($r->get_json_params()['authorize_supplier_settlement']??false)!==true)throw new \InvalidArgumentException('A store administrator must explicitly authorize supplier balance spending for this action.');define('SM_CJ_CONFIRMED_SETTLEMENT',true);}
+            if($op==='pay-balance')return new \WP_REST_Response(self::settle($params),200,['Cache-Control'=>'private,no-store']);
             if(in_array($op,['create-v2','create-v3'],true))return new \WP_REST_Response(self::create_order($op,$params),200,['Cache-Control'=>'private,no-store']);
             return new \WP_REST_Response(self::call($op,$params,true),200,['Cache-Control'=>'private,no-store']);
         }catch(\Throwable $e){return new \WP_REST_Response(self::error($e),422,['Cache-Control'=>'private,no-store']);}
+    }
+    static function settle(array $p): array {
+        $shipment=self::id($p['shipmentOrderId']??'');$key='smcj_settlement_'.hash('sha256',$shipment);
+        if(!add_option($key,['state'=>'started','at'=>time()],'','no'))throw new \RuntimeException('A settlement attempt exists for this shipment. Reconcile its result before another attempt.');
+        try{$r=self::call('pay-balance',$p,true);update_option($key,['state'=>'responded','requestId'=>$r['requestId'],'at'=>time()],false);return $r;}
+        catch(\Throwable $e){update_option($key,['state'=>'reconcile','requestId'=>self::trace()['request_id']??null,'at'=>time()],false);throw $e;}
     }
     static function create_order(string $op,array $p): array {
         $number=(string)($p['orderNumber']??'');if($number===''||strlen($number)>50||!preg_match('/^[A-Za-z0-9_-]+$/D',$number))throw new \InvalidArgumentException('Use a unique order number of up to 50 letters, digits, hyphens or underscores.');
