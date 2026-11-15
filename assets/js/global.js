@@ -93,7 +93,10 @@
     main.innerHTML = tb.dataset.type === 'video' ? `<video src="${esc(u)}" poster="${esc(poster)}" controls playsinline preload="metadata"></video>` : `<img src="${esc(u)}" alt="" width="800" height="800">`;
     document.querySelectorAll('.pdp .gallery-thumbs button').forEach(x => x.classList.toggle('active', x === tb));
   });
-  window.SMGCart = { count: gcCount, html: gcHtml, bind: gcBind, get: gcGet, fmt: n => USD.format(n), clear: () => gcSet([]) };
+  window.SMGCart = { count: gcCount, html: gcHtml, bind: gcBind, get: gcGet, fmt: n => USD.format(n), clear: () => gcSet([]),
+    /* Reuse the existing global cart for homepage CJ cards after the shopper selects an actual supplier variant. */
+    addVerified: row => { if (!row || !row.id || !row.vkey || !Number.isFinite(Number(row.unit)) || Number(row.unit) <= 0 || !Number.isFinite(Number(row.qty)) || Number(row.qty) < 1) return false; gcAdd(row); return true; }
+  };
   gcBind();
   // global.js loads after the first route has rendered: refresh the header count, and the cart page if it is the page being shown
   if (gcCount()) { try { A.setCart(A.getCart()); } catch (e) { } if (/(^|\/)(cart|checkout)\/?$/.test(location.pathname) || /^#\/(cart|checkout)/.test(location.hash)) setTimeout(() => A.route(), 0); }
