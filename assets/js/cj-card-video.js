@@ -6,6 +6,10 @@
  const validPid=/^(?:[0-9]{15,22}|[a-f0-9-]{36})$/i;
  const validMedia=/^\/cjv\/v1\/[A-Za-z0-9_-]+\.[a-f0-9]{64}$/;
  const pending=new Map(),negativeKey='sm_cjv_negative_v2';
+ // Signed media links are valid for 12 hours upstream. Refresh before expiry,
+ // and retry transient failures instead of retaining a rejected lookup forever.
+ const positiveTtlMs=10*60*60*1000;
+ const retryTtlMs=60*1000;
  let negative={};
  try{negative=JSON.parse(sessionStorage.getItem(negativeKey)||'{}')}catch{}
  const unavailable=pid=>negative[pid]&&negative[pid]>Date.now();
@@ -13,7 +17,9 @@
  let nextAt=0, sequence=Promise.resolve();
  const fetchSlow=pid=>{
    if(unavailable(pid))return Promise.resolve(null);
-   if(pending.has(pid))return pending.get(pid);
+   const existing=pending.get(pid);
+   if(existing&&existing.expires>Date.now())return existing.promise;
+   pending.delete(pid);
    const operation=sequence.then(async()=>{
      const pause=Math.max(0,nextAt-Date.now());
      if(pause)await new Promise(resolve=>setTimeout(resolve,pause));
@@ -29,7 +35,13 @@
      }catch{return null}finally{clearTimeout(timer)}
    });
    sequence=operation.catch(()=>{});
-   pending.set(pid,operation);
+   const entry={promise:operation,expires:Date.now()+positiveTtlMs};
+   pending.set(pid,entry);
+   operation.then(video=>{
+     if(pending.get(pid)!==entry)return;
+     // Short retry for network/server failures and long-lived successful results.
+     entry.expires=Date.now()+(video?positiveTtlMs:retryTtlMs);
+   },()=>{if(pending.get(pid)===entry)pending.delete(pid)});
    return operation;
  };
  const style=document.createElement('style');
