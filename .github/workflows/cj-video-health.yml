@@ -7,6 +7,9 @@ on:
     branches: ["main"]
     paths:
       - "tools/cj-video-health.mjs"
+      - "assets/js/cj-card-video.js"
+      - "assets/js/cj-home-video-rail.js"
+      - "tools/cj-video-regression.test.mjs"
 permissions:
   contents: read
 concurrency:
