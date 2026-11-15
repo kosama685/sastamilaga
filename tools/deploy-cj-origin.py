@@ -23,10 +23,15 @@ after=after.replace("Database::lock('cj_request',1)","Database::lock('cj_request
 old_lock="if (!Database::lock('cj_token',90)) { throw new ApiException('CJ authentication is already running. Try again shortly.', 'auth_busy',true); }"
 new_lock="""if (!Database::lock('cj_token',90)) {
             $deadline=microtime(true)+10;
-            do { usleep(150000);$ready=Vault::get('tokens');if(!empty($ready['accessToken'])&&strtotime($ready['accessTokenExpiryDate']??'')>time()+3600){return $ready['accessToken'];} } while(microtime(true)<$deadline);
+            do { usleep(250000);wp_cache_delete('gdcs_secret_tokens','options');$ready=Vault::get('tokens');if(!empty($ready['accessToken'])&&strtotime($ready['accessTokenExpiryDate']??'')>time()+3600){return $ready['accessToken'];} } while(microtime(true)<$deadline);
             throw new ApiException('CJ authentication refresh did not finish. Try again shortly.','auth_busy',true);
         }"""
 if old_lock in after:after=after.replace(old_lock,new_lock)
+after=after.replace("do { usleep(150000);$ready=Vault::get('tokens');","do { usleep(250000);wp_cache_delete('gdcs_secret_tokens','options');$ready=Vault::get('tokens');")
+read_auth_old="($method==='GET' || str_starts_with($path,'aiData/') || $path==='product/queryVideosByProductId')"
+read_auth_new="($method==='GET' || str_starts_with($path,'aiData/') || in_array($path,['product/queryVideosByProductId','logistic/freightCalculate','logistic/freightCalculateTip','logistic/unavailableShippingMethods','logistic/getAvailableLogistics','logistic/getReachableCountry','logistic/getOrderTrackHistory','shopping/order/queryOrderLog','apiCallLog/queryPage','product/conn/connectionLog/queryPage','disputes/disputeConfirmInfo'],true))"
+after=after.replace(read_auth_old,read_auth_new)
+after=after.replace("['failures'=>$n,'request_id'","['count'=>$n,'request_id'")
 refresh_anchor="                Vault::forget('tokens');\n                return $this->raw($path,$params,$method,$this->token());"
 refresh_next="""                $saved=Vault::get('tokens');$saved['accessTokenExpiryDate']='1970-01-01T00:00:00Z';Vault::put('tokens',$saved);
                 try {$answer=$this->raw($path,$params,$method,$this->token());delete_option('smcj_auth_failures');return $answer;}

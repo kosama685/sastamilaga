@@ -7,3 +7,5 @@ workers/*/node_modules/
 
 
 reports/large/
+
+/artifacts/

@@ -49,7 +49,7 @@ final class Bridge {
     static function boot(): void {
         add_action('woocommerce_after_checkout_validation',[self::class,'checkout_stock'],100,2);
         add_action('rest_api_init',static function(){
-            foreach(['bootstrap','home','listing','detail','inventory','shipping','sitemap','feed','legacy','supplier'] as $name) register_rest_route(self::NS,'/'.$name,['methods'=>$name==='shipping'?'POST':'GET','permission_callback'=>$name==='shipping'?[\GDCS\Storefront::class,'csrf_check']:'__return_true','callback'=>static function($r)use($name){return self::response($name,$r);}]);
+            foreach(['bootstrap','home','listing','detail','inventory','inventory-snapshot','shipping','sitemap','feed','legacy','supplier'] as $name) register_rest_route(self::NS,'/'.$name,['methods'=>$name==='shipping'?'POST':'GET','permission_callback'=>$name==='shipping'?[\GDCS\Storefront::class,'csrf_check']:'__return_true','callback'=>static function($r)use($name){return self::response($name,$r);}]);
             register_rest_route(self::NS,'/merchant/(?P<operation>[a-z0-9-]+)',['methods'=>'GET,POST','permission_callback'=>[\GDCS\Rest::class,'permission'],'callback'=>static function($r){return self::merchant($r);}]);
         });
         add_action('admin_menu',static function(){add_submenu_page('woocommerce','CJ API operations','CJ API operations','manage_woocommerce','sm-cj-operations',[self::class,'admin']);});
@@ -68,7 +68,7 @@ final class Bridge {
         self::validate_operation($op,$params);
         if($op==='list')$params=self::listing_params($params);
         ksort($params);$key='smcj_'.md5($op.wp_json_encode($params));
-        if(!$fresh&&$ttl&&($hit=get_transient($key))!==false){$hit['cache']='hit';return $hit;}
+        if(!$fresh&&$ttl&&($hit=get_transient($key))!==false){if($can_stale&&get_transient($key.'_verified')===false)set_transient($key.'_verified',$hit,max(1,strtotime($hit['expires_at'])-time()+600));$hit['cache']='hit';return $hit;}
         if(!\GDCS\Database::lock($key,50)){
             for($i=0;$i<20;$i++){usleep(150000);if(($hit=get_transient($key))!==false){$hit['cache']='coalesced';return $hit;}}
             if($can_stale&&($verified=get_transient($key.'_verified'))!==false){$verified['cache']='verified-stale';$verified['refresh_error']=['code'=>'request_coalescing','message'=>'A supplier refresh is in progress.','requestId'=>null];$verified['stale_until']=gmdate('c',strtotime($verified['expires_at'])+600);return $verified;}
@@ -81,7 +81,7 @@ final class Bridge {
             return $result;
         }catch(\GDCS\ApiException $e){
             self::log_error('storefront.catalog_failure',$e,$path);
-            if($can_stale&&$e->retryable&&($verified=get_transient($key.'_verified'))!==false){$verified['cache']='verified-stale';$verified['refresh_error']=self::error($e);$verified['stale_until']=gmdate('c',strtotime($verified['expires_at'])+600);return $verified;}
+            if($can_stale&&($e->retryable||in_array($e->reason,['cj_1600301','cj_1608002'],true))&&($verified=get_transient($key.'_verified'))!==false){$verified['cache']='verified-stale';$verified['refresh_error']=self::error($e);$verified['stale_until']=gmdate('c',strtotime($verified['expires_at'])+600);return $verified;}
             throw $e;
         }finally{\GDCS\Database::unlock($key);}
     }
@@ -183,6 +183,7 @@ final class Bridge {
         if(!preg_match('/^(?:[0-9]{8}|[0-9]{12}|[0-9]{13}|[0-9]{14})$/D',$value))return false;
         $sum=0;$weight=3;for($i=strlen($value)-2;$i>=0;$i--){$sum+=(int)$value[$i]*$weight;$weight=$weight===3?1:3;}return (10-$sum%10)%10===(int)substr($value,-1);
     }
+    static function stock_snapshot(string $vid): ?array {$cached=get_transient('smcj_'.md5('stock'.wp_json_encode(['vid'=>self::id($vid)])));return $cached!==false?$cached:null;}
     static function inventory(string $vid): array {
         $out=['variant'=>self::call('variant',['vid'=>self::id($vid)]),'stock'=>self::call('stock',['vid'=>$vid],true)];
         try{$v=$out['variant']['data'];$p=self::call('product',['pid'=>self::id($v['pid']??'')])['data'];$snap=(array)get_option('smcj_feed_snapshots',[]);
@@ -227,12 +228,13 @@ final class Bridge {
             $ip=(string)($_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['REMOTE_ADDR']??'');$budget='smcj_rate_'.md5($ip.gmdate('YmdHi'));$used=(int)get_transient($budget);if($used>=40)return new \WP_REST_Response(['code'=>'request_rate_limited','message'=>'Please wait before requesting more supplier data.'],429,['Retry-After'=>'60','Cache-Control'=>'no-store']);set_transient($budget,$used+1,70);
             if(in_array($name,['inventory','shipping'],true))set_transient('smcj_foreground_priority',true,45);
             $p=$r->get_params();if(($p['view']??'')==='suggest'){unset($p['view']);$p['features']=[];$p['size']=5;}
-            $result=match($name){'bootstrap'=>self::bootstrap(),'home'=>self::home((string)($p['countryCode']??'')),'listing'=>self::listing($p),'detail'=>self::detail(self::id($p['pid']??'')),'inventory'=>self::inventory(self::id($p['vid']??'')),'shipping'=>self::shipping((array)$r->get_json_params()),'supplier'=>self::supplier($p),'legacy'=>self::legacy($p),'feed'=>self::feed(),'sitemap'=>['products'=>array_values(array_filter((array)get_option('smcj_seen_products',[]),static fn($x)=>strtotime($x['checked_at']??'')>time()-DAY_IN_SECONDS))]};
-            return new \WP_REST_Response($result,200,['Cache-Control'=>$name==='inventory'||$name==='shipping'?'private,no-store':'public,max-age=60,s-maxage=180','X-Sasta-CJ'=>self::VERSION]);
+            $result=match($name){'bootstrap'=>self::bootstrap(),'home'=>self::home((string)($p['countryCode']??''),empty($_SERVER['HTTP_X_SASTA_HEALTHCHECK'])),'listing'=>self::listing($p),'detail'=>self::detail(self::id($p['pid']??'')),'inventory-snapshot'=>['stock'=>self::stock_snapshot(self::id($p['vid']??''))],'inventory'=>self::inventory(self::id($p['vid']??'')),'shipping'=>self::shipping((array)$r->get_json_params()),'supplier'=>self::supplier($p),'legacy'=>self::legacy($p),'feed'=>self::feed(),'sitemap'=>['products'=>array_values(array_filter((array)get_option('smcj_seen_products',[]),static fn($x)=>strtotime($x['checked_at']??'')>time()-DAY_IN_SECONDS))]};
+            return new \WP_REST_Response($result,200,['Cache-Control'=>in_array($name,['inventory','inventory-snapshot','shipping','feed'],true)?'private,no-store':'public,max-age=60,s-maxage=180','X-Sasta-CJ'=>self::VERSION]);
         }catch(\Throwable $e){return new \WP_REST_Response(self::error($e),$e instanceof \InvalidArgumentException?400:($e instanceof \OutOfBoundsException||$e instanceof \GDCS\ApiException&&in_array($e->reason,['cj_1602000','cj_1602001','cj_1602002','cj_1602003'],true)?404:503),['Cache-Control'=>'no-store','Retry-After'=>'30']);}
     }
     static function warm(): void {
         if((int)get_option('smcj_home_last_view',0)<time()-900)return;
+        $points=(array)get_option('gdcs_cj_points',[]);if(isset($points['remaining'])&&(int)$points['remaining']<max(1000,(int)(($points['total']??0)*0.1)))return;
         try{foreach(self::call('categories')['data'] as $first){
             if(get_transient('smcj_foreground_priority'))return;
             $ids=array_column((array)($first['categoryFirstList']??[]),'categorySecondId');if(!$ids)continue;
