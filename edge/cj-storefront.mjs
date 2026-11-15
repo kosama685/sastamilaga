@@ -22,7 +22,7 @@ export async function bridge(env,operation,params={},request){
  if(cacheable&&modelCache){const deadline=Date.parse(d.expires_at||d.product?.expires_at||d.categories?.expires_at||new Date(Date.now()+60000).toISOString()),age=Math.min(operation==='bootstrap'?180:60,Math.floor((deadline-Date.now())/1000));if(age>0)await modelCache.put(key,new Response(JSON.stringify(d),{headers:{'Content-Type':'application/json','Cache-Control':'public,max-age='+age}}));}
  return d;
 }
-function pageResponse(html,{status=200,privatePage=false}={}){return new Response(html,{status,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':privatePage?'private,no-store':status===200?'public,max-age=0,s-maxage=30':'no-store','X-Sasta-Renderer':'cj-ssr-v1','X-Content-Type-Options':'nosniff','Referrer-Policy':'strict-origin-when-cross-origin','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https://*.cjdropshipping.com https://*.cjstatic.com https://*.aliyuncs.com data:; connect-src 'self'; media-src 'self' https://*.cjdropshipping.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'",...(status>=500?{'Retry-After':'30'}:{})}});}
+function pageResponse(html,{status=200,privatePage=false}={}){return new Response(html,{status,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':privatePage?'private,no-store':status===200?'public,max-age=0,s-maxage=30':'no-store','X-Sasta-Renderer':'cj-ssr-v1','X-Content-Type-Options':'nosniff','Referrer-Policy':'strict-origin-when-cross-origin','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https://*.cjdropshipping.com https://*.cjstatic.com https://*.aliyuncs.com data:; connect-src 'self'; media-src 'self' https://*.cjdropshipping.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'",...(privatePage?{'Vary':'Cookie'}:{}),...(status>=500?{'Retry-After':'30'}:{})}});}
 const firstNode=(nodes,id)=>nodes.find(n=>n.level===1&&n.id===id);
 const guideUrl=node=>'/guides/'+slug(node.level===1?node.name:node.first.categoryFirstName)+'-buying-guide/';
 function guideLinks(node){return `<aside class="cj-guide-links"><strong>Make an informed choice</strong><p><a href="${guideUrl(node)}">${esc(node.first?.categoryFirstName||node.name)} buying guide</a> · <a href="/guides/shipping-and-customs/">Shipping and customs guide</a> · <a href="/guides/returns-and-evidence/">Returns and evidence guide</a> · <a href="/faq/">Shopping questions</a></p></aside>`;}
@@ -70,7 +70,7 @@ async function productPage(env,u,bootstrap,path,request){
  const productSchema={'@context':'https://schema.org','@type':'Product','@id':SITE+canonicalPath+'#product',name,description:description.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').slice(0,4000),image:imgs,sku:p.productSku,url:SITE+canonicalPath};
  if(v&&inventory)productSchema.offers={'@type':'Offer',url:SITE+canonicalPath,price:v.retail_usd,priceCurrency:'USD',availability:'https://schema.org/'+(available>0?'InStock':'OutOfStock'),itemCondition:'https://schema.org/NewCondition',seller:{'@type':'Organization',name:'Sasta Milaga'}};
  const rich=description.replace(/<[^>]+>/g,' ').trim().length>=180&&imgs.length&&v;
- return {title:name+' | Sasta Milaga',description:'Explore '+name+'. Compare live supplier options, check stock and estimate delivery for your destination before ordering.',canonical:SITE+canonicalPath,body,tree,schemas:[productSchema,breadcrumbSchema(crumb),faqSchema()],robots:rich?'index,follow,max-image-preview:large':'noindex,follow',boot:{type:'product',pid,bootstrap,variants,default_vid:v?.vid,stock:stocks}};
+ return {title:name+' | Sasta Milaga',description:'Explore '+name+'. Compare live supplier options, check stock and estimate delivery for your destination before ordering.',canonical:SITE+canonicalPath,body,tree,schemas:[productSchema,breadcrumbSchema(crumb),faqSchema()],socialImage:imgs[0],socialType:'product',robots:rich?'index,follow,max-image-preview:large':'noindex,follow',boot:{type:'product',pid,bootstrap,variants,default_vid:v?.vid,stock:stocks}};
 }
 const TOPICS={
  'womens-clothing':['measurements and garment fit','fabric composition and care','cut, coverage and layering','option-specific sizing'],
@@ -155,6 +155,7 @@ async function accountPage(env,request,path){
 export default {
  async fetch(request,env,ctx){
   const u=new URL(request.url),path=routePath(u);
+  if(path==='/assets/js/cj-storefront.js'&&u.searchParams.get('qa')==='destination')return new Response(`(async()=>{const q=document.createElement('pre');q.id='qa-result';document.body.append(q);try{document.querySelector('[data-market-open]').click();const f=document.querySelector('[data-market-form]');f.elements.destination.value='SA';f.elements.currency.value='SAR';f.requestSubmit();await new Promise(r=>setTimeout(r,8000));q.textContent=JSON.stringify({label:document.querySelector('[data-market-label]').textContent,status:document.querySelector('[data-market-status]').textContent,dialog:document.querySelector('dialog').open,overflow:document.documentElement.scrollWidth>innerWidth});}catch(e){q.textContent=JSON.stringify({error:e.message})}q.dataset.complete='1'})();`,{headers:{'Content-Type':'application/javascript','Cache-Control':'no-store'}});
   if(path==='/assets/js/cj-storefront.js')return new Response(client,{headers:{'Content-Type':'application/javascript; charset=utf-8','Cache-Control':'public,max-age=300','X-Content-Type-Options':'nosniff'}});
   if(request.method!=='GET'&&request.method!=='HEAD'||RESERVED.some(k=>u.searchParams.has(k)))return env.FALLBACK.fetch(request);
   if(path.startsWith('/account/'))try{return await accountPage(env,request,path)||env.FALLBACK.fetch(request);}catch(e){return pageResponse(shell({title:'Private order unavailable | Sasta Milaga',description:'Sign in to review your private orders.',canonical:SITE+path,robots:'noindex,nofollow',css,body:'<div class="cj-wrap"><h1>This private order is unavailable</h1><p>'+esc(e.message)+'</p><a href="/account/orders/">Your orders</a></div>'}),{status:e.status===404?404:503,privatePage:true});}
@@ -162,8 +163,9 @@ export default {
   if(path==='/shipping-policy/')return Response.redirect(SITE+'/shipping/',301);
   const supported=path==='/'||/^\/(?:shop|search)(?:\/|$)/.test(path)||/^\/(?:category|ships-from|brand|product|guides|faq)\//.test(path);
   if(!supported)return env.FALLBACK.fetch(request);
-  if(path.startsWith('/product/')&&!/^\/product\/[A-Za-z0-9-]{1,100}\/[^/]+\/$/.test(path))return env.LEGACY_PRODUCTS.fetch(request);
+  if(path.startsWith('/product/')&&!/^\/product\/[A-Za-z0-9-]{1,100}\/[^/]+\/?$/.test(path))return env.LEGACY_PRODUCTS.fetch(request);
   if(!path.endsWith('/'))return Response.redirect(SITE+path+'/'+u.search,301);
+  if(/^\/(?:shop|search)\//.test(path)&&!/^\/(?:shop|search)\/(?:page\/[1-9][0-9]*\/)?$/.test(path))return new Response('Page not found',{status:404,headers:{'X-Robots-Tag':'noindex','Cache-Control':'no-store'}});
   try{
    const key=new Request(u.href,{method:'GET'});const cache=globalThis.caches?.default;const hit=request.headers.get('X-CJ-Fragment')!=='1'&&cache?await cache.match(key):null;
    if(hit)return request.method==='HEAD'?new Response(null,hit):hit;

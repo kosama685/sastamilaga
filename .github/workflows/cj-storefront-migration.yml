@@ -4,7 +4,7 @@ on:
     inputs:
       stage:
         type: choice
-        options: [preview, production]
+        options: [preview, production, rollback]
         default: preview
         description: Isolated preview first, then production routes
 permissions:
@@ -25,6 +25,7 @@ jobs:
           node --check edge/cj-storefront.mjs
           node --test tools/cj-storefront.test.mjs
           php tools/cj-validator-test.php
+          php tools/cj-contract-test.php
       - name: Deploy without modifying checkout services
         env:
           CJ_STAGE: ${{ inputs.stage }}

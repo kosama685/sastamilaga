@@ -63,6 +63,7 @@ final class Bridge {
         if(!isset(self::OPS[$op]))throw new \InvalidArgumentException('Unsupported operation.');
         [$path,$method,$required,$ttl,$access]=self::OPS[$op];
         foreach($required as $key)if(!isset($params[$key])||$params[$key]===''||$params[$key]===[])throw new \InvalidArgumentException('Missing '.$key.'.');
+        self::validate_operation($op,$params);
         if($op==='list')$params=self::listing_params($params);
         ksort($params);$key='smcj_'.md5($op.wp_json_encode($params));
         if(!$fresh&&$ttl&&($hit=get_transient($key))!==false){$hit['cache']='hit';return $hit;}
@@ -100,6 +101,18 @@ final class Bridge {
         foreach([['startSellPrice','endSellPrice'],['startWarehouseInventory','endWarehouseInventory'],['timeStart','timeEnd']] as [$a,$b])if(isset($out[$a],$out[$b])&&(float)$out[$a]>(float)$out[$b])throw new \InvalidArgumentException('Minimum must not exceed maximum.');
         if((int)$out['page']*(int)$out['size']>6000)throw new \InvalidArgumentException('This search is capped at 6,000 records. Narrow the category or listing dates.');
         return $out;
+    }
+    static function validate_operation(string $op,array $p): void {
+        foreach(['pid','vid','orderId','disputeId','shipmentOrderId','businessDisputeId','orderCode','id'] as $key)if(isset($p[$key]))self::id($p[$key]);
+        if(strlen(wp_json_encode($p))>65536)throw new \InvalidArgumentException('The supplier request is too large.');
+        if(isset($p['orderNumber'])&&(!is_scalar($p['orderNumber'])||strlen((string)$p['orderNumber'])>50))throw new \InvalidArgumentException('Order numbers must be 50 characters or fewer.');
+        foreach(['countryCode','startCountryCode','endCountryCode','destCountryCode','fromCountryCode','shippingCountryCode'] as $k)if(isset($p[$k])&&(!is_string($p[$k])||!preg_match('/^[A-Z]{2}$/D',$p[$k])))throw new \InvalidArgumentException('Invalid country code in '.$k.'.');
+        if(isset($p['products'])){if(!is_array($p['products'])||count($p['products'])>100)throw new \InvalidArgumentException('Use at most 100 product lines.');foreach($p['products'] as $line){self::id($line['vid']??'');$q=filter_var($line['quantity']??0,FILTER_VALIDATE_INT);if(!$q||$q<1||$q>100)throw new \InvalidArgumentException('Use a quantity between 1 and 100.');}}
+        if(isset($p['shippingMode'])&&(int)$p['shippingMode']===1&&empty($p['platforms']))throw new \InvalidArgumentException('Platform logistics requires platforms.');
+        if(isset($p['reqDTOS'])){if(!is_array($p['reqDTOS'])||!$p['reqDTOS']||count($p['reqDTOS'])>20)throw new \InvalidArgumentException('Choose 1 to 20 shipping groups.');foreach($p['reqDTOS'] as $i=>$row){foreach(['weight','volume'] as $field)if(!isset($row[$field])||!is_numeric($row[$field])||!is_finite((float)$row[$field])||(float)$row[$field]<=0)throw new \InvalidArgumentException('reqDTOS['.$i.'].'.$field.' must be greater than 0.');foreach(['srcAreaCode','destAreaCode'] as $field)if(!preg_match('/^[A-Z]{2}$/D',(string)($row[$field]??'')))throw new \InvalidArgumentException('Missing valid '.$field.'.');if(empty($row['productProp']))throw new \InvalidArgumentException('Supplier logistics properties are required.');}}
+        if(isset($p['trackNumbers'])&&(!is_array($p['trackNumbers'])||count($p['trackNumbers'])<1||count($p['trackNumbers'])>10))throw new \InvalidArgumentException('Use 1 to 10 tracking numbers.');
+        foreach([['startDate','endDate',90],['updateDateFrom','updateDateTo',31]] as [$start,$end,$days])if(isset($p[$start])||isset($p[$end])){if(!isset($p[$start],$p[$end])||!is_numeric($p[$start])||!is_numeric($p[$end])||(float)$p[$end]<(float)$p[$start]||(float)$p[$end]-(float)$p[$start]>$days*86400000)throw new \InvalidArgumentException('Use paired dates within '.$days.' days.');}
+        if($op==='dispute-create'&&(!in_array((int)$p['expectType'],[1,2],true)||!in_array((int)$p['refundType'],[1,2],true)||!is_string($p['messageText'])||mb_strlen($p['messageText'])>500))throw new \InvalidArgumentException('Choose valid dispute options and a message of up to 500 characters.');
     }
     static function price(float $usd): ?float {
         if($usd<=0)return null;
@@ -165,7 +178,7 @@ final class Bridge {
         return ['simple'=>$simple,'accurate'=>$accurate,'accurate_error'=>$accurate_error,'origin'=>$origin,'country'=>$dest,'stock'=>$inventory['stock'],'fees_included'=>false];
     }
     static function error(\Throwable $e): array {
-        $trace=self::trace();return ['code'=>$e instanceof \GDCS\ApiException?$e->reason:($e instanceof \InvalidArgumentException?'invalid_input':'supplier_unavailable'),'message'=>$e instanceof \InvalidArgumentException?$e->getMessage():'Supplier data could not be verified. Retry shortly or contact support with this reference.','requestId'=>$trace['request_id']??null];
+        $trace=$e instanceof \GDCS\ApiException?self::trace():[];return ['code'=>$e instanceof \GDCS\ApiException?$e->reason:($e instanceof \InvalidArgumentException?'invalid_input':'supplier_unavailable'),'message'=>$e instanceof \InvalidArgumentException?$e->getMessage():'Supplier data could not be verified. Retry shortly or contact support with this reference.','requestId'=>$trace['request_id']??null];
     }
     static function response(string $name,$r){
         try{
@@ -196,6 +209,7 @@ final class Bridge {
     }
     static function merchant($r){
         try{
+            if(!current_user_can('manage_woocommerce'))throw new \InvalidArgumentException('Store management permission is required.');
             $op=(string)$r['operation'];if(!isset(self::OPS[$op]))throw new \InvalidArgumentException('Unknown operation.');
             $params=(array)($r->get_json_params()['params']??[]);
             if(self::OPS[$op][1]!=='GET'&&$r->get_method()!=='POST')throw new \InvalidArgumentException('Use the confirmed action form.');
@@ -218,7 +232,7 @@ final class Bridge {
         catch(\GDCS\ApiException $e){$attempts[]=['version'=>$op,'error'=>$e->reason,'requestId'=>self::trace()['request_id']??null];
             // Only an explicit V3 parameter rejection proves that no order was accepted.
             if($op!=='create-v3'||$e->reason!=='cj_1600100'){update_option($key,['state'=>'reconcile','attempts'=>$attempts,'at'=>time()],false);throw $e;}
-            $r=self::call('create-v2',$p,true);$attempts[]=['version'=>'create-v2','requestId'=>$r['requestId']];
+            try{$r=self::call('create-v2',$p,true);$attempts[]=['version'=>'create-v2','requestId'=>$r['requestId']];}catch(\Throwable $fallback){$attempts[]=['version'=>'create-v2','error'=>$fallback->getMessage(),'requestId'=>self::trace()['request_id']??null];update_option($key,['state'=>'reconcile','attempts'=>$attempts,'at'=>time()],false);throw $fallback;}
         }
         update_option($key,['state'=>'created','orderId'=>$r['data']['orderId']??null,'attempts'=>$attempts,'at'=>time()],false);$r['attempts']=$attempts;return $r;
     }
