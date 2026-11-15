@@ -24,6 +24,7 @@ function boot(country,currency,manifest=true) {
  window.SM_CJ=manifest?{cats:[{s:'garden-tools',n:'Garden Tools',img:'https://example.com/tools.jpg'}]}:null;
  const stack=document.querySelector('[data-fill="stack"]');
  stack.innerHTML='<a class="sm-stack__card" href="p/local.html">Local item</a>';
+ document.getElementById('home-view').insertAdjacentHTML('beforeend','<a id="normalized-shop-test" href="/shop/" data-route="shop">Shop</a>');
  vm.runInNewContext(source,context);
  document.dispatchEvent(new window.Event('DOMContentLoaded'));
  return {document,window,callbacks};
@@ -41,6 +42,8 @@ for(const [country,currency,name] of [['SA','SAR','Saudi Arabia'],['AE','AED','U
    assert.match(d.querySelector('[data-fill="stack"] a').href,/\/c\/global\/garden-tools.html$/);
    assert.match(d.querySelector('.sm-hero a[href]')?.href || d.querySelector('a[href="https://sastamilaga.com/c/global/index.html"]').href,/c\/global\/index.html/);
    assert.match(w.SMMarket.experience(country,currency).payment,/prepaid/);
+   assert.equal(d.getElementById('normalized-shop-test').getAttribute('data-route'),null);
+   assert.match(d.getElementById('normalized-shop-test').href,/c\/global\/index.html$/);
   } else assert.equal(d.querySelector('[data-fill="stack"] a').getAttribute('href'),'p/local.html');
   assert.equal(d.querySelector('link[rel="canonical"]').href,'https://sastamilaga.com/');
  });
@@ -59,6 +62,8 @@ test('same page can return from Saudi Arabia to Pakistan without stale copy or l
  assert.equal(d.querySelector('[data-fill="stack"] a').getAttribute('href'),'p/local.html');
  assert.equal(d.querySelector('[data-fill="cats"]').hidden,false);
  assert.ok(d.querySelector('a[href="shop/"]'));
+ assert.equal(d.getElementById('normalized-shop-test').getAttribute('data-route'),'shop');
+ assert.equal(d.getElementById('normalized-shop-test').getAttribute('href'),'/shop/');
 });
 test('homepage has raw canonical, factual schema and crawlable help links',()=>{
  const {document:d}=parseHTML(html);
@@ -74,4 +79,11 @@ test('global directory links load the real index instead of an invented category
  vm.runInNewContext(fn,context);
  assert.equal(context.cleanToRoute('/c/global/index.html'),null);
  assert.equal(context.cleanToRoute('/c/global/garden-tools.html'),'global/c/garden-tools');
+});
+test('every supported international destination avoids Pakistan-store and COD promises',()=>{
+ const {window:w}=boot('SA','SAR');
+ for(const [country,currency] of Object.entries(w.SMMarket.currencies)){
+  const view=w.SMMarket.experience(country,currency);
+  if(country!=='PK')for(const key of ['title','trust','lead','order','payment','cta'])assert.doesNotMatch(view[key],/Pakistan|cash on delivery/i,country+': '+key);
+ }
 });

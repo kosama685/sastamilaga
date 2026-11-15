@@ -216,8 +216,10 @@
   function paintHeader() {
     document.querySelectorAll('[data-gdcs-market]').forEach(function (b) {
       var c = b.querySelector('.gdcs-market-trigger__country'), u = b.querySelector('.gdcs-market-trigger__currency'), f = b.querySelector('.gdcs-flag'), s = b.querySelector('.gdcs-market-trigger__separator');
-      if (c) c.textContent = cname(state.country); if (u) u.textContent = state.currency; if (s) s.textContent = ' · ';
-      if (f) f.innerHTML = flag(state.country, 32);
+      if (c && c.textContent !== cname(state.country)) c.textContent = cname(state.country);
+      if (u && u.textContent !== state.currency) u.textContent = state.currency;
+      if (s && s.textContent !== ' · ') s.textContent = ' · ';
+      if (f && f.dataset.marketCountry !== state.country) { f.innerHTML = flag(state.country, 32); f.dataset.marketCountry = state.country; }
       b.setAttribute('aria-label', 'Shopping destination: ' + cname(state.country) + ', ' + state.currency + '. Change country, language or currency');
     });
     document.documentElement.classList.toggle('sm-abroad', state.country !== 'PK');
@@ -312,7 +314,7 @@
     paintHeader();
     document.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('[data-gdcs-market], [data-gdl-header-language], [data-gdl-header-currency]'); if (t) { e.preventDefault(); e.stopPropagation(); open(); } }, true);
     // Always watch for newly rendered prices; convertIn() does nothing while the currency is PKR or rates are not loaded.
-    var queued = false, again = function () { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; convertIn(document); convertTagged(document); localiseText(document.body); destinationHome(); }); };
+    var queued = false, again = function () { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; paintHeader(); convertIn(document); convertTagged(document); localiseText(document.body); destinationHome(); }); };
     localiseText(document.body); destinationHome();
     if (document.querySelector('.gdcs-converted-price[data-currency]')) getRates().then(again).catch(function () {});
     new MutationObserver(function (m) { for (var i = 0; i < m.length; i++) if (m[i].addedNodes.length) { again(); break; } }).observe(document.body, { childList: true, subtree: true });
@@ -351,7 +353,7 @@
     '@media (max-width:820px){.sm-mk{border-radius:20px;overflow:auto}.sm-mk[open]{display:block}.sm-mk__body{grid-template-columns:1fr;overflow:visible}.sm-mk__left{border-right:0;border-bottom:1px solid #e6eee9}.sm-mk__head{padding:20px;gap:14px}.sm-mk__globe{width:56px;height:56px}.sm-mk__globe svg{width:30px;height:30px}.sm-mk__left,.sm-mk__right{padding:20px}.sm-mk__list{max-height:260px}}' +
     '@media (prefers-reduced-motion:reduce){.sm-mk *{transition:none!important}}';
   document.head.appendChild(css);
-  css.textContent += '#home-view [data-market-local-home][hidden]{display:none!important}.sm-abroad #home-view .sm-cat-total{display:none!important}.sm-auto{position:fixed;z-index:99990;left:50%;top:12px;transform:translateX(-50%);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;max-width:min(760px,calc(100vw - 24px));padding:10px 14px;border-radius:14px;background:#11261b;color:#fff;font-size:14px;line-height:1.45;box-shadow:0 12px 30px rgba(9,46,30,.35)}' +
+  css.textContent += '#home-view [data-market-local-home][hidden],.smh-search__cat[hidden],#home-view .sm-stack[hidden]{display:none!important}.sm-abroad #home-view .sm-cat-total{display:none!important}.sm-auto{position:fixed;z-index:99990;left:50%;top:12px;transform:translateX(-50%);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;max-width:min(760px,calc(100vw - 24px));padding:10px 14px;border-radius:14px;background:#11261b;color:#fff;font-size:14px;line-height:1.45;box-shadow:0 12px 30px rgba(9,46,30,.35)}' +
     '.sm-auto button{min-height:34px;padding:0 14px;border:0;border-radius:999px;font:600 13px/1 inherit;cursor:pointer;background:#fff;color:#11261b}.sm-auto button[data-a="change"]{background:transparent;color:#bfeedd;text-decoration:underline}.sm-auto button:focus-visible{outline:3px solid #ffc439;outline-offset:2px}' +
     '@media (max-width:820px){.sm-auto{top:auto;bottom:calc(86px + env(safe-area-inset-bottom));}}';
   window.SMMarket = { open: open, state: function () { return state; }, convert: convertIn, list: function () { return COUNTRIES.slice(); }, detect: geoCountry, browserLang: browserLang, countryName: cname, flag: flag, currencies: CUR, experience: experience };
