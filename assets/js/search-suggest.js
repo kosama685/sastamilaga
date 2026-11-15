@@ -54,7 +54,10 @@
   window.SMCJSearch = { words: words, rank: rank, products: products, manifest: manifest, index: index };
 
   /* ---------------- dropdown UI ---------------- */
-  var CSS = '.smss{position:absolute;z-index:99990;inset-inline-start:0;width:max(100%,min(560px,94vw));top:calc(100% + 6px);max-height:min(78vh,640px);overflow:auto;border-radius:16px;background:#fff;color:#1c2b22;border:1px solid rgba(15,122,59,.18);box-shadow:0 26px 50px -22px rgba(11,59,32,.55),0 4px 12px rgba(11,59,32,.12);padding:6px;text-align:start;font:400 14px/1.45 system-ui,sans-serif}'
+  /* The header main bar and navigation bar are sibling stacking contexts.
+     Raise only the search bar while its suggestions are visible. */
+  var CSS = '.smh-main.smss-open{z-index:5}.smh-main.smss-open .smh-search{position:relative;z-index:1}'
+    + '.smss{position:absolute;z-index:99990;inset-inline-start:0;width:max(100%,min(560px,94vw));top:calc(100% + 6px);max-height:min(78vh,640px);overflow:auto;border-radius:16px;background:#fff;color:#1c2b22;border:1px solid rgba(15,122,59,.18);box-shadow:0 26px 50px -22px rgba(11,59,32,.55),0 4px 12px rgba(11,59,32,.12);padding:6px;text-align:start;font:400 14px/1.45 system-ui,sans-serif}'
     + '.smss[hidden]{display:none}.smss h3{margin:10px 10px 4px;font:800 11px/1.2 system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5a6f61}'
     + '.smss ul{list-style:none;margin:0;padding:0}.smss a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;color:inherit;text-decoration:none}'
     + '.smss a:hover,.smss a[aria-selected=true]{background:#EAF6EE}.smss a:focus-visible{outline:3px solid #FF8A00;outline-offset:-3px}'
@@ -65,6 +68,7 @@
   function init() {
     var input = document.getElementById('smh-q'); if (!input || input.dataset.smss) return; input.dataset.smss = '1';
     var form = input.closest('form'); if (!form) return;
+    var headerMain = form.closest('.smh-main');
     var st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
     if (getComputedStyle(form).position === 'static') form.style.position = 'relative';
     var box = document.createElement('div'); box.className = 'smss'; box.id = 'smss-box'; box.hidden = true; box.setAttribute('role', 'listbox'); box.setAttribute('aria-label', 'Search suggestions'); form.appendChild(box);
@@ -79,7 +83,7 @@
     var token = 0, timer = null, cur = -1;
     var hl = function (text, ws) { var s = esc(text); ws.forEach(function (w) { s = s.replace(new RegExp('(' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig'), '<mark>$1</mark>'); }); return s; };
     var opts = function () { return Array.prototype.slice.call(box.querySelectorAll('a[role=option]')); };
-    function close() { box.hidden = true; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); cur = -1; }
+    function close() { box.hidden = true; if (headerMain) headerMain.classList.remove('smss-open'); input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); cur = -1; }
     function mark(i) { var o = opts(); if (!o.length) return; cur = (i + o.length) % o.length; o.forEach(function (a, k) { a.setAttribute('aria-selected', k === cur ? 'true' : 'false'); }); input.setAttribute('aria-activedescendant', o[cur].id); o[cur].scrollIntoView({ block: 'nearest' }); }
     function paint(q, ws, parts) {
       var n = 0, id = function () { return 'smss-o' + (n++); };
@@ -91,7 +95,7 @@
       if (parts.loading) html += '<p class="st" role="status">Searching the global catalogue…</p>';
       else if (!n) html += '<p class="st" role="status">No suggestions yet. Press Enter to search everything.</p>';
       html += '<div class="all"><a role="option" id="' + id() + '" href="' + esc(L.search(q)) + '">See all results for “' + esc(q) + '”</a></div>';
-      box.innerHTML = html; box.hidden = false; input.setAttribute('aria-expanded', 'true'); cur = -1;
+      box.innerHTML = html; box.hidden = false; if (headerMain) headerMain.classList.add('smss-open'); input.setAttribute('aria-expanded', 'true'); cur = -1;
     }
     function run() {
       var q = input.value.trim(), ws = words(q); if (q.length < 2 || !ws.length) { close(); return; }
