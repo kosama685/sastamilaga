@@ -35,6 +35,10 @@
       return { ok: false, status: x.r.status, message: plain(x.j && x.j.message) || 'The cart could not be updated.', reason: (x.j && x.j.code) || 'error' };
     });
   }
+  /* Read-only SKU availability for CJ option dialogs. Does not create or price products. */
+  W.hasSKU = function (sku) {
+    return loadIds().then(function (map) { return Boolean(map && map[String(sku)]); }).catch(function () { return null; });
+  };
   W.sync = syncContext;
   // The store answers in 2-10 seconds, so everything a click needs is prepared in the background first (in this order: the country decides the session).
   W.warm = function () { return loadIds().then(function () { return syncContext(); }).then(function () { return getNonce(false); }).catch(function () {}); };
