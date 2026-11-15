@@ -506,6 +506,14 @@
     };
     go();
   }
+  /* Clean-URL static pages were exported before the video module existed.
+     Load the same additive card player there; homepage has an explicit deferred tag. */
+  if (![...document.scripts].some(el=>/\/cj-card-video\.js(?:\?|$)/.test(el.src||''))) {
+    const videoScript=document.createElement('script');
+    videoScript.src=new URL('assets/js/cj-card-video.js?v=20261115-1',document.baseURI).href;
+    videoScript.dataset.smCjCardVideo='1';
+    document.head.appendChild(videoScript);
+  }
   window.SMGlobal = {
     searchBlock, shard,
     route(parts, qs) {
