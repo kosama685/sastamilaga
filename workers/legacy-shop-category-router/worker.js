@@ -9,7 +9,7 @@ export default { async fetch(request,env) {
     if(match) {
       const slug=match[1].toLowerCase();
       const destination=GLOBAL.has(slug)?'/c/global/'+slug+'.html':LOCAL.has(slug)?'/c/'+slug+'.html':null;
-      if(destination)return new Response(null,{status:301,headers:{Location:url.origin+destination+url.search,'Cache-Control':'public,max-age=3600,s-maxage=86400','X-Sasta-Route':'verified-category-alias'}});
+      if(destination)return new Response(null,{status:301,headers:{Location:'https://sastamilaga.com'+destination+url.search,'Cache-Control':'public,max-age=3600,s-maxage=86400','X-Sasta-Route':'verified-category-alias'}});
     }
   }
   /* Unmatched paths retain the existing site behaviour, not a broad homepage redirect. */
