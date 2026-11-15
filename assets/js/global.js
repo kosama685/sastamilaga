@@ -337,6 +337,23 @@
     const fromWp = d => ({ variants: ((d && d.options) || []).map(o => { const m = /([A-Z]{3})\s*([\d.,]+)/.exec(o.price_label || ''); const usd = m && RATE[m[1]] ? parseFloat(m[2].replace(/,/g, '')) * RATE[m[1]] : (r[3] || 0) * MARGIN; return { vid: o.vid, name: o.name, key: o.name, sku: o.sku, image: o.image || '', price: usd / MARGIN, label: m ? o.price_label : '' }; }) });   /* a label without a price (feed down) is dropped: the tile shows the catalogue estimate, refined below from the supplier price */
     (W ? fetchRetry(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`, 2).then(x => x.json()).then(d => { if (!d || !Array.isArray(d.variants)) throw new Error('Invalid supplier options'); return d; }) : (window.SMWoo && window.SMWoo.active ? window.SMWoo.sync() : Promise.resolve()).then(() => fetchRetry(`${(window.SMWoo && window.SMWoo.active ? (() => { try { return new URL(C.wpApi).pathname; } catch (e) { return C.wpApi; } })() : C.wpApi).replace(/\/$/, '')}/live/options/${encodeURIComponent(r[0])}`).then(x => { if (!x.ok) throw new Error(x.status); return x.json(); }).then(fromWp))).then(d => {
       const list = (d && d.variants) || [];
+      /* Additive live-supplier transparency: never alters existing PDP sections or purchase flow. */
+      if (list.length) {
+        const tabs = document.querySelector('.sm-tabs');
+        if (tabs && !document.getElementById('sm-cj-verified')) {
+          const section = document.createElement('section');
+          section.id = 'sm-cj-verified';
+          section.className = 'sm-tabs';
+          section.setAttribute('aria-labelledby', 'sm-cj-verified-title');
+          section.style.cssText = 'margin-top:20px;padding:18px 20px;border:1px solid #dbe9df;border-radius:16px;background:#f5faf6';
+          const count = list.length;
+          const noun = count === 1 ? 'option' : 'options';
+          section.innerHTML = '<h2 id="sm-cj-verified-title" style="margin:0 0 8px;font-size:1.15rem;color:#0b3b20">Supplier options verified</h2>'
+            + '<p style="margin:0 0 7px">' + count + ' ' + noun + ' returned by the connected supplier service for this product.</p>'
+            + '<p style="margin:0;font-size:.88rem;color:#4c5b52">Choose an option above for its current supplier estimate. Stock, destination-specific shipping and final payable amount require separate confirmation; this is not a stock guarantee.</p>';
+          tabs.insertAdjacentElement('afterend', section);
+        }
+      }
       if (!list.length) { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">No supplier variations are currently available. Please confirm the exact option before ordering.</p>'; return; }
       if (list.length === 1) {
         box.innerHTML = `<legend>Option</legend><p class="sm-var__one"><b>${esc(list[0].key || list[0].name)}</b> <small>SKU ${esc(maskSku(list[0].sku))}</small></p>`; pick(list[0]); return;
