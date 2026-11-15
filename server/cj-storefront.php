@@ -185,10 +185,10 @@ final class Bridge {
     }
 
     static function shipping(array $p): array {
-        $vid=self::id($p['vid']??'');$qty=filter_var($p['quantity']??1,FILTER_VALIDATE_INT);if(!$qty||$qty>100)throw new \InvalidArgumentException('Choose 1 to 100 items.');
+        $vid=self::id($p['vid']??'');$qty=filter_var($p['quantity']??1,FILTER_VALIDATE_INT);if(!$qty||$qty<1||$qty>100)throw new \InvalidArgumentException('Choose 1 to 100 items.');
         $inventory=self::inventory($vid);$v=$inventory['variant']['data'];$stock=$inventory['stock']['data'];$origin=\GDCS\VirtualCheckout::available_origin($stock,$qty,(string)($p['origin']??''));
         $dest=strtoupper((string)($p['country']??''));if(!isset(WC()->countries->get_countries()[$dest]))throw new \InvalidArgumentException('Choose a destination.');
-        $simple=self::call('freight',['startCountryCode'=>$origin,'endCountryCode'=>$dest,'zip'=>sanitize_text_field($p['zip']??''),'products'=>[['vid'=>$vid,'quantity'=>$qty]]]);
+        $simple_error=null;try{$simple=self::call('freight',['startCountryCode'=>$origin,'endCountryCode'=>$dest,'zip'=>sanitize_text_field($p['zip']??''),'products'=>[['vid'=>$vid,'quantity'=>$qty]]]);}catch(\Throwable $e){$simple_error=self::error($e);$simple=['data'=>[]];}
         $detail=self::call('product',['pid'=>self::id($v['pid']??$p['pid']??'')]);$prod=$detail['data'];
         $weight=(float)($v['variantWeight']??0);$volume=(float)($v['variantVolume']??0);$prop=$prod['productProEnSet']??[];if(is_string($prop))$prop=json_decode($prop,true)?:array_filter(explode(',',$prop));
         $accurate=null;$accurate_error=null;
@@ -196,7 +196,8 @@ final class Bridge {
             $row=['srcAreaCode'=>$origin,'destAreaCode'=>$dest,'weight'=>$weight*$qty,'volume'=>$volume*$qty,'productProp'=>array_values($prop),'totalGoodsAmount'=>(float)($v['variantSellPrice']??0)*$qty,'freightTrialSkuList'=>[['skuQuantity'=>$qty,'sku'=>$v['variantSku']??'']]];
             try{$accurate=self::call('freight-accurate',['reqDTOS'=>[$row]]);}catch(\Throwable $e){$accurate_error=self::error($e);}
         }else $accurate_error=['code'=>'missing_supplier_shipping_properties','message'=>'An accurate quote requires supplier weight, volume and logistics properties. The simple quote is shown separately.','requestId'=>$detail['requestId']];
-        return ['simple'=>$simple,'accurate'=>$accurate,'accurate_error'=>$accurate_error,'origin'=>$origin,'country'=>$dest,'stock'=>$inventory['stock'],'fees_included'=>false];
+        $diagnostics=null;if(empty($simple['data'])&&isset($row))try{$diagnostics=self::call('freight-diagnostics',['reqDTOS'=>[$row]]);}catch(\Throwable $e){$diagnostics=['error'=>self::error($e)];}
+        return ['simple'=>$simple,'simple_error'=>$simple_error,'diagnostics'=>$diagnostics,'accurate'=>$accurate,'accurate_error'=>$accurate_error,'origin'=>$origin,'country'=>$dest,'stock'=>$inventory['stock'],'fees_included'=>false];
     }
     static function error(\Throwable $e): array {
         $trace=$e instanceof \GDCS\ApiException?self::trace():[];return ['code'=>$e instanceof \GDCS\ApiException?$e->reason:($e instanceof \InvalidArgumentException?'invalid_input':'supplier_unavailable'),'message'=>$e instanceof \InvalidArgumentException?$e->getMessage():'Supplier data could not be verified. Retry shortly or contact support with this reference.','requestId'=>$trace['request_id']??null];

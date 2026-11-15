@@ -40,16 +40,19 @@ scoped_guard="""        if (in_array($path,['product/list','logistic/getTrackInf
 if guard in after:after=after.replace(guard,scoped_guard)
 elif '$confirmed_settlement=' not in after:raise RuntimeError('Supplier settlement guard changed; no deployment performed')
 bridge=(ROOT/'server/cj-storefront.php').read_bytes().replace(b'\r\n',b'\n')
+newsletter=(ROOT/'server/cj-newsletter.php').read_bytes().replace(b'\r\n',b'\n')
 account=(ROOT/'server/cj-account.php').read_bytes().replace(b'\r\n',b'\n')
 remote('mkdir -p '+PRIVATE+' && chmod 700 '+PRIVATE)
 remote('cat > '+PRIVATE+'/api-reviewed.php',after.encode())
 remote('cat > '+PRIVATE+'/bridge-reviewed.php',bridge)
 remote('cat > '+PRIVATE+'/account-reviewed.php',account)
+remote('cat > '+PRIVATE+'/newsletter-reviewed.php',newsletter)
 script=f'''set -eu
 php_bin=/opt/alt/php82/usr/bin/php
 "$php_bin" -l {PRIVATE}/api-reviewed.php
 "$php_bin" -l {PRIVATE}/bridge-reviewed.php
 "$php_bin" -l {PRIVATE}/account-reviewed.php
+"$php_bin" -l {PRIVATE}/newsletter-reviewed.php
 test -f {api_path}
 if ! test -f {PRIVATE}/Api.before.php; then cp -p {api_path} {PRIVATE}/Api.before.php; fi
 mkdir -p {ORIGIN}/wp-content/mu-plugins
@@ -63,6 +66,9 @@ mv -f {ORIGIN}/wp-content/mu-plugins/sasta-cj-storefront.php.sm-new {ORIGIN}/wp-
 cp {PRIVATE}/account-reviewed.php {ORIGIN}/wp-content/mu-plugins/sasta-cj-account.php.sm-new
 chmod 644 {ORIGIN}/wp-content/mu-plugins/sasta-cj-account.php.sm-new
 mv -f {ORIGIN}/wp-content/mu-plugins/sasta-cj-account.php.sm-new {ORIGIN}/wp-content/mu-plugins/sasta-cj-account.php
+cp {PRIVATE}/newsletter-reviewed.php {ORIGIN}/wp-content/mu-plugins/sasta-cj-newsletter.php.sm-new
+chmod 644 {ORIGIN}/wp-content/mu-plugins/sasta-cj-newsletter.php.sm-new
+mv -f {ORIGIN}/wp-content/mu-plugins/sasta-cj-newsletter.php.sm-new {ORIGIN}/wp-content/mu-plugins/sasta-cj-newsletter.php
 echo 'Additive CJ bridge deployed; checkout and credentials preserved.'
 '''
 print(remote('bash -s',script.encode()).decode())
