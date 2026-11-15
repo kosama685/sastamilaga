@@ -11,6 +11,7 @@ export const BASE='https://sastamilaga.com';
 export const SAMPLES=[
  {id:'cart',path:'/cart/',accept:[200],pattern:/Cart|basket|shopping/i},
  {id:'checkout',path:'/checkout/',accept:[200,301,302,303,307,308]},
+ {id:'bikini_screenshot_regression',path:'/global-shop/p/1374599998817308672/women-sexy-soild-print-bikini-set-push-up-bathing-swimwear/',accept:[200],pattern:/<link rel="canonical" href="https:\/\/sastamilaga\.com\/global-shop\/p\/1374599998817308672\//,requiredText:'Women Sexy Soild Print Bikini Set Push Up Bathing Swimwear'},
  {id:'canonical_shoe',path:'/global-shop/p/1830116277370114048/retro-square-heel-pointed-toe-ankle-boots-fashion-versatile-chelsea-boot-women-s-shoes/',accept:[200],pattern:/<link rel="canonical" href="https:\/\/sastamilaga\.com\/global-shop\/p\//},
  {id:'legacy_shoe',path:'/global/p/woman-boots/1830116277370114048/old-video-slug',accept:[301],location:'/global-shop/p/1830116277370114048/'},
  {id:'qualified_sitemap',path:'/sitemap-global-qualified.xml',accept:[200],pattern:/<sitemapindex\b/},
@@ -28,7 +29,7 @@ export async function probeAll(fetcher=fetch,base=BASE){
    else await r.body?.cancel();
   }catch(e){detail=e?.name==='TimeoutError'?'timeout':'network_exception';}
   duration=Date.now()-started;
-  const ok=x.accept.includes(code)&&(!x.pattern||x.pattern.test(body))&&(!x.location||location.startsWith(base+x.location)||location.startsWith(x.location));
+  const ok=x.accept.includes(code)&&(!x.pattern||x.pattern.test(body))&&(!x.location||location.startsWith(base+x.location)||location.startsWith(x.location))&&(!x.requiredText||body.includes(x.requiredText))&&!/This supplier product is unavailable|Catalog(?:ue)? temporarily unavailable/i.test(body);
   events.push({check:x.id,http_status:code,passed:ok,reason:detail||(!ok?'unexpected_response':''),location:x.id==='legacy_shoe'?location:undefined,duration_ms:duration});
  }
  return {created_utc:new Date().toISOString(),scope:'external_http_route_reachability_only',checks:events,passed:events.every(e=>e.passed),caveats:['HTTP 200 cart/checkout does not confirm session persistence, tax, freight, order placement or payment.','Cloudflare internal Worker fetch may fail even when an independent external probe is reachable.','This check does not query Google Search Console or Merchant Center.']};
