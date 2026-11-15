@@ -32,6 +32,10 @@ export default {
         if (origin && !allowed.includes(origin)) return json({ error: 'Origin not allowed' }, 403);
         return await homeCategories(env, ctx, json);
       }
+      if (url.pathname === '/api/cj/home-warehouses' && req.method === 'GET') {
+        if (origin && !allowed.includes(origin)) return json({ error: 'Origin not allowed' }, 403);
+        return await homeWarehouses(env, ctx, json);
+      }
       if (url.pathname === '/api/cj/home-rail' && req.method === 'GET') {
         if (origin && !allowed.includes(origin)) return json({ error: 'Origin not allowed' }, 403);
         return await homeRail(url.searchParams, env, ctx, json);
@@ -289,4 +293,29 @@ async function homeRail(search,env,ctx,json){
   products:[],count:0,requested:10,source:'CJ API 2.0',checkedAt:new Date().toISOString()};
  await store(key,empty,10*60,ctx);
  return json(empty);
+}
+
+export function normalizeCJHomeWarehouses(rows){
+ if(!Array.isArray(rows))return [];
+ const seen=new Set(),out=[];
+ for(const x of rows){
+  const code=String(x?.countryCode||'').toUpperCase();
+  if(x?.disabled===true||!/^[A-Z]{2}$/.test(code)||seen.has(code))continue;
+  const name=String(x.nameEn||x.areaEn||code).trim().slice(0,70);
+  seen.add(code);out.push({code,name});
+ }
+ return out.sort((a,b)=>a.name.localeCompare(b.name));
+}
+async function homeWarehouses(env,ctx,json){
+ const key='https://cache.internal/cj-home-warehouses-v1';
+ const hit=await cached(key);if(hit)return json(hit);
+ const tok=await token(env,ctx);
+ const {r,d}=await cj('/product/globalWarehouseList',{headers:{'CJ-Access-Token':tok}});
+ if(!r.ok||!(d.success===true||d.result===true)||!Array.isArray(d.data)){
+  console.error(JSON.stringify({event:'cj_home_warehouses_error',code:d.code,status:r.status,requestId:d.requestId||null,message:String(d.message||'').slice(0,140)}));
+  return json({error:'cj_warehouses_unavailable',requestId:d.requestId||null},503);
+ }
+ const out={countries:normalizeCJHomeWarehouses(d.data),source:'CJ API 2.0',checkedAt:new Date().toISOString()};
+ if(out.countries.length)await store(key,out,12*3600,ctx);
+ return json(out);
 }
