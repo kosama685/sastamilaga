@@ -1,6 +1,7 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import {probeAll,BASE} from './external-commerce-health.mjs';
 function mock(statuses={}){return async url=>{const u=new URL(url),k=u.pathname;let status=statuses[k]||200,body='<html><title>Cart</title><link rel="canonical" href="'+BASE+'/global-shop/p/"></html>',location='';
 if(k==='/checkout/')status=302;
+if(k.includes('/1374599998817308672/'))body='<html><title>Women Sexy Soild Print Bikini Set Push Up Bathing Swimwear</title><link rel="canonical" href="'+BASE+'/global-shop/p/1374599998817308672/women-sexy-soild-print-bikini-set-push-up-bathing-swimwear/"></html>';
 if(k.startsWith('/global/p/')){status=301;location=BASE+'/global-shop/p/1830116277370114048/retro-square-heel/'}
 if(k==='/sitemap-global-qualified.xml')body='<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></sitemapindex>';
 if(k==='/__ops-health.json')body='{"route_checks":{"cart_http":0}}';
