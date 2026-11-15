@@ -28,6 +28,14 @@ export default {
         if (origin && !allowed.includes(origin)) return json({ error: 'Origin not allowed' }, 403);
         return await productVideos(url.searchParams.get('pid'), env, ctx, json);
       }
+      if (url.pathname === '/api/cj/home-categories' && req.method === 'GET') {
+        if (origin && !allowed.includes(origin)) return json({ error: 'Origin not allowed' }, 403);
+        return await homeCategories(env, ctx, json);
+      }
+      if (url.pathname === '/api/cj/home-rail' && req.method === 'GET') {
+        if (origin && !allowed.includes(origin)) return json({ error: 'Origin not allowed' }, 403);
+        return await homeRail(url.searchParams, env, ctx, json);
+      }
       if (url.pathname === '/api/cj/shipping' && req.method === 'POST') {
         if (origin && !allowed.includes(origin)) return json({ error: 'Origin not allowed' }, 403);
         return await quote(await req.json(), env, ctx, json);
@@ -168,4 +176,117 @@ async function productVideos(pid,env,ctx,json){
   const result={pid,videos,eligibleCount:videos.length,provider:'CJ',checkedAt:new Date().toISOString()};
   await store(key,result,videos.length?6*3600:3600,ctx);
   return json(result);
+}
+
+
+/* CJ live homepage rails.
+ * This is an additive discovery feature; it never deletes existing local
+ * homepage sections, changes local prices, or creates purchase orders.
+ * Query scope is checked against CJ's real first-level category tree.
+ * No countryCode is sent without an explicit ship-from selection. */
+const SAFE_CATEGORY_ID=/^(?:[0-9]{15,22}|[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12})$/i;
+export function normalizeCJCategoryGroups(rows){
+ if(!Array.isArray(rows))return [];
+ const out=[],seen=new Set();
+ for(const group of rows){
+  const name=String(group?.categoryFirstName||'').trim();
+  if(!name||seen.has(name.toLowerCase()))continue;
+  const leafs=[];
+  for(const second of Array.isArray(group.categoryFirstList)?group.categoryFirstList:[]){
+   for(const cat of Array.isArray(second.categorySecondList)?second.categorySecondList:[]){
+    const id=String(cat.categoryId||'');
+    if(SAFE_CATEGORY_ID.test(id)&&!leafs.some(x=>x.id===id))
+     leafs.push({id,name:String(cat.categoryName||'').slice(0,100)});
+   }
+  }
+  if(!leafs.length)continue;
+  seen.add(name.toLowerCase());
+  out.push({id:leafs[0].id,name:name.slice(0,110),leafCount:leafs.length,leaves:leafs.slice(0,5)});
+  if(out.length>=100)break;
+ }
+ return out;
+}
+export function buildCJHomeListPath(categoryId,countryCode=''){
+ if(!SAFE_CATEGORY_ID.test(categoryId))throw new Error('invalid CJ category');
+ if(countryCode&&!/^[A-Z]{2}$/.test(countryCode))throw new Error('invalid country');
+ const u=new URLSearchParams({categoryId,page:'1',size:'10',features:'enable_category'});
+ if(countryCode)u.set('countryCode',countryCode);
+ return '/product/listV2?'+u.toString();
+}
+export function normalizeCJHomeProducts(rows){
+ if(!Array.isArray(rows))return [];
+ const out=[],seen=new Set();
+ for(const item of rows){
+  const id=String(item?.id||'').toUpperCase(),title=String(item?.nameEn||'').trim();
+  if(!SAFE_CATEGORY_ID.test(id)||!title||seen.has(id))continue;
+  const image=String(item?.bigImage||'');
+  if(!/^https:\/\/[A-Za-z0-9.-]+\/\S+$/.test(image))continue;
+  const minMax=String(item.sellPrice||'').match(/\d+(?:\.\d+)?/g)||[];
+  const lo=minMax.length?Number(minMax[0]):null,hi=minMax.length>1?Number(minMax[1]):lo;
+  seen.add(id);
+  out.push({id,title:title.slice(0,180),image,
+   priceMin:lo!==null&&Number.isFinite(lo)&&lo>0?lo:null,
+   priceMax:hi!==null&&Number.isFinite(hi)&&hi>0?hi:null,
+   hasVideo:Boolean(item.isVideo===1||item.isVedio===1),
+   category:String(item.threeCategoryName||'').slice(0,90),
+   sku:String(item.sku||'').slice(0,90)});
+  if(out.length===10)break;
+ }
+ return out;
+}
+async function cjCategoryTree(env,ctx){
+ const key='https://cache.internal/cj-live-home-categories-v1';
+ const existing=await cached(key);
+ if(existing?.groups?.length)return existing;
+ const tok=await token(env,ctx);
+ const {r,d}=await cj('/product/getCategory',{headers:{'CJ-Access-Token':tok}});
+ if(!r.ok||d.result!==true||!Array.isArray(d.data)){
+  console.error(JSON.stringify({event:'cj_home_categories_error',status:r.status,code:d.code,message:String(d.message||'').slice(0,140),requestId:d.requestId||null}));
+  return {error:'cj_category_unavailable',requestId:d.requestId||null};
+ }
+ const result={groups:normalizeCJCategoryGroups(d.data),checkedAt:new Date().toISOString(),source:'CJ API 2.0'};
+ if(result.groups.length)await store(key,result,12*3600,ctx);
+ return result;
+}
+async function homeCategories(env,ctx,json){
+ const categories=await cjCategoryTree(env,ctx);
+ return categories.error?json(categories,503):json(categories);
+}
+async function homeRail(search,env,ctx,json){
+ const groupId=String(search.get('categoryId')||'').toUpperCase();
+ const country=String(search.get('countryCode')||'').toUpperCase();
+ if(!SAFE_CATEGORY_ID.test(groupId)||country&&!/^[A-Z]{2}$/.test(country))
+  return json({error:'invalid_filters'},400);
+ const categories=await cjCategoryTree(env,ctx);
+ if(categories.error)return json(categories,503);
+ const group=categories.groups.find(g=>g.id.toUpperCase()===groupId);
+ if(!group)return json({error:'unknown_category'},404);
+ const key='https://cache.internal/cj-home-rail-v1/'+groupId+'/'+(country||'ALL');
+ const previous=await cached(key);
+ if(previous)return json({...previous,cached:true});
+ const tok=await token(env,ctx);
+ let lastRequestId=null;
+ // Try one additional known leaf only when the first leaf has no results.
+ for(const leaf of group.leaves.slice(0,2)){
+  const path=buildCJHomeListPath(leaf.id,country);
+  const {r,d}=await cj(path,{headers:{'CJ-Access-Token':tok}});
+  lastRequestId=d.requestId||null;
+  if(!r.ok||d.result!==true||!d.data){
+   console.error(JSON.stringify({event:'cj_home_rail_query_error',status:r.status,code:d.code,
+     message:String(d.message||'').slice(0,140),requestId:lastRequestId,category:leaf.id}));
+   return json({error:'cj_rail_unavailable',requestId:lastRequestId},503);
+  }
+  const rows=(Array.isArray(d.data.content)?d.data.content:[]).flatMap(x=>Array.isArray(x?.productList)?x.productList:[]);
+  const products=normalizeCJHomeProducts(rows);
+  if(products.length){
+   const result={category:group.name,categoryId:group.id,leaf:leaf.name,countryCode:country||null,
+    products,count:products.length,requested:10,source:'CJ API 2.0',checkedAt:new Date().toISOString()};
+   await store(key,result,30*60,ctx);
+   return json(result);
+  }
+ }
+ const empty={category:group.name,categoryId:group.id,countryCode:country||null,
+  products:[],count:0,requested:10,source:'CJ API 2.0',checkedAt:new Date().toISOString()};
+ await store(key,empty,10*60,ctx);
+ return json(empty);
 }
