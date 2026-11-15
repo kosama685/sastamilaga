@@ -1,6 +1,7 @@
-import {SITE,esc,slug,taxonomy,productUrl,money,image,card,shell,marquee,filters,pagination,breadcrumbs,breadcrumbSchema,faq,faqSchema,policyAnswers} from './cj-render.mjs';
-import {css,client} from './cj-assets.mjs';
+import {SITE,esc,slug,taxonomy,productUrl,money,image,card,shell as renderShell,marquee,filters,pagination,breadcrumbs,breadcrumbSchema,faq,faqSchema,policyAnswers} from './cj-render.mjs';
+import {css,client,version} from './cj-assets.mjs';
 const API='/wp-json/sm-cj/v1/';
+const shell=props=>renderShell({...props,assetVersion:version});
 export const RESERVED=['wc-ajax','add-to-cart','wc-api','key','order_key','preview','smcj_newsletter_confirm','smcj_newsletter_remove'];
 export function routePath(u){return u.pathname.startsWith('/__cj-preview/')?'/'+u.pathname.slice('/__cj-preview/'.length):u.pathname;}
 const trackingKey=k=>/^(?:utm_[a-z_]+|gclid|fbclid|msclkid|srsltid|_ga)$/i.test(k);
