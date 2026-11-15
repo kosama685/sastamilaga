@@ -1,0 +1,22 @@
+name: CJ storefront uptime
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: node tools/cj-uptime.mjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: cj-uptime
+          path: artifacts/cj-uptime.json
