@@ -21,6 +21,8 @@ test('videos are signed, lazy, throttled, and never autoplay',()=>{
  assert.match(card,/preload="none"/);
  assert.doesNotMatch(card,/\.play\(\)|\bautoplay\s*=/gi);
  assert.match(card,/pending=new Map/);
+ assert.match(card,/if\(!video\)/);
+ assert.match(card,/badge\.remove\(\)/);
  assert.match(card,/player\.addEventListener\('close'/);
  assert.match(card,/if\(card\.dataset\.cjVideoHint!=='1'\)continue/);
 });
