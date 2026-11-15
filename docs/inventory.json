@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-15T09:59:15Z",
+  "checked_at": "2026-11-15T10:02:35Z",
   "token": {
     "success": true,
     "status": "active"
@@ -401,6 +401,13 @@
         "compatibility_date": "2026-11-09"
       },
       {
+        "id": "sasta-static-html-normalizer-v1",
+        "modified_on": "2026-11-15T09:59:48.850787Z",
+        "created_on": "2026-11-15T09:59:48.850787Z",
+        "usage_model": "standard",
+        "compatibility_date": null
+      },
+      {
         "id": "sasta-static-readonly-recovery",
         "modified_on": "2026-11-09T20:17:16.233592Z",
         "created_on": "2026-11-09T20:17:02.352202Z",
@@ -430,28 +437,28 @@
       },
       {
         "id": "sastamilaga-cj-shipping",
-        "modified_on": "2026-11-15T09:58:14.308213Z",
+        "modified_on": "2026-11-15T10:01:34.270398Z",
         "created_on": "2026-11-11T03:54:36.589467Z",
         "usage_model": "standard",
         "compatibility_date": "2025-07-18"
       },
       {
         "id": "sastamilaga-global-pages",
-        "modified_on": "2026-11-15T09:58:22.870458Z",
+        "modified_on": "2026-11-15T10:01:41.742577Z",
         "created_on": "2026-11-11T03:54:44.151298Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-paypal",
-        "modified_on": "2026-11-15T09:58:19.574861Z",
+        "modified_on": "2026-11-15T10:01:38.933202Z",
         "created_on": "2026-11-11T03:54:41.174076Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-redirects",
-        "modified_on": "2026-11-15T09:58:27.220767Z",
+        "modified_on": "2026-11-15T10:01:45.738208Z",
         "created_on": "2026-11-11T05:14:22.59741Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
@@ -771,7 +778,7 @@
       },
       {
         "pattern": "sastamilaga.com/c/global/*",
-        "script": "sasta-canonical-sync-v11"
+        "script": "sasta-static-html-normalizer-v1"
       },
       {
         "pattern": "sastamilaga.com/ships-from/*",
@@ -828,6 +835,10 @@
       {
         "pattern": "sastamilaga.com/global/c/*",
         "script": "sasta-global-category-legacy-route-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/p/*",
+        "script": "sasta-static-html-normalizer-v1"
       }
     ]
   },

@@ -66,35 +66,35 @@
 25: if(sample&&String(sample.pid).toUpperCase()===r.cj_product_id){if(String(sample.description||'').trim()){desc=C(sample.description).slice(0,16000);origin='cj_connected_account_snapshot'};if(Array.isArray(sample.varia
 29:return answer(req,{product:{sku:r.sku,source,pid:source==='cj'?r.cj_product_id:null,title:C(r.name),category:C(r.categories),images,videoUrls:Array.isArray(meta.video_urls)?meta.video_urls.filter(x=>/^https:\/\//.test
 ## sasta-cj-storefront-preview-v1  bytes=114630
-32: return `<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><meta name="description" content="${esc(desc
-71: if(request?.headers.get('X-Sasta-Healthcheck')==='1')headers.set('X-Sasta-Healthcheck','1');
-75: const length=Number(r.headers.get('content-length')||0);if(length>3_000_000)throw Object.assign(Error('Supplier response exceeds the rendering budget.'),{status:502,code:'oversize_response'});
-81:function pageResponse(html,{status=200,privatePage=false}={}){return new Response(html,{status,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':privatePage?'private,no-store':status===200?'public,max
-127: const productSchema={'@context':'https://schema.org','@type':'Product','@id':SITE+canonicalPath+'#product',name,description:description.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').slice(0,4000),image:imgs,sku:p.prod
-172: if(request.headers.get('X-CJ-Fragment')==='1')return Response.json({body:page.body,title:page.title,description:page.description,canonical:page.canonical,robots:page.robots},{headers:{'Cache-Control':'no-store','X-S
-177: if(/^\/sitemap-cj(?:-(?:products|categories|guides|images))?\.xml$/.test(path)){
-181:  return new Response(xml,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=60,s-maxage=180','X-Sasta-Renderer':'cj-ssr-v1','X-Content-Type-Options':'nosniff'}});
-185: return new Response(text,{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=60,s-maxage=180','X-Sasta-Renderer':'cj-ssr-v1','X-Content-Type-Options':'nosniff'}});
-223: const response=new Response(body,{headers:{'Content-Type':upstream.headers.get('content-type'),'Content-Length':String(size),'Cache-Control':'public,max-age=86400,s-maxage=604800','X-Content-Type-Options':'nosniff',
-239:  if(path==='/sitemap-global-qualified.xml'||path.startsWith('/sitemaps/global-qualified/'))return Response.redirect(SITE+'/sitemap-cj-products.xml',301);
-241:  if(['/feed-cj.json','/feed-cj.xml'].includes(path))try{
-242:   const d=await bridge(env,'feed',{},request),ttl=Math.min(60,...d.items.map(x=>Math.max(0,300-Math.ceil((Date.now()-Date.parse(x.checked_at))/1000)))),items=d.items.map(x=>({id:x.id,item_group_id:x.pid,title:x.titl
-247:  if(/^\/sitemap-cj(?:-(?:products|categories|guides|images))?\.xml$/.test(path)||['/llms.txt','/llms-full.txt'].includes(path))try{return await discovery(env,request,path);}catch(e){return new Response('Live discove
+40: return `<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><meta name="description" content="${esc(desc
+79: if(request?.headers.get('X-Sasta-Healthcheck')==='1')headers.set('X-Sasta-Healthcheck','1');
+83: const length=Number(r.headers.get('content-length')||0);if(length>3_000_000)throw Object.assign(Error('Supplier response exceeds the rendering budget.'),{status:502,code:'oversize_response'});
+89:function pageResponse(html,{status=200,privatePage=false}={}){return new Response(html,{status,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':privatePage?'private,no-store':status===200?'public,max
+135: const productSchema={'@context':'https://schema.org','@type':'Product','@id':SITE+canonicalPath+'#product',name,description:description.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').slice(0,4000),image:imgs,sku:p.prod
+180: if(request.headers.get('X-CJ-Fragment')==='1')return Response.json({body:page.body,title:page.title,description:page.description,canonical:page.canonical,robots:page.robots},{headers:{'Cache-Control':'no-store','X-S
+185: if(/^\/sitemap-cj(?:-(?:products|categories|guides|images))?\.xml$/.test(path)){
+189:  return new Response(xml,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=60,s-maxage=180','X-Sasta-Renderer':'cj-ssr-v1','X-Content-Type-Options':'nosniff'}});
+193: return new Response(text,{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=60,s-maxage=180','X-Sasta-Renderer':'cj-ssr-v1','X-Content-Type-Options':'nosniff'}});
+231: const response=new Response(body,{headers:{'Content-Type':upstream.headers.get('content-type'),'Content-Length':String(size),'Cache-Control':'public,max-age=86400,s-maxage=604800','X-Content-Type-Options':'nosniff',
+247:  if(path==='/sitemap-global-qualified.xml'||path.startsWith('/sitemaps/global-qualified/'))return Response.redirect(SITE+'/sitemap-cj-products.xml',301);
+249:  if(['/feed-cj.json','/feed-cj.xml'].includes(path))try{
+250:   const d=await bridge(env,'feed',{},request),ttl=Math.min(60,...d.items.map(x=>Math.max(0,300-Math.ceil((Date.now()-Date.parse(x.checked_at))/1000)))),items=d.items.map(x=>({id:x.id,item_group_id:x.pid,title:x.titl
+255:  if(/^\/sitemap-cj(?:-(?:products|categories|guides|images))?\.xml$/.test(path)||['/llms.txt','/llms-full.txt'].includes(path))try{return await discovery(env,request,path);}catch(e){return new Response('Live discove
 ## sasta-cj-storefront-v1  bytes=114639
-21: if(request?.headers.get('X-Sasta-Healthcheck')==='1')headers.set('X-Sasta-Healthcheck','1');
-25: const length=Number(r.headers.get('content-length')||0);if(length>3_000_000)throw Object.assign(Error('Supplier response exceeds the rendering budget.'),{status:502,code:'oversize_response'});
-31:function pageResponse(html,{status=200,privatePage=false}={}){return new Response(html,{status,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':privatePage?'private,no-store':status===200?'public,max
-77: const productSchema={'@context':'https://schema.org','@type':'Product','@id':SITE+canonicalPath+'#product',name,description:description.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').slice(0,4000),image:imgs,sku:p.produ
-122: if(request.headers.get('X-CJ-Fragment')==='1')return Response.json({body:page.body,title:page.title,description:page.description,canonical:page.canonical,robots:page.robots},{headers:{'Cache-Control':'no-store','X-S
-127: if(/^\/sitemap-cj(?:-(?:products|categories|guides|images))?\.xml$/.test(path)){
-131:  return new Response(xml,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=60,s-maxage=180','X-Sasta-Renderer':'cj-ssr-v1','X-Content-Type-Options':'nosniff'}});
-135: return new Response(text,{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=60,s-maxage=180','X-Sasta-Renderer':'cj-ssr-v1','X-Content-Type-Options':'nosniff'}});
-173: const response=new Response(body,{headers:{'Content-Type':upstream.headers.get('content-type'),'Content-Length':String(size),'Cache-Control':'public,max-age=86400,s-maxage=604800','X-Content-Type-Options':'nosniff',
-189:  if(path==='/sitemap-global-qualified.xml'||path.startsWith('/sitemaps/global-qualified/'))return Response.redirect(SITE+'/sitemap-cj-products.xml',301);
-191:  if(['/feed-cj.json','/feed-cj.xml'].includes(path))try{
-192:   const d=await bridge(env,'feed',{},request),ttl=Math.min(60,...d.items.map(x=>Math.max(0,300-Math.ceil((Date.now()-Date.parse(x.checked_at))/1000)))),items=d.items.map(x=>({id:x.id,item_group_id:x.pid,title:x.titl
-197:  if(/^\/sitemap-cj(?:-(?:products|categories|guides|images))?\.xml$/.test(path)||['/llms.txt','/llms-full.txt'].includes(path))try{return await discovery(env,request,path);}catch(e){return new Response('Live discove
-257: return `<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><meta name="description" content="${esc(des
+40: return `<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><meta name="description" content="${esc(desc
+79: if(request?.headers.get('X-Sasta-Healthcheck')==='1')headers.set('X-Sasta-Healthcheck','1');
+83: const length=Number(r.headers.get('content-length')||0);if(length>3_000_000)throw Object.assign(Error('Supplier response exceeds the rendering budget.'),{status:502,code:'oversize_response'});
+89:function pageResponse(html,{status=200,privatePage=false}={}){return new Response(html,{status,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':privatePage?'private,no-store':status===200?'public,max
+135: const productSchema={'@context':'https://schema.org','@type':'Product','@id':SITE+canonicalPath+'#product',name,description:description.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').slice(0,4000),image:imgs,sku:p.prod
+180: if(request.headers.get('X-CJ-Fragment')==='1')return Response.json({body:page.body,title:page.title,description:page.description,canonical:page.canonical,robots:page.robots},{headers:{'Cache-Control':'no-store','X-S
+185: if(/^\/sitemap-cj(?:-(?:products|categories|guides|images))?\.xml$/.test(path)){
+189:  return new Response(xml,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=60,s-maxage=180','X-Sasta-Renderer':'cj-ssr-v1','X-Content-Type-Options':'nosniff'}});
+193: return new Response(text,{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=60,s-maxage=180','X-Sasta-Renderer':'cj-ssr-v1','X-Content-Type-Options':'nosniff'}});
+231: const response=new Response(body,{headers:{'Content-Type':upstream.headers.get('content-type'),'Content-Length':String(size),'Cache-Control':'public,max-age=86400,s-maxage=604800','X-Content-Type-Options':'nosniff',
+247:  if(path==='/sitemap-global-qualified.xml'||path.startsWith('/sitemaps/global-qualified/'))return Response.redirect(SITE+'/sitemap-cj-products.xml',301);
+249:  if(['/feed-cj.json','/feed-cj.xml'].includes(path))try{
+250:   const d=await bridge(env,'feed',{},request),ttl=Math.min(60,...d.items.map(x=>Math.max(0,300-Math.ceil((Date.now()-Date.parse(x.checked_at))/1000)))),items=d.items.map(x=>({id:x.id,item_group_id:x.pid,title:x.titl
+255:  if(/^\/sitemap-cj(?:-(?:products|categories|guides|images))?\.xml$/.test(path)||['/llms.txt','/llms-full.txt'].includes(path))try{return await discovery(env,request,path);}catch(e){return new Response('Live discove
 ## sasta-cj-variants-shipping  bytes=12730
 15:  if(Number(r.headers.get('content-length')||0)>MAX_JSON_BYTES)throw new Error('provider_payload_too_large');
 33:const CORS_ORIGINS=new Set(['https://sastamilaga.com','https://www.sastamilaga.com','https://kosama685.github.io']);
@@ -277,6 +277,8 @@
 72:   const xml=u.pathname==='/blog/sitemap.xml';
 73:   const r=await fetch('https://kosama685.github.io/sastamilaga/data/blog-fallback/'+snapshots[u.pathname],{cf:{cacheTtl:300,cacheEverything:true},signal:AbortSignal.timeout(8000)});
 78:     result=new Response(html,{headers:{'Content-Type':xml?'application/xml; charset=utf-8':'text/html; charset=utf-8','Cache-Control':'public,max-age=60,s-maxage=300','X-Sasta-Blog':'verified-published-snapshot','X-C
+## sasta-static-html-normalizer-v1  bytes=1112
+15:      'X-Sasta-Route':'normalize-static-html'
 ## sasta-static-readonly-recovery  bytes=5995
 4:const BACKUP='https://kosama685.github.io/sastamilaga',CANONICAL='https://sastamilaga.com';
 22:  const response=await fetch(target,{method:'GET',redirect:'follow',headers:{Accept:kind==='home'?'text/html':'*/*'},cf:{cacheEverything:true,cacheTtl:120}});
