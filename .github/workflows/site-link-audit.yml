@@ -1,0 +1,27 @@
+name: Audit internal URLs and shared site chrome
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.html'
+      - 'assets/**'
+      - 'tools/audit-internal-urls.mjs'
+      - '.github/workflows/site-link-audit.yml'
+  workflow_dispatch:
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node tools/audit-internal-urls.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-link-audit
+          path: reports/url-audit-ci.json
+          if-no-files-found: error
