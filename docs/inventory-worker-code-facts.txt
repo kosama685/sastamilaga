@@ -105,8 +105,8 @@
 149:    // Cache API creates 206/304 from a complete cached object with Content-Length.
 164:      const h=cleanHeaders(upstream,claim), length=Number(h.get('Content-Length'));
 173:      if(selected){h.set('Content-Range',`bytes ${selected.start}-${selected.end}/${size}`);h.set('Content-Length',String(selected.end-selected.start+1));return new Response(slice(upstream.body,selected.start,selecte
-## sasta-clean-global-route-v1  bytes=1481
-12:return new Response(req.method==='HEAD'?null:html,{status:200,headers:{'content-type':'text/html; charset=utf-8','Cache-Control':'public,max-age=0,s-maxage=60','X-Sasta-Global-Route':product?'dynamic-product':'static-
+## sasta-clean-global-route-v1  bytes=2388
+30:    'X-Sasta-Global-Route':pr?'dynamic-product':'static-group',
 ## sasta-commerce-safe-v9  bytes=11297
 4:const ROBOTS_TEXT="User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\nDisallow: /cart/\nDisallow: /checkout/\nDisallow: /my-account/\n\nUser-agent: GPTBot\nDisallow: /\nUser-agent: ClaudeBot\nDisallo
 5:const BACKUP='https://kosama685.github.io/sastamilaga',CANONICAL='https://sastamilaga.com';
@@ -300,23 +300,23 @@
 170:      const contentLength=Number(upstream.headers.get('Content-Length')||0);
 186:    for (const header of ['Content-Type','Content-Length','Content-Range','Accept-Ranges','ETag','Last-Modified']) {
 ## sasta-wp-cron-autopilot  bytes=18321
-12: if(Number(request.headers.get('Content-Length')||0)>2048)throw Error('size');
-19: const stamp=request.headers.get('X-Sasta-Time')||'',signature=request.headers.get('X-Sasta-Translation-Signature')||'';
-68:    diagnostic.stage='response';return Response.json({...answer,country,country_name:data.countries[country].name,language,currency:data.countries[country].currency,sources:answer.sources||[],products:[],contacts,mode
-120:  if(market.length) saved.headers.set('X-Sasta-Saved-Market',JSON.stringify(market));
-121:  saved.headers.set('X-Sasta-Saved-At',String(Date.now()));
-128:  const set=response.headers.get('X-Sasta-Saved-Market');
-129:  response.headers.delete('X-Sasta-Saved-Market');response.headers.delete('X-Sasta-Saved-At');
-135:  response.headers.set('X-Sasta-Cache',status);return response;
-147:    headers: { 'X-Sasta-Time': stamp, 'X-Sasta-Signature': await signature(env.AUTOMATION_KEY, `cron|${stamp}`), 'Accept': 'application/json' },
-159:    headers:{'X-Sasta-Time':stamp,'X-Sasta-Signature':await signature(env.AUTOMATION_KEY,`cron|${stamp}`),Accept:'application/json'},
-179:    for (const name of ['X-Sasta-Country', 'X-Sasta-Geo-Time', 'X-Sasta-Geo-Signature']) headers.delete(name);
-183:      headers.set('X-Sasta-Country', country);
-184:      headers.set('X-Sasta-Geo-Time', stamp);
-185:      headers.set('X-Sasta-Geo-Signature', await signature(env.AUTOMATION_KEY, `geo|${country}|${stamp}`));
-194:      const origin=await fetch(originRequest,{cache:'no-store',cf:{cacheEverything:false,cacheTtlByStatus:{'100-599':-1}}});
-205:        const age=(Date.now()-Number(saved.headers.get('X-Sasta-Saved-At')))/1000;
-223:    const response=outward(await refresh(),key&&cache?'MISS':'BYPASS');if(supportDiagnostic.reason)response.headers.set('X-Sasta-Support-Fallback',supportDiagnostic.reason);return response;
+28:    diagnostic.stage='response';return Response.json({...answer,country,country_name:data.countries[country].name,language,currency:data.countries[country].currency,sources:answer.sources||[],products:[],contacts,mode
+80:  if(market.length) saved.headers.set('X-Sasta-Saved-Market',JSON.stringify(market));
+81:  saved.headers.set('X-Sasta-Saved-At',String(Date.now()));
+88:  const set=response.headers.get('X-Sasta-Saved-Market');
+89:  response.headers.delete('X-Sasta-Saved-Market');response.headers.delete('X-Sasta-Saved-At');
+95:  response.headers.set('X-Sasta-Cache',status);return response;
+107:    headers: { 'X-Sasta-Time': stamp, 'X-Sasta-Signature': await signature(env.AUTOMATION_KEY, `cron|${stamp}`), 'Accept': 'application/json' },
+119:    headers:{'X-Sasta-Time':stamp,'X-Sasta-Signature':await signature(env.AUTOMATION_KEY,`cron|${stamp}`),Accept:'application/json'},
+139:    for (const name of ['X-Sasta-Country', 'X-Sasta-Geo-Time', 'X-Sasta-Geo-Signature']) headers.delete(name);
+143:      headers.set('X-Sasta-Country', country);
+144:      headers.set('X-Sasta-Geo-Time', stamp);
+145:      headers.set('X-Sasta-Geo-Signature', await signature(env.AUTOMATION_KEY, `geo|${country}|${stamp}`));
+154:      const origin=await fetch(originRequest,{cache:'no-store',cf:{cacheEverything:false,cacheTtlByStatus:{'100-599':-1}}});
+165:        const age=(Date.now()-Number(saved.headers.get('X-Sasta-Saved-At')))/1000;
+183:    const response=outward(await refresh(),key&&cache?'MISS':'BYPASS');if(supportDiagnostic.reason)response.headers.set('X-Sasta-Support-Fallback',supportDiagnostic.reason);return response;
+198: if(Number(request.headers.get('Content-Length')||0)>2048)throw Error('size');
+205: const stamp=request.headers.get('X-Sasta-Time')||'',signature=request.headers.get('X-Sasta-Translation-Signature')||'';
 ## sastamilaga-cj-shipping  bytes=10040
 13:    const allowed = (env.ALLOWED_ORIGINS || "https://kosama685.github.io").split(",").map((s) => s.trim());
 ## sastamilaga-global-pages  bytes=15920
