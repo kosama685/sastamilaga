@@ -23,10 +23,18 @@
     "pattern": 3
   },
   "confirmed_200_both_agents": 747,
-  "gsc_authenticated": false,
-  "gsc_live_tests_run": false,
-  "sitemap_submitted_to_gsc": false,
-  "gsc_validations_started": false,
   "payment_capture_tested": false,
-  "note": "Googlebot UA simulations are not requests from verified Google IPs and are not GSC Live URL Inspection."
+  "note": "Googlebot UA simulations are not requests from verified Google IPs and are not GSC Live URL Inspection.",
+  "gsc_owner_confirmation": {
+    "date": "2026-11-15",
+    "statement": "Search Console already validated",
+    "final_google_result_independently_verified": false
+  },
+  "cloudflare_connection_verified": true,
+  "cloudflare_zone_active": true,
+  "google_crawler_rule_enabled_verified": true,
+  "gsc_authenticated_by_agent": false,
+  "gsc_live_tests_run_by_agent": false,
+  "sitemap_submission_performed_by_agent": false,
+  "gsc_validations_started_by_agent": false
 }
