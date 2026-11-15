@@ -68,10 +68,22 @@
     const endpoint=String((window.SM_CONFIG||{}).cjShippingWorker||(window.SM_CONFIG||{}).cjImageWorker||'').replace(/\/$/,'');
     if(!endpoint){status.textContent='Live product options are not configured. Open the product page to continue.';return;}
     try{
-      const response=await Promise.race([fetch(endpoint+'/api/cj/product?pid='+encodeURIComponent(r[0]),{headers:{Accept:'application/json'}}),timeout(12000)]);
-      const result=await response.json();
+      // CJ rate limits are intermittent. Retry only transient responses; never invent options.
+      let result=null,lastError=null;
+      for(let attempt=0;attempt<3;attempt++){
+        if(attempt)await new Promise(resolve=>setTimeout(resolve,1600*(attempt+1)));
+        if(id!==activeRequest||!dialog.open)return;
+        try{
+          const response=await Promise.race([fetch(endpoint+'/api/cj/product?pid='+encodeURIComponent(r[0]),{headers:{Accept:'application/json'},cache:'no-store'}),timeout(10000)]);
+          if(response.status===429||response.status>=500){lastError=new Error('Supplier temporarily busy: '+response.status);continue;}
+          if(!response.ok)throw new Error('Supplier returned HTTP '+response.status);
+          const data=await response.json();
+          if(!Array.isArray(data?.variants)||!data.variants.length)throw new Error('No verified supplier options available');
+          result=data;break;
+        }catch(e){lastError=e;if(!/timeout|network|fetch|busy|5\d\d/i.test(String(e?.message||e)))break;}
+      }
       if(id!==activeRequest||!dialog.open)return;
-      if(!response.ok||!Array.isArray(result.variants)||!result.variants.length)throw new Error('No verified supplier options available');
+      if(!result)throw (lastError||new Error('Supplier options unavailable'));
       const variants=result.variants.filter(v=>v&&v.vid&&v.sku&&Number(v.price)>0);
       if(!variants.length)throw new Error('No purchasable supplier option is currently available');
       selector.innerHTML='';
