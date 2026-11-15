@@ -6,8 +6,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 const require=createRequire(import.meta.url);
 const {parseHTML}=require(process.env.SM_DOM_MODULE || 'linkedom');
-const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
-const source=readFileSync(new URL('../assets/js/market.js',import.meta.url),'utf8');
+const html=readFileSync(process.env.SM_MARKET_HTML || new URL('../index.html',import.meta.url),'utf8');
+const source=readFileSync(process.env.SM_MARKET_SOURCE || new URL('../assets/js/market.js',import.meta.url),'utf8');
 function boot(country,currency,manifest=true) {
  const {document,window:domWindow}=parseHTML(html);
  const window={Event:domWindow.Event,addEventListener(){},dispatchEvent(){}};
@@ -66,4 +66,12 @@ test('homepage has raw canonical, factual schema and crawlable help links',()=>{
  for(const href of ['shipping/','returns/','how-to-order/'])assert.ok(d.querySelector(`a[href="${href}"]`));
  assert.equal(d.querySelectorAll('link[rel="canonical"]').length,1);
  assert.doesNotMatch(source,/Shop our Pakistan store from/);
+});
+test('global directory links load the real index instead of an invented category',()=>{
+ const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
+ const fn=app.slice(app.indexOf('function cleanToRoute('),app.indexOf('/* Navigate inside the app'));
+ const context={APP_BASE:'/'};
+ vm.runInNewContext(fn,context);
+ assert.equal(context.cleanToRoute('/c/global/index.html'),null);
+ assert.equal(context.cleanToRoute('/c/global/garden-tools.html'),'global/c/garden-tools');
 });

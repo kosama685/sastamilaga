@@ -144,6 +144,8 @@ function cleanToRoute(pathname) {
   if (!pathname.startsWith(APP_BASE)) return null;
   const rel = decodeURIComponent(pathname.slice(APP_BASE.length));
   if (rel === '' || rel === 'index.html') return 'home';
+  // The global directory is a real server-rendered index, not a category called "index".
+  if (rel === 'c/global/index.html') return null;
   let m;
   if ((m = rel.match(/^p\/([^/]+\.html)$/))) { const p = productByPage(`p/${m[1]}`); return p ? `product/${p._slug}` : null; }
   if ((m = rel.match(/^c\/global\/([a-z0-9-]+)\.html$/))) return `global/c/${m[1]}`;
