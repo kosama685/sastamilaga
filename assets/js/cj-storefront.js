@@ -6,6 +6,17 @@
  var bootstrap=boot.bootstrap||{},countries=bootstrap.countries||{},rates=bootstrap.exchange_rates||{},currencyList=bootstrap.currencies||['USD'];
  var state={country:'',currency:'USD',lang:'en'},contextPromise=null,stockSerial=0,fxWarning=false,formatters={};
  try{var stored=JSON.parse(localStorage.getItem('sm_market')||'null');if(stored&&countries[stored.country])state.country=stored.country;if(stored&&currencyList.includes(stored.currency))state.currency=stored.currency;}catch{}
+ // Fragments never reach an HTTP server. Resolve old bookmarks to real paths.
+ if(location.hash.startsWith('#/'))(async function(){try{var old=new URL(location.hash.slice(1),'https://sastamilaga.com'),parts=old.pathname.split('/').filter(Boolean),target='';
+  if(!parts.length||parts[0]==='home')target='/';
+  else if(parts[0]==='shop'||parts[0]==='global'&&parts.length===1)target='/shop/'+old.search;
+  else if(parts[0]==='global'&&parts[1]==='p')target='/product/'+encodeURIComponent(parts[parts.length-1])+'/product/';
+  else if(parts[0]==='global'&&parts[1]==='c')target='/c/global/'+encodeURIComponent(parts[2])+'.html';
+  else if(parts[0]==='product'&&parts[1]){var match=await json('/wp-json/sm-cj/v1/legacy?handle='+encodeURIComponent(parts[1]));target=match.path;}
+  else if(parts[0]==='category'&&parts[1])target='/c/'+encodeURIComponent(parts[1])+'.html'+old.search;
+  else if(['cart','checkout','contact','about','privacy','terms','returns','shipping','travel','live-tv','blog','faq'].includes(parts[0]))target='/'+parts[0]+'/';
+  if(target&&target.startsWith('/')&&!target.startsWith('//'))location.replace(target);else toast('This old bookmark needs an updated link. Search the current catalog or contact support.');
+ }catch{toast('This old bookmark could not be verified. Search the current catalog or contact support.');}})();
  function esc(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
  function toast(message){var e=document.querySelector('.cj-toast');if(!e)return;e.textContent=message;e.hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(function(){e.hidden=true;},6500);}
  async function json(url,options){var r=await fetch(url,Object.assign({credentials:'same-origin'},options||{})),d;try{d=await r.json();}catch{throw Error('The service returned an unreadable response. Please retry.');}if(!r.ok||d.error)throw Error((d.message||d.error||'Request could not be completed.')+(d.requestId?' Reference: '+d.requestId:''));return d;}

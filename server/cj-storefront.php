@@ -49,7 +49,7 @@ final class Bridge {
     static function boot(): void {
         add_action('woocommerce_after_checkout_validation',[self::class,'checkout_stock'],100,2);
         add_action('rest_api_init',static function(){
-            foreach(['bootstrap','home','listing','detail','inventory','shipping','sitemap','feed'] as $name) register_rest_route(self::NS,'/'.$name,['methods'=>$name==='shipping'?'POST':'GET','permission_callback'=>$name==='shipping'?[\GDCS\Storefront::class,'csrf_check']:'__return_true','callback'=>static function($r)use($name){return self::response($name,$r);}]);
+            foreach(['bootstrap','home','listing','detail','inventory','shipping','sitemap','feed','legacy'] as $name) register_rest_route(self::NS,'/'.$name,['methods'=>$name==='shipping'?'POST':'GET','permission_callback'=>$name==='shipping'?[\GDCS\Storefront::class,'csrf_check']:'__return_true','callback'=>static function($r)use($name){return self::response($name,$r);}]);
             register_rest_route(self::NS,'/merchant/(?P<operation>[a-z0-9-]+)',['methods'=>'GET,POST','permission_callback'=>[\GDCS\Rest::class,'permission'],'callback'=>static function($r){return self::merchant($r);}]);
         });
         add_action('admin_menu',static function(){add_submenu_page('woocommerce','CJ API operations','CJ API operations','manage_woocommerce','sm-cj-operations',[self::class,'admin']);});
@@ -162,6 +162,12 @@ final class Bridge {
         }
         return ['product'=>$r,'variants'=>$variants,'checkout_ready'=>\GDCS\VirtualCheckout::ready()];
     }
+    static function legacy(array $p): array {
+        $handle=(string)($p['handle']??'');if(!preg_match('/^[a-z0-9-]{1,250}$/D',$handle))throw new \InvalidArgumentException('Invalid old product handle.');
+        $file=dirname(rtrim(ABSPATH,'/')).'/gdcs-private/cj-storefront-20261115/legacy-urls.json';$map=is_file($file)?json_decode(file_get_contents($file),true):[];
+        $target=$map[$handle]??null;if(!$target||!preg_match('~^/p/[a-z0-9-]+\.html$~D',$target))throw new \OutOfBoundsException('This old product URL could not be verified.');
+        return ['path'=>$target,'type'=>'existing_local_static_product','source'=>'legacy URL alias registry'];
+    }
     static function gtin(string $value): bool {
         if(!preg_match('/^(?:[0-9]{8}|[0-9]{12}|[0-9]{13}|[0-9]{14})$/D',$value))return false;
         $sum=0;$weight=3;for($i=strlen($value)-2;$i>=0;$i--){$sum+=(int)$value[$i]*$weight;$weight=$weight===3?1:3;}return (10-$sum%10)%10===(int)substr($value,-1);
@@ -207,7 +213,7 @@ final class Bridge {
             if(!class_exists('\GDCS\Api'))throw new \RuntimeException('Supplier integration is unavailable.');
             $ip=(string)($_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['REMOTE_ADDR']??'');$budget='smcj_rate_'.md5($ip.gmdate('YmdHi'));$used=(int)get_transient($budget);if($used>=40)return new \WP_REST_Response(['code'=>'request_rate_limited','message'=>'Please wait before requesting more supplier data.'],429,['Retry-After'=>'60','Cache-Control'=>'no-store']);set_transient($budget,$used+1,70);
             $p=$r->get_params();if(($p['view']??'')==='suggest'){unset($p['view']);$p['features']=[];$p['size']=5;}
-            $result=match($name){'bootstrap'=>self::bootstrap(),'home'=>self::home((string)($p['countryCode']??'')),'listing'=>self::listing($p),'detail'=>self::detail(self::id($p['pid']??'')),'inventory'=>self::inventory(self::id($p['vid']??'')),'shipping'=>self::shipping((array)$r->get_json_params()),'feed'=>self::feed(),'sitemap'=>['products'=>array_values(array_filter((array)get_option('smcj_seen_products',[]),static fn($x)=>strtotime($x['checked_at']??'')>time()-DAY_IN_SECONDS))]};
+            $result=match($name){'bootstrap'=>self::bootstrap(),'home'=>self::home((string)($p['countryCode']??'')),'listing'=>self::listing($p),'detail'=>self::detail(self::id($p['pid']??'')),'inventory'=>self::inventory(self::id($p['vid']??'')),'shipping'=>self::shipping((array)$r->get_json_params()),'legacy'=>self::legacy($p),'feed'=>self::feed(),'sitemap'=>['products'=>array_values(array_filter((array)get_option('smcj_seen_products',[]),static fn($x)=>strtotime($x['checked_at']??'')>time()-DAY_IN_SECONDS))]};
             return new \WP_REST_Response($result,200,['Cache-Control'=>$name==='inventory'||$name==='shipping'?'private,no-store':'public,max-age=60,s-maxage=180','X-Sasta-CJ'=>self::VERSION]);
         }catch(\Throwable $e){return new \WP_REST_Response(self::error($e),$e instanceof \InvalidArgumentException?400:($e instanceof \OutOfBoundsException?404:503),['Cache-Control'=>'no-store','Retry-After'=>'30']);}
     }
