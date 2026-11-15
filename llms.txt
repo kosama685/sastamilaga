@@ -1,6 +1,6 @@
 # Sasta Milaga
 
-> Sasta Milaga is an online store and travel desk for Pakistan and Pakistanis abroad. It sells 20,165 local products priced in Pakistani rupees (PKR) with cash on delivery across Pakistan, offers access to a catalogue of 451,812 global supplier product records (availability, supported destinations, variants, freight and final price are verified individually before an order), takes flight, hotel, Umrah and visa requests, and offers a Live TV page with reviewed channels.
+> Sasta Milaga is an online store and travel desk with local and global catalogs. Visitors choose a shopping destination and display currency; converted amounts are estimates. It sells 20,165 local products priced in Pakistani rupees (PKR) with cash on delivery across Pakistan, offers access to a catalogue of 451,812 global supplier product records (availability, supported destinations, variants, freight and final price are verified individually before an order), takes flight, hotel, Umrah and visa requests, and offers a Live TV page with reviewed channels.
 
 Key facts:
 - Local delivery in Pakistan: Rs 250 per order, free above Rs 5,000. Cash on delivery available for local products.

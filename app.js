@@ -188,7 +188,7 @@ function setSEO({ title, description, image, url, ldJson, robots }) {
   setMetaName('robots', robots || (NOINDEX_ROUTES.has(window.__route) ? 'noindex, follow' : 'index, follow, max-image-preview:large'));
   document.title = title
     ? `${title} | ${SITE_NAME}`
-    : `${SITE_NAME} – Online Shopping in Pakistan, Travel & Live TV`;
+    : `${SITE_NAME} – Global & Local Shopping, Travel & Live TV`;
 
   setMetaName('description', truncate(description, 160));
   // Canonical/og:url always use the clean URL when the route has one (never a #/ address).
@@ -604,6 +604,7 @@ function bindEvents() {
       e.preventDefault();
       e.stopImmediatePropagation();
       const q   = (form.querySelector('input[type="search"], #topSearch') || {}).value || '';
+      if (window.SMMarket && window.SMMarket.state().country !== 'PK') { location.hash = '#/global/search?q=' + encodeURIComponent(q.trim()); return; }
       const cat = (form.querySelector('select') || {}).value || '';
       location.hash = cat
         ? `#/category/${cat}${q.trim() ? '?q=' + encodeURIComponent(q.trim()) : ''}`
@@ -943,13 +944,13 @@ function renderHome() {
   showView('home');
   setSEO({
     title: '',
-    description: `Shop ${products.length.toLocaleString()} products in PKR with cash on delivery across Pakistan, search flights and hotels, and watch Live TV on Sasta Milaga.`,
+    description: 'Explore global and local products, from fashion and beauty to electronics and home essentials. Check destination availability, delivery and payment options. Discover travel services and Live TV.',
     url: `${SITE_URL}/`,
     ldJson: {
       '@context': 'https://schema.org',
       '@type'   : 'ItemList',
-      'name'    : 'Sasta Milaga categories',
-      'itemListElement': categories.slice(0, 12).map((c, i) => ({ '@type': 'ListItem', 'position': i + 1, 'name': c.name, 'url': `${SITE_URL}/c/${c.slug}.html` }))
+      'name'    : 'Sasta Milaga shopping and services',
+      'itemListElement': [['Global products', '/c/global/index.html'], ['Local products', '/shop/'], ['Travel services', '/travel/'], ['Shipping and delivery', '/shipping/']].map(([name, path], i) => ({ '@type': 'ListItem', 'position': i + 1, 'name': name, 'url': SITE_URL + path }))
     }
   });
   fillHome();
@@ -976,7 +977,7 @@ function fillGlobalCats(localList) {
       const c = m.cats.filter(x => x.g === g.n).sort((a, b) => b.c - a.c)[0] || {};
       return `<li><a class="sm-cat" href="#/global/g/${esc(g.s)}"><span class="sm-cat__img"><img src="${esc(c.img || '')}" alt="${esc(g.n)} – global shop" width="300" height="300" loading="lazy" decoding="async" onerror="this.src=window.fallbackImg"></span><span class="sm-cat__name">${esc(g.n)}</span><span class="sm-cat__count">${g.c.toLocaleString()} global products</span></a></li>`;
     }).join('');
-    localList.insertAdjacentHTML('afterend', `<p class="sm-cat-total">${products.length.toLocaleString()} local products in ${categories.length} categories, plus ${m.total.toLocaleString()} global products: ${total.toLocaleString()} in total.</p>
+    localList.insertAdjacentHTML('afterend', `<p data-market-local-home class="sm-cat-total">${products.length.toLocaleString()} local products in ${categories.length} categories, plus ${m.total.toLocaleString()} global products: ${total.toLocaleString()} in total.</p>
       <div id="sm-home-global" class="sm-home-global"><div class="sm-home-global__head"><h3>Global shop by category</h3><a href="#/global">View all ${m.cats.length} global categories</a></div>
       <ul class="${esc(localList.className)}" role="list">${grid}</ul></div>`);
   };

@@ -63,7 +63,7 @@
     var lang = browserLang();
     return geoCountry().catch(function () { return browserCountry() || 'PK'; }).then(function (cc) {
       state = { country: cc, currency: CUR[cc] || 'PKR', lang: lang, auto: true };
-      save(state); paintHeader(); clearFx(); localiseText(document.body);
+      save(state); paintHeader(); clearFx(); localiseText(document.body); destinationHome();
       window.dispatchEvent(new CustomEvent('sm:market', { detail: state }));
       if (applyAutoLang(lang)) return;
       getRates().then(function () { convertIn(document); convertTagged(document); }).catch(function () { });
@@ -146,13 +146,65 @@
       if (!origText.has(n)) origText.set(n, n.nodeValue);
       var o = origText.get(n), v = o;
       if (state.country !== 'PK' || cur !== 'PKR') {
-        /* the catalogue ships from Pakistan: say "Pakistan store" instead of implying local delivery abroad, and label converted prices as estimates */
-        v = v.replace(/Shopping for Pakistan/g, 'Shop our Pakistan store from ' + name).replace(/prices in PKR/g, 'estimated prices in ' + cur);
+        /* Local product restrictions stay factual; destination headings and display currency follow the visitor. */
+        v = v.replace(/Shopping for Pakistan/g, 'Shopping for ' + name).replace(/prices in PKR/g, 'estimated prices in ' + cur);
         // Destination card value ("Your shopping destination" → "Pakistan")
         if (o.trim() === 'Pakistan' && n.parentNode.previousElementSibling && /shopping destination/i.test(n.parentNode.previousElementSibling.textContent)) v = o.replace('Pakistan', name);
       }
       if (n.nodeValue !== v) n.nodeValue = v;
     }
+  }
+
+  /* Destination copy describes eligibility, never a promise that every listing ships. */
+  function experience(country, currency) {
+    var name = cname(country), local = country === 'PK';
+    return {
+      local: local,
+      title: 'Shopping for ' + name + '. Find your next favourite.',
+      trust: 'Shopping for ' + name + ' · ' + (currency === 'PKR' ? 'prices' : 'estimated prices') + ' in ' + currency,
+      lead: local ? 'Explore local and global products. Local items offer cash on delivery. Review delivery charges and payment options before you order.' : 'Explore global fashion, beauty, electronics and home essentials with estimated prices in ' + currency + '. Shipping availability and charges are confirmed for your address before you order.',
+      returns: 'Check eligibility and time limits in our returns policy.',
+      order: local ? 'Local orders use cash on delivery where available. Global orders use an available prepaid method.' : 'Enter your delivery address and review available shipping and prepaid payment options before placing your order.',
+      delivery: 'Delivery charges depend on your products and address. Check shipping availability and the final total before ordering.',
+      payment: local ? 'Cash on delivery is available for eligible local products. Global products require prepaid payment.' : 'Global products require prepaid payment. Checkout confirms the available payment methods and payment currency.',
+      cta: 'Explore products for your destination. Review availability, payment and delivery details before ordering.'
+    };
+  }
+  var originalLinks = new WeakMap(), originalStacks = new WeakMap();
+  function destinationHome() {
+    var home = document.getElementById('home-view'), view = experience(state.country, state.currency);
+    document.querySelectorAll('.smh-top__trust').forEach(function (e) { if(e.textContent !== view.trust)e.textContent = view.trust; });
+    if (!home) return;
+    home.querySelectorAll('[data-market-copy]').forEach(function (e) {
+      var text = view[e.getAttribute('data-market-copy')];
+      if (text && e.textContent !== text) e.textContent = text;
+    });
+    home.querySelectorAll('[data-market-local-home]').forEach(function (e) { e.hidden = !view.local; });
+    document.querySelectorAll('a[href]').forEach(function (a) {
+      var current = a.getAttribute('href');
+      if (!originalLinks.has(a) && /^(?:shop\/|#\/shop(?:\?.*)?)$/.test(current)) originalLinks.set(a, current);
+      if (originalLinks.has(a)) {
+        var target = view.local ? originalLinks.get(a) : new URL('c/global/index.html', document.baseURI).href;
+        if (current !== target) a.setAttribute('href', target);
+      }
+    });
+    var stack = home.querySelector('[data-fill="stack"]');
+    if (stack && !originalStacks.has(stack) && stack.querySelector('.sm-stack__card')) originalStacks.set(stack, stack.innerHTML);
+    if (stack && view.local && stack.dataset.market === 'global') {
+      stack.innerHTML = originalStacks.get(stack) || ''; delete stack.dataset.market;
+    }
+    if (stack && !view.local && stack.dataset.market !== 'global') {
+      // The existing home loader requests this same manifest; no extra shard or API request.
+      if (window.SM_CJ && window.SM_CJ.cats) {
+        var cats = window.SM_CJ.cats.filter(function (c) { return c.img; }).slice(0, 3);
+        stack.innerHTML = cats.map(function (c, i) {
+          return '<a class="sm-stack__card sm-stack__card--' + (i + 1) + '" href="' + esc(new URL('c/global/' + c.s + '.html', document.baseURI).href) + '"><img src="' + esc(c.img) + '" alt="' + esc(c.n) + '" width="800" height="800" decoding="async"><span class="sm-stack__meta"><span class="sm-stack__name">' + esc(c.n) + '</span><span class="sm-stack__price">Explore global products</span></span></a>';
+        }).join(''); stack.dataset.market = 'global';
+      } else {
+        stack.hidden = true; // Do not advertise local-only items while global categories load.
+      }
+    }
+    if (stack && (view.local || stack.dataset.market === 'global')) stack.hidden = false;
   }
 
   /* ---- header ---- */
@@ -164,6 +216,10 @@
       b.setAttribute('aria-label', 'Shopping destination: ' + cname(state.country) + ', ' + state.currency + '. Change country, language or currency');
     });
     document.documentElement.classList.toggle('sm-abroad', state.country !== 'PK');
+    document.querySelectorAll('.smh-search__cat').forEach(function (e) {
+      e.hidden = state.country !== 'PK';
+      var select = e.querySelector('select'); if (select) select.disabled = state.country !== 'PK';
+    });
   }
 
   /* ---- dialog ---- */
@@ -222,7 +278,7 @@
     draft.country = cc; if (suggestCurrency) { draft.currency = CUR[cc] || 'PKR'; curSel.value = draft.currency; if (curSel.value !== draft.currency) { draft.currency = 'PKR'; curSel.value = 'PKR'; } }
     list.querySelectorAll('.sm-mk__c').forEach(function (l) { l.classList.toggle('is-on', l.querySelector('input').value === cc); });
     pane.innerHTML = '<div class="sm-mk__sel"><span class="sm-mk__bigflag" aria-hidden="true">' + flag(cc, 64) + '</span><h3>' + esc(cname(cc)) + '</h3></div>' +
-      '<p>' + (cc === 'PK' ? 'Local products are delivered across Pakistan with cash on delivery. Global items ship from our supplier network.' : 'Global items ship to ' + esc(cname(cc)) + ' from our supplier network. Local supplier items are delivered within Pakistan only: you can order them for an address in Pakistan, for example for family.') + '</p>' +
+      '<p>' + (cc === 'PK' ? 'Local products are delivered across Pakistan with cash on delivery. Global items ship from our supplier network.' : 'Explore global products for ' + esc(cname(cc)) + '. Delivery availability, shipping charges and payment options depend on the product and your address. Review the final details before placing an order.') + '</p>' +
       '<p class="sm-mk__note">Choosing a country suggests its currency. Your selected language stays the same. PKR is used if a currency is unavailable.</p>';
     dlg.querySelector('.sm-mk__picked').innerHTML = '<span aria-hidden="true">✓</span> <span>Your shopping experience, personalised.<b>' + esc(cname(cc)) + '</b></span>';
   }
@@ -238,7 +294,7 @@
     var lang = langSel.value, langChanged = lang !== state.lang;
     state = { country: draft.country, currency: curSel.value || 'PKR', lang: lang, auto: false };   /* an explicit choice always wins over detection */
     var n = document.getElementById('sm-auto'); if (n) n.remove();
-    save(state); dlg.close(); paintHeader(); clearFx(); localiseText(document.body);
+    save(state); dlg.close(); paintHeader(); clearFx(); localiseText(document.body); destinationHome();
     window.dispatchEvent(new CustomEvent('sm:market', { detail: state }));
     if (langChanged) {
       var u = new URL(location.href); if (lang === 'en') u.searchParams.delete('gdcs_lang'); else u.searchParams.set('gdcs_lang', lang);
@@ -251,8 +307,8 @@
     paintHeader();
     document.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('[data-gdcs-market], [data-gdl-header-language], [data-gdl-header-currency]'); if (t) { e.preventDefault(); e.stopPropagation(); open(); } }, true);
     // Always watch for newly rendered prices; convertIn() does nothing while the currency is PKR or rates are not loaded.
-    var queued = false, again = function () { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; convertIn(document); convertTagged(document); localiseText(document.body); }); };
-    localiseText(document.body);
+    var queued = false, again = function () { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; convertIn(document); convertTagged(document); localiseText(document.body); destinationHome(); }); };
+    localiseText(document.body); destinationHome();
     if (document.querySelector('.gdcs-converted-price[data-currency]')) getRates().then(again).catch(function () {});
     new MutationObserver(function (m) { for (var i = 0; i < m.length; i++) if (m[i].addedNodes.length) { again(); break; } }).observe(document.body, { childList: true, subtree: true });
     window.addEventListener('load', again); document.addEventListener('sasta:rendered', again);
@@ -290,9 +346,9 @@
     '@media (max-width:820px){.sm-mk{border-radius:20px;overflow:auto}.sm-mk[open]{display:block}.sm-mk__body{grid-template-columns:1fr;overflow:visible}.sm-mk__left{border-right:0;border-bottom:1px solid #e6eee9}.sm-mk__head{padding:20px;gap:14px}.sm-mk__globe{width:56px;height:56px}.sm-mk__globe svg{width:30px;height:30px}.sm-mk__left,.sm-mk__right{padding:20px}.sm-mk__list{max-height:260px}}' +
     '@media (prefers-reduced-motion:reduce){.sm-mk *{transition:none!important}}';
   document.head.appendChild(css);
-  css.textContent += '.sm-auto{position:fixed;z-index:99990;left:50%;top:12px;transform:translateX(-50%);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;max-width:min(760px,calc(100vw - 24px));padding:10px 14px;border-radius:14px;background:#11261b;color:#fff;font-size:14px;line-height:1.45;box-shadow:0 12px 30px rgba(9,46,30,.35)}' +
+  css.textContent += '#home-view [data-market-local-home][hidden]{display:none!important}.sm-abroad #home-view .sm-cat-total{display:none!important}.sm-auto{position:fixed;z-index:99990;left:50%;top:12px;transform:translateX(-50%);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;max-width:min(760px,calc(100vw - 24px));padding:10px 14px;border-radius:14px;background:#11261b;color:#fff;font-size:14px;line-height:1.45;box-shadow:0 12px 30px rgba(9,46,30,.35)}' +
     '.sm-auto button{min-height:34px;padding:0 14px;border:0;border-radius:999px;font:600 13px/1 inherit;cursor:pointer;background:#fff;color:#11261b}.sm-auto button[data-a="change"]{background:transparent;color:#bfeedd;text-decoration:underline}.sm-auto button:focus-visible{outline:3px solid #ffc439;outline-offset:2px}' +
     '@media (max-width:820px){.sm-auto{top:auto;bottom:calc(86px + env(safe-area-inset-bottom));}}';
-  window.SMMarket = { open: open, state: function () { return state; }, convert: convertIn, list: function () { return COUNTRIES.slice(); }, detect: geoCountry, browserLang: browserLang, countryName: cname, flag: flag, currencies: CUR };
+  window.SMMarket = { open: open, state: function () { return state; }, convert: convertIn, list: function () { return COUNTRIES.slice(); }, detect: geoCountry, browserLang: browserLang, countryName: cname, flag: flag, currencies: CUR, experience: experience };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

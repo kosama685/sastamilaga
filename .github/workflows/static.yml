@@ -39,6 +39,10 @@ jobs:
           for f in app.js assets/js/*.js; do node --check "$f" || exit 1; done
       - name: Validate AI-readable canonical site references
         run: node tools/validate-ai-site-index.mjs
+      - name: Verify destination-specific copy and catalog eligibility
+        run: |
+          npm install --prefix "$RUNNER_TEMP/sasta-dom" linkedom@0.18.15 --no-audit --no-fund
+          SM_DOM_MODULE="$RUNNER_TEMP/sasta-dom/node_modules/linkedom" node --test tools/market-experience.test.mjs
       - name: Build blog posts that are due (any deploy publishes them, not only the daily schedule)
         run: node tools/build-blog.mjs
       - name: Clean URLs (section pages, clean links, sitemap entries)
