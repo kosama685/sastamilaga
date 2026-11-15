@@ -17,7 +17,7 @@ function walk(dir='') {
  }
 }
 walk();
-const knownDynamic=/^\/(?:api\/|wp-json\/|wp-admin\/|global-shop\/p\/|global\/p\/|product\/|category\/|sitemaps\/|cart\/|checkout\/|my-account\/|wc-api\/|shop\/search\/)/i;
+const knownDynamic=/^\/(?:api\/|wp-json\/|wp-admin\/|global-shop\/p\/|global\/p\/|product\/|category\/|sitemaps\/|cart\/|checkout\/|my-account\/|wc-api\/|shop\/search\/|wp-content\/plugins\/woocommerce\/assets\/client\/blocks\/)/i;
 const knownHash=/#\/(?:global|product|category|cart|checkout|shop|search|travel)/i;
 const problems=[],chromeIssues=[],oldCategoryLinks=[],internalRefs=new Set();
 const slashNormalize=s=>s.replace(/\/{2,}/g,'/');
@@ -68,7 +68,7 @@ for(const filename of htmlFiles){
   if(problems.length<LIMIT)problems.push({source:filename,target:p,attribute:m[1]});
  }
 }
-const result={generatedAt:new Date().toISOString(),htmlFiles:htmlFiles.length,repoFiles:validFiles.size,distinctInternalPaths:internalRefs.size,legacyShopCategoryLinks:oldCategoryLinks.length,missingStaticReferences:problems.length,missingIsTruncated:problems.length===LIMIT,chromeIssues:chromeIssues.length,notes:['Dynamic supplier/API/checkout routes are excluded from static existence checks.','A static audit does not prove live HTTP status or working checkout.','Legacy /shop/category.html links are redirected only when a corresponding category exists.'],sampleMissing:problems.slice(0,100),sampleChrome:chromeIssues.slice(0,70),sampleLegacy:oldCategoryLinks.slice(0,30)};
+const result={generatedAt:new Date().toISOString(),htmlFiles:htmlFiles.length,repoFiles:validFiles.size,distinctInternalPaths:internalRefs.size,legacyShopCategoryLinks:oldCategoryLinks.length,missingStaticReferences:problems.length,missingIsTruncated:problems.length===LIMIT,chromeIssues:chromeIssues.length,notes:['Dynamic supplier/API/checkout routes and WordPress-served WooCommerce block CSS are excluded from repository-only existence checks. The WooCommerce CSS returned HTTP 200 on production on 2026-11-15.','A static audit does not prove live HTTP status or working checkout.','Legacy /shop/category.html links are redirected only when a corresponding category exists.'],sampleMissing:problems.slice(0,100),sampleChrome:chromeIssues.slice(0,70),sampleLegacy:oldCategoryLinks.slice(0,30)};
 fs.mkdirSync(path.join(ROOT,'reports'),{recursive:true});
 fs.writeFileSync(path.join(ROOT,'reports','url-audit-ci.json'),JSON.stringify(result,null,2));
 console.log(JSON.stringify({htmlFiles:result.htmlFiles,distinctInternalPaths:result.distinctInternalPaths,missingStaticReferences:result.missingStaticReferences,chromeIssues:result.chromeIssues,legacyShopCategoryLinks:result.legacyShopCategoryLinks}));
