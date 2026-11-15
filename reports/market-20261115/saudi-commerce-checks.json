@@ -1,0 +1,69 @@
+{
+  "checked_at_utc": "2026-11-15T03:03:33Z",
+  "order_submitted": false,
+  "payment_captured": false,
+  "checks": [
+    {
+      "check": "official_market_context",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/wp-json/gdcs/v1/context",
+      "csrf_present": true
+    },
+    {
+      "check": "official_market_selection",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/wp-json/gdcs/v1/context",
+      "saved": true
+    },
+    {
+      "check": "anonymous_global_item_add",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/",
+      "woo_fragments": false,
+      "woo_error": true
+    },
+    {
+      "check": "cart_session_persistence",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/cart/",
+      "cart_form": false,
+      "expected_product": false
+    },
+    {
+      "check": "checkout_form",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/cart/",
+      "checkout_form": false,
+      "billing_fields": false,
+      "gateways": [],
+      "paypal_markup": true,
+      "cod_markup": false,
+      "shipping_method_markup": true,
+      "noindex": true
+    }
+  ],
+  "inventory_reason": {
+    "tested_variation": 64465,
+    "parent": 64464,
+    "parent_status": "pending",
+    "published_global_parent_sample": [
+      {
+        "id": 65373,
+        "catalog_preview": true,
+        "purchasable": false
+      },
+      {
+        "id": 65384,
+        "catalog_preview": true,
+        "purchasable": false
+      },
+      {
+        "id": 65438,
+        "catalog_preview": true,
+        "purchasable": false
+      }
+    ],
+    "query_limit": 6,
+    "inventory_statuses_changed": false
+  }
+}

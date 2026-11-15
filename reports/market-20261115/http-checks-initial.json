@@ -1,0 +1,370 @@
+{
+  "checked_at_utc": "2026-11-15T02:52:34Z",
+  "note": "Googlebot user-agent simulation does not establish what verified Google IPs or Search Console receive.",
+  "results": [
+    {
+      "url": "https://sastamilaga.com/",
+      "agent": "user",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/",
+      "redirects": 0,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 372088,
+      "canonical": [
+        "https://sastamilaga.com/"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ],
+      "title": "Sasta Milaga \u2013 Global & Local Shopping, Travel & Live TV",
+      "market_markers": 7,
+      "new_external_stylesheets": 0,
+      "market_script_deferred": true
+    },
+    {
+      "url": "https://sastamilaga.com/",
+      "agent": "googlebot-user-agent-simulation",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/",
+      "redirects": 0,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 372088,
+      "canonical": [
+        "https://sastamilaga.com/"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ]
+    },
+    {
+      "url": "https://sastamilaga.com/assets/js/market.js",
+      "agent": "user",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/assets/js/market.js",
+      "redirects": 0,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 36696,
+      "new_market_renderer": true,
+      "obsolete_pakistan_store_copy": false
+    },
+    {
+      "url": "https://sastamilaga.com/assets/js/market.js",
+      "agent": "googlebot-user-agent-simulation",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/assets/js/market.js",
+      "redirects": 0,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 36696
+    },
+    {
+      "url": "https://sastamilaga.com/assets/js/chrome.js",
+      "agent": "user",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/assets/js/chrome.js",
+      "redirects": 0,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 5863
+    },
+    {
+      "url": "https://sastamilaga.com/assets/js/chrome.js",
+      "agent": "googlebot-user-agent-simulation",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/assets/js/chrome.js",
+      "redirects": 0,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 5863
+    },
+    {
+      "url": "https://sastamilaga.com/assets/js/search-suggest.js",
+      "agent": "user",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/assets/js/search-suggest.js",
+      "redirects": 0,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 13938
+    },
+    {
+      "url": "https://sastamilaga.com/assets/js/search-suggest.js",
+      "agent": "googlebot-user-agent-simulation",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/assets/js/search-suggest.js",
+      "redirects": 0,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 13938
+    },
+    {
+      "url": "https://sastamilaga.com/app.js",
+      "agent": "user",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/app.js",
+      "redirects": 0,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 175576
+    },
+    {
+      "url": "https://sastamilaga.com/app.js",
+      "agent": "googlebot-user-agent-simulation",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/app.js",
+      "redirects": 0,
+      "content_type": "application/javascript; charset=utf-8",
+      "bytes": 175576
+    },
+    {
+      "url": "https://sastamilaga.com/llms.txt",
+      "agent": "user",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/llms.txt",
+      "redirects": 0,
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 3279
+    },
+    {
+      "url": "https://sastamilaga.com/llms.txt",
+      "agent": "googlebot-user-agent-simulation",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/llms.txt",
+      "redirects": 0,
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 3279
+    },
+    {
+      "url": "https://sastamilaga.com/robots.txt",
+      "agent": "user",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/robots.txt",
+      "redirects": 0,
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 312
+    },
+    {
+      "url": "https://sastamilaga.com/robots.txt",
+      "agent": "googlebot-user-agent-simulation",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/robots.txt",
+      "redirects": 0,
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 312
+    },
+    {
+      "url": "https://sastamilaga.com/sitemap.xml",
+      "agent": "user",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/sitemap.xml",
+      "redirects": 0,
+      "content_type": "application/xml; charset=utf-8",
+      "bytes": 896
+    },
+    {
+      "url": "https://sastamilaga.com/sitemap.xml",
+      "agent": "googlebot-user-agent-simulation",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/sitemap.xml",
+      "redirects": 0,
+      "content_type": "application/xml; charset=utf-8",
+      "bytes": 896
+    },
+    {
+      "url": "https://sastamilaga.com/cart/",
+      "agent": "user",
+      "status": 503,
+      "final_url": "https://sastamilaga.com/cart/",
+      "redirects": 0,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 1213,
+      "canonical": [],
+      "robots": [
+        "noindex"
+      ]
+    },
+    {
+      "url": "https://sastamilaga.com/cart/",
+      "agent": "googlebot-user-agent-simulation",
+      "status": 503,
+      "final_url": "https://sastamilaga.com/cart/",
+      "redirects": 0,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 1213,
+      "canonical": [],
+      "robots": [
+        "noindex"
+      ]
+    },
+    {
+      "url": "https://sastamilaga.com/checkout/",
+      "agent": "user",
+      "status": 503,
+      "final_url": "https://sastamilaga.com/cart/",
+      "redirects": 1,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 1213,
+      "canonical": [],
+      "robots": [
+        "noindex"
+      ]
+    },
+    {
+      "url": "https://sastamilaga.com/checkout/",
+      "agent": "googlebot-user-agent-simulation",
+      "status": 503,
+      "final_url": "https://sastamilaga.com/cart/",
+      "redirects": 1,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 1213,
+      "canonical": [],
+      "robots": [
+        "noindex"
+      ]
+    },
+    {
+      "url": "https://sastamilaga.com/c/global/index.html",
+      "agent": "user",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/c/global/index.html",
+      "redirects": 0,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 78288,
+      "canonical": [
+        "https://sastamilaga.com/c/global/index.html"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ]
+    },
+    {
+      "url": "https://sastamilaga.com/c/global/index.html",
+      "agent": "googlebot-user-agent-simulation",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/c/global/index.html",
+      "redirects": 0,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 78288,
+      "canonical": [
+        "https://sastamilaga.com/c/global/index.html"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ]
+    },
+    {
+      "url": "https://sastamilaga.com/c/global/garden-tools.html",
+      "agent": "user",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/c/global/garden-tools.html",
+      "redirects": 0,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 124409,
+      "canonical": [
+        "https://sastamilaga.com/c/global/garden-tools.html"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ]
+    },
+    {
+      "url": "https://sastamilaga.com/c/global/garden-tools.html",
+      "agent": "googlebot-user-agent-simulation",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/c/global/garden-tools.html",
+      "redirects": 0,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 124409,
+      "canonical": [
+        "https://sastamilaga.com/c/global/garden-tools.html"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ]
+    },
+    {
+      "url": "https://sastamilaga.com/shipping/",
+      "agent": "user",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/shipping/",
+      "redirects": 0,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 314040,
+      "canonical": [
+        "https://sastamilaga.com/shipping/"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ]
+    },
+    {
+      "url": "https://sastamilaga.com/shipping/",
+      "agent": "googlebot-user-agent-simulation",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/shipping/",
+      "redirects": 0,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 314040,
+      "canonical": [
+        "https://sastamilaga.com/shipping/"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ]
+    },
+    {
+      "url": "https://sastamilaga.com/returns/",
+      "agent": "user",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/returns/",
+      "redirects": 0,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 311772,
+      "canonical": [
+        "https://sastamilaga.com/returns/"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ]
+    },
+    {
+      "url": "https://sastamilaga.com/returns/",
+      "agent": "googlebot-user-agent-simulation",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/returns/",
+      "redirects": 0,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 311772,
+      "canonical": [
+        "https://sastamilaga.com/returns/"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ]
+    },
+    {
+      "url": "https://sastamilaga.com/how-to-order/",
+      "agent": "user",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/how-to-order/",
+      "redirects": 0,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 309971,
+      "canonical": [
+        "https://sastamilaga.com/how-to-order/"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ]
+    },
+    {
+      "url": "https://sastamilaga.com/how-to-order/",
+      "agent": "googlebot-user-agent-simulation",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/how-to-order/",
+      "redirects": 0,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 309971,
+      "canonical": [
+        "https://sastamilaga.com/how-to-order/"
+      ],
+      "robots": [
+        "index, follow, max-image-preview:large"
+      ]
+    }
+  ]
+}
