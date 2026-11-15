@@ -62,6 +62,8 @@ final class Bridge {
     static function call(string $op,array $params=[],bool $fresh=false): array {
         if(!isset(self::OPS[$op]))throw new \InvalidArgumentException('Unsupported operation.');
         [$path,$method,$required,$ttl,$access]=self::OPS[$op];
+        $can_stale=!$fresh&&in_array($op,['list','categories','product','variants','warehouses','warehouse','storage'],true);
+        $key=null;
         foreach($required as $key)if(!isset($params[$key])||$params[$key]===''||$params[$key]===[])throw new \InvalidArgumentException('Missing '.$key.'.');
         self::validate_operation($op,$params);
         if($op==='list')$params=self::listing_params($params);
@@ -69,13 +71,18 @@ final class Bridge {
         if(!$fresh&&$ttl&&($hit=get_transient($key))!==false){$hit['cache']='hit';return $hit;}
         if(!\GDCS\Database::lock($key,50)){
             for($i=0;$i<20;$i++){usleep(150000);if(($hit=get_transient($key))!==false){$hit['cache']='coalesced';return $hit;}}
+            if($can_stale&&($verified=get_transient($key.'_verified'))!==false){$verified['cache']='verified-stale';$verified['refresh_error']=['code'=>'request_coalescing','message'=>'A supplier refresh is in progress.','requestId'=>null];$verified['stale_until']=gmdate('c',strtotime($verified['expires_at'])+600);return $verified;}
             throw new \RuntimeException('This supplier request is already running. Retry shortly.');
         }
         try{
             $api=new \GDCS\Api();try{$data=$api->request($path,$params,$method);}finally{self::$currentTrace=method_exists($api,'last_response')?$api->last_response():(array)get_option('gdcs_last_api',[]);}
             $trace=self::trace();$result=['data'=>$data,'checked_at'=>gmdate('c'),'expires_at'=>gmdate('c',time()+$ttl),'requestId'=>$trace['request_id']??null,'endpoint'=>$path,'cache'=>'miss'];
-            if($ttl)set_transient($key,$result,$ttl);
+            if($ttl){set_transient($key,$result,$ttl);if(in_array($op,['list','categories','product','variants','warehouses','warehouse','storage'],true))set_transient($key.'_verified',$result,$ttl+600);}
             return $result;
+        }catch(\GDCS\ApiException $e){
+            self::log_error('storefront.catalog_failure',$e,$path);
+            if($can_stale&&$e->retryable&&($verified=get_transient($key.'_verified'))!==false){$verified['cache']='verified-stale';$verified['refresh_error']=self::error($e);$verified['stale_until']=gmdate('c',strtotime($verified['expires_at'])+600);return $verified;}
+            throw $e;
         }finally{\GDCS\Database::unlock($key);}
     }
     static function listing_params(array $p): array {
@@ -181,7 +188,7 @@ final class Bridge {
         try{$v=$out['variant']['data'];$p=self::call('product',['pid'=>self::id($v['pid']??'')])['data'];$snap=(array)get_option('smcj_feed_snapshots',[]);
             $snap[$vid]=['id'=>$vid,'pid'=>$v['pid'],'title'=>sanitize_text_field($p['productNameEn']??''),'description'=>wp_strip_all_tags($p['description']??''),'image'=>\GDCS\LiveCatalog::image($v['variantImage']??$p['productImage']??''),'sku'=>$v['variantSku']??'','gtin'=>(string)($v['barcode']??''),'brand'=>sanitize_text_field($p['brandName']??$p['brand']??''),'price'=>is_numeric($v['variantSellPrice']??null)?self::price((float)$v['variantSellPrice']):null,'stock'=>array_sum(array_column((array)$out['stock']['data'],'totalInventoryNum')),'checked_at'=>gmdate('c'),'requestId'=>$out['stock']['requestId']];
             if(count($snap)>1000)$snap=array_slice($snap,-1000,null,true);update_option('smcj_feed_snapshots',$snap,false);
-        }catch(\Throwable $e){\GDCS\Logger::write('info','storefront.feed_snapshot_unavailable',self::error($e));}return $out;
+        }catch(\Throwable $e){self::log_error('storefront.feed_snapshot_unavailable',$e);}return $out;
     }
     static function feed(): array {
         $items=[];$excluded=[];foreach((array)get_option('smcj_feed_snapshots',[]) as $x){$reasons=[];
@@ -210,6 +217,7 @@ final class Bridge {
         $diagnostics=null;if(empty($simple['data'])&&isset($row))try{$diagnostics=self::call('freight-diagnostics',['reqDTOS'=>[$row]]);}catch(\Throwable $e){$diagnostics=['error'=>self::error($e)];}
         return ['simple'=>$simple,'simple_error'=>$simple_error,'diagnostics'=>$diagnostics,'accurate'=>$accurate,'accurate_error'=>$accurate_error,'origin'=>$origin,'country'=>$dest,'stock'=>$inventory['stock'],'fees_included'=>false];
     }
+    static function log_error(string $event,\Throwable $e,string $endpoint=''): void {$error=self::error($e);\GDCS\Logger::write('error',$event,['reason_code'=>$error['code'],'request_id'=>$error['requestId'],'endpoint'=>$endpoint]);}
     static function error(\Throwable $e): array {
         $trace=$e instanceof \GDCS\ApiException?self::trace():[];return ['code'=>$e instanceof \GDCS\ApiException?$e->reason:($e instanceof \InvalidArgumentException?'invalid_input':'supplier_unavailable'),'message'=>$e instanceof \InvalidArgumentException?$e->getMessage():'Supplier data could not be verified. Retry shortly or contact support with this reference.','requestId'=>$trace['request_id']??null];
     }
@@ -217,18 +225,20 @@ final class Bridge {
         try{
             if(!class_exists('\GDCS\Api'))throw new \RuntimeException('Supplier integration is unavailable.');
             $ip=(string)($_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['REMOTE_ADDR']??'');$budget='smcj_rate_'.md5($ip.gmdate('YmdHi'));$used=(int)get_transient($budget);if($used>=40)return new \WP_REST_Response(['code'=>'request_rate_limited','message'=>'Please wait before requesting more supplier data.'],429,['Retry-After'=>'60','Cache-Control'=>'no-store']);set_transient($budget,$used+1,70);
+            if(in_array($name,['inventory','shipping'],true))set_transient('smcj_foreground_priority',true,45);
             $p=$r->get_params();if(($p['view']??'')==='suggest'){unset($p['view']);$p['features']=[];$p['size']=5;}
             $result=match($name){'bootstrap'=>self::bootstrap(),'home'=>self::home((string)($p['countryCode']??'')),'listing'=>self::listing($p),'detail'=>self::detail(self::id($p['pid']??'')),'inventory'=>self::inventory(self::id($p['vid']??'')),'shipping'=>self::shipping((array)$r->get_json_params()),'supplier'=>self::supplier($p),'legacy'=>self::legacy($p),'feed'=>self::feed(),'sitemap'=>['products'=>array_values(array_filter((array)get_option('smcj_seen_products',[]),static fn($x)=>strtotime($x['checked_at']??'')>time()-DAY_IN_SECONDS))]};
             return new \WP_REST_Response($result,200,['Cache-Control'=>$name==='inventory'||$name==='shipping'?'private,no-store':'public,max-age=60,s-maxage=180','X-Sasta-CJ'=>self::VERSION]);
-        }catch(\Throwable $e){return new \WP_REST_Response(self::error($e),$e instanceof \InvalidArgumentException?400:($e instanceof \OutOfBoundsException?404:503),['Cache-Control'=>'no-store','Retry-After'=>'30']);}
+        }catch(\Throwable $e){return new \WP_REST_Response(self::error($e),$e instanceof \InvalidArgumentException?400:($e instanceof \OutOfBoundsException||$e instanceof \GDCS\ApiException&&in_array($e->reason,['cj_1602000','cj_1602001','cj_1602002','cj_1602003'],true)?404:503),['Cache-Control'=>'no-store','Retry-After'=>'30']);}
     }
     static function warm(): void {
         if((int)get_option('smcj_home_last_view',0)<time()-900)return;
         try{foreach(self::call('categories')['data'] as $first){
+            if(get_transient('smcj_foreground_priority'))return;
             $ids=array_column((array)($first['categoryFirstList']??[]),'categorySecondId');if(!$ids)continue;
             $p=self::listing_params(['page'=>1,'size'=>10,'features'=>['enable_category','enable_description'],'lv2categoryList'=>$ids]);ksort($p);$hit=get_transient('smcj_'.md5('list'.wp_json_encode($p)));
             if($hit===false||strtotime($hit['expires_at'])<time()+65)self::call('list',$p,true);
-        }}catch(\Throwable $e){\GDCS\Logger::write('error','storefront.warm_failed',self::error($e));}
+        }}catch(\Throwable $e){self::log_error('storefront.warm_failed',$e);}
     }
     static function checkout_stock($data,$errors): void {
         if(!WC()->cart||!\GDCS\Shipping::has_cj())return;

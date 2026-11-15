@@ -7,6 +7,9 @@ on:
         options: [preview, production, rollback]
         default: preview
         description: Isolated preview first, then production routes
+concurrency:
+  group: cj-storefront-deployment
+  cancel-in-progress: false
 permissions:
   contents: read
 jobs:

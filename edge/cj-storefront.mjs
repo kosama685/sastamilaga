@@ -115,7 +115,7 @@ async function render(env,request,u,path){
  if(!page)return null;if(page.redirect)return Response.redirect(page.redirect,301);
  if(u.pathname.startsWith('/__cj-preview/'))page.robots='noindex,nofollow';
  if(request.headers.get('X-CJ-Fragment')==='1')return Response.json({body:page.body,title:page.title,description:page.description,canonical:page.canonical,robots:page.robots},{headers:{'Cache-Control':'no-store','X-Sasta-Renderer':'cj-ssr-v1'}});
- return pageResponse(shell({...page,css}));
+ return pageResponse(shell({...page,css,assetBase:u.pathname.startsWith('/__cj-preview/')?'/__cj-preview':''}));
 }
 async function discovery(env,request,path){
  const bootstrap=await bridge(env,'bootstrap',{},request),nodes=taxonomy(bootstrap.categories.data),first=nodes.filter(n=>n.level===1);
@@ -193,7 +193,7 @@ export default {
   if(path==='/shipping-policy/')return Response.redirect(SITE+'/shipping/',301);
   const supported=path==='/'||/^\/(?:shop|search)(?:\/|$)/.test(path)||/^\/(?:category|ships-from|brand|product|guides|faq)\//.test(path);
   if(!supported)return env.FALLBACK.fetch(request);
-  if(path.startsWith('/product/')&&!/^\/product\/[A-Za-z0-9-]{1,100}\/[^/]+\/?$/.test(path))return env.LEGACY_PRODUCTS.fetch(request);
+  if(path.startsWith('/product/')&&!/^\/product\/(?:[a-f0-9]{32}|[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}|[0-9]{8,24})\/[^/]+\/?$/i.test(path))return env.LEGACY_PRODUCTS.fetch(request);
   if(!path.endsWith('/'))return Response.redirect(SITE+path+'/'+u.search,301);
   if(/^\/(?:shop|search)\//.test(path)&&!/^\/(?:shop|search)\/(?:page\/[1-9][0-9]*\/)?$/.test(path))return new Response('Page not found',{status:404,headers:{'X-Robots-Tag':'noindex','Cache-Control':'no-store'}});
   try{

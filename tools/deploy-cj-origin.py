@@ -16,6 +16,9 @@ if replacement in before:
 elif before.count(anchor)==1:
  after=before.replace(anchor,replacement)
 else:raise RuntimeError('API compatibility anchor changed; no origin files modified')
+# A one-second integer lease can expire after only milliseconds at a clock boundary.
+# Two seconds guarantees at least one second between starts across the account.
+after=after.replace("Database::lock('cj_request',1)","Database::lock('cj_request',2)")
 # Preserve refresh tokens and wait for the account-wide refresh already in flight.
 old_lock="if (!Database::lock('cj_token',90)) { throw new ApiException('CJ authentication is already running. Try again shortly.', 'auth_busy',true); }"
 new_lock="""if (!Database::lock('cj_token',90)) {

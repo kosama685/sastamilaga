@@ -1,6 +1,8 @@
 <?php
 namespace GDCS {
-    final class Api {public static array $calls=[];function request($path,$params,$method){self::$calls[]=[$path,$method,$params];return ['fixture'=>true];}function last_response(){return ['request_id'=>'unit-test-reference','api_code'=>'200'];}}
+    final class ApiException extends \RuntimeException {function __construct($message,public $reason,public $retryable=false){parent::__construct($message);}}
+    final class Logger {static function write(...$args){}}
+    final class Api {public static ?string $failure=null;public static array $calls=[];function request($path,$params,$method){self::$calls[]=[$path,$method,$params];if(self::$failure)throw new ApiException('Simulated supplier timeout',self::$failure,true);return ['fixture'=>true];}function last_response(){return ['request_id'=>'unit-test-reference','api_code'=>'200'];}}
     final class Database {static function lock(...$a){return true;}static function unlock(...$a){}}
 }
 namespace {
@@ -27,5 +29,6 @@ foreach(\Sasta\CJ\Bridge::OPS as $op=>[$path,$method,$required]){
 $bad=[['freight-accurate',['reqDTOS'=>[['srcAreaCode'=>'CN','destAreaCode'=>'SA','weight'=>0,'volume'=>1,'productProp'=>['COMMON']]]]],['freight',['startCountryCode'=>'CN','endCountryCode'=>'SA','products'=>[['vid'=>'VID-1','quantity'=>0]]]],['disputes',['startDate'=>0,'endDate'=>91*86400000]],['disputes',['updateDateFrom'=>0,'updateDateTo'=>32*86400000]]];
 foreach($bad as [$op,$p]){try{\Sasta\CJ\Bridge::call($op,$p,true);throw new \RuntimeException('Invalid operational payload accepted.');}catch(\InvalidArgumentException $e){}}
 \Sasta\CJ\Bridge::settle(['shipmentOrderId'=>'MOCK-SHIPMENT']);$before=count(\GDCS\Api::$calls);try{\Sasta\CJ\Bridge::settle(['shipmentOrderId'=>'MOCK-SHIPMENT']);throw new \RuntimeException('Duplicate supplier settlement accepted.');}catch(\RuntimeException $e){if(count(\GDCS\Api::$calls)!==$before)throw new \RuntimeException('Duplicate supplier payment reached provider.');}
+\Sasta\CJ\Bridge::call('categories',[],true);$primary='smcj_'.md5('categories'.json_encode([]));unset($GLOBALS['smcj_test_cache'][$primary]);\GDCS\Api::$failure='transport';$fallback=\Sasta\CJ\Bridge::call('categories');if($fallback['cache']!=='verified-stale'||empty($fallback['refresh_error']))throw new \RuntimeException('Verified catalog fallback failed.');try{\Sasta\CJ\Bridge::call('categories',[],true);throw new \RuntimeException('Forced fresh call used stale data.');}catch(\GDCS\ApiException $e){}\GDCS\Api::$failure=null;
 echo $checked." endpoint contracts checked, including methods, mandatory fields and request references. Invalid freight, stock quantity and dispute date windows rejected before network I/O.\n";
 }
