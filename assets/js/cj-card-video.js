@@ -68,7 +68,13 @@
      const card=entry.target,pid=card.dataset.cjVideo;
      if(card.dataset.cjVideoHint!=='1')continue; // snapshot explicitly reports a video
      fetchSlow(pid).then(video=>{
-       if(!video||!card.isConnected||card.querySelector('.sm-cj-video-button'))return;
+       if(!card.isConnected)return;
+       if(!video){
+         const badge=card.querySelector('.sm-card__badge');
+         if(badge && badge.textContent.trim()==='Video')badge.remove();
+         return;
+       }
+       if(card.querySelector('.sm-cj-video-button'))return;
        const button=document.createElement('button');button.type='button';
        button.className='sm-cj-video-button';button.textContent='▶ Video';
        button.setAttribute('aria-label','Play supplier video for '+(card.querySelector('.sm-cj-rail-name,.sm-card__title')?.textContent||'product'));
