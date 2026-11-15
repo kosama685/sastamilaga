@@ -1,0 +1,26 @@
+name: Verify CJ card WooCommerce handoff
+on:
+  pull_request:
+    paths:
+      - assets/js/cj-home-rails.js
+      - tools/cj-cart-handoff.test.mjs
+      - .github/workflows/cj-cart-handoff.yml
+  push:
+    branches: [main]
+    paths:
+      - assets/js/cj-home-rails.js
+      - tools/cj-cart-handoff.test.mjs
+      - .github/workflows/cj-cart-handoff.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - run: node --check assets/js/cj-home-rails.js
+      - run: node --test tools/cj-cart-handoff.test.mjs
