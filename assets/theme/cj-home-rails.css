@@ -1,0 +1,36 @@
+/* Additive CJ supplier discovery: follows Sasta Milaga's green/mint/orange
+   palette. Existing homepage sections remain untouched. */
+#sm-home-global .sm-cj-live{--cj-green:#0b3b20;--cj-bright:#0f7a3b;--cj-line:#dcebe2;--cj-mint:#eaf6ee;max-width:100%;margin-top:clamp(28px,4vw,54px);padding:clamp(18px,3vw,30px);border:1px solid var(--cj-line);border-radius:20px;background:linear-gradient(155deg,#f2faf5 0%,#fff 52%);color:#123b27}
+#sm-home-global .sm-cj-live-head{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+#sm-home-global .sm-cj-live-head h4{font-size:clamp(1.18rem,2.4vw,1.6rem);margin:4px 0;color:var(--cj-green)}
+#sm-home-global .sm-cj-live-head p{max-width:66ch;margin:5px 0 12px;font-size:.91rem;color:#4b6757}
+#sm-home-global .sm-cj-eyebrow{font-size:.7rem;letter-spacing:.13em;font-weight:800;color:#0f7a3b}
+#sm-home-global .sm-cj-country-select{display:flex;flex-direction:column;gap:4px}
+#sm-home-global .sm-cj-country-select label{font-size:.8rem;font-weight:700;color:#345a44}
+#sm-home-global .sm-cj-country-select select{max-width:100%;min-height:44px;padding:9px 35px 9px 12px;border:1px solid #b7d0c0;border-radius:10px;background:#fff;color:#103923;font:inherit}
+#sm-home-global .sm-cj-live-feedback{font-size:.82rem;color:#4b6757}
+#sm-home-global .sm-cj-live-group{padding:19px 0;border-top:1px solid var(--cj-line);min-width:0}
+#sm-home-global .sm-cj-group-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#sm-home-global .sm-cj-group-heading h5{font-size:1rem;margin:0;color:var(--cj-green)}
+#sm-home-global .sm-cj-group-summary{font-size:.77rem;color:#5a7465;margin:3px 0}
+#sm-home-global .sm-cj-group-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+#sm-home-global .sm-cj-arrow,#sm-home-global .sm-cj-retry{padding:8px 11px;border:1px solid #bdd3c5;border-radius:9px;background:white;color:#0b3b20;cursor:pointer;min-height:42px}
+#sm-home-global .sm-cj-arrow:disabled{opacity:.5;cursor:default}
+#sm-home-global .sm-cj-browse{color:#067a3a;font-weight:700;font-size:.8rem;text-underline-offset:3px}
+#sm-home-global .sm-cj-rail-viewport{overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#bbd8c5 transparent;padding:13px 0 3px;outline-offset:2px}
+#sm-home-global .sm-cj-rail-track{display:flex;width:max-content;max-width:none}
+#sm-home-global .sm-cj-rail-set{display:flex;gap:12px;padding-right:12px}
+#sm-home-global .sm-cj-rail-card{display:flex;flex-direction:column;gap:5px;box-sizing:border-box;width:186px;max-width:186px;min-height:290px;padding:10px;border:1px solid var(--cj-line);border-radius:14px;background:#fff;text-decoration:none!important;color:#173f27;box-shadow:0 8px 24px rgba(7,53,24,.04)}
+#sm-home-global .sm-cj-rail-image{display:grid;place-items:center;aspect-ratio:1;background:#f8fbf9;border-radius:9px;overflow:hidden}
+#sm-home-global .sm-cj-rail-image img{display:block;width:100%;height:100%;object-fit:contain}
+#sm-home-global .sm-cj-rail-title{font-size:.84rem;line-height:1.35;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden}
+#sm-home-global .sm-cj-rail-price{font-size:.81rem;color:#0f7a3b;font-weight:800}
+#sm-home-global .sm-cj-rail-note{font-size:.67rem;color:#6b766f;line-height:1.28}
+#sm-home-global .sm-cj-status{font-size:.76rem;color:#5b7063;margin:8px 0}
+#sm-home-global .sm-cj-rail-auto{animation:sm-cj-scroll 55s linear infinite;will-change:transform}
+#sm-home-global .sm-cj-live-group:hover .sm-cj-rail-auto,#sm-home-global .sm-cj-live-group:focus-within .sm-cj-rail-auto{animation-play-state:paused}
+@keyframes sm-cj-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+#sm-home-global .sm-cj-rail-card:hover{border-color:#0f7a3b}
+#sm-home-global .sm-cj-rail-card:focus-visible,#sm-home-global button:focus-visible,#sm-home-global select:focus-visible{outline:3px solid #ff8a00;outline-offset:3px}
+@media(max-width:600px){#sm-home-global .sm-cj-live{padding:15px;border-radius:16px}#sm-home-global .sm-cj-rail-card{width:156px;max-width:156px;min-height:255px}#sm-home-global .sm-cj-group-actions{width:100%}}
+@media(prefers-reduced-motion:reduce){#sm-home-global .sm-cj-rail-auto{animation:none!important;will-change:auto}#sm-home-global .sm-cj-rail-viewport{scroll-behavior:auto!important}}
