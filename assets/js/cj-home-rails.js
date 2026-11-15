@@ -22,7 +22,7 @@
   };
   const records=new Map();
   const card=(cat,r)=>{
-    const name=String(r[2]),url='/#/global/p/'+encodeURIComponent(cat.s)+'/'+encodeURIComponent(r[0]);
+    const name=String(r[2]),url='/global/p/'+encodeURIComponent(cat.s)+'/'+encodeURIComponent(r[0]);
     const groupKey=cat.s+'|'+String(r[0]);records.set(groupKey,{cat,r,url});
     const price=Number(r[3]),amt=price>0?money.format(price*1.2):'Confirm price';
     return '<article class="sm-cj-rail-card" data-cj-card="'+escape(groupKey)+'"><a class="sm-cj-card-link" href="'+escape(url)+'" aria-label="View '+escape(name)+'">'
@@ -50,7 +50,7 @@
         +'<p id="sm-cj-order-estimate" class="sm-cj-order-estimate"></p>'
         +'<p class="sm-cj-order-disclaimer">Supplier price estimate only. Delivery, inventory and final total are confirmed before payment.</p>'
         +'<div class="sm-cj-order-buttons"><button type="button" id="sm-cj-order-confirm" class="sm-cj-add">Add to cart</button><a id="sm-cj-order-whatsapp" class="sm-cj-wa" target="_blank" rel="noopener noreferrer">WhatsApp order</a></div></div>'
-        +'<p><a id="sm-cj-order-full" href="/#/global">View full product details and delivery</a></p></form>';
+        +'<p><a id="sm-cj-order-full" href="/c/global/index.html">View full product details and delivery</a></p></form>';
       document.body.appendChild(element);
     }
     return element;
@@ -114,7 +114,7 @@
   const section=(group,cat)=>{
     const sec=document.createElement('section');sec.className='sm-cj-rail';sec.dataset.category=cat.s;
     sec.innerHTML='<div class="sm-cj-rail-top"><div><h3>'+escape(group.n)+'</h3><p>Browse international finds. Final stock, price and shipping are checked for your destination.</p></div>'
-      +'<a href="/#/global/g/'+encodeURIComponent(group.s)+'">View all '+escape(group.n)+'</a></div>'
+      +'<a href="/global/g/'+encodeURIComponent(group.s)+'/">View all '+escape(group.n)+'</a></div>'
       +'<div class="sm-cj-rail-track" tabindex="0" aria-label="'+escape(group.n)+' product selection"><p class="sm-cj-rail-status" role="status">Loading products…</p></div>';
     return sec;
   };
@@ -133,7 +133,7 @@
       }catch(e){lastError=e}
     }
     track.innerHTML='<p class="sm-cj-rail-status">Products are temporarily unavailable in this category. '
-      +'<a href="/#/global/g/'+encodeURIComponent(group.s)+'">Browse the category</a></p>';
+      +'<a href="/global/g/'+encodeURIComponent(group.s)+'/">Browse the category</a></p>';
     if(lastError)console.warn('CJ category snapshot failed',group.s,lastError.message);
   };
   async function start(){
@@ -144,7 +144,7 @@
     if(!manifest||!Array.isArray(manifest.groups)||!Array.isArray(manifest.cats))throw new Error('invalid CJ manifest');
     host.innerHTML='<div class="sm-cj-rails-heading"><div><p class="sm-cj-eyebrow">INTERNATIONAL PRODUCT DISCOVERY</p><h2>Explore global products by category</h2>'
       +'<p>All '+manifest.groups.length+' catalogue groups. Product cards are drawn from the '+escape(manifest.snapshot||'saved')+' CJ catalogue snapshot, not a live inventory claim.</p></div>'
-      +'<a href="/#/global">Explore all categories</a></div><div id="sm-cj-rails-list"></div>';
+      +'<a href="/c/global/index.html">Explore all categories</a></div><div id="sm-cj-rails-list"></div>';
     const container=host.querySelector('#sm-cj-rails-list');
     let observer;
     const load=new WeakSet();
@@ -174,5 +174,5 @@
     });
     if(!observer)pump();
   }
-  start().catch(e=>{console.error('CJ rails unavailable:',e.message);host.innerHTML='<div class="sm-cj-rails-heading"><h2>Explore global products by category</h2><p>Category product rows are temporarily unavailable. <a href="/#/global">Browse the global catalogue</a>.</p></div>'});
+  start().catch(e=>{console.error('CJ rails unavailable:',e.message);host.innerHTML='<div class="sm-cj-rails-heading"><h2>Explore global products by category</h2><p>Category product rows are temporarily unavailable. <a href="/c/global/index.html">Browse the global catalogue</a>.</p></div>'});
 })();
