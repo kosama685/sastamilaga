@@ -1,0 +1,36 @@
+name: CJ supplier video additions
+on:
+  pull_request:
+    paths:
+      - 'assets/js/cj-card-video.js'
+      - 'assets/js/cj-home-video-rail.js'
+      - 'assets/js/global.js'
+      - 'assets/js/cj-home-rails.js'
+      - 'index.html'
+      - 'tools/cj-video-regression.test.mjs'
+      - '.github/workflows/cj-video-additions.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'assets/js/cj-card-video.js'
+      - 'assets/js/cj-home-video-rail.js'
+      - 'assets/js/global.js'
+      - 'assets/js/cj-home-rails.js'
+      - 'index.html'
+      - 'tools/cj-video-regression.test.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  safety-and-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - run: node --test tools/cj-video-regression.test.mjs
+      - run: node --check assets/js/global.js && node --check assets/js/cj-home-rails.js && node --check assets/js/cj-card-video.js && node --check assets/js/cj-home-video-rail.js
+      - name: Validate static clean-route section generation
+        run: node tools/build-sections.mjs
