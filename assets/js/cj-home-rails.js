@@ -55,7 +55,7 @@
     }
     return element;
   };
-  let activeRequest=0;
+  let activeRequest=0, onConfirm=null;
   async function openOrder(key,action){
     const item=records.get(key);if(!item)return;
     const {cat,r,url}=item, dialog=modal(),status=dialog.querySelector('#sm-cj-order-message'),controls=dialog.querySelector('#sm-cj-order-controls');
@@ -96,21 +96,59 @@
       };
       selector.onchange=update;qty.oninput=update;update();
       confirm.textContent=action==='buy'?'Quick Buy — continue to checkout':'Add to cart';
-      confirm.onclick=()=>{
+      onConfirm=async()=>{
         const v=variants[Number(selector.value)]||variants[0],n=Number(qty.value);
         if(!Number.isInteger(n)||n<1||n>99){status.textContent='Please enter a quantity between 1 and 99.';return;}
-        const row={id:r[0],cs:cat.s,sku:r[1],name:r[2],img:v.image||r[5],unit:Number(v.price)*1.2,qty:n,opt:'',ship:'',shipAmt:0,shipCur:'USD',vkey:String(v.sku),vname:String(v.key||v.name||v.sku),url:location.origin+url};
-        if(!window.SMGCart?.addVerified?.(row)){status.textContent='Unable to save this item. Use the product page or WhatsApp.';return;}
-        dialog.close();
-        if(action==='buy'){if(window.SMApp?.go)window.SMApp.go('checkout');else location.href='/#/checkout';}
-        else {status.textContent='Added to your cart';const label=document.createElement('span');label.className='sm-cj-feedback';label.setAttribute('role','status');label.textContent='Added to cart';let original=document.querySelector('[data-cj-card="'+key.replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'"] .sm-cj-add');if(original){original.after(label);setTimeout(()=>label.remove(),3500);}}
+        if(!v?.sku||!v?.vid){status.textContent='This supplier option cannot be verified. Please use WhatsApp.';return;}
+        const woo=window.SMWoo;
+        if(!woo?.active||typeof woo.add!=='function'){
+          status.textContent='WooCommerce checkout is only available on the main store. Use WhatsApp to request this exact variation.';
+          return;
+        }
+        confirm.disabled=true;confirm.setAttribute('aria-busy','true');
+        status.textContent='Verifying this variation with the WooCommerce cart…';
+        try{
+          // WooCommerce is the single source of truth for cart, price and availability.
+          // Never fall back to localStorage or claim an order when the server rejects a SKU.
+          const saved=await woo.add(String(v.sku),n);
+          if(!saved?.ok){
+            const reason=saved?.reason==='unmapped'
+              ? 'This CJ variation has not been synchronized with WooCommerce.'
+              : (saved?.message||'WooCommerce could not accept this variation.');
+            status.textContent=reason+' No order has been created. Select WhatsApp order to request stock, shipping and the final price.';
+            return;
+          }
+          dialog.close();
+          if(action==='buy')location.assign('/checkout/');
+          else{
+            const label=document.createElement('span');
+            label.className='sm-cj-feedback';label.setAttribute('role','status');
+            label.textContent='Added to WooCommerce cart';
+            const original=[...host.querySelectorAll('[data-cj-order="add"]')].find(b=>b.dataset.cjKey===key);
+            if(original){original.after(label);setTimeout(()=>label.remove(),4500);}
+          }
+        }catch(err){
+          status.textContent='The secure WooCommerce cart is unavailable. No order was created. Please use WhatsApp or retry.';
+          console.warn('WooCommerce add-item failed',String(err?.message||err));
+        }finally{confirm.disabled=false;confirm.removeAttribute('aria-busy');}
       };
     }catch(e){if(id!==activeRequest)return;status.textContent='Live supplier options are unavailable right now. Open the product page or ask on WhatsApp. We will not add an unverified option to the cart.';controls.hidden=true;console.warn('CJ card option verification failed',String(e.message||e));}
   }
-  host.addEventListener('click',e=>{
-    const btn=e.target.closest('[data-cj-order]');if(!btn||!host.contains(btn))return;
-    e.preventDefault();openOrder(btn.dataset.cjKey,btn.dataset.cjOrder);
-  });
+  // Capture above document-level recovery listeners that can swallow commerce clicks.
+  window.addEventListener('click',e=>{
+    const target=e.target;
+    if(!(target instanceof Element))return;
+    const confirm=target.closest('#sm-cj-order-confirm');
+    if(confirm&&document.getElementById('sm-cj-order-dialog')?.open){
+      e.preventDefault();e.stopImmediatePropagation();
+      if(!confirm.disabled&&onConfirm)onConfirm();
+      return;
+    }
+    const btn=target.closest('[data-cj-order]');
+    if(!btn||!host.contains(btn))return;
+    e.preventDefault();e.stopImmediatePropagation();
+    openOrder(btn.dataset.cjKey,btn.dataset.cjOrder);
+  },true);
   const section=(group,cat)=>{
     const sec=document.createElement('section');sec.className='sm-cj-rail';sec.dataset.category=cat.s;
     sec.innerHTML='<div class="sm-cj-rail-top"><div><h3>'+escape(group.n)+'</h3><p>Browse international finds. Final stock, price and shipping are checked for your destination.</p></div>'
