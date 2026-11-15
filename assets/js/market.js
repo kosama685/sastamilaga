@@ -170,7 +170,7 @@
       cta: 'Explore products for your destination. Review availability, payment and delivery details before ordering.'
     };
   }
-  var originalLinks = new WeakMap(), originalStacks = new WeakMap();
+  var originalLinks = new WeakMap(), originalRoutes = new WeakMap(), originalStacks = new WeakMap();
   function destinationHome() {
     var home = document.getElementById('home-view'), view = experience(state.country, state.currency);
     document.querySelectorAll('.smh-top__trust').forEach(function (e) { if(e.textContent !== view.trust)e.textContent = view.trust; });
@@ -182,10 +182,15 @@
     home.querySelectorAll('[data-market-local-home]').forEach(function (e) { e.hidden = !view.local; });
     document.querySelectorAll('a[href]').forEach(function (a) {
       var current = a.getAttribute('href');
-      if (!originalLinks.has(a) && /^(?:shop\/|#\/shop(?:\?.*)?)$/.test(current)) originalLinks.set(a, current);
+      var resolved = new URL(current, document.baseURI), shop = new URL('shop/', document.baseURI);
+      if (!originalLinks.has(a) && (/^#\/shop(?:\?.*)?$/.test(current) || (resolved.origin === shop.origin && resolved.pathname === shop.pathname))) {
+        originalLinks.set(a, current); originalRoutes.set(a, a.getAttribute('data-route'));
+      }
       if (originalLinks.has(a)) {
         var target = view.local ? originalLinks.get(a) : new URL('c/global/index.html', document.baseURI).href;
         if (current !== target) a.setAttribute('href', target);
+        if (!view.local) a.removeAttribute('data-route');
+        else if (originalRoutes.get(a)) a.setAttribute('data-route', originalRoutes.get(a));
       }
     });
     var stack = home.querySelector('[data-fill="stack"]');

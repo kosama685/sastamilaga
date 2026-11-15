@@ -36,13 +36,13 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: node tools/deploy-indexing-edge.mjs
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: encrypted-indexing-diagnostic
           path: artifacts/indexing-diagnostic.enc.json
           retention-days: 2
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         if: inputs.apply && always()
         with:
           name: indexing-deployment-receipt
