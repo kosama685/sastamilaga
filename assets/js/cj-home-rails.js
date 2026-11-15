@@ -20,15 +20,85 @@
     if(!Array.isArray(rows))throw new Error('invalid catalogue rows');
     return rows.filter(r=>Array.isArray(r)&&r.length>=6&&r[0]&&r[2]&&/^https:\/\//.test(String(r[5]))).slice(0,10);
   };
+  const records=new Map();
   const card=(cat,r)=>{
     const name=String(r[2]),url='/#/global/p/'+encodeURIComponent(cat.s)+'/'+encodeURIComponent(r[0]);
+    const groupKey=cat.s+'|'+String(r[0]);records.set(groupKey,{cat,r,url});
     const price=Number(r[3]),amt=price>0?money.format(price*1.2):'Confirm price';
-    return '<article class="sm-cj-rail-card"><a href="'+escape(url)+'" aria-label="View '+escape(name)+'">'
+    return '<article class="sm-cj-rail-card" data-cj-card="'+escape(groupKey)+'"><a class="sm-cj-card-link" href="'+escape(url)+'" aria-label="View '+escape(name)+'">'
       +'<img src="'+escape(r[5])+'" alt="'+escape(name)+'" width="280" height="280" loading="lazy" decoding="async">'
       +'<span class="sm-cj-rail-name">'+escape(name)+'</span></a>'
-      +'<span class="sm-cj-rail-price">'+escape(amt)+' <small>catalogue estimate</small></span>'
-      +'<a class="sm-cj-rail-view" href="'+escape(url)+'">View options and delivery</a></article>';
+      +'<span class="sm-cj-rail-price">'+escape(amt)+' <small>catalogue estimate · final total confirmed</small></span>'
+      +'<div class="sm-cj-card-actions"><button type="button" class="sm-cj-add" data-cj-order="add" data-cj-key="'+escape(groupKey)+'">Add to cart</button>'
+      +'<button type="button" class="sm-cj-quick" data-cj-order="buy" data-cj-key="'+escape(groupKey)+'" title="Quick Buy">Buy now</button>'
+      +'<a class="sm-cj-wa" href="'+escape(waHref(name,url))+'" target="_blank" rel="noopener noreferrer" aria-label="Ask to order '+escape(name)+' on WhatsApp" title="Order on WhatsApp">WA</a>'
+      +'</div><a class="sm-cj-rail-view" href="'+escape(url)+'">View options &amp; delivery</a></article>';
   };
+  const waHref=(name,url,variant='')=>{
+    const number=String((window.SM_CONFIG||{}).whatsapp||'').replace(/\D/g,'');
+    const message='Assalam o Alaikum! I want to order '+name+(variant?'\nOption: '+variant:'')+'\nProduct: '+location.origin+url+'\nPlease confirm current stock, exact shipping and final price before payment.';
+    return number?'https://wa.me/'+number+'?text='+encodeURIComponent(message):location.origin+url;
+  };
+  const modal=()=>{
+    let element=document.getElementById('sm-cj-order-dialog');
+    if(!element){
+      element=document.createElement('dialog');element.id='sm-cj-order-dialog';element.className='sm-cj-order-dialog';
+      element.innerHTML='<form method="dialog" class="sm-cj-order-shell"><button type="submit" class="sm-cj-close" aria-label="Close dialog">×</button>'
+        +'<h2 id="sm-cj-order-title">Choose your option</h2><p id="sm-cj-order-message" role="status" aria-live="polite">Checking the supplier…</p>'
+        +'<div id="sm-cj-order-controls" hidden><label>Product option<select id="sm-cj-order-variant" required></select></label>'
+        +'<label>Quantity<input id="sm-cj-order-qty" type="number" min="1" max="99" value="1" required></label>'
+        +'<p id="sm-cj-order-estimate" class="sm-cj-order-estimate"></p>'
+        +'<p class="sm-cj-order-disclaimer">Supplier price estimate only. Delivery, inventory and final total are confirmed before payment.</p>'
+        +'<div class="sm-cj-order-buttons"><button type="button" id="sm-cj-order-confirm" class="sm-cj-add">Add to cart</button><a id="sm-cj-order-whatsapp" class="sm-cj-wa" target="_blank" rel="noopener noreferrer">WhatsApp order</a></div></div>'
+        +'<p><a id="sm-cj-order-full" href="/#/global">View full product details and delivery</a></p></form>';
+      document.body.appendChild(element);
+    }
+    return element;
+  };
+  let activeRequest=0;
+  async function openOrder(key,action){
+    const item=records.get(key);if(!item)return;
+    const {cat,r,url}=item, dialog=modal(),status=dialog.querySelector('#sm-cj-order-message'),controls=dialog.querySelector('#sm-cj-order-controls');
+    const selector=dialog.querySelector('#sm-cj-order-variant'),qty=dialog.querySelector('#sm-cj-order-qty'),estimate=dialog.querySelector('#sm-cj-order-estimate');
+    const confirm=dialog.querySelector('#sm-cj-order-confirm'),wa=dialog.querySelector('#sm-cj-order-whatsapp'),full=dialog.querySelector('#sm-cj-order-full');
+    const id=++activeRequest;status.textContent='Checking live supplier options…';controls.hidden=true;
+    dialog.querySelector('#sm-cj-order-title').textContent=r[2];
+    full.href=url;
+    if(!dialog.open)dialog.showModal();
+    const endpoint=String((window.SM_CONFIG||{}).cjShippingWorker||(window.SM_CONFIG||{}).cjImageWorker||'').replace(/\/$/,'');
+    if(!endpoint){status.textContent='Live product options are not configured. Open the product page to continue.';return;}
+    try{
+      const response=await Promise.race([fetch(endpoint+'/api/cj/product?pid='+encodeURIComponent(r[0]),{headers:{Accept:'application/json'}}),timeout(12000)]);
+      const result=await response.json();
+      if(id!==activeRequest||!dialog.open)return;
+      if(!response.ok||!Array.isArray(result.variants)||!result.variants.length)throw new Error('No verified supplier options available');
+      const variants=result.variants.filter(v=>v&&v.vid&&v.sku&&Number(v.price)>0);
+      if(!variants.length)throw new Error('No purchasable supplier option is currently available');
+      selector.innerHTML='';
+      variants.forEach((v,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=String(v.key||v.name||v.sku);selector.add(o);});
+      qty.value='1';controls.hidden=false;status.textContent='Choose the exact supplier option before ordering.';
+      const update=()=>{
+        const v=variants[Number(selector.value)]||variants[0];
+        estimate.textContent='Estimated '+money.format(Number(v.price)*1.2)+' each · '+money.format(Number(v.price)*1.2*(Math.min(99,Math.max(1,Number(qty.value)||1))))+' items subtotal, excluding delivery';
+        wa.href=waHref(r[2],url,String(v.key||v.name||v.sku));
+      };
+      selector.onchange=update;qty.oninput=update;update();
+      confirm.textContent=action==='buy'?'Quick Buy — continue to checkout':'Add to cart';
+      confirm.onclick=()=>{
+        const v=variants[Number(selector.value)]||variants[0],n=Number(qty.value);
+        if(!Number.isInteger(n)||n<1||n>99){status.textContent='Please enter a quantity between 1 and 99.';return;}
+        const row={id:r[0],cs:cat.s,sku:r[1],name:r[2],img:v.image||r[5],unit:Number(v.price)*1.2,qty:n,opt:'',ship:'',shipAmt:0,shipCur:'USD',vkey:String(v.sku),vname:String(v.key||v.name||v.sku),url:location.origin+url};
+        if(!window.SMGCart?.addVerified?.(row)){status.textContent='Unable to save this item. Use the product page or WhatsApp.';return;}
+        dialog.close();
+        if(action==='buy'){if(window.SMApp?.go)window.SMApp.go('checkout');else location.href='/#/checkout';}
+        else {status.textContent='Added to your cart';const label=document.createElement('span');label.className='sm-cj-feedback';label.setAttribute('role','status');label.textContent='Added to cart';let original=document.querySelector('[data-cj-card="'+key.replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'"] .sm-cj-add');if(original){original.after(label);setTimeout(()=>label.remove(),3500);}}
+      };
+    }catch(e){if(id!==activeRequest)return;status.textContent='Live supplier options are unavailable right now. Open the product page or ask on WhatsApp. We will not add an unverified option to the cart.';controls.hidden=true;console.warn('CJ card option verification failed',String(e.message||e));}
+  }
+  host.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-cj-order]');if(!btn||!host.contains(btn))return;
+    e.preventDefault();openOrder(btn.dataset.cjKey,btn.dataset.cjOrder);
+  });
   const section=(group,cat)=>{
     const sec=document.createElement('section');sec.className='sm-cj-rail';sec.dataset.category=cat.s;
     sec.innerHTML='<div class="sm-cj-rail-top"><div><h3>'+escape(group.n)+'</h3><p>Browse international finds. Final stock, price and shipping are checked for your destination.</p></div>'
