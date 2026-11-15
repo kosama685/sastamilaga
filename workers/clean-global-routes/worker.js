@@ -18,7 +18,7 @@ export default {
     html=html.replace(/<title>[\s\S]*?<\/title>/,'<title>Global product | Sasta Milaga</title>');
     html=html.replace(/<meta name="robots"[^>]*>/,'<meta name="robots" content="noindex, follow">');
     // Keep source HTML metadata consistent with the actual browser URL until product SSR is available.
-    const canonical='https://sastamilaga.com'+p.replace(/\\/$/,'');
+    const canonical='https://sastamilaga.com'+(p.endsWith('/')?p.slice(0,-1):p);
     html=html.replace(/<link rel="canonical"[^>]*>/,'<link rel="canonical" href="'+canonical+'">');
     html=html.replace(/<meta property="og:url"[^>]*>/,'<meta property="og:url" content="'+canonical+'">');
    }
