@@ -234,7 +234,8 @@
 
   /* Live shipping quotes from the WordPress store (global-dropshipping-commerce): real carrier rates for the visitor's country,
      already converted to the visitor's currency. Only on the store's own domain, where the session cookies are first-party. */
-  const wpShip = () => { const C = window.SM_CONFIG || {}; return !C.cjShippingWorker && C.wpApi && window.SMWoo && window.SMWoo.active; };
+  const supplierWorker = () => { const C = window.SM_CONFIG || {}; return String(C.cjShippingWorker || C.cjImageWorker || '').replace(/\/$/, ''); };
+  const wpShip = () => { const C = window.SM_CONFIG || {}; return !supplierWorker() && C.wpApi && window.SMWoo && window.SMWoo.active && !/\.github\.io$/i.test(location.hostname); };
   /* Fallback quote: workers/cj-shipping (supplier carrier prices in US$) for the visitor's detected country. Returns true when quotes were shown. */
   let qSeq = 0;   /* only the newest quote request may write to the page (options can be clicked quickly) */
   async function workerQuote(r, chosen, qty, out, stale) {
@@ -294,7 +295,7 @@
   }
   function shipBox() {
     if (wpShip()) return shipBoxWp();
-    if (!(window.SM_CONFIG || {}).cjShippingWorker) return '';
+    if (!supplierWorker()) return '';
     let names; try { names = new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) { names = null; }
     // Every country, with the visitor's own (detected) country selected: no manual choice needed.
     const mk = window.SMMarket, cur = (mk && mk.state().country) || 'PK';
@@ -315,7 +316,7 @@
   function fetchRetry(u, n = 4) { return fetch(u).then(x => { if (!x.ok) throw new Error(x.status); return x; }).catch(e => (n > 0 ? new Promise(res => setTimeout(res, 1800 + (4 - n) * 1200)).then(() => fetchRetry(u, n - 1)) : Promise.reject(e))); }
   function bindVariants(r, chosen) {
     const box = document.getElementById('gvar'); if (!box) return;
-    const C = window.SM_CONFIG || {}, W = (C.cjShippingWorker || '').replace(/\/$/, '');
+    const C = window.SM_CONFIG || {}, W = supplierWorker();
     const pick = v => {
       chosen.v = v;
       const price = document.querySelector('.buy-panel .big-price'); if (price) price.textContent = v.label || USD.format(v.price * MARGIN);
@@ -334,9 +335,9 @@
     /* Real options: the CJ Worker when configured, otherwise the WordPress store's live options (same CJ data, the store's own price). */
     const RATE = { USD: 1, SAR: 1 / 3.75, AED: 1 / 3.6725 };   // pegged currencies only; anything else keeps the catalogue price
     const fromWp = d => ({ variants: ((d && d.options) || []).map(o => { const m = /([A-Z]{3})\s*([\d.,]+)/.exec(o.price_label || ''); const usd = m && RATE[m[1]] ? parseFloat(m[2].replace(/,/g, '')) * RATE[m[1]] : (r[3] || 0) * MARGIN; return { vid: o.vid, name: o.name, key: o.name, sku: o.sku, image: o.image || '', price: usd / MARGIN, label: m ? o.price_label : '' }; }) });   /* a label without a price (feed down) is dropped: the tile shows the catalogue estimate, refined below from the supplier price */
-    (W ? fetch(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`).then(x => x.json()) : (window.SMWoo && window.SMWoo.active ? window.SMWoo.sync() : Promise.resolve()).then(() => fetchRetry(`${(window.SMWoo && window.SMWoo.active ? (() => { try { return new URL(C.wpApi).pathname; } catch (e) { return C.wpApi; } })() : C.wpApi).replace(/\/$/, '')}/live/options/${encodeURIComponent(r[0])}`).then(x => { if (!x.ok) throw new Error(x.status); return x.json(); }).then(fromWp))).then(d => {
+    (W ? fetchRetry(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`, 2).then(x => x.json()).then(d => { if (!d || !Array.isArray(d.variants)) throw new Error('Invalid supplier options'); return d; }) : (window.SMWoo && window.SMWoo.active ? window.SMWoo.sync() : Promise.resolve()).then(() => fetchRetry(`${(window.SMWoo && window.SMWoo.active ? (() => { try { return new URL(C.wpApi).pathname; } catch (e) { return C.wpApi; } })() : C.wpApi).replace(/\/$/, '')}/live/options/${encodeURIComponent(r[0])}`).then(x => { if (!x.ok) throw new Error(x.status); return x.json(); }).then(fromWp))).then(d => {
       const list = (d && d.variants) || [];
-      if (!list.length) { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Options will be confirmed on WhatsApp.</p>'; return; }
+      if (!list.length) { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">No supplier variations are currently available. Please confirm the exact option before ordering.</p>'; return; }
       if (list.length === 1) {
         box.innerHTML = `<legend>Option</legend><p class="sm-var__one"><b>${esc(list[0].key || list[0].name)}</b> <small>SKU ${esc(maskSku(list[0].sku))}</small></p>`; pick(list[0]); return;
       }
@@ -365,7 +366,7 @@
       sel.value = e.detail.country; if (chosen && chosen.v) quoteSoon();
     };
     window.addEventListener('sm:market', window.__shipMk);
-    const out = document.getElementById('gship-out'), W = window.SM_CONFIG.cjShippingWorker.replace(/\/$/, '');
+    const out = document.getElementById('gship-out'), W = supplierWorker();
     go.addEventListener('click', async () => {
       const cc = document.getElementById('gship-cc').value, qty = Number(document.querySelector('#greq [name="qty"]').value) || 1;
       go.disabled = true; out.textContent = 'Getting shipping options from the supplier…';
