@@ -19,3 +19,6 @@ if($selected[0]['price']!==9.5)throw new RuntimeException('A customer changed th
 foreach([[['lineItemId'=>'wrong','quantity'=>1]],[['lineItemId'=>'42','quantity'=>3]]] as $bad){try{\Sasta\CJ\Account::product_selection($items,$bad);throw new RuntimeException('Invalid case product was accepted.');}catch(InvalidArgumentException $e){}}
 try{\Sasta\CJ\Account::owned('123');throw new RuntimeException('Cross-customer order access was allowed.');}catch(InvalidArgumentException $e){}
 echo "CJ validator: ".count($cases)." invalid cases rejected; valid zero/empty values preserved; all registered operations checked.\n";
+
+if(!\Sasta\CJ\Bridge::gtin('4006381333931')||\Sasta\CJ\Bridge::gtin('4006381333932')||\Sasta\CJ\Bridge::gtin('CJ12345'))throw new \RuntimeException('GTIN validation failed.');
+echo "GTIN check-digit eligibility gate passed.\n";

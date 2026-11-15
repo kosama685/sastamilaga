@@ -5,7 +5,7 @@ private='/home/altugpaa/gdcs-private/cj-storefront-20261115'
 script="""#!/bin/bash
 set -eu
 cd /home/altugpaa/sastamilaga.com
-/usr/local/sbin/wp eval '\\Sasta\\CJ\\Bridge::warm();' --quiet
+/opt/alt/php82/usr/bin/php -d register_argc_argv=On /usr/local/sbin/wp eval '\\Sasta\\CJ\\Bridge::warm();' --quiet
 """
 # PHP namespace separators are literal in the shell's single-quoted PHP argument.
 script=script.replace('\\\\','\\')

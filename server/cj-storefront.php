@@ -49,7 +49,7 @@ final class Bridge {
     static function boot(): void {
         add_action('woocommerce_after_checkout_validation',[self::class,'checkout_stock'],100,2);
         add_action('rest_api_init',static function(){
-            foreach(['bootstrap','home','listing','detail','inventory','shipping','sitemap'] as $name) register_rest_route(self::NS,'/'.$name,['methods'=>$name==='shipping'?'POST':'GET','permission_callback'=>$name==='shipping'?[\GDCS\Storefront::class,'csrf_check']:'__return_true','callback'=>static function($r)use($name){return self::response($name,$r);}]);
+            foreach(['bootstrap','home','listing','detail','inventory','shipping','sitemap','feed'] as $name) register_rest_route(self::NS,'/'.$name,['methods'=>$name==='shipping'?'POST':'GET','permission_callback'=>$name==='shipping'?[\GDCS\Storefront::class,'csrf_check']:'__return_true','callback'=>static function($r)use($name){return self::response($name,$r);}]);
             register_rest_route(self::NS,'/merchant/(?P<operation>[a-z0-9-]+)',['methods'=>'GET,POST','permission_callback'=>[\GDCS\Rest::class,'permission'],'callback'=>static function($r){return self::merchant($r);}]);
         });
         add_action('admin_menu',static function(){add_submenu_page('woocommerce','CJ API operations','CJ API operations','manage_woocommerce','sm-cj-operations',[self::class,'admin']);});
@@ -162,7 +162,28 @@ final class Bridge {
         }
         return ['product'=>$r,'variants'=>$variants,'checkout_ready'=>\GDCS\VirtualCheckout::ready()];
     }
-    static function inventory(string $vid): array {return ['variant'=>self::call('variant',['vid'=>self::id($vid)]),'stock'=>self::call('stock',['vid'=>$vid],true)];}
+    static function gtin(string $value): bool {
+        if(!preg_match('/^(?:[0-9]{8}|[0-9]{12}|[0-9]{13}|[0-9]{14})$/D',$value))return false;
+        $sum=0;$weight=3;for($i=strlen($value)-2;$i>=0;$i--){$sum+=(int)$value[$i]*$weight;$weight=$weight===3?1:3;}return (10-$sum%10)%10===(int)substr($value,-1);
+    }
+    static function inventory(string $vid): array {
+        $out=['variant'=>self::call('variant',['vid'=>self::id($vid)]),'stock'=>self::call('stock',['vid'=>$vid],true)];
+        try{$v=$out['variant']['data'];$p=self::call('product',['pid'=>self::id($v['pid']??'')])['data'];$snap=(array)get_option('smcj_feed_snapshots',[]);
+            $snap[$vid]=['id'=>$vid,'pid'=>$v['pid'],'title'=>sanitize_text_field($p['productNameEn']??''),'description'=>wp_strip_all_tags($p['description']??''),'image'=>\GDCS\LiveCatalog::image($v['variantImage']??$p['productImage']??''),'sku'=>$v['variantSku']??'','gtin'=>(string)($v['barcode']??''),'brand'=>sanitize_text_field($p['brandName']??$p['brand']??''),'price'=>is_numeric($v['variantSellPrice']??null)?self::price((float)$v['variantSellPrice']):null,'stock'=>array_sum(array_column((array)$out['stock']['data'],'totalInventoryNum')),'checked_at'=>gmdate('c'),'requestId'=>$out['stock']['requestId']];
+            if(count($snap)>1000)$snap=array_slice($snap,-1000,null,true);update_option('smcj_feed_snapshots',$snap,false);
+        }catch(\Throwable $e){\GDCS\Logger::write('info','storefront.feed_snapshot_unavailable',self::error($e));}return $out;
+    }
+    static function feed(): array {
+        $items=[];$excluded=[];foreach((array)get_option('smcj_feed_snapshots',[]) as $x){$reasons=[];
+            if(strtotime($x['checked_at'])<time()-300)$reasons[]='stock_snapshot_expired';
+            if(!self::gtin((string)$x['gtin']))$reasons[]='verified_gtin_missing';
+            if(!$x['brand'])$reasons[]='manufacturer_brand_missing';
+            if(strlen($x['description'])<180||!$x['image']||!$x['price'])$reasons[]='insufficient_product_content';
+            if($reasons){$excluded[]=['id'=>$x['id'],'reasons'=>$reasons];continue;}
+            $items[]=$x;
+        }return ['items'=>$items,'excluded'=>$excluded,'checked_at'=>gmdate('c'),'stock_ttl_seconds'=>300,'approval_status'=>'unverified','shipping_tax_returns'=>'Merchant Center destination policies must be configured and approved separately.'];
+    }
+
     static function shipping(array $p): array {
         $vid=self::id($p['vid']??'');$qty=filter_var($p['quantity']??1,FILTER_VALIDATE_INT);if(!$qty||$qty>100)throw new \InvalidArgumentException('Choose 1 to 100 items.');
         $inventory=self::inventory($vid);$v=$inventory['variant']['data'];$stock=$inventory['stock']['data'];$origin=\GDCS\VirtualCheckout::available_origin($stock,$qty,(string)($p['origin']??''));
@@ -185,7 +206,7 @@ final class Bridge {
             if(!class_exists('\GDCS\Api'))throw new \RuntimeException('Supplier integration is unavailable.');
             $ip=(string)($_SERVER['HTTP_CF_CONNECTING_IP']??$_SERVER['REMOTE_ADDR']??'');$budget='smcj_rate_'.md5($ip.gmdate('YmdHi'));$used=(int)get_transient($budget);if($used>=40)return new \WP_REST_Response(['code'=>'request_rate_limited','message'=>'Please wait before requesting more supplier data.'],429,['Retry-After'=>'60','Cache-Control'=>'no-store']);set_transient($budget,$used+1,70);
             $p=$r->get_params();if(($p['view']??'')==='suggest'){unset($p['view']);$p['features']=[];$p['size']=5;}
-            $result=match($name){'bootstrap'=>self::bootstrap(),'home'=>self::home((string)($p['countryCode']??'')),'listing'=>self::listing($p),'detail'=>self::detail(self::id($p['pid']??'')),'inventory'=>self::inventory(self::id($p['vid']??'')),'shipping'=>self::shipping((array)$r->get_json_params()),'sitemap'=>['products'=>array_values(array_filter((array)get_option('smcj_seen_products',[]),static fn($x)=>strtotime($x['checked_at']??'')>time()-DAY_IN_SECONDS))]};
+            $result=match($name){'bootstrap'=>self::bootstrap(),'home'=>self::home((string)($p['countryCode']??'')),'listing'=>self::listing($p),'detail'=>self::detail(self::id($p['pid']??'')),'inventory'=>self::inventory(self::id($p['vid']??'')),'shipping'=>self::shipping((array)$r->get_json_params()),'feed'=>self::feed(),'sitemap'=>['products'=>array_values(array_filter((array)get_option('smcj_seen_products',[]),static fn($x)=>strtotime($x['checked_at']??'')>time()-DAY_IN_SECONDS))]};
             return new \WP_REST_Response($result,200,['Cache-Control'=>$name==='inventory'||$name==='shipping'?'private,no-store':'public,max-age=60,s-maxage=180','X-Sasta-CJ'=>self::VERSION]);
         }catch(\Throwable $e){return new \WP_REST_Response(self::error($e),$e instanceof \InvalidArgumentException?400:($e instanceof \OutOfBoundsException?404:503),['Cache-Control'=>'no-store','Retry-After'=>'30']);}
     }
