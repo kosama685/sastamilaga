@@ -1,12 +1,24 @@
+# Sasta Milaga — canonical crawl policy
+# The GitHub Pages mirror uses https://sastamilaga.com as canonical.
+# robots.txt controls crawling, NOT security, login, or guaranteed indexing.
 User-agent: *
 Allow: /
 Disallow: /wp-admin/
+Allow: /wp-login.php
 Allow: /wp-admin/admin-ajax.php
-Disallow: /wp-login.php
-Disallow: /wp-json/
-Disallow: /api/
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /my-account/
+Disallow: /ur/cart/
+Disallow: /ur/checkout/
+Disallow: /ur/my-account/
+Disallow: /*?add-to-cart=
+Disallow: /*&add-to-cart=
+Disallow: /*?sm_buy_now=
+Disallow: /*&sm_buy_now=
+Disallow: /*?wc-ajax=
+Disallow: /*&wc-ajax=
 Disallow: /wc-api/
-Disallow: /admin/
 Disallow: /backup/
 Disallow: /private/
 Disallow: /staging/

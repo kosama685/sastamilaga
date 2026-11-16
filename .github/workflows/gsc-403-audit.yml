@@ -1,0 +1,63 @@
+name: GSC 403 crawlability and indexability audit
+on:
+  pull_request:
+    paths:
+      - 'reports/gsc-403-2026-11-16.txt'
+      - 'tools/audit-gsc-403.mjs'
+      - 'tools/test-gsc-403-fixture.mjs'
+      - '.github/workflows/gsc-403-audit.yml'
+      - 'robots.txt'
+      - 'data/redirects/blog.json'
+      - 'tools/build-robots-worker.mjs'
+  push:
+    branches: [main]
+    paths:
+      - 'reports/gsc-403-2026-11-16.txt'
+      - 'tools/audit-gsc-403.mjs'
+      - 'tools/test-gsc-403-fixture.mjs'
+      - '.github/workflows/gsc-403-audit.yml'
+      - 'robots.txt'
+      - 'data/redirects/blog.json'
+      - 'tools/build-robots-worker.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: gsc-403-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: node --check tools/audit-gsc-403.mjs
+      - run: node --check tools/build-robots-worker.mjs
+      - run: node tools/build-robots-worker.mjs
+      - run: node --test tools/test-gsc-403-fixture.mjs
+  probe:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SM_GSC_PROBE_LIMIT: ${{ github.event_name == 'pull_request' && '25' || '0' }}
+      SM_GSC_COMPARE_BROWSER: '20'
+      SM_GSC_CONCURRENCY: '2'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Read-only public URL probes (no cart mutations)
+        run: node tools/audit-gsc-403.mjs
+      - name: Preserve full results even when some URLs fail
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: gsc-403-url-ledger
+          path: artifacts/gsc-403-audit-2026-11-16.json
+          if-no-files-found: error
+          retention-days: 30
