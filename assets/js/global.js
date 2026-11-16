@@ -183,8 +183,8 @@
         { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: `${A.SITE_URL}/` }, { '@type': 'ListItem', position: 2, name: 'Global shop', item: `${A.SITE_URL}/c/global/index.html` }, { '@type': 'ListItem', position: 3, name: c.n, item: `${A.SITE_URL}/c/global/${cs}.html` }, { '@type': 'ListItem', position: 4, name: r[2] }] }] } });
     const related = rows.filter(x => x !== r).slice(0, 8);
     renderApp(`<nav class="sm-crumbs" aria-label="Breadcrumb"><a href="./">Home</a> <span aria-hidden="true">/</span> <a href="#/global">Global shop</a>${g ? ` <span aria-hidden="true">/</span> <a href="#/global/g/${g.s}">${esc(g.n)}</a>` : ''} <span aria-hidden="true">/</span> <a href="#/global/c/${cs}">${esc(c.n)}</a></nav>
-      <section class="pdp pdp3" aria-label="Product detail"><div class="gallery-panel"><div class="gallery-main">${r[6] ? `<video src="${esc(r[6])}" poster="${esc(r[5])}" controls playsinline preload="none"></video>` : `<img src="${esc(r[5])}" alt="${esc(r[2])}" width="800" height="800" onerror="this.src=window.fallbackImg">`}</div>
-        ${r[6] ? `<div class="gallery-thumbs"><button type="button" data-gallery="${esc(r[5])}" data-type="img" aria-label="Show image"><img src="${esc(r[5])}" alt=""></button><button type="button" class="active" data-gallery="${esc(r[6])}" data-type="video" aria-label="Play video"><img src="${esc(r[5])}" alt=""></button></div>` : ''}</div>
+      <section class="pdp pdp3 sm-global-pdp" aria-label="Product detail"><div class="gallery-panel"><div class="gallery-main">${r[6] ? `<video src="${esc(r[6])}" poster="${esc(r[5])}" controls playsinline preload="none"></video>` : `<img src="${esc(r[5])}" alt="${esc(r[2])}" width="960" height="960" fetchpriority="high" decoding="async" onerror="this.src=window.fallbackImg">`}</div>
+        <p id="gvariant-photo-status" class="sm-global-photo-status" role="status" aria-live="polite">Select an option to view its supplier photo</p>${r[6] ? `<div class="gallery-thumbs"><button type="button" data-gallery="${esc(r[5])}" data-type="img" aria-label="Show image"><img src="${esc(r[5])}" alt=""></button><button type="button" class="active" data-gallery="${esc(r[6])}" data-type="video" aria-label="Play video"><img src="${esc(r[5])}" alt=""></button></div>` : ''}</div>
       <aside class="buy-panel" aria-label="Order options"><span class="eyebrow">${esc(c.n)}</span><h1>${esc(r[2])}</h1><p class="product-meta">SKU: ${esc(maskSku(r[1]))} · Global item</p>
         <div style="margin:12px 0"><span class="big-price">${est(r)}</span> <small class="sm-est">estimated</small></div>
         <form class="sm-greq" id="greq">${varBox()}<label><span>Quantity</span><input type="number" name="qty" min="1" max="99" value="1"></label><label><span>${(window.SM_CONFIG || {}).cjShippingWorker || (window.SM_CONFIG || {}).wpApi ? 'Notes (optional)' : 'Size, colour or option (optional)'}</span><input name="opt" maxlength="120" placeholder="${(window.SM_CONFIG || {}).cjShippingWorker || (window.SM_CONFIG || {}).wpApi ? 'Anything we should know' : 'e.g. Blue, size M'}"></label><label><span>Deliver to (country and city)</span><input name="to" required maxlength="120" value="${esc(gcTo())}" placeholder="e.g. Pakistan, Karachi"></label>
@@ -323,7 +323,14 @@
     const pick = v => {
       chosen.v = v;
       const price = document.querySelector('.buy-panel .big-price'); if (price) price.textContent = v.label || USD.format(v.price * MARGIN);
-      const img = document.querySelector('.gallery-main img'); if (img && v.image) img.src = v.image;
+      const img = document.querySelector('.sm-global-pdp .gallery-main img');
+      if (img && v.image && /^https:\/\//i.test(v.image)) {
+        img.removeAttribute('srcset'); // prevent a prior responsive product image from overriding the selected variant
+        img.src = v.image;
+        img.alt = r[2] + ' – ' + (v.key || v.name || 'selected option');
+      }
+      const photoStatus = document.getElementById('gvariant-photo-status');
+      if (photoStatus) photoStatus.textContent = 'Showing ' + (v.key || v.name || 'selected option') + ' in the product image';
       const vid = document.querySelector('.gallery-main video'); if (vid && v.image && vid.paused) vid.poster = v.image;
       // Products with a video: the main slot is the video, so the variation photo gets its own thumbnail, shown in the main slot (the video stays one click away).
       const gt = document.querySelector('.gallery-thumbs');
@@ -373,7 +380,7 @@
           box.querySelectorAll('.sm-var__opt').forEach((lab, i) => { const v = list[i], s = lab.querySelector('.sm-var__t small'); if (s && v && !v.label) s.textContent = 'est. ' + USD.format(v.price * MARGIN); });
           { const sel0 = box.querySelector('input[name=variant]:checked'), v0 = sel0 && list.find(x => x.vid === sel0.value), bp = document.querySelector('.buy-panel .big-price'); if (v0 && !v0.label && bp) bp.textContent = USD.format(v0.price * MARGIN); }
           box.querySelectorAll('.sm-var__opt').forEach((lab, i) => { const v = list[i], holder = lab.querySelector('.sm-var__img'); if (holder && v && v.image && !holder.firstChild) { const im = document.createElement('img'); im.src = v.image; im.alt = ''; im.width = 56; im.height = 56; im.loading = 'lazy'; im.onerror = () => im.remove(); holder.appendChild(im); } });
-          const sel = box.querySelector('input[name=variant]:checked'); if (sel) { const v = list.find(x => x.vid === sel.value), g = document.querySelector('.gallery-main img'); if (v && v.image && g) g.src = v.image; else if (v && v.image) sel.dispatchEvent(new Event('change', { bubbles: true })); }
+          const sel = box.querySelector('input[name=variant]:checked'); if (sel) { const v = list.find(x => x.vid === sel.value), g = document.querySelector('.gallery-main img'); if (v && v.image && g) { g.removeAttribute('srcset'); g.src = v.image; g.alt = r[2] + ' – ' + (v.key || v.name || 'selected option'); } else if (v && v.image) sel.dispatchEvent(new Event('change', { bubbles: true })); }
         }).catch(() => { });
       })();
     }).catch(() => { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Options could not be loaded just now. <button type="button" class="sm-btn sm-btn--ghost" id="gvar-retry">Try again</button> Or tell us your size or colour in the notes and we will confirm it on WhatsApp.</p>'; const b = document.getElementById('gvar-retry'); if (b) b.addEventListener('click', () => { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Loading the supplier\'s options…</p>'; bindVariants(r, chosen); }); });
