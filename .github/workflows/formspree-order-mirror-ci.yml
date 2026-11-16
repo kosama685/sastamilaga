@@ -18,6 +18,8 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - name: Validate PHP syntax and signed webhook tests
         run: |
           set -e
@@ -30,6 +32,21 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           set -e
-          git fetch --no-tags origin main --depth=1
           forbidden="$(git diff --name-only origin/main...HEAD -- app.js assets/js/config.js assets/js/checkout.js assets/js/woo-bridge.js workers/paypal)"
           test -z "$forbidden" || { echo "::error::Checkout or PayPal files modified: $forbidden"; exit 1; }
+      - name: Assemble installable WordPress plugin ZIP
+        run: |
+          set -e
+          mkdir -p dist/sasta-formspree-woo/includes
+          cp integrations/sasta-formspree-woo/sasta-formspree-woo.php dist/sasta-formspree-woo/
+          cp integrations/sasta-formspree-woo/includes/Signature.php dist/sasta-formspree-woo/includes/
+          cp integrations/sasta-formspree-woo/README.md dist/sasta-formspree-woo/
+          cd dist
+          zip -q -r ../sasta-formspree-woo-wordpress-plugin.zip sasta-formspree-woo
+      - name: Upload tested plugin ZIP
+        uses: actions/upload-artifact@v7
+        with:
+          name: sasta-formspree-woo-wordpress-plugin
+          path: sasta-formspree-woo-wordpress-plugin.zip
+          if-no-files-found: error
+          retention-days: 30
