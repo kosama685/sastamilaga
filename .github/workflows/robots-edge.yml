@@ -48,6 +48,17 @@ jobs:
             jq -e '.success == true' <<<"$RESPONSE" >/dev/null || { echo "::error::Cloudflare route creation failed"; exit 1; }
           fi
           echo "Canonical robots route attached safely."
+      - name: Purge the one cached robots.txt URL before comparing live output
+        shell: bash
+        run: |
+          set -euo pipefail
+          API="https://api.cloudflare.com/client/v4"
+          H="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+          ZID="$(curl -fsS -m 30 -H "$H" "$API/zones?name=sastamilaga.com" | jq -r '.result[0].id // empty')"
+          test -n "$ZID" || { echo "::error::Canonical zone not found"; exit 1; }
+          RESPONSE="$(curl -fsS -m 30 -X POST -H "$H" -H 'Content-Type: application/json' -d '{"files":["https://sastamilaga.com/robots.txt"]}' "$API/zones/$ZID/purge_cache")"
+          jq -e '.success == true' <<<"$RESPONSE" >/dev/null || { echo "::error::Targeted robots purge failed"; exit 1; }
+          echo "PASS: target-specific Cloudflare cache purge succeeded."
       - name: Verify canonical robots response matches GitHub source
         shell: bash
         run: |

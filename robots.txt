@@ -4,7 +4,7 @@
 User-agent: *
 Allow: /
 Disallow: /wp-admin/
-Allow: /wp-login.php
+Disallow: /wp-login.php
 Allow: /wp-admin/admin-ajax.php
 Disallow: /cart/
 Disallow: /checkout/

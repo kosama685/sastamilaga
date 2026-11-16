@@ -23,6 +23,7 @@ test('robots policy allows product rendering resources and excludes shopping act
  assert.match(robots,/Sitemap: https:\/\/sastamilaga\.com\/sitemap\.xml/);
  assert.match(robots,/Disallow: \/\*\?add-to-cart=/);
  assert.match(robots,/Disallow: \/checkout\//);
+ assert.match(robots,/Disallow: \/wp-login\.php/);
  assert.doesNotMatch(robots,/Disallow: \/wp-json\//);
  assert.doesNotMatch(robots,/Disallow: \/api\//);
 });
