@@ -803,3 +803,56 @@ footer.smf .smf-pay svg{color:#fff}
 .sm-global-live-results .sm-gcount{margin:0 0 14px;color:#55605b}
 @media(max-width:850px){.sm-global-live-layout{grid-template-columns:1fr}.sm-global-live-layout .sm-gfilters.sm-global-live-sidebar{position:static;grid-template-columns:repeat(2,minmax(0,1fr))}.sm-global-live-sidebar__title,.sm-global-live-sidebar__hint{grid-column:1/-1}}
 @media(max-width:520px){.sm-global-live-layout .sm-gfilters.sm-global-live-sidebar{grid-template-columns:1fr}}
+
+
+/* Global CJ PDP showcase — scoped to dynamic catalogue product pages only. */
+#app .pdp.pdp3.sm-global-pdp{grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);column-gap:clamp(18px,2.4vw,34px);row-gap:24px;align-items:start;max-width:1500px;margin-inline:auto}
+#app .sm-global-pdp .gallery-panel{min-width:0;display:flex;flex-direction:column;padding:clamp(14px,1.5vw,22px);gap:12px;border-radius:22px}
+#app .sm-global-pdp .gallery-main{width:100%;grid-column:auto;grid-row:auto;aspect-ratio:1/1;min-height:360px;max-height:720px;border-radius:16px;background:#f7faf7}
+#app .sm-global-pdp .gallery-main img,#app .sm-global-pdp .gallery-main video{width:100%;height:100%;object-fit:contain}
+#app .sm-global-pdp .gallery-thumbs{grid-column:auto;grid-row:auto;display:flex;flex-direction:row;gap:10px;max-height:none;overflow:auto;padding:3px 2px 8px}
+#app .sm-global-pdp .gallery-thumbs button{width:76px;height:76px;flex:0 0 76px;background:#f6faf7}
+#app .sm-global-pdp .sm-global-photo-status{margin:0;color:#456456;font-size:.83rem;line-height:1.5;text-align:center}
+#app .sm-global-pdp .buy-panel{min-width:0;padding:clamp(18px,2.1vw,30px);border-radius:22px}
+#app .sm-global-pdp .buy-panel h1{font-size:clamp(1.5rem,2.15vw,2.2rem);line-height:1.22;overflow-wrap:break-word}
+#app .sm-global-pdp .sm-var{margin:16px 0;border:0;padding:0;min-width:0}
+#app .sm-global-pdp .sm-var legend{font-size:1.04rem;font-weight:800;color:#0b3b20;padding:0 0 10px}
+#app .sm-global-pdp .sm-var__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-height:540px;overflow-y:auto;overflow-x:hidden;padding:3px}
+#app .sm-global-pdp .sm-var__opt{min-width:0;min-height:98px;display:grid;grid-template-columns:76px minmax(0,1fr);align-items:center;gap:12px;padding:10px;border:1px solid #dbe6de;border-radius:16px;background:#fff;box-shadow:0 2px 8px #0b3b2008;transition:border-color .15s,box-shadow .15s}
+#app .sm-global-pdp .sm-var__opt:hover{transform:none;border-color:#0f7a3b;box-shadow:0 4px 18px #0b3b2019}
+#app .sm-global-pdp .sm-var__opt:has(input:checked){padding:9px;border:2px solid #0f7a3b;background:#eff9f2;box-shadow:0 0 0 2px #d6ebdc}
+#app .sm-global-pdp .sm-var__img{width:76px;height:76px;flex:none;background:#f4f7f4;border-radius:11px}
+#app .sm-global-pdp .sm-var__img img{width:100%;height:100%;object-fit:contain}
+#app .sm-global-pdp .sm-var__t{min-width:0;gap:5px}
+#app .sm-global-pdp .sm-var__t b{font-size:.88rem;line-height:1.32;overflow-wrap:break-word}
+#app .sm-global-pdp .sm-var__t small{font-size:.79rem;color:#52655a}
+#app .sm-global-pdp .pdp-side{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(260px,1fr);gap:18px}
+#app .sm-global-pdp .sm-ship-card{padding:clamp(18px,2vw,25px);background:linear-gradient(120deg,#eef8f1,#fff)}
+#app .sm-global-pdp .sm-ship__out{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#app .sm-global-pdp .sm-ship__out .sm-ship__opt{min-width:0;margin:0;min-height:66px}
+#app .sm-global-pdp .sm-ship__out .sm-ship__note{grid-column:1/-1}
+#app .sm-global-pdp .sm-gactions{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#app .sm-global-pdp .sm-gactions button{min-width:0}
+@media(max-width:1100px){
+ #app .pdp.pdp3.sm-global-pdp{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ #app .sm-global-pdp .sm-var__opt{grid-template-columns:58px minmax(0,1fr);min-height:80px;padding:8px}
+ #app .sm-global-pdp .sm-var__img{width:58px;height:58px}
+ #app .sm-global-pdp .gallery-main{min-height:290px}
+}
+@media(max-width:800px){
+ #app .pdp.pdp3.sm-global-pdp{grid-template-columns:minmax(0,1fr);gap:16px}
+ #app .sm-global-pdp .gallery-main{min-height:0;max-height:620px}
+ #app .sm-global-pdp .pdp-side{grid-column:1;grid-template-columns:minmax(0,1fr)}
+ #app .sm-global-pdp .sm-var__opt{grid-template-columns:68px minmax(0,1fr)}
+ #app .sm-global-pdp .sm-var__img{width:68px;height:68px}
+}
+@media(max-width:480px){
+ #app .sm-global-pdp .gallery-main{aspect-ratio:1/1}
+ #app .sm-global-pdp .sm-var__grid{gap:8px}
+ #app .sm-global-pdp .sm-var__opt{grid-template-columns:minmax(0,1fr);justify-items:start;gap:7px;min-height:0;padding:9px}
+ #app .sm-global-pdp .sm-var__img{width:100%;height:auto;aspect-ratio:1.5;max-height:115px}
+ #app .sm-global-pdp .sm-var__t b{font-size:.8rem}
+ #app .sm-global-pdp .sm-ship__out{grid-template-columns:minmax(0,1fr)}
+ #app .sm-global-pdp .sm-gactions{gap:8px}
+}
+@media(prefers-reduced-motion:reduce){#app .sm-global-pdp .sm-var__opt{transition:none}}
