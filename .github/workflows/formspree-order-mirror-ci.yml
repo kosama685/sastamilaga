@@ -1,0 +1,52 @@
+name: Validate Formspree to WooCommerce order mirror (read-only)
+on:
+  pull_request:
+    paths:
+      - 'integrations/sasta-formspree-woo/**'
+      - '.github/workflows/formspree-order-mirror-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'integrations/sasta-formspree-woo/**'
+      - '.github/workflows/formspree-order-mirror-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Validate PHP syntax and signed webhook tests
+        run: |
+          set -e
+          php -v
+          php -l integrations/sasta-formspree-woo/includes/Signature.php
+          php -l integrations/sasta-formspree-woo/sasta-formspree-woo.php
+          php -l integrations/sasta-formspree-woo/tests/contract.php
+          php integrations/sasta-formspree-woo/tests/contract.php
+      - name: Require checkout and PayPal source unchanged
+        if: github.event_name == 'pull_request'
+        run: |
+          set -e
+          forbidden="$(git diff --name-only origin/main...HEAD -- app.js assets/js/config.js assets/js/checkout.js assets/js/woo-bridge.js workers/paypal)"
+          test -z "$forbidden" || { echo "::error::Checkout or PayPal files modified: $forbidden"; exit 1; }
+      - name: Assemble installable WordPress plugin ZIP
+        run: |
+          set -e
+          mkdir -p dist/sasta-formspree-woo/includes
+          cp integrations/sasta-formspree-woo/sasta-formspree-woo.php dist/sasta-formspree-woo/
+          cp integrations/sasta-formspree-woo/includes/Signature.php dist/sasta-formspree-woo/includes/
+          cp integrations/sasta-formspree-woo/README.md dist/sasta-formspree-woo/
+          cd dist
+          zip -q -r ../sasta-formspree-woo-wordpress-plugin.zip sasta-formspree-woo
+      - name: Upload tested plugin ZIP
+        uses: actions/upload-artifact@v7
+        with:
+          name: sasta-formspree-woo-wordpress-plugin
+          path: sasta-formspree-woo-wordpress-plugin.zip
+          if-no-files-found: error
+          retention-days: 30
