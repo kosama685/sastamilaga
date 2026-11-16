@@ -7,6 +7,7 @@ on:
       - 'tools/test-gsc-403-fixture.mjs'
       - '.github/workflows/gsc-403-audit.yml'
       - 'robots.txt'
+      - 'data/redirects/blog.json'
       - 'tools/build-robots-worker.mjs'
   push:
     branches: [main]
@@ -16,6 +17,7 @@ on:
       - 'tools/test-gsc-403-fixture.mjs'
       - '.github/workflows/gsc-403-audit.yml'
       - 'robots.txt'
+      - 'data/redirects/blog.json'
       - 'tools/build-robots-worker.mjs'
   workflow_dispatch:
 permissions:
