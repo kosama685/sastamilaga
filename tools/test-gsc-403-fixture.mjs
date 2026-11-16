@@ -17,3 +17,12 @@ test('shopping mutation URLs remain distinct from indexable pages',()=>{
  assert.match(script,/NOT_PROBED_INTENTIONALLY/);
  assert.match(script,/redirect:'manual'/);
 });
+
+test('robots policy allows product rendering resources and excludes shopping actions',()=>{
+ const robots=fs.readFileSync('robots.txt','utf8');
+ assert.match(robots,/Sitemap: https:\/\/sastamilaga\.com\/sitemap\.xml/);
+ assert.match(robots,/Disallow: \/\*\?add-to-cart=/);
+ assert.match(robots,/Disallow: \/checkout\//);
+ assert.doesNotMatch(robots,/Disallow: \/wp-json\//);
+ assert.doesNotMatch(robots,/Disallow: \/api\//);
+});
