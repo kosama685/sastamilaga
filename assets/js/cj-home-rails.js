@@ -44,24 +44,24 @@
 
   const uiStyle=document.createElement('style');uiStyle.id='sm-cj-quickview-v2';
   uiStyle.textContent=`
-  .sm-cj-order-dialog{width:min(940px,calc(100vw - 24px));max-width:940px;max-height:calc(100dvh - 30px);overflow:auto}
-  .sm-cj-order-shell{padding:clamp(15px,2.5vw,28px);display:block}
-  .sm-cj-order-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(16px,3vw,32px);align-items:start}
+  #sm-cj-order-dialog.sm-cj-order-dialog{width:min(980px,calc(100vw - 32px));max-width:980px;max-height:calc(100dvh - 32px);overflow:auto;overscroll-behavior:contain}
+  #sm-cj-order-dialog .sm-cj-order-shell{padding:clamp(16px,2.5vw,28px);display:block}
+  #sm-cj-order-dialog .sm-cj-order-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(18px,3vw,32px);align-items:start}
   .sm-cj-order-gallery{min-width:0}.sm-cj-order-image-zoom{width:100%;position:relative;display:flex;align-items:center;justify-content:center;aspect-ratio:1;background:#f4f7f3;border:1px solid #e1e9e3;border-radius:15px;overflow:hidden;padding:12px;cursor:zoom-in}
   .sm-cj-order-image-zoom img{height:100%;width:100%;object-fit:contain;transition:transform .2s ease}.sm-cj-order-image-zoom.is-zoomed{cursor:zoom-out}.sm-cj-order-image-zoom.is-zoomed img{transform:scale(1.7)}
   .sm-cj-order-image-hint{position:absolute;bottom:10px;right:10px;background:#fff;color:#14482e;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:700;box-shadow:0 1px 5px #0002}
   .sm-cj-order-gallery-note{margin:10px 2px 0!important;font-size:12px!important;line-height:1.5}
-  .sm-cj-order-details{min-width:0;display:grid;gap:12px}.sm-cj-order-eyebrow{font-size:11px;font-weight:800;letter-spacing:.11em;color:#147a41}
-  .sm-cj-order-shell h2{font-size:clamp(21px,2.2vw,27px);line-height:1.25;padding-right:34px;overflow-wrap:anywhere}
+  #sm-cj-order-dialog .sm-cj-order-details{min-width:0;display:grid;gap:12px}.sm-cj-order-eyebrow{font-size:11px;font-weight:800;letter-spacing:.11em;color:#147a41}
+  #sm-cj-order-dialog .sm-cj-order-shell h2{font-size:clamp(20px,2.1vw,26px);line-height:1.3;padding-right:36px;overflow-wrap:break-word;word-break:normal}
   #sm-cj-order-controls{display:grid;gap:12px}#sm-cj-order-controls[hidden]{display:none}
-  .sm-cj-order-buttons{display:grid;grid-template-columns:minmax(0,1fr) minmax(125px,.85fr);gap:10px;margin-top:5px}
+  #sm-cj-order-dialog .sm-cj-order-buttons{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(125px,.9fr);gap:10px;margin-top:6px;position:sticky;bottom:-16px;padding:12px 0;background:#fff;z-index:2}
   .sm-cj-order-buttons .sm-cj-add{min-height:46px;padding:10px 14px;line-height:1.35}.sm-cj-order-buttons .sm-cj-add:disabled{opacity:.58;cursor:wait}
   .sm-cj-order-buttons .sm-cj-wa{display:flex;align-items:center;justify-content:center;gap:8px;background:#128c49;color:#fff!important;text-decoration:none;border-radius:30px;padding:10px 12px;min-height:46px;font-size:13px;font-weight:800}
   .sm-cj-order-detail-link{font-weight:700;font-size:13px;color:#116e3c;text-decoration:underline;text-underline-offset:3px}
   .sm-cj-order-dialog :is(button,a,select,input):focus-visible{outline:3px solid #ff8a00;outline-offset:3px}
   .sm-cj-card-actions .sm-cj-wa svg{width:18px;height:18px}.sm-cj-card-actions .sm-cj-wa{min-width:39px;min-height:39px}
-  @media(max-width:650px){.sm-cj-order-layout{grid-template-columns:minmax(0,1fr)}.sm-cj-order-image-zoom{aspect-ratio:4/3}.sm-cj-order-shell{padding:16px}.sm-cj-order-gallery-note{font-size:11px!important}.sm-cj-order-buttons{grid-template-columns:1fr 1fr}}
-  @media(max-width:390px){.sm-cj-order-buttons{grid-template-columns:1fr}}
+  @media(max-width:650px){#sm-cj-order-dialog.sm-cj-order-dialog{width:calc(100vw - 16px);max-height:calc(100dvh - 16px);border-radius:16px}#sm-cj-order-dialog .sm-cj-order-layout{grid-template-columns:minmax(0,1fr);gap:12px}.sm-cj-order-image-zoom{aspect-ratio:16/10;max-height:240px}#sm-cj-order-dialog .sm-cj-order-shell{padding:16px}.sm-cj-order-gallery-note{font-size:11px!important}#sm-cj-order-dialog .sm-cj-order-buttons{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+  @media(max-width:390px){#sm-cj-order-dialog .sm-cj-order-buttons{grid-template-columns:minmax(0,1fr)}}
   @media(prefers-reduced-motion:reduce){.sm-cj-order-image-zoom img{transition:none}}
   `;
   document.head.appendChild(uiStyle);
@@ -150,7 +150,7 @@
           confirm.textContent=mapped===true?(action==='buy'?'Quick Buy — continue to checkout':'Add to cart'):'Request this option on WhatsApp';
           status.textContent=mapped===true
             ? 'This option is linked to WooCommerce. The cart will confirm the final availability.'
-            : 'This CJ variation is not yet available in WooCommerce checkout. You can request the exact option on WhatsApp.';
+            : 'This option is not linked to checkout. Request the exact option on WhatsApp, or view the full product page.';
         });
       };
       selector.onchange=update;qty.oninput=update;update();
