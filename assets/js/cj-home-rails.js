@@ -6,6 +6,8 @@
   const host=document.getElementById('sm-cj-rails');if(!host)return;
   const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const money=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'});
+  // Icon is inline so the purchase controls never depend on an external icon font.
+  const waIcon="<svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"currentColor\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M20.52 3.48A11.88 11.88 0 0 0 12.05 0C5.46 0 .1 5.35.1 11.95c0 2.1.55 4.15 1.6 5.95L0 24l6.25-1.64a11.9 11.9 0 0 0 5.79 1.48h.01c6.59 0 11.95-5.35 11.95-11.95 0-3.2-1.25-6.2-3.48-8.41ZM12.05 21.8a9.85 9.85 0 0 1-5.02-1.37l-.36-.22-3.71.97.99-3.62-.24-.37a9.8 9.8 0 0 1-1.5-5.24c0-5.44 4.43-9.87 9.87-9.87a9.8 9.8 0 0 1 6.98 2.89 9.79 9.79 0 0 1 2.89 6.98c0 5.44-4.43 9.85-9.9 9.85Zm5.42-7.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.29-.77.97-.94 1.17-.17.2-.35.22-.64.08-.3-.15-1.25-.46-2.37-1.46-.88-.78-1.47-1.74-1.64-2.03-.17-.3-.02-.46.13-.61.13-.13.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.48-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.11 3.22 5.12 4.52.72.31 1.28.5 1.72.64.72.23 1.37.2 1.88.12.57-.08 1.76-.72 2.01-1.41.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35Z\"/></svg>";
   const slug=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,72);
   const base=()=>new URL('data/cj/',document.baseURI);
   const timeout=ms=>new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')),ms));
@@ -30,8 +32,8 @@
       +'<span class="sm-cj-rail-name">'+escape(name)+'</span></a>'
       +'<span class="sm-cj-rail-price">'+escape(amt)+' <small>catalogue estimate · final total confirmed</small></span>'
       +'<div class="sm-cj-card-actions"><button type="button" class="sm-cj-add" data-cj-order="add" data-cj-key="'+escape(groupKey)+'">Add to cart</button>'
-      +'<button type="button" class="sm-cj-quick" data-cj-order="buy" data-cj-key="'+escape(groupKey)+'" title="Quick Buy">Buy now</button>'
-      +'<a class="sm-cj-wa" href="'+escape(waHref(name,url))+'" target="_blank" rel="noopener noreferrer" aria-label="Ask to order '+escape(name)+' on WhatsApp" title="Order on WhatsApp">WA</a>'
+      +'<button type="button" class="sm-cj-quick" data-cj-order="buy" data-cj-key="'+escape(groupKey)+'" aria-label="Quick buy '+escape(name)+'" title="Quick Buy">Buy now</button>'
+      +'<a class="sm-cj-wa" href="'+escape(waHref(name,url))+'" target="_blank" rel="noopener noreferrer" aria-label="Ask to order '+escape(name)+' on WhatsApp" title="Order on WhatsApp">'+waIcon+'</a>'
       +'</div><a class="sm-cj-rail-view" href="'+escape(url)+'">View options &amp; delivery</a></article>';
   };
   const waHref=(name,url,variant='')=>{
@@ -39,19 +41,51 @@
     const message='Assalam o Alaikum! I want to order '+name+(variant?'\nOption: '+variant:'')+'\nProduct: '+location.origin+url+'\nPlease confirm current stock, exact shipping and final price before payment.';
     return number?'https://wa.me/'+number+'?text='+encodeURIComponent(message):location.origin+url;
   };
+
+  const uiStyle=document.createElement('style');uiStyle.id='sm-cj-quickview-v2';
+  uiStyle.textContent=`
+  .sm-cj-order-dialog{width:min(940px,calc(100vw - 24px));max-width:940px;max-height:calc(100dvh - 30px);overflow:auto}
+  .sm-cj-order-shell{padding:clamp(15px,2.5vw,28px);display:block}
+  .sm-cj-order-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(16px,3vw,32px);align-items:start}
+  .sm-cj-order-gallery{min-width:0}.sm-cj-order-image-zoom{width:100%;position:relative;display:flex;align-items:center;justify-content:center;aspect-ratio:1;background:#f4f7f3;border:1px solid #e1e9e3;border-radius:15px;overflow:hidden;padding:12px;cursor:zoom-in}
+  .sm-cj-order-image-zoom img{height:100%;width:100%;object-fit:contain;transition:transform .2s ease}.sm-cj-order-image-zoom.is-zoomed{cursor:zoom-out}.sm-cj-order-image-zoom.is-zoomed img{transform:scale(1.7)}
+  .sm-cj-order-image-hint{position:absolute;bottom:10px;right:10px;background:#fff;color:#14482e;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:700;box-shadow:0 1px 5px #0002}
+  .sm-cj-order-gallery-note{margin:10px 2px 0!important;font-size:12px!important;line-height:1.5}
+  .sm-cj-order-details{min-width:0;display:grid;gap:12px}.sm-cj-order-eyebrow{font-size:11px;font-weight:800;letter-spacing:.11em;color:#147a41}
+  .sm-cj-order-shell h2{font-size:clamp(21px,2.2vw,27px);line-height:1.25;padding-right:34px;overflow-wrap:anywhere}
+  #sm-cj-order-controls{display:grid;gap:12px}#sm-cj-order-controls[hidden]{display:none}
+  .sm-cj-order-buttons{display:grid;grid-template-columns:minmax(0,1fr) minmax(125px,.85fr);gap:10px;margin-top:5px}
+  .sm-cj-order-buttons .sm-cj-add{min-height:46px;padding:10px 14px;line-height:1.35}.sm-cj-order-buttons .sm-cj-add:disabled{opacity:.58;cursor:wait}
+  .sm-cj-order-buttons .sm-cj-wa{display:flex;align-items:center;justify-content:center;gap:8px;background:#128c49;color:#fff!important;text-decoration:none;border-radius:30px;padding:10px 12px;min-height:46px;font-size:13px;font-weight:800}
+  .sm-cj-order-detail-link{font-weight:700;font-size:13px;color:#116e3c;text-decoration:underline;text-underline-offset:3px}
+  .sm-cj-order-dialog :is(button,a,select,input):focus-visible{outline:3px solid #ff8a00;outline-offset:3px}
+  .sm-cj-card-actions .sm-cj-wa svg{width:18px;height:18px}.sm-cj-card-actions .sm-cj-wa{min-width:39px;min-height:39px}
+  @media(max-width:650px){.sm-cj-order-layout{grid-template-columns:minmax(0,1fr)}.sm-cj-order-image-zoom{aspect-ratio:4/3}.sm-cj-order-shell{padding:16px}.sm-cj-order-gallery-note{font-size:11px!important}.sm-cj-order-buttons{grid-template-columns:1fr 1fr}}
+  @media(max-width:390px){.sm-cj-order-buttons{grid-template-columns:1fr}}
+  @media(prefers-reduced-motion:reduce){.sm-cj-order-image-zoom img{transition:none}}
+  `;
+  document.head.appendChild(uiStyle);
   const modal=()=>{
     let element=document.getElementById('sm-cj-order-dialog');
     if(!element){
       element=document.createElement('dialog');element.id='sm-cj-order-dialog';element.className='sm-cj-order-dialog';
-      element.innerHTML='<form method="dialog" class="sm-cj-order-shell"><button type="submit" class="sm-cj-close" aria-label="Close dialog">×</button>'
-        +'<h2 id="sm-cj-order-title">Choose your option</h2><p id="sm-cj-order-message" role="status" aria-live="polite">Checking the supplier…</p>'
+      element.setAttribute('aria-labelledby','sm-cj-order-title');
+      element.setAttribute('aria-describedby','sm-cj-order-message');
+      element.innerHTML='<form method="dialog" class="sm-cj-order-shell"><button type="submit" class="sm-cj-close" aria-label="Close quick buy">×</button>'
+        +'<div class="sm-cj-order-layout"><div class="sm-cj-order-gallery"><button class="sm-cj-order-image-zoom" type="button" aria-label="Enlarge product photo" title="Enlarge photo"><img id="sm-cj-order-image" alt="" width="720" height="720"><span class="sm-cj-order-image-hint">Click to enlarge</span></button>'
+        +'<p class="sm-cj-order-gallery-note">Supplier catalogue photo. The exact colour and options must be checked before ordering.</p></div>'
+        +'<div class="sm-cj-order-details"><span class="sm-cj-order-eyebrow">QUICK PRODUCT VIEW</span><h2 id="sm-cj-order-title">Choose your option</h2>'
+        +'<p id="sm-cj-order-message" role="status" aria-live="polite">Checking the supplier…</p>'
         +'<div id="sm-cj-order-controls" hidden><label>Product option<select id="sm-cj-order-variant" required></select></label>'
-        +'<label>Quantity<input id="sm-cj-order-qty" type="number" min="1" max="99" value="1" required></label>'
+        +'<label>Quantity<input id="sm-cj-order-qty" type="number" min="1" max="99" inputmode="numeric" value="1" required></label>'
         +'<p id="sm-cj-order-estimate" class="sm-cj-order-estimate"></p>'
-        +'<p class="sm-cj-order-disclaimer">Supplier price estimate only. Delivery, inventory and final total are confirmed before payment.</p>'
-        +'<div class="sm-cj-order-buttons"><button type="button" id="sm-cj-order-confirm" class="sm-cj-add">Add to cart</button><a id="sm-cj-order-whatsapp" class="sm-cj-wa" target="_blank" rel="noopener noreferrer">WhatsApp order</a></div></div>'
-        +'<p><a id="sm-cj-order-full" href="/c/global/index.html">View full product details and delivery</a></p></form>';
+        +'<p class="sm-cj-order-disclaimer">Supplier price estimate only. Delivery, inventory and the final total are verified before payment.</p>'
+        +'<div class="sm-cj-order-buttons"><button type="button" id="sm-cj-order-confirm" class="sm-cj-add">Add to cart</button><a id="sm-cj-order-whatsapp" class="sm-cj-wa" target="_blank" rel="noopener noreferrer">'+waIcon+'<span>WhatsApp</span></a></div></div>'
+        +'<a id="sm-cj-order-full" class="sm-cj-order-detail-link" href="/c/global/index.html">View full product page, photos &amp; delivery →</a></div></div></form>';
       document.body.appendChild(element);
+      const zoom=element.querySelector('.sm-cj-order-image-zoom');
+      zoom.addEventListener('click',()=>{const enlarged=zoom.classList.toggle('is-zoomed');zoom.setAttribute('aria-label',enlarged?'Fit product photo':'Enlarge product photo')});
+      element.addEventListener('close',()=>{++activeRequest;onConfirm=null;zoom.classList.remove('is-zoomed')});
     }
     return element;
   };
@@ -63,6 +97,10 @@
     const confirm=dialog.querySelector('#sm-cj-order-confirm'),wa=dialog.querySelector('#sm-cj-order-whatsapp'),full=dialog.querySelector('#sm-cj-order-full');
     const id=++activeRequest;status.textContent='Checking live supplier options…';controls.hidden=true;
     dialog.querySelector('#sm-cj-order-title').textContent=r[2];
+    const photo=dialog.querySelector('#sm-cj-order-image');
+    photo.src=/^https:\/\//i.test(String(r[5]))?String(r[5]):'/assets/brand/no-image.svg';
+    photo.alt='Product photo of '+String(r[2]);
+    dialog.querySelector('.sm-cj-order-image-zoom').classList.remove('is-zoomed');
     full.href=url;
     if(!dialog.open)dialog.showModal();
     const endpoint=String((window.SM_CONFIG||{}).cjShippingWorker||(window.SM_CONFIG||{}).cjImageWorker||'').replace(/\/$/,'');
@@ -92,6 +130,9 @@
       let isMapped=null, optionSeq=0;
       const update=()=>{
         const v=variants[Number(selector.value)]||variants[0],seq=++optionSeq;
+        // Use a verified supplier option photo when available; otherwise keep the product cover.
+        const variantPhoto=String(v.image||v.imageUrl||v.img||'');
+        photo.src=/^https:\/\//i.test(variantPhoto)?variantPhoto:String(r[5]);
         isMapped=null;
         estimate.textContent='Estimated '+money.format(Number(v.price)*1.2)+' each · '+money.format(Number(v.price)*1.2*(Math.min(99,Math.max(1,Number(qty.value)||1))))+' items subtotal, excluding delivery';
         wa.href=waHref(r[2],url,String(v.key||v.name||v.sku));
