@@ -21,7 +21,7 @@ test('numeric 19-digit supplier ID becomes a real 200 canonical detail page but 
  assert.match(html,/<meta name="robots" content="noindex, follow"/);
  assert.match(html,/canonical/);
  assert.match(html,/Simulation Flame Mute Aroma Diffuser Humidifier/);
- assert.match(html,/No payment is collected on this page/);
+ assert.match(html,/Supplier-only items require confirmation of variant, availability, price and shipping/);
 });
 test('existing approved UUID URLs remain indexable unchanged',async()=>{
  const u=BASE+uuid+'/solar-simulation-anti-theft-warning-light/';
@@ -50,8 +50,13 @@ test('canonical product HTML offers verified CJ variant gallery, shipping and us
  assert.equal(res.status,200);
  const h=await res.text();
  assert.match(h,/sasta-verified-gallery-v1/);
- assert.match(h,/sm-cj-video-player-v1/);
+ assert.match(h,/sm-cj-video-player-v2/);
  assert.ok(h.includes('cjv/resolve'));
+ assert.match(h,/sm-video-modal/);
+ assert.match(h,/dialog\.showModal/);
+ assert.match(h,/player\.pause\(\)/);
+ assert.match(h,/href="\/cart\/"/);
+ assert.match(h,/href="\/my-account\/"/);
  assert.match(res.headers.get('content-security-policy')||'',/media-src/);
  assert.match(h,/sasta:cjvariants/);
  assert.match(h,/cj-quote/);
@@ -89,7 +94,7 @@ test('no-D1 snapshot fallback gives real existing supplier product HTTP 200, noi
   assert.equal(r.status,200);
   assert.equal(r.headers.get('x-sasta-catalog-source'),'snapshot-recovery-2026-11-05');
   assert.equal(r.headers.get('x-robots-tag'),'noindex, follow');
-  const h=await r.text();assert.match(h,/class="pdp pdp3"/);assert.match(h,/sm-cj-video-player-v1/);assert.match(h,/Supplier catalogue recovery mode/);assert.match(h,/Simulation Flame Mute Aroma Diffuser Humidifier/);
+  const h=await r.text();assert.match(h,/class="pdp pdp3"/);assert.match(h,/sm-cj-video-player-v2/);assert.match(h,/Supplier catalogue recovery mode/);assert.match(h,/Simulation Flame Mute Aroma Diffuser Humidifier/);
   assert.doesNotMatch(h,/id="cj-widget"/);
   assert.doesNotMatch(h,/<video[^>]*src=/);
   assert.match(h,/rel="canonical"/);
