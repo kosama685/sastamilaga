@@ -1721,6 +1721,8 @@ function renderCheckout() {
             <label><span class="screen-reader-text">Phone number</span><input name="phone" required placeholder="Phone number *" type="tel" aria-label="Phone number" autocomplete="tel"></label>
             <label class="sm-co-wide"><span class="screen-reader-text">Email</span><input name="email" placeholder="Email address (optional)" type="email" aria-label="Email" autocomplete="email"></label>
             <label class="sm-co-wide"><span class="screen-reader-text">Delivery address</span><textarea name="address" required placeholder="Complete delivery address" aria-label="Delivery address" autocomplete="street-address"></textarea></label>
+            <label><span class="screen-reader-text">City (optional)</span><input name="city" placeholder="City (optional)" aria-label="City (optional)" autocomplete="address-level2"></label>
+            <label><span class="screen-reader-text">Near place / landmark (optional)</span><input name="near_place" placeholder="Near place / landmark (optional)" aria-label="Near place / landmark (optional)"></label>
             <label class="sm-co-wide"><span class="screen-reader-text">Order notes</span><textarea name="notes" placeholder="Order notes (optional)" aria-label="Order notes"></textarea></label>
           </div>
           ${globalBlock(G)}
