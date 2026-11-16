@@ -6,6 +6,8 @@ on:
       - 'tools/audit-gsc-403.mjs'
       - 'tools/test-gsc-403-fixture.mjs'
       - '.github/workflows/gsc-403-audit.yml'
+      - 'robots.txt'
+      - 'tools/build-robots-worker.mjs'
   push:
     branches: [main]
     paths:
@@ -13,6 +15,8 @@ on:
       - 'tools/audit-gsc-403.mjs'
       - 'tools/test-gsc-403-fixture.mjs'
       - '.github/workflows/gsc-403-audit.yml'
+      - 'robots.txt'
+      - 'tools/build-robots-worker.mjs'
   workflow_dispatch:
 permissions:
   contents: read
@@ -29,6 +33,8 @@ jobs:
         with:
           node-version: '22'
       - run: node --check tools/audit-gsc-403.mjs
+      - run: node --check tools/build-robots-worker.mjs
+      - run: node tools/build-robots-worker.mjs
       - run: node --test tools/test-gsc-403-fixture.mjs
   probe:
     needs: validate
