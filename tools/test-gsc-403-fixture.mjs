@@ -26,3 +26,10 @@ test('robots policy allows product rendering resources and excludes shopping act
  assert.doesNotMatch(robots,/Disallow: \/wp-json\//);
  assert.doesNotMatch(robots,/Disallow: \/api\//);
 });
+
+test('one historical article has an exact published canonical replacement',()=>{
+ const m=JSON.parse(fs.readFileSync('data/redirects/blog.json','utf8'));
+ const key='best-bakeware-to-buy-in-lahore-practical-shopping-guide';
+ assert.equal(m[key],'b/'+key+'.html');
+ assert.ok(fs.existsSync(m[key]));
+});
