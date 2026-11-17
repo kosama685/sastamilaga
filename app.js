@@ -1352,7 +1352,7 @@ function renderPDP(handle) {
   const trust = [['<rect x="2.5" y="6.5" width="19" height="11" rx="2"/><circle cx="12" cy="12" r="2.6"/>', 'Cash on delivery'], ['<path d="M12 3 4.5 6v5.5c0 4.4 3.1 8.2 7.5 9.5 4.4-1.3 7.5-5.1 7.5-9.5V6z"/><path d="m9 12 2 2 4-4"/>', '7-day return requests'], [TRUCK, 'Delivery across Pakistan'], ['<path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.6-4.3a8.5 8.5 0 1 1 15.4-4.6Z"/>', 'WhatsApp support']];
   renderApp([
     breadcrumbHtml,
-    '<section class="pdp pdp3" aria-label="Product detail">',
+    `<section class="pdp pdp3" aria-label="Product detail" data-local-videos="${esc(encodeURIComponent(JSON.stringify(p.vids || [])))}">`,
       '<div class="gallery-panel">',
         `<div class="gallery-main" id="galleryMain">${mediaElement(first.u, first.type, p.n)}</div>`,
         `<div class="gallery-thumbs" role="list" aria-label="Product images">${thumbsHtml}</div>`,
@@ -1469,12 +1469,12 @@ function mediaElement(url, type, alt) {
    ============================================================ */
 function productCard(p) {
   if (!price(p)) {
-    return `<article class="sm-card"><a class="sm-card__media" href="#/product/${p._slug}" tabindex="-1" aria-hidden="true"><img src="${esc(img(p))}" alt="${esc(p.n)}" width="480" height="480" loading="lazy" decoding="async" onerror="this.src=window.fallbackImg"></a>
+    return `<article class="sm-card" data-local-videos="${esc(encodeURIComponent(JSON.stringify(p.vids || [])))}"><a class="sm-card__media" href="#/product/${p._slug}" tabindex="-1" aria-hidden="true"><img src="${esc(img(p))}" alt="${esc(p.n)}" width="480" height="480" loading="lazy" decoding="async" onerror="this.src=window.fallbackImg"></a>
       <div class="sm-card__body"><h3 class="sm-card__title"><a href="#/product/${p._slug}">${esc(p.n)}</a></h3><p class="sm-card__price">Price on request</p>
       <div class="smqb-actions"><a class="smqb-opt sm-btn--ghost" href="${esc(waLink(`Assalam o Alaikum! What is the price of ${p.n} (SKU ${p.sku || p.id})?`))}" target="_blank" rel="noopener"><span>Ask price on WhatsApp</span></a></div></div></article>`;
   }
   const out = !(p.in || num(p.stock) > 0);
-  return `<article class="sm-card${out ? ' is-out' : ''}" itemscope itemtype="https://schema.org/Product">
+  return `<article class="sm-card${out ? ' is-out' : ''}" data-local-videos="${esc(encodeURIComponent(JSON.stringify(p.vids || [])))}" itemscope itemtype="https://schema.org/Product">
     <a class="sm-card__media" href="#/product/${p._slug}" tabindex="-1" aria-hidden="true">
       <img src="${esc(img(p))}" alt="${esc((Array.isArray(p.alt) ? p.alt[0] : p.alt) || p.n)}" width="480" height="480" loading="lazy" decoding="async" onerror="this.src=window.fallbackImg" itemprop="image">
       ${(p.vids || []).length ? '<span class="sm-card__badge">Video</span>' : ''}

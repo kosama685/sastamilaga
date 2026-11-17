@@ -83,6 +83,8 @@
   var wb = document.createElement('script'); wb.src = prefix + 'assets/js/woo-bridge.js'; wb.defer = true; document.head.appendChild(wb);
   var ay = document.createElement('script'); ay.src = prefix + 'assets/js/a11y.js'; ay.defer = true; document.head.appendChild(ay);
   var mt = document.createElement('script'); mt.src = prefix + 'assets/js/i18n.js'; mt.defer = true; document.head.appendChild(mt);
+  /* Reusable video button for static local product pages. */
+  var pv = document.createElement('script'); pv.src = prefix + 'assets/js/product-video-universal.js?v=20261117-1'; pv.defer = true; document.head.appendChild(pv);
   /* Contact number by location (Pakistan number for Pakistan visitors) */
   var ct = document.createElement('script'); ct.src = prefix + 'assets/js/contact.js'; ct.defer = true; document.head.appendChild(ct);
 })();
