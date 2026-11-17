@@ -38,7 +38,7 @@ jobs:
           node --check tools/merchant-sftp-secure.mjs
           node --test tools/merchant-verified-feed.test.mjs
   merchant:
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && vars.GMC_AUTO_PUBLISH_ENABLED == 'true') }}
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && vars.GMC_AUTO_PUBLISH_ENABLED == 'true' && vars.GMC_VERIFIED_RELEASE_READY == 'true') }}
     runs-on: ubuntu-latest
     timeout-minutes: 40
     environment: merchant-production
