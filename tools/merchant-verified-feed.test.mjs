@@ -13,7 +13,7 @@ test('Missing independent verified retail data fails closed',()=>{
 test('Only verified and fresh checkout offers enter XML, not supplier estimates',()=>{
  const now=new Date().toISOString();
  const good={id:'verified-test-1',title:'Test item',description:'Fictional test fixture only',link:'https://sastamilaga.com/p/fixture.html',
- image_link:'https://example.com/test.jpg',price:1200,currency:'PKR',country:'PK',availability:'in_stock',identifier_exists:false,offer_kind:'verified_retail',
+ image_link:'https://example.com/test.jpg',price:1200,condition:'new',currency:'PKR',country:'PK',availability:'in_stock',identifier_exists:false,offer_kind:'verified_retail',
  evidence:{exact_variant_checkout:true,price_matches_page_and_checkout:true,stock_matches_page_and_checkout:true,shipping_reviewed:true,
  indexable_landing:true,merchant_policy_reviewed:true,price_checked_at:now,stock_checked_at:now,landing_checked_at:now,
  shipping_checked_at:now,checkout_tested_at:now,reference:'mock-test-record'}};
