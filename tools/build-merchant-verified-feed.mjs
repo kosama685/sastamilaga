@@ -69,7 +69,7 @@ try{
  if(stats.eligible===0)throw Error('Zero independently verified, checkout-eligible offers; upload blocked');
  if(fs.statSync(temp).size>=4*1024**3)throw Error('Merchant file exceeds Google 4 GB limit');
  fs.renameSync(temp,target);
- const sha256=crypto.createHash('sha256').update(fs.readFileSync(target)).digest('hex');
+ const hash=crypto.createHash('sha256');for await(const chunk of fs.createReadStream(target))hash.update(chunk);const sha256=hash.digest('hex');
  fs.writeFileSync(report,JSON.stringify({createdAt:new Date().toISOString(),country,currency,stats,rejections:why,examples,sha256,merchantApproval:'NOT_CLAIMED',uploaded:false},null,2)+'\n');
  console.log(JSON.stringify({stats,sha256,report}));
 }catch(err){out.destroy();try{fs.unlinkSync(temp)}catch{}throw err}
