@@ -38,21 +38,21 @@ jobs:
           node --check tools/merchant-sftp-secure.mjs
           node --test tools/merchant-verified-feed.test.mjs
   merchant:
-    if: \${{ github.event_name == 'workflow_dispatch' || vars.GMC_AUTO_PUBLISH_ENABLED == 'true' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || vars.GMC_AUTO_PUBLISH_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 40
     environment: merchant-production
     env:
       GMC_VERIFIED_OFFERS_FILE: data/merchant/verified-offers.ndjson
-      GMC_TARGET_COUNTRY: \${{ vars.GMC_TARGET_COUNTRY }}
-      GMC_TARGET_CURRENCY: \${{ vars.GMC_TARGET_CURRENCY }}
+      GMC_TARGET_COUNTRY: ${{ vars.GMC_TARGET_COUNTRY }}
+      GMC_TARGET_CURRENCY: ${{ vars.GMC_TARGET_CURRENCY }}
       GMC_SFTP_HOST: partnerupload.google.com
       GMC_SFTP_PORT: "19321"
-      GMC_SFTP_FILENAME: \${{ vars.GMC_SFTP_FILENAME }}
-      GMC_SFTP_USERNAME: \${{ secrets.GMC_SFTP_USERNAME }}
-      GMC_SFTP_PASSWORD: \${{ secrets.GMC_SFTP_PASSWORD }}
-      GMC_RELEASE_SHA256: \${{ secrets.GMC_RELEASE_SHA256 }}
-      GMC_PUBLISH_APPROVED: \${{ ((github.event_name == 'workflow_dispatch' && inputs.publish) || vars.GMC_AUTO_PUBLISH_ENABLED == 'true') && 'true' || 'false' }}
+      GMC_SFTP_FILENAME: ${{ vars.GMC_SFTP_FILENAME }}
+      GMC_SFTP_USERNAME: ${{ secrets.GMC_SFTP_USERNAME }}
+      GMC_SFTP_PASSWORD: ${{ secrets.GMC_SFTP_PASSWORD }}
+      GMC_RELEASE_SHA256: ${{ secrets.GMC_RELEASE_SHA256 }}
+      GMC_PUBLISH_APPROVED: ${{ ((github.event_name == 'workflow_dispatch' && inputs.publish) || vars.GMC_AUTO_PUBLISH_ENABLED == 'true') && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
