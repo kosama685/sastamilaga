@@ -26,6 +26,7 @@ function errors(p){
  if(p.country!==country||p.currency!==currency)bad.push('market_mismatch');
  if(typeof p.price!=='number'||!Number.isFinite(p.price)||p.price<=0||Math.round(p.price*100)/100!==p.price)bad.push('not_retail_price');
  if(!['in_stock','out_of_stock'].includes(p.availability))bad.push('unknown_stock');
+ if(!['new','used','refurbished'].includes(p.condition))bad.push('unverified_condition');
  if(String(p.title||'').length>150||String(p.description||'').length>5000)bad.push('oversize_text');
  if(p.offer_kind!=='verified_retail')bad.push('supplier_estimate');
  const e=p.evidence||{};
@@ -41,7 +42,7 @@ function node(k,v){return v===undefined||v===null||v===''?'':'<g:'+k+'>'+xml(v)+
 function item(p){
  let s='<item>';
  for(const key of ['id','title','description','link','image_link','availability'])s+=node(key,p[key]);
- s+=node('price',p.price.toFixed(2)+' '+p.currency)+node('condition','new');
+ s+=node('price',p.price.toFixed(2)+' '+p.currency)+node('condition',p.condition);
  for(const key of ['brand','gtin','mpn','product_type'])s+=node(key,p[key]);
  s+=node('identifier_exists',p.identifier_exists?'yes':'no');
  if(p.shipping_price!==undefined)s+='<g:shipping>'+node('country',country)+node('service','Standard')+node('price',p.shipping_price.toFixed(2)+' '+currency)+'</g:shipping>';
