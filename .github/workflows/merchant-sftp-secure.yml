@@ -12,12 +12,31 @@ on:
         default: "Preflight only"
   schedule:
     - cron: "29 3 * * *"
+  pull_request:
+    paths:
+      - tools/build-merchant-verified-feed.mjs
+      - tools/merchant-sftp-secure.mjs
+      - tools/merchant-verified-feed.test.mjs
+      - .github/workflows/merchant-sftp-secure.yml
 permissions:
   contents: read
 concurrency:
   group: secure-merchant-sftp
   cancel-in-progress: false
 jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify syntax and fail-closed eligibility logic
+        run: |
+          node --check tools/build-merchant-verified-feed.mjs
+          node --check tools/merchant-sftp-secure.mjs
+          node --test tools/merchant-verified-feed.test.mjs
   merchant:
     if: \${{ github.event_name == 'workflow_dispatch' || vars.GMC_AUTO_PUBLISH_ENABLED == 'true' }}
     runs-on: ubuntu-latest
