@@ -20,6 +20,7 @@ GMC_SFTP_FILENAME — filename EXACTLY registered in Merchant Center (do not inv
 GMC_TARGET_COUNTRY — real target country, e.g. PK only if account is set for Pakistan
 GMC_TARGET_CURRENCY — verified retail currency, e.g. PKR only if visible on page and at checkout
 GMC_AUTO_PUBLISH_ENABLED — leave unset or false until a trusted verified daily export and release digest exists
+GMC_VERIFIED_RELEASE_READY — independent second scheduled-release switch, leave unset or false until eligibility has been reviewed
 
 ## Required retail offer file
 The workflow requires data/merchant/verified-offers.ndjson. This is intentionally NOT generated from the 451,812 supplier snapshot. It must come from current checked retail inventory and verified WooCommerce checkout.
