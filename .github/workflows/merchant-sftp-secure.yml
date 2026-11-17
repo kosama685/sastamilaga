@@ -10,8 +10,6 @@ on:
         description: "Release note"
         type: string
         default: "Preflight only"
-  schedule:
-    - cron: "29 3 * * *"
   pull_request:
     paths:
       - tools/build-merchant-verified-feed.mjs
@@ -38,7 +36,7 @@ jobs:
           node --check tools/merchant-sftp-secure.mjs
           node --test tools/merchant-verified-feed.test.mjs
   merchant:
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && vars.GMC_AUTO_PUBLISH_ENABLED == 'true' && vars.GMC_VERIFIED_RELEASE_READY == 'true') }}
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     timeout-minutes: 40
     environment: merchant-production
@@ -52,7 +50,7 @@ jobs:
       GMC_SFTP_USERNAME: ${{ secrets.GMC_SFTP_USERNAME }}
       GMC_SFTP_PASSWORD: ${{ secrets.GMC_SFTP_PASSWORD }}
       GMC_RELEASE_SHA256: ${{ secrets.GMC_RELEASE_SHA256 }}
-      GMC_PUBLISH_APPROVED: ${{ ((github.event_name == 'workflow_dispatch' && inputs.publish) || vars.GMC_AUTO_PUBLISH_ENABLED == 'true') && 'true' || 'false' }}
+      GMC_PUBLISH_APPROVED: ${{ github.event_name == 'workflow_dispatch' && inputs.publish == true && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -63,6 +61,9 @@ jobs:
           node --check tools/build-merchant-verified-feed.mjs
           node --check tools/merchant-sftp-secure.mjs
           node --test tools/merchant-verified-feed.test.mjs
+      - name: Reject malformed SFTP filename before any feed generation
+        run: |
+          node -e 'const v=process.env.GMC_SFTP_FILENAME||""; if(v && !/^[A-Za-z0-9_.-]+\\.(xml|tsv|txt)(\\.gz)?$/.test(v)){console.error("Invalid SFTP filename. Use only the exact registered filename; never an HTTP URL.");process.exit(1)}'
       - name: Require independent retail verification file
         run: |
           test -s "$GMC_VERIFIED_OFFERS_FILE" || { echo "::error::Verified retail offers unavailable. Raw CJ supplier XML is not Merchant-ready."; exit 1; }
