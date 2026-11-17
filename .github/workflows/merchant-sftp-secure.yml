@@ -1,0 +1,87 @@
+name: Secure Google Merchant SFTP (verified offers only)
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Upload only the independently approved exact feed (requires secrets)"
+        type: boolean
+        default: false
+      reason:
+        description: "Release note"
+        type: string
+        default: "Preflight only"
+  schedule:
+    - cron: "29 3 * * *"
+  pull_request:
+    paths:
+      - tools/build-merchant-verified-feed.mjs
+      - tools/merchant-sftp-secure.mjs
+      - tools/merchant-verified-feed.test.mjs
+      - .github/workflows/merchant-sftp-secure.yml
+permissions:
+  contents: read
+concurrency:
+  group: secure-merchant-sftp
+  cancel-in-progress: false
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+      - name: Verify syntax and fail-closed eligibility logic
+        run: |
+          node --check tools/build-merchant-verified-feed.mjs
+          node --check tools/merchant-sftp-secure.mjs
+          node --test tools/merchant-verified-feed.test.mjs
+  merchant:
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && vars.GMC_AUTO_PUBLISH_ENABLED == 'true' && vars.GMC_VERIFIED_RELEASE_READY == 'true') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    environment: merchant-production
+    env:
+      GMC_VERIFIED_OFFERS_FILE: data/merchant/verified-offers.ndjson
+      GMC_TARGET_COUNTRY: ${{ vars.GMC_TARGET_COUNTRY }}
+      GMC_TARGET_CURRENCY: ${{ vars.GMC_TARGET_CURRENCY }}
+      GMC_SFTP_HOST: partnerupload.google.com
+      GMC_SFTP_PORT: "19321"
+      GMC_SFTP_FILENAME: ${{ vars.GMC_SFTP_FILENAME }}
+      GMC_SFTP_USERNAME: ${{ secrets.GMC_SFTP_USERNAME }}
+      GMC_SFTP_PASSWORD: ${{ secrets.GMC_SFTP_PASSWORD }}
+      GMC_RELEASE_SHA256: ${{ secrets.GMC_RELEASE_SHA256 }}
+      GMC_PUBLISH_APPROVED: ${{ ((github.event_name == 'workflow_dispatch' && inputs.publish) || vars.GMC_AUTO_PUBLISH_ENABLED == 'true') && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+      - name: Syntax and safety tests
+        run: |
+          node --check tools/build-merchant-verified-feed.mjs
+          node --check tools/merchant-sftp-secure.mjs
+          node --test tools/merchant-verified-feed.test.mjs
+      - name: Require independent retail verification file
+        run: |
+          test -s "$GMC_VERIFIED_OFFERS_FILE" || { echo "::error::Verified retail offers unavailable. Raw CJ supplier XML is not Merchant-ready."; exit 1; }
+      - name: Export eligible Merchant products
+        run: node tools/build-merchant-verified-feed.mjs
+      - name: Show redacted preflight result
+        run: |
+          node -e 'const r=require("./artifacts/merchant-verified-report.json"); console.log(JSON.stringify({checked:r.stats.read,eligible:r.stats.eligible,excluded:r.stats.excluded,sha256:r.sha256,merchantApproval:r.merchantApproval}));'
+      - name: Install SFTP package for approved release only
+        if: env.GMC_PUBLISH_APPROVED == 'true'
+        run: npm install --no-save --no-package-lock --ignore-scripts ssh2-sftp-client@11.0.0
+      - name: Secure fingerprint-verified SFTP upload
+        if: env.GMC_PUBLISH_APPROVED == 'true'
+        run: node tools/merchant-sftp-secure.mjs
+      - name: Archive eligibility report (no secrets)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: merchant-verified-preflight
+          path: artifacts/merchant-verified-report.json
+          if-no-files-found: warn
+          retention-days: 14
