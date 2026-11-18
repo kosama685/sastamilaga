@@ -49,7 +49,7 @@
     pdp.appendChild(side);
     /* tabs: the description and tags move out of the grid into a tabbed block */
     if (detail) {
-      var desc = detail.querySelector('p:not(.product-meta)'), tags = detail.querySelector('.tags-wrap'), meta = detail.querySelector('.product-meta');
+      var desc = detail.querySelector('.sm-longdesc') || detail.querySelector('p:not(.product-meta)'), tags = detail.querySelector('.tags-wrap'), meta = detail.querySelector('.product-meta');
       var tabs = el('<section class="sm-tabs" aria-label="Product information"><div role="tablist" aria-label="Product information tabs"><button type="button" role="tab" aria-selected="true" data-tab="tab-d">Description</button><button type="button" role="tab" aria-selected="false" data-tab="tab-s">Details</button><button type="button" role="tab" aria-selected="false" data-tab="tab-r">Delivery &amp; returns</button></div><div role="tabpanel" id="tab-d"></div><div role="tabpanel" id="tab-s" hidden></div><div role="tabpanel" id="tab-r" hidden><p style="margin:0">Cash on delivery across Pakistan. Delivery is free on orders over ' + PKR.format(free) + ', otherwise ' + PKR.format(fee) + '. If an item arrives damaged or wrong, send us a return request within 7 days on WhatsApp.</p></div></section>');
       if (desc) tabs.querySelector('#tab-d').appendChild(desc); else tabs.querySelector('#tab-d').textContent = 'Full product details at Sasta Milaga.';
       var s = tabs.querySelector('#tab-s'); if (meta) { meta.style.margin = '0 0 .6rem'; s.appendChild(meta); } if (tags) s.appendChild(tags);
