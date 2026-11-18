@@ -115,12 +115,22 @@ export default {async fetch(request,env,ctx){
  const url=new URL(request.url);
  if(!['GET','HEAD'].includes(request.method))return new Response('Method not allowed',{status:405,headers:{'allow':'GET, HEAD','cache-control':'no-store'}});
  const isSitemap=url.pathname==='/global-shop/sitemap.xml';
+ const sitemapPart=url.pathname.match(/^\/global-shop\/sitemaps\/([1-9][0-9]*)\.xml$/);
  const m=url.pathname.match(pathRe);
- if(!isSitemap&&!m)return error(404,'Page not found',request.method);
+ if(!isSitemap&&!sitemapPart&&!m)return error(404,'Page not found',request.method);
  if(!env.DB&&m)return recoveredProduct(request,m[1].toUpperCase());
  try{
- if(isSitemap){
-  const q=await env.DB.prepare("SELECT p.cj_product_id,p.name FROM cj_product_enrichment AS e INNER JOIN catalog_products_cj AS p ON p.cj_product_id=e.cj_product_id WHERE e.seo_approved=1 AND length(e.description_text)>=100 ORDER BY e.cj_product_id LIMIT 4000").all();
+ if(isSitemap||sitemapPart){
+  const countRow=await env.DB.prepare("SELECT COUNT(*) AS total FROM cj_product_enrichment e INNER JOIN catalog_products_cj p ON p.cj_product_id=e.cj_product_id WHERE e.seo_approved=1 AND length(e.description_text)>=100").first();
+  const count=Math.max(0,Number(countRow?.total)||0),pages=Math.ceil(count/4000);
+  if(isSitemap){
+   const rows=Array.from({length:pages},(_,i)=>'<sitemap><loc>'+BASE+'/global-shop/sitemaps/'+(i+1)+'.xml</loc></sitemap>').join('');
+   const xml='<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+rows+'</sitemapindex>';
+   return new Response(request.method==='HEAD'?null:xml,{status:200,headers:{'content-type':'application/xml; charset=utf-8','cache-control':'public,max-age=300,s-maxage=1200'}});
+  }
+  const page=Number(sitemapPart[1]);
+  if(!Number.isSafeInteger(page)||page>pages)return error(404,'Sitemap not found',request.method);
+  const q=await env.DB.prepare("SELECT p.cj_product_id,p.name FROM cj_product_enrichment AS e INNER JOIN catalog_products_cj AS p ON p.cj_product_id=e.cj_product_id WHERE e.seo_approved=1 AND length(e.description_text)>=100 ORDER BY e.cj_product_id LIMIT 4000 OFFSET ?").bind((page-1)*4000).all();
   const rows=(q.results||[]).map(p=>'<url><loc>'+BASE+'/global-shop/p/'+escapeHTML(String(p.cj_product_id).toUpperCase())+'/'+slugify(p.name)+'/</loc></url>').join('');
   const xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+rows+'</urlset>';
   return new Response(request.method==='HEAD'?null:xml,{status:200,headers:{'content-type':'application/xml; charset=utf-8','cache-control':'public,max-age=300,s-maxage=1200'}});
