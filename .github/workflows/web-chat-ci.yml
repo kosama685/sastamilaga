@@ -1,0 +1,36 @@
+name: Validate corporate customer chat
+on:
+  pull_request:
+    paths:
+      - 'assets/js/web-chat.js'
+      - 'assets/theme/sm-whatsapp-crm-web-chat.css'
+      - 'tools/web-chat.test.mjs'
+      - '.github/workflows/web-chat-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'assets/js/web-chat.js'
+      - 'assets/theme/sm-whatsapp-crm-web-chat.css'
+      - 'tools/web-chat.test.mjs'
+      - '.github/workflows/web-chat-ci.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Check client and tests syntax
+        run: |
+          node --check assets/js/web-chat.js
+          node --check tools/web-chat.test.mjs
+      - name: Exercise English product, order, support and travel flows
+        run: node --test tools/web-chat.test.mjs
+      - name: Ensure customer chat remains English only
+        run: |
+          ! grep -q "localStorage.setItem(languageKey" assets/js/web-chat.js
+          grep -Fq '.smwa-web__language{display:none!important}' assets/theme/sm-whatsapp-crm-web-chat.css
