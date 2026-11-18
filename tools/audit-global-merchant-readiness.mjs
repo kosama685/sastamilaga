@@ -15,7 +15,8 @@ const files=fs.readdirSync(dataDir).filter(f=>/^[a-f0-9]{3}\.json$/.test(f)).sor
 const validId=/^(?:[0-9]{19}|[A-Fa-f0-9]{8}-(?:[A-Fa-f0-9]{4}-){3}[A-Fa-f0-9]{12})$/;
 const seen=new Set();
 const counts={records:0,uniqueIDs:0,missingTitles:0,missingPrimaryImages:0,invalidImageURLs:0,missingSupplierSkus:0,invalidIDs:0,duplicateIDs:0,badBuckets:0};
-const failures=[],byCategory={};
+const failures=[],byCategory={},categoryIssues={};
+const evidence={supplierRecords:0,titleAndHttpsImage:0,titleSkuAndHttpsImage:0,verifiedRetailDescriptionInLookup:0,verifiedRetailPriceInLookup:0,verifiedLiveStockInLookup:0,checkoutProofInLookup:0};
 function note(kind,file,id){if(failures.length<60)failures.push({kind,file,id})}
 for(const f of files){
   let bucket;
@@ -34,6 +35,20 @@ for(const f of files){
     else if(!/^https:\/\/[^\s]+$/i.test(String(image)))counts.invalidImageURLs++;
     const cat=String(slug||category||'uncategorized').slice(0,150);
     byCategory[cat]=(byCategory[cat]||0)+1;
+    const hasTitle=Boolean(String(title||'').trim());
+    const hasHttpsImage=/^https:\/\/[^\s]+$/i.test(String(image||''));
+    const hasSku=Boolean(String(sku||'').trim());
+    evidence.supplierRecords++;
+    if(hasTitle&&hasHttpsImage)evidence.titleAndHttpsImage++;
+    if(hasTitle&&hasHttpsImage&&hasSku)evidence.titleSkuAndHttpsImage++;
+    // Source row schema: SKU, title, category, slug, image ONLY.
+    // It supplies no verified current retail price, live stock, or checkout evidence.
+    if(!hasTitle||!hasHttpsImage||!hasSku){
+      const c=categoryIssues[cat]||(categoryIssues[cat]={missingTitle:0,missingOrInvalidImage:0,missingSku:0});
+      if(!hasTitle)c.missingTitle++;
+      if(!hasHttpsImage)c.missingOrInvalidImage++;
+      if(!hasSku)c.missingSku++;
+    }
   }
 }
 counts.uniqueIDs=seen.size;
@@ -42,7 +57,8 @@ const complete=files.length===Number(manifest.shards)&&counts.records===expected
 const result={
   generatedAt:new Date().toISOString(),sourceSnapshot:manifest.snapshot,
   source:'data/cj/lookup/*.json',sourceProductsExpected:expected,lookupShardsExpected:manifest.shards,
-  lookupShardsScanned:files.length,counts,categoryCount:Object.keys(byCategory).length,structuralCoveragePass:complete,
+  lookupShardsScanned:files.length,counts,evidence,categoryCount:Object.keys(byCategory).length,structuralCoveragePass:complete,
+  approvedByThisSupplierOnlyAudit:0,
   merchantStatus:'NOT VERIFIED - DO NOT SUBMIT AS APPROVED INVENTORY',
   googleAccountMisrepresentationReview:'NOT VERIFIED',
   retailPricesVerified:0,liveInventoryVerified:0,productCheckoutsVerified:0,
@@ -60,9 +76,48 @@ const result={
     qualifiedSitemap:'https://sastamilaga.com/sitemap-global-qualified.xml'
   },
   issuesSample:failures,
-  categories:byCategory
+  categories:byCategory,
+  categorySourceFieldGaps:categoryIssues
 };
 fs.mkdirSync(path.join(ROOT,'artifacts'),{recursive:true});
 fs.writeFileSync(path.join(ROOT,'artifacts/global-merchant-readiness-audit.json'),JSON.stringify(result,null,2)+'\n');
+const md=[
+ '# Complete CJ supplier source evidence — Sasta Milaga',
+ '',
+ 'Snapshot: '+manifest.snapshot+' · Created: '+result.generatedAt,
+ '',
+ '## All-record structural coverage',
+ '- Records scanned: **'+counts.records.toLocaleString('en-US')+'**',
+ '- Unique IDs: **'+counts.uniqueIDs.toLocaleString('en-US')+'**',
+ '- Lookup shards: **'+files.length+'**',
+ '- Structural coverage: **'+(complete?'PASS':'FAIL')+'**',
+ '- With title and HTTPS image: **'+evidence.titleAndHttpsImage.toLocaleString('en-US')+'**',
+ '- With title, SKU and HTTPS image: **'+evidence.titleSkuAndHttpsImage.toLocaleString('en-US')+'**',
+ '',
+ '## What the source cannot independently certify',
+ 'All '+counts.records.toLocaleString('en-US')+' supplier records lack **verified** retail price, live stock and checkout evidence in this lookup format. This audit approves **zero** products; separately reviewed D1 products must be counted separately.',
+ 'Supplier-only pages must not be advertised as guaranteed indexable, in stock or Merchant-ready.',
+ '',
+ '## Source-field problems',
+ '- Missing titles: '+counts.missingTitles,
+ '- Missing primary images: '+counts.missingPrimaryImages,
+ '- Non-HTTPS image URLs: '+counts.invalidImageURLs,
+ '- Missing supplier SKUs: '+counts.missingSupplierSkus,
+ '',
+ '## SEO / AEO / GEO safeguards',
+ 'Use product-specific factual descriptions, canonical HTML, descriptive internal links, and visible Q&A. Only publish true Product offers and reviews.',
+ 'Keep incomplete products noindex. For Google discovery use XML sitemaps, not the Indexing API intended for JobPosting and BroadcastEvent.',
+ 'Merchant SFTP upload filenames must exactly match the registered source name.',
+ '',
+ '## Top 30 categories needing source cleanup',
+ '| Category | Missing title | Missing/invalid HTTPS image | Missing SKU |',
+ '|---|---:|---:|---:|',
+ ...Object.entries(categoryIssues).sort((a,b)=>(b[1].missingTitle+b[1].missingOrInvalidImage+b[1].missingSku)-(a[1].missingTitle+a[1].missingOrInvalidImage+a[1].missingSku)).slice(0,30).map(([key,v])=>'| '+key.replaceAll('|','/')+' | '+v.missingTitle+' | '+v.missingOrInvalidImage+' | '+v.missingSku+' |'),
+ '',
+ 'This report uses checked-in data only: zero Cloudflare D1 reads and zero per-product network requests.'
+].join('\n');
+fs.writeFileSync(path.join(ROOT,'artifacts/global-merchant-readiness-audit.md'),md);
+if(process.env.GITHUB_STEP_SUMMARY)fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,md.slice(0,30000));
+
 console.log(JSON.stringify({expected,scanned:counts.records,shards:files.length,unique:counts.uniqueIDs,missingImages:counts.missingPrimaryImages,invalidImages:counts.invalidImageURLs,missingTitles:counts.missingTitles,complete,merchantStatus:result.merchantStatus}));
 if(!complete)process.exitCode=1;
