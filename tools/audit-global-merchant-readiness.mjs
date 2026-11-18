@@ -119,5 +119,5 @@ const md=[
 fs.writeFileSync(path.join(ROOT,'artifacts/global-merchant-readiness-audit.md'),md);
 if(process.env.GITHUB_STEP_SUMMARY)fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,md.slice(0,30000));
 
-console.log(JSON.stringify({expected,scanned:counts.records,shards:files.length,unique:counts.uniqueIDs,missingImages:counts.missingPrimaryImages,invalidImages:counts.invalidImageURLs,missingTitles:counts.missingTitles,complete,merchantStatus:result.merchantStatus}));
+console.log(JSON.stringify({expected,scanned:counts.records,shards:files.length,unique:counts.uniqueIDs,missingImages:counts.missingPrimaryImages,invalidImages:counts.invalidImageURLs,missingTitles:counts.missingTitles,missingSkus:counts.missingSupplierSkus,withTitleAndHttpsImage:evidence.titleAndHttpsImage,withTitleSkuAndHttpsImage:evidence.titleSkuAndHttpsImage,approvedFromSupplierAudit:0,complete,merchantStatus:result.merchantStatus}));
 if(!complete)process.exitCode=1;
