@@ -4,7 +4,7 @@
  */
 (function(){
 'use strict';
-if(window.SM_HHCBridge&&window.SM_HHCBridge.version==='20261118-3')return;
+if(window.SM_HHCBridge&&window.SM_HHCBridge.version==='20261118-4')return;
 const PLACEHOLDER='data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><rect width="640" height="640" rx="24" fill="#eef6f0"/><rect x="160" y="170" width="320" height="250" rx="18" fill="none" stroke="#66987b" stroke-width="12"/><path d="M195 384l85-92 68 65 53-47 45 74" fill="none" stroke="#66987b" stroke-width="12"/><text x="320" y="487" text-anchor="middle" fill="#305c40" font-family="Arial,sans-serif" font-size="29">Product image unavailable</text></svg>');
 const once=new WeakSet(), verified=new Map();
 const clean=u=>{try{const v=new URL(u,location.href);return v.protocol==='https:'?v.href:''}catch(e){return''}};
@@ -36,7 +36,16 @@ const known=new Set([clean(source)]);for(const url of candidates){const u=clean(
 img.onerror=null;img.src=PLACEHOLDER;img.alt='Product image unavailable';img.dataset.smPhotoUnavailable='true';
 }
 document.addEventListener('error',e=>{const img=e.target;if(!(img instanceof HTMLImageElement))return;if(img.closest('.gallery-main,.gallery-thumbs,.smss,.sm-card,.sm-static-thumbs'))recover(img)},true);
+function scanAlreadyBroken(){
+  document.querySelectorAll('.gallery-main img,.gallery-thumbs img,.smss img,.sm-card img').forEach(img=>{
+    if(img.complete&&img.naturalWidth===0&&!img.dataset.smPhotoUnavailable)recover(img);
+  });
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scanAlreadyBroken,{once:true});else scanAlreadyBroken();
+window.addEventListener('load',scanAlreadyBroken,{once:true});
+document.addEventListener('sm:pdp-ready',scanAlreadyBroken);
+
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',restoreSearchImage,{once:true});else restoreSearchImage();
 window.addEventListener('sm:pdp-ready',restoreSearchImage);
-window.SM_HHCBridge={version:'20261118-3',recover,probe,placeholder:PLACEHOLDER};
+window.SM_HHCBridge={version:'20261118-4',recover,probe,placeholder:PLACEHOLDER};
 })();
