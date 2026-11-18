@@ -63,7 +63,7 @@ jobs:
           node --test tools/merchant-verified-feed.test.mjs
       - name: Reject malformed SFTP filename before any feed generation
         run: |
-          node -e 'const v=process.env.GMC_SFTP_FILENAME||""; if(v && !/^[A-Za-z0-9_.-]+\\.(xml|tsv|txt)(\\.gz)?$/.test(v)){console.error("Invalid SFTP filename. Use only the exact registered filename; never an HTTP URL.");process.exit(1)}'
+          node -e 'const v=process.env.GMC_SFTP_FILENAME||""; if(v && !/^[A-Za-z0-9_.-]+\.(xml|tsv|txt)(\.gz)?$/.test(v)){console.error("Invalid SFTP filename. Use only the exact registered filename; never an HTTP URL.");process.exit(1)}'
       - name: Require independent retail verification file
         run: |
           test -s "$GMC_VERIFIED_OFFERS_FILE" || { echo "::error::Verified retail offers unavailable. Raw CJ supplier XML is not Merchant-ready."; exit 1; }
