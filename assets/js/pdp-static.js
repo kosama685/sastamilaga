@@ -16,6 +16,14 @@
     var bp = buy.querySelector('.big-price'), pm = bp && /Rs\s*([\d,]+(?:\.\d+)?)/.exec(bp.textContent), unit = pm ? Number(pm[1].replace(/,/g, '')) : 0;   /* only the rupee amount: the currency converter appends another price to this element */
     var first = pdp.firstElementChild, gallery = first && first.querySelector('.gallery-panel'), detail = first && first.querySelector('.detail-panel');
     if (!gallery) return;
+    /* Remove only the redundant supplier-image loading hint shown between
+       gallery and video on some Worker-rendered product pages. Do not touch
+       the actual thumbnails or product image nodes. */
+    gallery.querySelectorAll('small,span,p,div').forEach(function (node) {
+      if (node.children.length) return;
+      var t = (node.textContent || '').replace(/\\s+/g,' ').trim();
+      if (/supplier images loaded/i.test(t) || /select a thumbnail to zoom/i.test(t)) node.remove();
+    });
     pdp.classList.add('pdp3'); pdp.insertBefore(gallery, buy);
     /* thumbnails: the main photo plus the others, all clickable */
     var main = gallery.querySelector('.gallery-main img'), strip = gallery.querySelector('.gallery-thumbs'), urls = [];
