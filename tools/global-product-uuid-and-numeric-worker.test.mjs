@@ -109,3 +109,36 @@ test('D1 quota exception falls back to snapshot and nonexistent reference stays 
   const unknown=await worker.fetch(new Request(BASE+'1111111111111111111/nonexistent/'),envQuota);assert.equal(unknown.status,404);
  }finally{globalThis.fetch=old}
 });
+
+test('reviewed CJ product has item-specific answers, contextual policies and wide page styling',async()=>{
+ const res=await worker.fetch(new Request(BASE+uuid+'/solar-simulation-anti-theft-warning-light/'),env());
+ const html=await res.text();
+ assert.match(html,/Questions about Solar simulation anti-theft warning light/);
+ assert.match(html,/What is Solar simulation anti-theft warning light/);
+ assert.match(html,/Can Solar simulation anti-theft warning light be shipped/);
+ assert.match(html,/smh-answers/);
+ assert.match(html,/max-width:1680px/);
+ assert.match(html,/href="\/shipping\/"/);
+ assert.match(html,/href="\/returns\/"/);
+ assert.match(html,/href="\/c\/global\/index.html"/);
+ assert.doesNotMatch(html,/"@type":"Offer"/);
+});
+test('reviewed CJ sitemap is paginated beyond 4000, with no duplicate first-page URLs',async()=>{
+ const count=8001;
+ const db={prepare(sql){return {
+   bind(n){return {async all(){assert.match(sql,/OFFSET/);return {results:[{cj_product_id:String(n+1),name:'Item '+(n+1)}]}}}},
+   async first(){assert.match(sql,/COUNT/);return {total:count}}
+ }}};
+ const e={DB:db};
+ const ix=await worker.fetch(new Request('https://sastamilaga.com/global-shop/sitemap.xml'),e);
+ assert.equal(ix.status,200);let xml=await ix.text();
+ assert.match(xml,/sitemapindex/);assert.match(xml,/sitemaps\/1.xml/);assert.match(xml,/sitemaps\/2.xml/);assert.match(xml,/sitemaps\/3.xml/);
+ const one=await worker.fetch(new Request('https://sastamilaga.com/global-shop/sitemaps/1.xml'),e);
+ const two=await worker.fetch(new Request('https://sastamilaga.com/global-shop/sitemaps/2.xml'),e);
+ const three=await worker.fetch(new Request('https://sastamilaga.com/global-shop/sitemaps/3.xml'),e);
+ assert.equal(one.status,200);assert.equal(two.status,200);assert.equal(three.status,200);
+ assert.match(await one.text(),/\/global-shop\/p\/1\/item-1\//);
+ assert.match(await two.text(),/\/global-shop\/p\/4001\/item-4001\//);
+ assert.match(await three.text(),/\/global-shop\/p\/8001\/item-8001\//);
+ assert.equal((await worker.fetch(new Request('https://sastamilaga.com/global-shop/sitemaps/4.xml'),e)).status,404);
+});
