@@ -14,7 +14,7 @@ const cache=new Map();
 function safe(url){try{const u=new URL(url,location.href);return u.origin===location.origin&&/^\/p\/[a-z0-9-]+\.html$/i.test(u.pathname)?u.href:null}catch{return null}}
 function lookup(url){
  if(cache.has(url))return cache.get(url);
- const work=fetch(url,{credentials:'omit',headers:{Accept:'text/html'},signal:AbortSignal.timeout(10000)}).then(r=>{
+ const work=fetch(url,{credentials:'omit',headers:{Accept:'text/html'},signal:undefined}).then(r=>{
   if(!r.ok||!(r.headers.get('content-type')||'').includes('html'))throw Error('Product HTML unavailable');
   return r.text()
  }).then(html=>{
@@ -32,9 +32,11 @@ for(const li of cards){
  if(!url)continue;
  const name=a.textContent.trim();
  const price=li.querySelector('span');
+ a.textContent='';
+ const label=document.createElement('span');label.className='sm-related-name';label.textContent=name;
  const frame=document.createElement('span');frame.className='sm-related-media';frame.setAttribute('aria-hidden','true');
  const img=new Image();img.loading='lazy';img.decoding='async';img.width=380;img.height=380;img.alt='';
- frame.append(img);a.prepend(frame);a.classList.add('sm-related-link');
+ frame.append(img);a.append(frame,label);a.classList.add('sm-related-link');
  if(price){price.classList.add('sm-related-price');a.append(price)}
  li.classList.add('sm-related-card');
  li.dataset.productHref=url;
