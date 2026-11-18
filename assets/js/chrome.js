@@ -109,7 +109,7 @@
   /* Country / language / currency window (header "Shopping destination" button) */
   var mk = document.createElement('script'); mk.src = prefix + 'assets/js/market.js'; mk.defer = true; document.head.appendChild(mk);
   var wb = document.createElement('script'); wb.src = prefix + 'assets/js/woo-bridge.js'; wb.defer = true; document.head.appendChild(wb);
-  var hb = document.createElement('script'); hb.src = prefix + 'assets/js/hhcbridge.js?v=20261118-1'; hb.defer = true; document.head.appendChild(hb);
+  var hb = document.createElement('script'); hb.src = prefix + 'assets/js/hhcbridge.js?v=20261118-4'; hb.defer = true; document.head.appendChild(hb);
   var ay = document.createElement('script'); ay.src = prefix + 'assets/js/a11y.js'; ay.defer = true; document.head.appendChild(ay);
   var mt = document.createElement('script'); mt.src = prefix + 'assets/js/i18n.js'; mt.defer = true; document.head.appendChild(mt);
   /* Reusable video button for static local product pages. */
