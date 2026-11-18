@@ -2184,3 +2184,13 @@ footer.smf .smf-pay svg{color:#fff}
 @media(prefers-reduced-motion:reduce){
  .sm-page-static section.pdp .gallery-thumbs button,.sm-page-static section.pdp .buy-actions a,.sm-page-static section.pdp .buy-actions button,.sm-page-static .sm-static-links li{transition:none}
 }
+
+/* 2026-11 full-width product layout for approved local and CJ pages */
+.sm-page-static .sm-main:has(section.pdp){max-width:1680px;width:100%;margin-inline:auto;padding-inline:clamp(14px,2.6vw,44px)}
+@media(min-width:1180px){
+.sm-page-static section.pdp:not(.pdp3){grid-template-columns:minmax(0,1.12fr) minmax(380px,.88fr)!important;gap:clamp(24px,3vw,48px)!important}
+.sm-page-static section.pdp.pdp3{grid-template-columns:minmax(0,1.13fr) minmax(0,1fr) minmax(235px,.57fr);gap:clamp(18px,2vw,36px)}
+.sm-page-static section.pdp .gallery-main img,.sm-page-static section.pdp .gallery-main video{max-height:min(76vh,750px)}
+}
+@media(min-width:761px) and (max-width:1179px){.sm-page-static section.pdp.pdp3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.sm-page-static section.pdp.pdp3 .pdp-side{grid-column:1/-1;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr))}}
+@media(max-width:760px){.sm-page-static section.pdp.pdp3{grid-template-columns:minmax(0,1fr)!important}.sm-page-static section.pdp.pdp3 .pdp-side{grid-column:auto;grid-template-columns:minmax(0,1fr)}}

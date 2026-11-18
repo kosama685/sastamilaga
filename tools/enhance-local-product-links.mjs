@@ -30,13 +30,14 @@ for(const file of files){
  const meta=original.slice(0,original.indexOf('</head>')>0?original.indexOf('</head>'):5000);
  if(!meta.includes('rel="canonical" href="'+canonical+'"'))throw Error('Canonical mismatch in '+file);
  const title=clean(original.match(/<h1(?:\s[^>]*)?>([\s\S]*?)<\/h1>/i)?.[1]||'');
+ const description=clean(original.match(/<div class="detail-panel">[\s\S]*?<p>([\s\S]*?)<\/p>/i)?.[1]||'');
  const crumbs=original.match(/<nav class="sm-crumbs"[\s\S]*?<\/nav>/i)?.[0]||'';
  const broad=crumbs.match(/href="\.\.\/c\/([a-z0-9-]+)\.html"/i)?.[1]||'';
  const leaf=crumbs.match(/[?&]leaf=([a-z0-9-]+)/i)?.[1]||'';
  const indexable=!/<meta\s+name="robots"\s+content="[^"]*\bnoindex\b/i.test(meta);
  const usable=indexable&&title.length>4&&broad!==''&&fs.existsSync(path.join(ROOT,'c',broad+'.html'));
  const group=leaf?broad+'/'+leaf:broad;
- const r={file,original,canonical,title,words:tokens(title),broad,group,usable};
+ const r={file,original,canonical,title,description,words:tokens(title),broad,group,usable};
  const ix=records.length;records.push(r);byFile.set(file,ix);
  if(usable){if(!groups.has(group))groups.set(group,[]);groups.get(group).push(ix);}
 }
@@ -60,7 +61,9 @@ function related(r){
 function guide(r,rec){
  const links=rec.length?'<nav aria-label="Related products in the same category"><h3>Compare related products</h3><ul>'+
   rec.map(x=>'<li><a href="'+esc(x.canonical)+'">'+esc(short(x.title))+'</a></li>').join('')+'</ul></nav>':'';
+ const factualAnswer=r.description.length>=45?'<section aria-label="Product-specific questions"><h3>What is '+esc(short(r.title,125))+'?</h3><p>'+esc(short(r.description,400))+'</p></section>':'';
  return '<section id="'+MARK+'" class="sm-page sm-page--wide" aria-label="Related items and shopping guidance"><div class="sm-prose">'+
+  factualAnswer+
   '<h2>More in '+esc(r.broad.replace(/-/g,' '))+'</h2>'+
   '<p>Explore similar items, compare product details and check the availability of the exact option before purchasing.</p>'+
   links+
