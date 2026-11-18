@@ -24,6 +24,7 @@ function tokens(s){return [...new Set(s.toLowerCase().replace(/[^a-z0-9]+/g,' ')
 const files=fs.readdirSync(DIR).filter(x=>x.endsWith('.html')).sort();
 if(files.length<19000)throw Error('Static product tree unexpectedly small; refusing partial coverage');
 const records=[],groups=new Map(),byFile=new Map();
+const coverage={source_native_faq_sections:0,source_faq_schema_blocks:0,eligible_factual_answer_candidates:0,eligible_short_descriptions:0,excluded_factual_answer_candidates:0};
 for(const file of files){
  const original=fs.readFileSync(path.join(DIR,file),'utf8');
  const canonical=SITE+'/p/'+file;
@@ -37,6 +38,10 @@ for(const file of files){
  const indexable=!/<meta\s+name="robots"\s+content="[^"]*\bnoindex\b/i.test(meta);
  const usable=indexable&&title.length>4&&broad!==''&&fs.existsSync(path.join(ROOT,'c',broad+'.html'));
  const group=leaf?broad+'/'+leaf:broad;
+ if(/<section\b[^>]*class="[^"]*sm-faq\b/i.test(original))coverage.source_native_faq_sections++;
+ if(/"@type"\s*:\s*"FAQPage"/.test(original))coverage.source_faq_schema_blocks++;
+ if(description.length>=45){if(usable)coverage.eligible_factual_answer_candidates++;else coverage.excluded_factual_answer_candidates++;}
+ else if(usable)coverage.eligible_short_descriptions++;
  const r={file,original,canonical,title,description,words:tokens(title),broad,group,usable};
  const ix=records.length;records.push(r);byFile.set(file,ix);
  if(usable){if(!groups.has(group))groups.set(group,[]);groups.get(group).push(ix);}
@@ -82,4 +87,4 @@ for(const r of records){
  if(s!==r.original){touched++;if(!CHECK)fs.writeFileSync(path.join(DIR,r.file),s);}
  if(peers.length){withRelated++;linked+=peers.length;}
 }
-console.log(JSON.stringify({mode:CHECK?'check':'deploy',total_products:records.length,indexable_with_category:records.length-unindexed,excluded_from_enhancement:unindexed,missing_category:noCategory,rewritten:touched,products_with_semantically_related_links:withRelated,product_to_product_links:linked,category_to_product_backlinks:records.length-unindexed,version:MARK}));
+console.log(JSON.stringify({...coverage,mode:CHECK?'check':'deploy',total_products:records.length,indexable_with_category:records.length-unindexed,excluded_from_enhancement:unindexed,missing_category:noCategory,rewritten:touched,products_with_semantically_related_links:withRelated,product_to_product_links:linked,category_to_product_backlinks:records.length-unindexed,version:MARK}));
