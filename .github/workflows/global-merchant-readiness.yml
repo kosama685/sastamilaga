@@ -30,6 +30,8 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: global-merchant-readiness-audit
-          path: artifacts/global-merchant-readiness-audit.json
+          path: |
+            artifacts/global-merchant-readiness-audit.json
+            artifacts/global-merchant-readiness-audit.md
           retention-days: 30
           if-no-files-found: warn
