@@ -31,16 +31,18 @@ for(const li of cards){
  const a=li.querySelector('a[href]'); const url=safe(a.href);
  if(!url)continue;
  const name=a.textContent.trim();
+ const originalImage=a.querySelector('img[src]')?.getAttribute('src')||li.dataset.productImage||'';
  const price=li.querySelector('span');
  a.textContent='';
  const label=document.createElement('span');label.className='sm-related-name';label.textContent=name;
  const frame=document.createElement('span');frame.className='sm-related-media';frame.setAttribute('aria-hidden','true');
  const img=new Image();img.loading='lazy';img.decoding='async';img.width=380;img.height=380;img.alt='';
  frame.append(img);a.append(frame,label);a.classList.add('sm-related-link');
+ if(originalImage){img.onerror=()=>{img.onerror=null;img.src=PLACEHOLDER;img.dataset.failed='1'};img.src=originalImage;}
  if(price){price.classList.add('sm-related-price');a.append(price)}
  li.classList.add('sm-related-card');
  li.dataset.productHref=url;
- const load=()=>lookup(url).then(src=>{
+ const load=()=>originalImage?Promise.resolve():lookup(url).then(src=>{
   if(!src){img.src=PLACEHOLDER;img.dataset.failed='1';return}
   img.onerror=()=>{img.onerror=null;img.src=PLACEHOLDER;img.dataset.failed='1'};
   img.src=src;
