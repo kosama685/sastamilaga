@@ -1,24 +1,36 @@
-# Publishes scheduled blog posts: every day at 00:10 Pakistan time it builds static pages for
-# posts in assets/data/blog.js whose publish date has arrived, commits them and redeploys Pages.
+# Publish due blog entries without network-heavy Live TV maintenance.
+# 19:10 UTC = 00:10 Asia/Karachi; builder is deterministic and deduplicates.
 name: Publish scheduled blog posts
 
 on:
   schedule:
-    - cron: '10 19 * * *'   # 19:10 UTC = 00:10 Asia/Karachi
+    - cron: '10 19 * * *'
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/blog-schedule.yml'
+      - 'tools/build-blog.mjs'
+      - 'tools/verify-blog-publication.mjs'
+      - 'assets/data/blog.js'
+      - 'assets/data/blog-wp.js'
+      - 'data/wp/posts/**'
 
 permissions:
   contents: write
   pages: write
   id-token: write
+  issues: write
 
+# Share the existing Pages deployment lock to avoid simultaneous GitHub Pages releases.
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -27,27 +39,29 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: '20'
-      - name: Build due posts
+      - name: Build due posts without duplicates
         run: node tools/build-blog.mjs
-      - name: Refresh Live TV channels from the Free-TV playlist
-        run: node tools/build-livetv.mjs --check || echo "Playlist unavailable; keeping the current channel list"
-      - name: Commit changes
+      - name: Validate every due post locally
+        run: node tools/verify-blog-publication.mjs --local
+      - name: Commit only blog and sitemap changes
         id: commit
+        shell: bash
         run: |
+          set -euo pipefail
           git config user.name "sasta-milaga-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A b sitemap-blog.xml sitemap.xml b-published.txt data/livetv
+          git add -A b sitemap-blog.xml sitemap.xml b-published.txt
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
-            git commit -m "Publish scheduled blog posts"
-            git push
+            git commit -m "Publish due blog posts"
+            git push origin HEAD:main
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
       - name: Setup Pages
         if: steps.commit.outputs.changed == 'true'
         uses: actions/configure-pages@v6
-      - name: Upload artifact
+      - name: Upload Pages artifact
         if: steps.commit.outputs.changed == 'true'
         uses: actions/upload-pages-artifact@v5
         with:
@@ -56,14 +70,13 @@ jobs:
         if: steps.commit.outputs.changed == 'true'
         id: deployment
         uses: actions/deploy-pages@v5
-      - name: Verify every published post is live
+      - name: Check live published article HTML and canonical links
+        run: node tools/verify-blog-publication.mjs --live
+      - name: Report publishing failure without blocking cleanup
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
-          sleep 30
-          fail=0
-          while read -r url; do
-            [ -z "$url" ] && continue
-            code=$(curl -s -o /dev/null -w '%{http_code}' "$url")
-            echo "$code $url"; [ "$code" = "200" ] || fail=1
-          done < b-published.txt
-          curl -s https://kosama685.github.io/sastamilaga/sitemap-blog.xml | grep -c '<url>'
-          exit $fail
+          echo "Blog publish failed: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> "$GITHUB_STEP_SUMMARY"
+          gh issue create --repo "$GITHUB_REPOSITORY" --title "Blog publishing failed: run $GITHUB_RUN_ID" --body "Investigate and retry the failed blog publishing workflow: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" || true
