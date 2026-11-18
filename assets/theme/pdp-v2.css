@@ -64,3 +64,65 @@
 /* Product gallery: the Worker-injected theme (#sasta-local-pdp-theme-v1) sets display:contents on the first child of .pdp. After pdp-static.js moves the gallery there, that rule collapsed it and the main photo rendered underneath the buy box. */
 .sm-page-static section.pdp.sm-local-pdp.pdp3>.gallery-panel{display:grid!important;grid-template-columns:78px minmax(0,1fr)!important;gap:.8rem;align-items:start;grid-area:auto!important}
 @media(max-width:760px){.sm-page-static section.pdp.sm-local-pdp.pdp3>.gallery-panel{grid-template-columns:1fr!important}}
+
+
+/* Sasta Milaga product-detail refinement 2026-11: shared local and CJ presentation.
+   CSS-only: retain existing commerce links, regional currency, supplier data and button handlers. */
+.sm-page-static{--sm-pdp-green:#0f7a3b;--sm-pdp-forest:#0b3b20;--sm-pdp-orange:#ff8a00;--sm-pdp-border:#e2e9e4;--sm-pdp-muted:#576b60}
+.sm-page-static .sm-main:has(section.pdp){max-width:1280px;width:100%;margin-inline:auto;padding-inline:clamp(16px,3vw,36px)}
+.sm-page-static .sm-crumbs:has(+section.pdp){font-size:.83rem;line-height:1.55;color:var(--sm-pdp-muted);margin:22px 0 24px;overflow-wrap:anywhere}
+.sm-page-static section.pdp{gap:clamp(20px,3vw,38px)!important;align-items:start;min-width:0}
+.sm-page-static section.pdp>div,.sm-page-static section.pdp>.gallery-panel,.sm-page-static section.pdp>.buy-panel{min-width:0}
+.sm-page-static section.pdp .gallery-panel{background:#fff;border:1px solid var(--sm-pdp-border);border-radius:22px;padding:clamp(12px,1.5vw,20px);box-shadow:0 18px 44px -36px rgba(11,59,32,.48);overflow:hidden}
+.sm-page-static section.pdp .gallery-main{background:#f8faf9;border-radius:14px;overflow:hidden;min-height:0}
+.sm-page-static section.pdp .gallery-main img,.sm-page-static section.pdp .gallery-main video{width:100%;height:100%;max-height:min(64vh,640px);object-fit:contain;display:block}
+.sm-page-static section.pdp .gallery-thumbs button{border-radius:10px;transition:border-color .18s ease,transform .18s ease}
+.sm-page-static section.pdp .gallery-thumbs button:hover{transform:translateY(-2px)}
+.sm-page-static section.pdp .sm-static-video{margin-top:12px;overflow:hidden;border-radius:12px;background:#f5f7f5}
+.sm-page-static section.pdp .sm-static-video video{display:block;width:100%;max-height:260px;object-fit:contain}
+.sm-page-static section.pdp .buy-panel{background:#fff;border:1px solid var(--sm-pdp-border);border-radius:22px;padding:clamp(20px,2.5vw,32px);box-shadow:0 20px 50px -38px rgba(11,59,32,.5)}
+.sm-page-static section.pdp .buy-panel .eyebrow{font-size:.76rem;font-weight:800;letter-spacing:.035em;text-transform:uppercase;color:var(--sm-pdp-green)}
+.sm-page-static section.pdp .buy-panel h1{color:var(--sm-pdp-forest);font-size:clamp(1.45rem,2.35vw,2.25rem);line-height:1.24;letter-spacing:-.025em;overflow-wrap:anywhere;margin:.65rem 0 1rem}
+.sm-page-static section.pdp .buy-panel .product-meta{color:var(--sm-pdp-muted);font-size:.89rem;line-height:1.55}
+.sm-page-static section.pdp .buy-panel .big-price{color:var(--sm-pdp-forest);font-weight:850;font-size:clamp(1.75rem,3vw,2.55rem);letter-spacing:-.035em}
+.sm-page-static section.pdp .sm-total{border-radius:14px;padding:16px;background:#f2f8f4}
+.sm-page-static section.pdp .buy-actions,.sm-page-static section.pdp .sm-gactions{gap:10px}
+.sm-page-static section.pdp .buy-actions a,.sm-page-static section.pdp .buy-actions button,.sm-page-static section.pdp .sm-gactions a,.sm-page-static section.pdp .sm-gactions button{min-height:49px;border-radius:12px;font-weight:800;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease}
+.sm-page-static section.pdp .buy-actions a:hover,.sm-page-static section.pdp .buy-actions button:hover,.sm-page-static section.pdp .sm-gactions a:hover{transform:translateY(-2px)}
+.sm-page-static section.pdp .sm-wa-btn{display:flex;align-items:center;justify-content:center;min-height:47px;margin-top:10px;border-radius:12px;text-align:center;font-weight:800}
+.sm-page-static section.pdp .sm-buy-facts{margin-top:17px;padding-top:15px;border-top:1px solid var(--sm-pdp-border);line-height:1.5}
+.sm-page-static section.pdp .detail-panel{background:#fff;border:1px solid var(--sm-pdp-border);border-radius:18px;margin-top:18px;padding:clamp(19px,2vw,28px);box-shadow:0 16px 38px -36px rgba(11,59,32,.44);line-height:1.7}
+.sm-page-static section.pdp .detail-panel h2{font-size:1.2rem;line-height:1.3;color:var(--sm-pdp-forest);margin:0 0 12px}
+.sm-page-static section.pdp .detail-panel p{overflow-wrap:anywhere;line-height:1.78}
+.sm-page-static section.pdp .detail-panel .tags-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.sm-page-static section.pdp .detail-panel .tag-chip{border-radius:999px;font-size:.76rem}
+.sm-page-static .sm-static-links{gap:12px}
+.sm-page-static .sm-static-links li{border-radius:14px;border:1px solid var(--sm-pdp-border);background:#fff;padding:15px;transition:border-color .18s ease,box-shadow .18s ease}
+.sm-page-static .sm-static-links li:hover{border-color:#8fc9a3;box-shadow:0 14px 32px -25px rgba(11,59,32,.45)}
+.sm-page-static .sm-main:has(section.pdp) .section-head h2,.sm-page-static .sm-main:has(section.pdp) .sm-faq h2{color:var(--sm-pdp-forest);letter-spacing:-.015em}
+.sm-page-static section.pdp a:focus-visible,.sm-page-static section.pdp button:focus-visible{outline:3px solid var(--sm-pdp-orange);outline-offset:3px}
+@media(min-width:1080px){
+ .sm-page-static section.pdp:not(.pdp3){grid-template-columns:minmax(0,1.08fr) minmax(340px,.92fr)!important}
+ .sm-page-static section.pdp:not(.pdp3)>div{grid-column:1}
+ .sm-page-static section.pdp:not(.pdp3)>.buy-panel{grid-column:2}
+ .sm-page-static section.pdp:not(.pdp3) .gallery-main img{max-height:620px}
+}
+@media(min-width:761px) and (max-width:1079px){
+ .sm-page-static section.pdp:not(.pdp3){grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+}
+@media(max-width:760px){
+ .sm-page-static .sm-main:has(section.pdp){padding-inline:14px}
+ .sm-page-static section.pdp{grid-template-columns:minmax(0,1fr)!important;gap:16px!important}
+ .sm-page-static section.pdp>.buy-panel{position:static!important;padding:20px}
+ .sm-page-static section.pdp .gallery-panel{padding:10px;border-radius:16px}
+ .sm-page-static section.pdp .buy-panel h1{font-size:1.55rem}
+ .sm-page-static section.pdp .gallery-main img{max-height:440px}
+ .sm-page-static section.pdp .detail-panel{margin-top:14px}
+}
+@media(max-width:400px){
+ .sm-page-static section.pdp .buy-actions{grid-template-columns:minmax(0,1fr)!important}
+ .sm-page-static section.pdp .sm-trust{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){
+ .sm-page-static section.pdp .gallery-thumbs button,.sm-page-static section.pdp .buy-actions a,.sm-page-static section.pdp .buy-actions button,.sm-page-static .sm-static-links li{transition:none}
+}
