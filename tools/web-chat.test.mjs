@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 const source=fs.readFileSync(new URL('../assets/js/web-chat.js',import.meta.url),'utf8');
 class Node {
-  constructor(tag='div') {this.tagName=tag;this.children=[];this.handlers={};this.attributes={};this.hidden=false;this.textContent='';this.value='';this.options=[];}
+  constructor(tag='div') {this.tagName=tag;this.children=[];this.handlers={};this.attributes={};this.hidden=false;this.textContent='';this.value='';this.options=[];this.selectedIndex=0;}
   append(...nodes){nodes.forEach(x=>this.appendChild(x))}
   appendChild(node){this.children.push(node);if(this.tagName==='select'&&node.tagName==='option')this.options.push(node);return node}
   replaceChildren(...nodes){this.children=[...nodes]}
@@ -14,6 +14,7 @@ class Node {
   addEventListener(k,fn){this.handlers[k]=fn}
   focus(){this.focused=true}
   reportValidity(){return true}
+  get text(){return this.textContent}
   get childElementCount(){return this.children.length}
   get lastElementChild(){return this.children[this.children.length-1]}
   get scrollHeight(){return 100}
