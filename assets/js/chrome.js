@@ -6,6 +6,34 @@
   if (!holder) return;
   var prefix = holder.getAttribute('data-prefix') || '../';
 
+  /* Load one English-only support assistant across all prerendered product,
+     category and blog pages. No WooCommerce/cart hooks or new REST permissions. */
+  function installCustomerChat() {
+    if (document.querySelector('[data-smwa-webchat]')) return;
+    window.SMWA_WEBCHAT = window.SMWA_WEBCHAT || {
+      api:'https://sastamilaga.com/wp-json/sm-wa/v1/',
+      travelApi:'https://sastamilaga.com/wp-json/smts/v1/request',
+      retentionDays:90,
+      text:{hello:'Welcome to Sasta Milaga.','error':'Chat unavailable. Please use support options.'}
+    };
+    var css=document.createElement('link');css.rel='stylesheet';
+    css.href=prefix+'assets/theme/sm-whatsapp-crm-web-chat.css';document.head.appendChild(css);
+    var wrap=document.createElement('div');
+    wrap.innerHTML='<div class="smwa-web" data-smwa-webchat lang="en" dir="ltr">'+
+      '<button type="button" class="smwa-web__launcher" aria-expanded="false" aria-controls="smwa-web-panel" aria-label="Chat with Sasta Milaga"><span aria-hidden="true">✦</span><span>Chat with us</span></button>'+
+      '<section class="smwa-web__panel" id="smwa-web-panel" role="dialog" aria-label="Sasta Milaga chat" hidden>'+
+      '<header class="smwa-web__head"><div><strong>Sasta Milaga</strong><small>Shop · Travel · Support</small></div><button class="smwa-web__close" type="button" aria-label="Close chat">×</button></header>'+
+      '<div class="smwa-web__messages" role="log" aria-live="polite" aria-relevant="additions text"></div>'+
+      '<div class="smwa-web__actions" aria-label="Quick help"><button type="button" data-smwa-action="shop">Find products</button><button type="button" data-smwa-action="travel">Plan travel</button><button type="button" data-smwa-action="orders">My orders</button><button type="button" data-smwa-action="support">Talk to support</button></div>'+
+      '<div class="smwa-web__form-slot"></div>'+
+      '<form class="smwa-web__composer"><label class="screen-reader-text" for="smwa-web-input">Message</label><input id="smwa-web-input" name="message" type="text" maxlength="600" autocomplete="off" required placeholder="Ask about products, travel or orders…"><button type="submit" aria-label="Send message">➤</button><input class="smwa-web__honeypot" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true"></form>'+
+      '<p class="smwa-web__privacy">Chat messages may be stored for up to 90 days. Do not send payment-card or passport details.</p></section></div>';
+    document.body.appendChild(wrap.firstElementChild);
+    var js=document.createElement('script');js.src=prefix+'assets/js/web-chat.js';document.body.appendChild(js);
+  }
+  installCustomerChat();
+
+
   function fixLinks(root) {
     root.querySelectorAll('[href],[src],[srcset],[action]').forEach(function (el) {
       ['href', 'src', 'action'].forEach(function (a) {
