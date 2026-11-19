@@ -11,10 +11,10 @@ The global supplier catalogue is intended for product discovery and enquiry. On 
 ## Canonical shopping destinations
 
 - [Home](https://sastamilaga.com/)
-- [Local shop](https://sastamilaga.com/shop/)
+- Browse Pakistan local products through the product categories linked on the homepage. `/shop/` currently canonicalizes to the global catalogue index, so it is not presented as a separate local-shop page.
 - [Global supplier category index](https://sastamilaga.com/c/global/index.html)
 - [3D pens example category](https://sastamilaga.com/c/global/3d-pens.html)
-- [Global category and product search](https://sastamilaga.com/global-shop/)
+- Interactive global search is available through the website navigation; the canonical category index is linked above.
 - [Shopping instructions](https://sastamilaga.com/how-to-order/)
 - [Shipping information](https://sastamilaga.com/shipping/)
 - [Returns](https://sastamilaga.com/returns/)
