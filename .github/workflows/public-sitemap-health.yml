@@ -1,35 +1,55 @@
-name: Public sitemap crawlability and Googlebot-UA smoke test
+name: Public sitemap health and crawlability
 on:
-  workflow_dispatch:
   schedule:
-    - cron: '17 */6 * * *'
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
-      - 'tools/audit-public-sitemaps.mjs'
+      - 'scripts/sitemap-audit.js'
       - '.github/workflows/public-sitemap-health.yml'
 permissions:
   contents: read
+  issues: write
 concurrency:
   group: sitemap-public-health
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
-  validate:
+  audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Validate JavaScript
-        run: node --check tools/audit-public-sitemaps.mjs
-      - name: Audit HTTP and XML delivery
-        run: node tools/audit-public-sitemaps.mjs --out reports/sitemaps/live-audit.json
-      - name: Keep evidence even after failed sitemap check
+      - name: Install strict XML streaming parser
+        run: npm install --no-save --ignore-scripts --no-audit --no-fund saxes@6.0.0
+      - name: Validate sitemap audit source
+        run: node --check scripts/sitemap-audit.js
+      - name: Fetch sitemaps and sample landing pages
+        id: audit
+        run: node scripts/sitemap-audit.js --out reports/sitemaps/live-verification-$(date -u +%F).json
+      - name: Upload raw evidence even if the audit fails
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: sitemap-http-evidence
-          path: reports/sitemaps/live-audit.json
+          name: sitemap-health-${{ github.run_id }}
+          path: reports/sitemaps/live-verification-*.json
           if-no-files-found: warn
+          retention-days: 30
+      - name: Open or update a single GitHub issue on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title='Sitemap health audit failure'
+          existing=$(gh issue list --state open --limit 100 --json title,number --jq '.[] | select(.title=="Sitemap health audit failure") | .number' | head -1)
+          body="Sitemap health failed at $(date -u +%FT%TZ). Review the attached JSON artifact from $RUN_URL. This alert does not establish Googlebot or indexing status."
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body"
+          fi
