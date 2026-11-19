@@ -5,7 +5,7 @@
  * Usage:
  * node tools/audit-static-local-products.mjs --out reports/local-catalog-audit.json
  * node tools/audit-static-local-products.mjs --woo-export /secure/woo-export.json --out reports/audit.json
- * Woo JSON: array of {sku,id,permalink,price,stock_status,images:[{src}]}
+ * Woo JSON: array of {sku,id,permalink,price,stock_status,images:[{src}]}\n * This audit is intentionally read-only and safe to run on every source update.
  */
 import fs from 'node:fs';
 import path from 'node:path';
