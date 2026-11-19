@@ -21,7 +21,7 @@ function lookup(url){
   const doc=new DOMParser().parseFromString(html,'text/html');
   const raw=doc.querySelector('meta[property="og:image"]')?.content||doc.querySelector('.gallery-main img')?.getAttribute('src')||'';
   const absolute=new URL(raw,url);
-  if(absolute.protocol!=='https:'||!['sastamilaga.com','hhcnewapp.blr1.cdn.digitaloceanspaces.com'].includes(absolute.hostname))return '';
+  if(absolute.protocol!=='https:'||!['sastamilaga.com','admin.yourmart.pk','hhcnewapp.blr1.cdn.digitaloceanspaces.com'].includes(absolute.hostname))return '';
   return absolute.href
  }).catch(()=> '');
  cache.set(url,work);return work
@@ -36,16 +36,21 @@ for(const li of cards){
  a.textContent='';
  const label=document.createElement('span');label.className='sm-related-name';label.textContent=name;
  const frame=document.createElement('span');frame.className='sm-related-media';frame.setAttribute('aria-hidden','true');
- const img=new Image();img.loading='lazy';img.decoding='async';img.width=380;img.height=380;img.alt='';
+ const img=new Image();img.loading='lazy';img.decoding='async';img.width=380;img.height=380;img.alt='';img.referrerPolicy='strict-origin-when-cross-origin';
  frame.append(img);a.append(frame,label);a.classList.add('sm-related-link');
- if(originalImage){img.onerror=()=>{img.onerror=null;img.src=PLACEHOLDER;img.dataset.failed='1'};img.src=originalImage;}
+ if(originalImage){img.src=originalImage;}
  if(price){price.classList.add('sm-related-price');a.append(price)}
  li.classList.add('sm-related-card');
  li.dataset.productHref=url;
- const load=()=>originalImage?Promise.resolve():lookup(url).then(src=>{
-  if(!src){img.src=PLACEHOLDER;img.dataset.failed='1';return}
-  img.onerror=()=>{img.onerror=null;img.src=PLACEHOLDER;img.dataset.failed='1'};
-  img.src=src;
+ const load=()=>lookup(url).then(src=>{
+  const source=src||originalImage;
+  if(!source){img.src=PLACEHOLDER;img.dataset.failed='1';return}
+  img.onerror=()=>{
+    img.onerror=null;
+    if(originalImage&&source!==originalImage){img.onerror=()=>{img.onerror=null;img.src=PLACEHOLDER;img.dataset.failed='1'};img.src=originalImage;return}
+    img.src=PLACEHOLDER;img.dataset.failed='1';
+  };
+  img.src=source;
  });
  li._smLoad=load;
 }
