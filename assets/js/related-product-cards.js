@@ -52,8 +52,8 @@ for(const li of cards){
 list.classList.add('sm-related-grid');
 const valid=cards.filter(li=>li._smLoad);
 if(!valid.length)return;
-const observer='IntersectionObserver' in window?new IntersectionObserver(entries=>{
- entries.forEach(entry=>{if(!entry.isIntersecting)return;observer.unobserve(entry.target);entry.target._smLoad?.()})
-},{rootMargin:'360px 0px'}):null;
-if(observer)valid.forEach(li=>observer.observe(li));else valid.forEach(li=>li._smLoad());
+// Recommendation images are part of product selection, not optional below-fold
+// decoration. Begin fetching immediately for this bounded list (max 12).
+// Individual <img> elements retain native loading=lazy to protect bandwidth.
+valid.forEach(li=>li._smLoad());
 })();
