@@ -161,6 +161,9 @@ function cleanToRoute(pathname) {
 function go(routeStr, replace) {
   const clean = hashToClean('#/' + routeStr);
   const url = clean !== null ? APP_BASE + clean : APP_BASE + '#/' + routeStr;
+  // Product pages are authoritative static documents; do not swap SPA DOM on click.
+  // A full same-origin navigation preserves cookies, localStorage and the Woo cart.
+  if (!replace && clean && /^p\/[a-z0-9-]+\.html$/i.test(clean)) { location.assign(url); return; }
   // Content pages (about, contact, faq …) carry no product data: leaving them is a normal page load, which brings the data in.
   const appEl0 = document.getElementById('app');
   if (!window.SASTA_PRODUCTS && appEl0 && appEl0.dataset.static && !replace) { location.assign(url); return; }
@@ -590,6 +593,9 @@ function bindEvents() {
     if (href.startsWith('#/')) { e.preventDefault(); go(href.slice(2)); return; }
     let u; try { u = new URL(a.href); } catch (x) { return; }
     if (u.origin !== location.origin) return;
+    // Let the browser load canonical /p/*.html on the FIRST click. The SPA
+    // otherwise renders a different gallery than a direct reload.
+    if (/^\/p\/[a-z0-9-]+\.html$/i.test(u.pathname)) return;
     const r = a.dataset.route || (u.search ? null : cleanToRoute(u.pathname));
     if (r && STATIC_PAGES.has(String(r).split('?')[0])) return;    // real content page: let the browser load it
     if (r) { e.preventDefault(); go(r); }
