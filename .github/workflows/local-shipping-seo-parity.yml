@@ -1,0 +1,33 @@
+name: Local product shipping SEO parity audit
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '31 2 * * 1'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/audit-local-shipping-parity.mjs'
+      - '.github/workflows/local-shipping-seo-parity.yml'
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate source
+        run: node --check tools/audit-local-shipping-parity.mjs
+      - name: Audit all checked-in local product shipping snippets
+        run: node tools/audit-local-shipping-parity.mjs
+      - name: Retain results for operational tariff reconciliation
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shipping-parity-${{ github.run_id }}
+          path: reports/seo/local-shipping-parity.json
+          retention-days: 30
+          if-no-files-found: warn
