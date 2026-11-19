@@ -8,7 +8,7 @@
 (function () {
   'use strict';
   if (window.SMMarket) return;
-  var KEY = 'sm_market', RATE_KEY = 'sm_fx_pkr', RATE_TTL = 12 * 3600e3;
+  var KEY = 'sm_market', RATE_KEY = 'sm_fx_pkr_v2', RATE_TTL = 12 * 3600e3;
   var CUR = {AD:'EUR',AE:'AED',AF:'AFN',AG:'XCD',AI:'XCD',AL:'ALL',AM:'AMD',AO:'AOA',AR:'ARS',AS:'USD',AT:'EUR',AU:'AUD',AW:'AWG',AX:'EUR',AZ:'AZN',BA:'BAM',BB:'BBD',BD:'BDT',BE:'EUR',BF:'XOF',BG:'BGN',BH:'BHD',BI:'BIF',BJ:'XOF',BL:'EUR',BM:'BMD',BN:'BND',BO:'BOB',BQ:'USD',BR:'BRL',BS:'BSD',BT:'BTN',BW:'BWP',BY:'BYN',BZ:'BZD',CA:'CAD',CC:'AUD',CD:'CDF',CF:'XAF',CG:'XAF',CH:'CHF',CI:'XOF',CK:'NZD',CL:'CLP',CM:'XAF',CN:'CNY',CO:'COP',CR:'CRC',CU:'CUP',CV:'CVE',CW:'ANG',CX:'AUD',CY:'EUR',CZ:'CZK',DE:'EUR',DJ:'DJF',DK:'DKK',DM:'XCD',DO:'DOP',DZ:'DZD',EC:'USD',EE:'EUR',EG:'EGP',EH:'MAD',ER:'ERN',ES:'EUR',ET:'ETB',FI:'EUR',FJ:'FJD',FK:'FKP',FM:'USD',FO:'DKK',FR:'EUR',GA:'XAF',GB:'GBP',GD:'XCD',GE:'GEL',GF:'EUR',GG:'GBP',GH:'GHS',GI:'GIP',GL:'DKK',GM:'GMD',GN:'GNF',GP:'EUR',GQ:'XAF',GR:'EUR',GT:'GTQ',GU:'USD',GW:'XOF',GY:'GYD',HK:'HKD',HN:'HNL',HR:'EUR',HT:'HTG',HU:'HUF',ID:'IDR',IE:'EUR',IL:'ILS',IM:'GBP',IN:'INR',IO:'USD',IQ:'IQD',IR:'IRR',IS:'ISK',IT:'EUR',JE:'GBP',JM:'JMD',JO:'JOD',JP:'JPY',KE:'KES',KG:'KGS',KH:'KHR',KI:'AUD',KM:'KMF',KN:'XCD',KP:'KPW',KR:'KRW',KW:'KWD',KY:'KYD',KZ:'KZT',LA:'LAK',LB:'LBP',LC:'XCD',LI:'CHF',LK:'LKR',LR:'LRD',LS:'LSL',LT:'EUR',LU:'EUR',LV:'EUR',LY:'LYD',MA:'MAD',MC:'EUR',MD:'MDL',ME:'EUR',MF:'EUR',MG:'MGA',MH:'USD',MK:'MKD',ML:'XOF',MM:'MMK',MN:'MNT',MO:'MOP',MP:'USD',MQ:'EUR',MR:'MRU',MS:'XCD',MT:'EUR',MU:'MUR',MV:'MVR',MW:'MWK',MX:'MXN',MY:'MYR',MZ:'MZN',NA:'NAD',NC:'XPF',NE:'XOF',NF:'AUD',NG:'NGN',NI:'NIO',NL:'EUR',NO:'NOK',NP:'NPR',NR:'AUD',NU:'NZD',NZ:'NZD',OM:'OMR',PA:'PAB',PE:'PEN',PF:'XPF',PG:'PGK',PH:'PHP',PK:'PKR',PL:'PLN',PM:'EUR',PN:'NZD',PR:'USD',PS:'ILS',PT:'EUR',PW:'USD',PY:'PYG',QA:'QAR',RE:'EUR',RO:'RON',RS:'RSD',RU:'RUB',RW:'RWF',SA:'SAR',SB:'SBD',SC:'SCR',SD:'SDG',SE:'SEK',SG:'SGD',SH:'SHP',SI:'EUR',SJ:'NOK',SK:'EUR',SL:'SLE',SM:'EUR',SN:'XOF',SO:'SOS',SR:'SRD',SS:'SSP',ST:'STN',SV:'USD',SX:'ANG',SY:'SYP',SZ:'SZL',TC:'USD',TD:'XAF',TF:'EUR',TG:'XOF',TH:'THB',TJ:'TJS',TK:'NZD',TL:'USD',TM:'TMT',TN:'TND',TO:'TOP',TR:'TRY',TT:'TTD',TV:'AUD',TW:'TWD',TZ:'TZS',UA:'UAH',UG:'UGX',UM:'USD',US:'USD',UY:'UYU',UZ:'UZS',VA:'EUR',VC:'XCD',VE:'VES',VG:'USD',VI:'USD',VN:'VND',VU:'VUV',WF:'XPF',WS:'WST',XK:'EUR',YE:'YER',YT:'EUR',ZA:'ZAR',ZM:'ZMW',ZW:'ZWL'};
   var LANGS = 'en ur ar af az bg bn ca cs da de el es et fa fi fr ga gu he hi hr hu id is it ja kn ko lt lv ml mr ms nb nl pl ps pt ro ru sd sk sl sq sr sv sw ta th tr uk vi zh ak am as ast av ay ba be bo bs bua ce ceb ch ckb cy dv dz ee eu ff fil fy gd gl ht hy ilo ka kg kha kk kl km kok kv ky lb ln lo lua mai mg mh mi mk mn mt my ne no nr nso ny oc or os pa pag pap si sn so sr-cyrl ss st tn uz war wo xh yo zh-hans zu'.split(' ');
   var dn = function (type) { try { return new Intl.DisplayNames(['en'], { type: type }); } catch (e) { return null; } };
@@ -85,18 +85,91 @@
   var rates = null;
 
   /* ---- exchange rates (PKR base) ---- */
-  function getRates() {
-    if (rates) return Promise.resolve(rates);
-    try { var c = JSON.parse(localStorage.getItem(RATE_KEY) || 'null'); if (c && Date.now() - c.at < RATE_TTL) { rates = c.r; return Promise.resolve(rates); } } catch (e) {}
-    return fetch('https://open.er-api.com/v6/latest/PKR').then(function (r) { return r.json(); }).then(function (j) {
-      if (!j || !j.rates) throw new Error('no rates');
-      rates = j.rates; try { localStorage.setItem(RATE_KEY, JSON.stringify({ at: Date.now(), r: rates })); } catch (e) {} return rates;
+  /* One PKR-base FX table for all mapped currencies, with a USD-base
+     provider fallback. Never invent fixed exchange rates. Preserve the
+     signed-off PKR or USD amount used for checkout and structured data. */
+  var rateRequest = null, rateTimestamp = 0, staleRates = false;
+  function validRates(input) {
+    if (!input || typeof input !== 'object') return null;
+    var result = {};
+    Object.keys(input).forEach(function (code) {
+      var n = Number(input[code]), key = code.toUpperCase();
+      if (/^[A-Z]{3}$/.test(key) && Number.isFinite(n) && n > 0) result[key] = n;
     });
+    if (!result.USD || !result.SAR || !result.PKR) return null;
+    return result;
+  }
+  function jsonFX(url) {
+    var controller = new AbortController(), timer = setTimeout(function () { controller.abort(); }, 8500);
+    return fetch(url, { mode: 'cors', cache: 'no-store', credentials: 'omit', signal: controller.signal })
+      .then(function (r) { if (!r.ok) throw new Error('FX HTTP ' + r.status); return r.json(); })
+      .finally(function () { clearTimeout(timer); });
+  }
+  function usdToPkrBase(usdRates) {
+    var checked = validRates(usdRates), result = {};
+    if (!checked) throw new Error('USD rate table invalid');
+    Object.keys(checked).forEach(function (k) { result[k] = checked[k] / checked.PKR; });
+    result.PKR = 1;
+    return result;
+  }
+  function getRates(force) {
+    if (rates && !force && Date.now() - rateTimestamp < RATE_TTL) return Promise.resolve(rates);
+    if (rateRequest) return rateRequest;
+    var cached = null;
+    try {
+      cached = JSON.parse(localStorage.getItem(RATE_KEY) || 'null');
+      if (cached && !validRates(cached.r)) cached = null;
+    } catch (e) { cached = null; }
+    if (cached && !force && Date.now() - cached.at < RATE_TTL) {
+      rates = validRates(cached.r); rateTimestamp = cached.at; staleRates = false;
+      return Promise.resolve(rates);
+    }
+    rateRequest = jsonFX('https://open.er-api.com/v6/latest/PKR')
+      .then(function (j) {
+        if (j.result !== 'success') throw new Error('PKR exchange response invalid');
+        var checked = validRates(j.rates);
+        if (!checked) throw new Error('PKR rate table incomplete');
+        checked.PKR = 1;
+        return checked;
+      })
+      .catch(function () {
+        return jsonFX('https://open.er-api.com/v6/latest/USD').then(function (j) {
+          if (j.result !== 'success') throw new Error('USD exchange response invalid');
+          return usdToPkrBase(j.rates);
+        });
+      })
+      .catch(function () {
+        return jsonFX('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/pkr.min.json')
+          .then(function (j) {
+            var checked = validRates(j.pkr);
+            if (!checked) throw new Error('Backup exchange response incomplete');
+            checked.PKR = 1;
+            return checked;
+          });
+      })
+      .then(function (next) {
+        rates = next; rateTimestamp = Date.now(); staleRates = false;
+        try { localStorage.setItem(RATE_KEY, JSON.stringify({ at: rateTimestamp, r: rates })); } catch (e) {}
+        window.dispatchEvent(new CustomEvent('sm:fx-rates', { detail: { at: rateTimestamp, stale: false } }));
+        return rates;
+      })
+      .catch(function (e) {
+        if (cached && Date.now() - cached.at < 72 * 3600e3) {
+          rates = validRates(cached.r); rateTimestamp = cached.at; staleRates = true;
+          window.dispatchEvent(new CustomEvent('sm:fx-rates', { detail: { at: rateTimestamp, stale: true } }));
+          return rates;
+        }
+        console.warn('[SMMarket] Exchange rates unavailable; leaving base prices unchanged.', e);
+        rates = null;
+        throw e;
+      })
+      .finally(function () { rateRequest = null; });
+    return rateRequest;
   }
   function fmt(v, cur) { try { return new Intl.NumberFormat('en', { style: 'currency', currency: cur, maximumFractionDigits: v >= 100 ? 0 : 2 }).format(v); } catch (e) { return cur + ' ' + v.toFixed(2); } }
   /* Shows prices in the visitor's currency only: "Rs 1,234" / "$1.23 – $4.56" are replaced by "SAR 16.70".
      The original markup (with its PKR/USD schema.org microdata) stays in the DOM, hidden, and comes back on PKR. */
-  var PRICE_SEL = '.sm-card__price, .big-price, .smhv-price, .smh-cart__total, .smtp-price, .cart-line .price, .summary-row b, .sm-cat__price, .sm-stack__price';
+  var PRICE_SEL = '.sm-card__price, .big-price, .smhv-price, .smh-cart__total, .smtp-price, .cart-line .price, .summary-row b, .sm-cat__price, .sm-stack__price, .sm-total dd, .sm-related-price, .sm-static-links > li > span';
   function convertIn(root) {
     if (!rates || state.currency === 'PKR' || !rates[state.currency]) return;
     var to = rates[state.currency], usd = rates.USD;
@@ -112,7 +185,7 @@
       var pkrNote = (rs && el.matches('.big-price')) ? ' <small class="sm-pkr">' + esc(rs[0].replace(/\s+/g, ' ') + ' · you pay in PKR') + '</small>' : '';   /* product page: the real PKR price stays visible next to the estimate */
       var extra = (/est\./.test(t) ? ' <small class="sm-est">est.</small>' : '') + pkrNote;
       el.dataset.fx = state.currency;
-      el.innerHTML = '<span class="sm-fx-orig" hidden>' + src + '</span><span class="sm-fx" title="Converted at today\'s rate from ' + (rs ? 'PKR' : 'USD') + '">' + esc(out.join(' – ')) + '</span>' + extra;
+      el.innerHTML = '<span class="sm-fx-orig" hidden>' + src + '</span><span class="sm-fx" title="Estimated FX conversion from ' + (rs ? 'PKR' : 'USD') + '">' + esc(out.join(' – ')) + '</span>' + extra;
     });
   }
   /* Prices the live theme wrote in another currency (mega-menu visa prices: <span class="gdcs-converted-price"
@@ -126,7 +199,7 @@
       var probe = document.createElement('div'); probe.innerHTML = el.dataset.srcHtml;
       var amt = parseFloat(probe.textContent.replace(/[^\d.]/g, '')); if (!amt) return;
       var v = amt / rates[from] * rates[state.currency];
-      el.innerHTML = '<span class="sm-fx" title="Converted at today\'s rate from ' + from + '">' + esc(state.currency === 'PKR' ? 'Rs ' + Math.round(v).toLocaleString('en') : fmt(v, state.currency)) + '</span>';
+      el.innerHTML = '<span class="sm-fx" title="Estimated FX conversion from ' + from + '">' + esc(state.currency === 'PKR' ? 'Rs ' + Math.round(v).toLocaleString('en') : fmt(v, state.currency)) + '</span>';
       el.dataset.shown = state.currency;
     });
   }
@@ -356,6 +429,20 @@
   css.textContent += '#home-view [data-market-local-home][hidden],.smh-search__cat[hidden],#home-view .sm-stack[hidden]{display:none!important}.sm-abroad #home-view .sm-cat-total{display:none!important}.sm-auto{position:fixed;z-index:99990;left:50%;top:12px;transform:translateX(-50%);display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;max-width:min(760px,calc(100vw - 24px));padding:10px 14px;border-radius:14px;background:#11261b;color:#fff;font-size:14px;line-height:1.45;box-shadow:0 12px 30px rgba(9,46,30,.35)}' +
     '.sm-auto button{min-height:34px;padding:0 14px;border:0;border-radius:999px;font:600 13px/1 inherit;cursor:pointer;background:#fff;color:#11261b}.sm-auto button[data-a="change"]{background:transparent;color:#bfeedd;text-decoration:underline}.sm-auto button:focus-visible{outline:3px solid #ffc439;outline-offset:2px}' +
     '@media (max-width:820px){.sm-auto{top:auto;bottom:calc(86px + env(safe-area-inset-bottom));}}';
-  window.SMMarket = { open: open, state: function () { return state; }, convert: convertIn, list: function () { return COUNTRIES.slice(); }, detect: geoCountry, browserLang: browserLang, countryName: cname, flag: flag, currencies: CUR, experience: experience };
+  window.SMMarket = { open: open, state: function () { return state; }, convert: convertIn,
+    list: function () { return COUNTRIES.slice(); }, detect: geoCountry, browserLang: browserLang,
+    countryName: cname, flag: flag, currencies: CUR, experience: experience,
+    fx: {
+      ready: getRates, supported: function (code) { return !!(rates && rates[String(code).toUpperCase()]); },
+      convert: function (amount, source, target) {
+        var from = String(source || 'PKR').toUpperCase(), to = String(target || state.currency).toUpperCase();
+        if (!Number.isFinite(Number(amount)) || !rates || !rates[from] || !rates[to]) return null;
+        return Number(amount) / rates[from] * rates[to];
+      },
+      format: fmt, stale: function () { return staleRates; },
+      rateTimestamp: function () { return rateTimestamp; },
+      snapshot: function () { return rates ? Object.assign({}, rates) : null; }
+    }
+  };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
