@@ -32,7 +32,7 @@ jobs:
         run: node tools/test-local-pdp-navigation.mjs
       - name: Verify two public production entrypoints
         run: |
-          node - <<'NODE'
+          node --input-type=module - <<'NODE'
           const base='https://sastamilaga.com';
           const urls=['/app.js','/assets/js/related-product-cards.js','/p/electric-super-micro-bubble-beauty-blackhead-remover-pore-vacuum-cleaner-facial-pe-96-00-00-964.html'];
           for(const url of urls){
