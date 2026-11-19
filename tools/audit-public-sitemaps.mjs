@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /** Read-only crawlability audit for canonical XML sitemaps.
- * GET both ordinary and Googlebot user agents. Never bypass a challenge
+ * GET both ordinary and simulated Googlebot user agents. A user-agent string alone does not prove verified Googlebot identity. Never bypass a challenge
  * or alter the site, sitemap submissions, robots, products or offers.
  * node tools/audit-public-sitemaps.mjs --out reports/sitemaps/live-audit.json
  */
@@ -28,8 +28,8 @@ async function fetchOne(p,ua){
   const xml=isRobots?null:(body.match(/<sitemapindex\b|<urlset\b/)?.[0]||null);
   const locs=[...body.matchAll(/<loc>\s*([^<]+?)\s*<\/loc>/g)].map(m=>m[1].replace(/&amp;/g,'&'));
   const offsite=locs.filter(x=>{try{return new URL(x).origin!==SITE}catch{return true}}).length;
-  return {path:p,userAgent:ua===userAgents.googlebot?'googlebot':'browser',http:response.status,finalUrl:response.url,contentType:response.headers.get('content-type'),bytes:Buffer.byteLength(body),root:xml,urls:xml==='<urlset'?locs.length:0,children:xml==='<sitemapindex'?locs.length:0,offsite,valid:response.ok&&(isRobots?body.includes('User-agent:'):!!xml)&&offsite===0&&locs.length<=50000,childPaths:xml==='<sitemapindex'?locs.map(u=>new URL(u).pathname):[],error:null};
- }catch(e){return {path:p,userAgent:ua===userAgents.googlebot?'googlebot':'browser',valid:false,http:response?.status||null,error:String(e?.message||e).slice(0,200),childPaths:[]}}
+  return {path:p,userAgent:ua===userAgents.googlebot?'googlebot-ua-simulation':'browser',http:response.status,finalUrl:response.url,contentType:response.headers.get('content-type'),bytes:Buffer.byteLength(body),root:xml,urls:xml==='<urlset'?locs.length:0,children:xml==='<sitemapindex'?locs.length:0,offsite,valid:response.ok&&(isRobots?body.includes('User-agent:'):!!xml)&&offsite===0&&locs.length<=50000,childPaths:xml==='<sitemapindex'?locs.map(u=>new URL(u).pathname):[],error:null};
+ }catch(e){return {path:p,userAgent:ua===userAgents.googlebot?'googlebot-ua-simulation':'browser',valid:false,http:response?.status||null,error:String(e?.message||e).slice(0,200),childPaths:[]}}
 }
 const result=[];
 for(const [label,ua] of Object.entries(userAgents)){
