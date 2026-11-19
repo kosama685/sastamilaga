@@ -41,5 +41,6 @@ for(const [label,ua] of Object.entries(userAgents)){
 }
 const report={checkedAt:new Date().toISOString(),origin:SITE,checks:result.length,failures:result.filter(x=>!x.valid),results:result.map(({childPaths,...rest})=>rest)};
 if(outfile){fs.mkdirSync(path.dirname(outfile),{recursive:true});fs.writeFileSync(outfile,JSON.stringify(report,null,2)+'\n')}
-console.log(JSON.stringify({checks:report.checks,failed:report.failures.length,failures:report.failures.map(x=>({path:x.path,ua:x.userAgent,http:x.http,error:x.error}))},null,2));
+const summary={checks:report.checks,failed:report.failures.length,failures:report.failures.map(x=>({path:x.path,ua:x.userAgent,http:x.http,error:x.error}))};
+console.log(JSON.stringify(summary,null,2));
 if(report.failures.length)process.exitCode=1;
