@@ -114,7 +114,7 @@
   var mt = document.createElement('script'); mt.src = prefix + 'assets/js/i18n.js'; mt.defer = true; document.head.appendChild(mt);
   /* Reusable video button for static local product pages. */
   var pv = document.createElement('script'); pv.src = prefix + 'assets/js/product-video-universal.js?v=20261117-1'; pv.defer = true; document.head.appendChild(pv);
-  if (document.querySelector('main .pdp')) { var rc = document.createElement('script'); rc.src = prefix + 'assets/js/related-product-cards.js?v=20261118-3'; rc.defer = true; document.head.appendChild(rc); }
+  if (document.querySelector('main .pdp')) { var rc = document.createElement('script'); rc.src = prefix + 'assets/js/related-product-cards.js?v=20261119-1'; rc.defer = true; document.head.appendChild(rc); }
   /* Contact number by location (Pakistan number for Pakistan visitors) */
   var ct = document.createElement('script'); ct.src = prefix + 'assets/js/contact.js'; ct.defer = true; document.head.appendChild(ct);
 })();
