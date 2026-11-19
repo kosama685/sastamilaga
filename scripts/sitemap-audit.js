@@ -114,7 +114,7 @@ for(const p of ['/sitemap.xml','/sitemap_index.xml','/sitemap-global-qualified.x
   try{
     const r=await fetch(new URL(p,SITE),{method:'HEAD',headers:{'User-Agent':googUA},redirect:'follow',signal:AbortSignal.timeout(15000)});
     head.push({path:p,status:r.status,contentType:r.headers.get('content-type'),userAgent:'Googlebot UA only, NOT verified crawler identity'});
-    if(r.status!==200)errors.push({url:p,error:'simulated Googlebot UA HEAD '+r.status});
+    // Informational only: spoofed User-Agent is not a verified Google crawler and can be challenged legitimately.
   }catch(e){head.push({path:p,error:String(e)});errors.push({url:p,error:String(e)})}
 }
 const duplicates=[...duplicateCounts].filter(([,n])=>n>1).map(([url,count])=>({url,count}));
