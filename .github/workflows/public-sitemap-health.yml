@@ -1,0 +1,35 @@
+name: Public sitemap crawlability and Googlebot-UA smoke test
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/audit-public-sitemaps.mjs'
+      - '.github/workflows/public-sitemap-health.yml'
+permissions:
+  contents: read
+concurrency:
+  group: sitemap-public-health
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate JavaScript
+        run: node --check tools/audit-public-sitemaps.mjs
+      - name: Audit HTTP and XML delivery
+        run: node tools/audit-public-sitemaps.mjs --out reports/sitemaps/live-audit.json
+      - name: Keep evidence even after failed sitemap check
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sitemap-http-evidence
+          path: reports/sitemaps/live-audit.json
+          if-no-files-found: warn
