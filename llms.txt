@@ -1,6 +1,6 @@
 # Sasta Milaga
 
-> Sasta Milaga is an online store and travel desk with local and global catalogs. Visitors choose a shopping destination and display currency; converted amounts are estimates. The static storefront lists local products with prices in Pakistani rupees (PKR); the connected WooCommerce catalog currently reports 11,763 published product records. Catalog counts differ between systems and stock/delivery must be verified per listing, offers access to a catalogue of 451,812 global supplier product records (availability, supported destinations, variants, freight and final price are verified individually before an order), takes flight, hotel, Umrah and visa requests, and offers a Live TV page with reviewed channels.
+> Sasta Milaga is an online store and travel desk with local and global catalogs. Visitors choose a shopping destination and display currency; converted amounts are estimates. The static storefront lists local products with prices in Pakistani rupees (PKR); the connected WooCommerce catalog currently reports 11,763 published product records. Catalog counts differ between systems, and every listing requires separate stock and delivery verification. A separate global supplier discovery catalogue contains 451,812 records (availability, supported destinations, variants, freight and final price are verified individually before an order), takes flight, hotel, Umrah and visa requests, and offers a Live TV page with reviewed channels.
 
 Key facts:
 - Local delivery in Pakistan: Rs 250 per order, free above Rs 5,000. Cash on delivery available for local products.
@@ -10,7 +10,7 @@ Key facts:
 - Contact: WhatsApp +966510451995, info@sastamilaga.com. Main store: https://sastamilaga.com/
 
 ## Shop
-- [All local products](https://sastamilaga.com/shop/): 20,165 products in 64 categories
+- Browse Pakistan local products through the categories below. WooCommerce and static catalogue counts differ; confirm each SKU's availability.
 - [Home & Living](https://sastamilaga.com/c/home-and-living.html): 4,933 products
 - [Fashion & Apparel](https://sastamilaga.com/c/fashion-and-apparel.html): 4,486 products
 - [Health & Beauty](https://sastamilaga.com/c/health-and-beauty.html): 4,445 products
