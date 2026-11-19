@@ -291,6 +291,10 @@
       var c = b.querySelector('.gdcs-market-trigger__country'), u = b.querySelector('.gdcs-market-trigger__currency'), f = b.querySelector('.gdcs-flag'), s = b.querySelector('.gdcs-market-trigger__separator');
       if (c && c.textContent !== cname(state.country)) c.textContent = cname(state.country);
       if (u && u.textContent !== state.currency) u.textContent = state.currency;
+      var fxHint = rates && !rates[state.currency]
+        ? ' · FX rate unavailable: original prices remain unchanged.'
+        : (staleRates ? ' · Using the last verified cached exchange rate.' : '');
+      b.title = 'Shopping destination: ' + cname(state.country) + ' · ' + state.currency + fxHint;
       if (s && s.textContent !== ' · ') s.textContent = ' · ';
       if (f && f.dataset.marketCountry !== state.country) { f.innerHTML = flag(state.country, 32); f.dataset.marketCountry = state.country; }
       b.setAttribute('aria-label', 'Shopping destination: ' + cname(state.country) + ', ' + state.currency + '. Change country, language or currency');
@@ -392,6 +396,15 @@
     if (document.querySelector('.gdcs-converted-price[data-currency]')) getRates().then(again).catch(function () {});
     new MutationObserver(function (m) { for (var i = 0; i < m.length; i++) if (m[i].addedNodes.length) { again(); break; } }).observe(document.body, { childList: true, subtree: true });
     window.addEventListener('load', again); document.addEventListener('sasta:rendered', again);
+    // Keep long shopping sessions current, without changing source cart totals.
+    setInterval(function () {
+      if (document.visibilityState === 'hidden') return;
+      getRates(true).then(function () {
+        clearFx();
+        document.querySelectorAll('.gdcs-converted-price[data-currency]').forEach(function (el) { delete el.dataset.shown; });
+        again();
+      }).catch(function () {});
+    }, 30 * 60 * 1000);
     if (state.currency !== 'PKR') getRates().then(again).catch(function () {});
     // Visa tab of the travel box: every destination, popular ones first (the live form listed only 10).
     var dl = document.getElementById('smx-countries');
