@@ -1,6 +1,6 @@
 # QA and release report
 
-**Date:** 2026-11-19. **Branch:** `landing-pages`. **Base:** `main`. Production was **not** deployed.
+**Date:** 2026-11-19. **Branch:** `landing-pages`, fast-forwarded to `main` at `babbf08` and deployed through the existing Pages workflow. Live check (2026-11-19, read-only GETs): all 12 landing URLs and `sitemap-landing.xml` return 200 on sastamilaga.com with the expected canonical and robots tags.
 
 ## Commands run and results
 
@@ -16,7 +16,10 @@
 ### Live shipping estimate (real Chrome, 2026-11-19)
 Flow: paste a `/global-shop/p/<id>/` link, variants load from `/api/cj/variants` (36 options for the test product), choose an option, "check shipping" calls `/api/cj/shipping?pid&vid&country&quantity`, rates render (cheapest pre-selected, any row selectable by click or Enter) and the chosen rate is added to the WhatsApp message. Cases: Germany DE (1280px), UK, USA, Serbia Cyrillic and Saudi Arabic (390px) all pass: correct country code (DE, GB, US, RS, SA) and quantity sent, 36 options, 8 rows rendered, table headers in the page language, selected rate present in the message, no overflow, 0 JS errors. API failure (HTTP 503): status message shown, quote button stays disabled, the order can still be sent on WhatsApp without a quote. No product link: button disabled and a hint shown.
 
-**Caveat:** the API rejects the `localhost` origin (HTTP 403), so the browser test served saved real responses (captured live on 2026-11-19 from `sastamilaga.com/api/cj/`) through request interception. A true same-origin call can only be tested after deployment.
+**Local-test note:** the API rejects the `localhost` origin (HTTP 403), so the local run above used saved real responses; the live run below used the real API.
+
+### Live same-origin test on sastamilaga.com (real Chrome, no interception, 2026-11-19)
+Real product `1830116277370114048`. Cases: Germany DE and EN, UK, USA, Serbia Latin and Cyrillic, Saudi EN and Arabic. Result: 8 of 8 load 36 CJ variants from the real `/api/cj/variants`, send the correct `country` (DE, DE, GB, US, RS, RS, SA, SA) and `quantity` to the real `/api/cj/shipping`, render rates (2 to 8 rows depending on the destination: Germany 8, UK 8, USA 8, Saudi 3, Serbia 2), put the selected rate in the WhatsApp message, with no overflow and 0 JavaScript errors. Two Serbian cases reported "message contains a carrier name" as false only because my test pattern did not list the second Serbian carrier ("DHL Official", US$224.91); the rate itself is correct. Rates are indicative CJ values and are displayed unchanged; they were not independently checked against a carrier quote.
 
 ### Real-browser cases (390px mobile unless noted)Pakistan EN, Pakistan UR (rtl), Germany EN (1280px), Germany DE (390 and 1280), UK, USA, Serbia EN, Serbia Latin, Serbia Cyrillic, Saudi EN, Saudi AR (390 and 1280, rtl), hub. For each: no horizontal overflow, 0 JavaScript errors, one H1, white hero heading, correct `dir`. Order panel (11 pages): button locked at start; stays locked until both confirmations are ticked; unlocks; opens exactly one `https://wa.me/966510451995?text=...` URL with the expected country, quantity, city and "prepaid" in the page language; re-locks when a confirmation is unticked.
 
@@ -28,14 +31,14 @@ Flow: paste a `/global-shop/p/<id>/` link, variants load from `/api/cj/variants`
 ## Skipped, blocked or not run
 | Item | Reason |
 |---|---|
-| Pull request | GitHub connector returned 403 for PR creation; `gh` not installed. Branch is pushed; the PR must be opened by the owner |
+| Pull request | not opened: connector returned 403 and `gh` is not installed. `landing-pages` was fast-forwarded to `main` on the owner's instruction instead, so there is no PR review record |
 | Existing `static.yml` gates after merge | local clone is sparse (missing `track/`, `travel/`, `live-tv/`); `validate-ai-site-index.mjs` and the chrome runtime check failed there for that reason only |
-| Preview / staging deploy | none configured that I could use safely; nothing deployed |
+| Pages workflow run result | not read through the GitHub API (connector unavailable); deploy confirmed by the live 200 responses |
 | Accessibility audit (contrast, screen reader) | keyboard focus styles and aria labels exist, but no axe/Lighthouse run |
 | Core Web Vitals | not measured |
 | Rich Results, Search Console, Merchant Center | no access |
 | Native-speaker review (ur, de, sr, ar) | not available |
-| Live CJ quote against production from the deployed pages | built and tested with captured real responses; real same-origin calls untested until deploy. Rates are indicative (the API says taxes, customs and final price may differ) |
+| Carrier rates verified against an independent carrier quote | not done; rates are CJ indicative values (the API says taxes, customs and final price may differ) |
 | Analytics events | no analytics wiring was found that I could reuse without touching protected files; none added |
 
 ## Completion dashboard (each with its denominator)
@@ -53,3 +56,6 @@ Flow: paste a `/global-shop/p/<id>/` link, variants load from `/api/cj/variants`
 
 ## sitemap.xml
 Added one line, `<sitemap><loc>https://sastamilaga.com/sitemap-landing.xml</loc></sitemap>`, before `</sitemapindex>`. `tools/build-blog.mjs` rewrites only its own blog and global entries, so the line survives the daily blog build. Because the blog workflow commits `sitemap.xml` daily, a merge may conflict on the blog `lastmod` line; keep both the new blog date and the landing entry.
+
+## Inbound links added
+Guide post /shopping-from-the-cj-supplier-collection.html (source data/wp/posts/shopping-from-the-cj-supplier-collection.html): new section Delivery by country linking /shipping-to/, the five market pages, /pakistan/ and /ur/pakistan/. Shipping page: a Shipping by country paragraph appended to shipping in data/wp/pages.json (and the mirrored data/wp/policy-shipping.html), and an Urdu link to /ur/pakistan/ appended to ur/shipping. Not edited: partials/chrome.json (footer), chrome.js, cart files.

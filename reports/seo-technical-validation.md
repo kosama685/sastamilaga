@@ -1,6 +1,6 @@
 # SEO technical validation: landing pages
 
-**Date:** 2026-11-19. **Scope:** the 12 generated pages (11 locale pages + the `/shipping-to/` hub) on branch `landing-pages`. **Method:** `node --test tools/build-landing-pages.test.mjs` against the generated HTML (86 tests, 86 pass), plus a real Chrome run. Nothing here is validated against Google tools.
+**Date:** 2026-11-19. **Scope:** the 12 generated pages (11 locale pages + the `/shipping-to/` hub), deployed on `main`; live status checked with read-only GETs. **Method:** `node --test tools/build-landing-pages.test.mjs` against the generated HTML (86 tests, 86 pass), plus a real Chrome run. Nothing here is validated against Google tools.
 
 ## Validated by tests (observed)
 
@@ -24,13 +24,13 @@
 
 | Gap | Detail |
 |---|---|
-| **No inbound links from the rest of the site** | The landing pages link to each other, but the existing site (home, footer, shipping page) does not link to them. Adding links requires editing `partials/chrome.json` or the shared app shell, which are protected or outside this scope. Until then the pages are only reachable by URL, so no authority flows to them. |
+| Inbound links from the rest of the site | Added on 2026-11-19 from the shopping guide post and the English and Urdu shipping pages (see QA report). Not added to the footer or home page (protected chrome file). Only 2 existing pages link in, so authority flow is small. |
 | Localized pages receive few internal links even inside the system | German and Arabic variants: 1 link in from other landing pages (the language switcher). Serbian variants: 2. English market pages: 10. |
 | Sitemap reference | `sitemap-landing.xml` is now listed once in `sitemap.xml` (added 2026-11-19); it lists only the 2 indexable Pakistan pages. Not yet submitted to Search Console. |
 | `/ur/` home has no file in this repository | The Urdu breadcrumb links to the live URL, served by a Cloudflare route. Its canonical status was reported "not verified" by the repository's own audit. |
 | Google tools | Not run: Rich Results Test, Search Console URL Inspection, Merchant Center. No Search Console access. |
 | Redirects | None needed (no existing URL changed). Redirect-chain test not applicable. |
-| Crawl / live status | The pages are not deployed, so live HTTP status, robots.txt interaction and Worker route behaviour are untested. |
+| Crawl / live status | Live status checked 2026-11-19: 12 of 12 pages and `sitemap-landing.xml` return 200 with the expected canonical and robots tags; `sitemap.xml` lists the landing sitemap. Not tested: Googlebot rendering, robots.txt crawl simulation, Search Console. |
 
 ## Not validated here
 
