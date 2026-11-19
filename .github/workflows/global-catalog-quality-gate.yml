@@ -1,0 +1,38 @@
+name: Global 451k catalog evidence gate
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '43 1 * * 1'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/audit-global-merchant-readiness.mjs'
+      - '.github/workflows/global-catalog-quality-gate.yml'
+permissions:
+  contents: read
+concurrency:
+  group: global-catalog-quality-audit
+  cancel-in-progress: false
+jobs:
+  source-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check source audit syntax
+        run: node --check tools/audit-global-merchant-readiness.mjs
+      - name: Scan every checked-in supplier lookup shard
+        run: node tools/audit-global-merchant-readiness.mjs
+      - name: Preserve full-snapshot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: global-catalog-readiness-${{ github.run_id }}
+          path: |
+            artifacts/global-merchant-readiness-audit.json
+            artifacts/global-merchant-readiness-audit.md
+          retention-days: 30
+          if-no-files-found: warn
