@@ -397,7 +397,7 @@
     new MutationObserver(function (m) { for (var i = 0; i < m.length; i++) if (m[i].addedNodes.length) { again(); break; } }).observe(document.body, { childList: true, subtree: true });
     window.addEventListener('load', again); document.addEventListener('sasta:rendered', again);
     // Keep long shopping sessions current, without changing source cart totals.
-    setInterval(function () {
+    if (typeof setInterval === 'function') setInterval(function () {
       if (document.visibilityState === 'hidden') return;
       getRates(true).then(function () {
         clearFx();
