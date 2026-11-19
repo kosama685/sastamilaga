@@ -1,0 +1,146 @@
+{
+  "generator": "tools/build-landing-pages.mjs",
+  "routes": [
+    {
+      "rel": "shipping-to/germany",
+      "url": "https://sastamilaga.com/shipping-to/germany/",
+      "lang": "en",
+      "dir": "ltr",
+      "robots": "noindex, follow",
+      "market": "germany",
+      "locale": "en",
+      "variant": "en",
+      "indexable": false,
+      "S": "en"
+    },
+    {
+      "rel": "shipping-to/germany/de",
+      "url": "https://sastamilaga.com/shipping-to/germany/de/",
+      "lang": "de-DE",
+      "dir": "ltr",
+      "robots": "noindex, follow",
+      "market": "germany",
+      "locale": "de-DE",
+      "variant": "de",
+      "indexable": false,
+      "S": "de"
+    },
+    {
+      "rel": "shipping-to/uk",
+      "url": "https://sastamilaga.com/shipping-to/uk/",
+      "lang": "en-GB",
+      "dir": "ltr",
+      "robots": "noindex, follow",
+      "market": "uk",
+      "locale": "en-GB",
+      "variant": "en",
+      "indexable": false,
+      "S": "en"
+    },
+    {
+      "rel": "shipping-to/usa",
+      "url": "https://sastamilaga.com/shipping-to/usa/",
+      "lang": "en-US",
+      "dir": "ltr",
+      "robots": "noindex, follow",
+      "market": "usa",
+      "locale": "en-US",
+      "variant": "en",
+      "indexable": false,
+      "S": "en"
+    },
+    {
+      "rel": "shipping-to/serbia",
+      "url": "https://sastamilaga.com/shipping-to/serbia/",
+      "lang": "en",
+      "dir": "ltr",
+      "robots": "noindex, follow",
+      "market": "serbia",
+      "locale": "en",
+      "variant": "en",
+      "indexable": false,
+      "S": "en"
+    },
+    {
+      "rel": "shipping-to/serbia/sr-latn",
+      "url": "https://sastamilaga.com/shipping-to/serbia/sr-latn/",
+      "lang": "sr-Latn-RS",
+      "dir": "ltr",
+      "robots": "noindex, follow",
+      "market": "serbia",
+      "locale": "sr-Latn-RS",
+      "variant": "sr-latn",
+      "indexable": false,
+      "S": "sr"
+    },
+    {
+      "rel": "shipping-to/serbia/sr-cyrl",
+      "url": "https://sastamilaga.com/shipping-to/serbia/sr-cyrl/",
+      "lang": "sr-Cyrl-RS",
+      "dir": "ltr",
+      "robots": "noindex, follow",
+      "market": "serbia",
+      "locale": "sr-Cyrl-RS",
+      "variant": "sr-cyrl",
+      "indexable": false,
+      "S": "sr-cyrl"
+    },
+    {
+      "rel": "shipping-to/saudi-arabia",
+      "url": "https://sastamilaga.com/shipping-to/saudi-arabia/",
+      "lang": "en-SA",
+      "dir": "ltr",
+      "robots": "noindex, follow",
+      "market": "saudi-arabia",
+      "locale": "en-SA",
+      "variant": "en",
+      "indexable": false,
+      "S": "en"
+    },
+    {
+      "rel": "shipping-to/saudi-arabia/ar",
+      "url": "https://sastamilaga.com/shipping-to/saudi-arabia/ar/",
+      "lang": "ar-SA",
+      "dir": "rtl",
+      "robots": "noindex, follow",
+      "market": "saudi-arabia",
+      "locale": "ar-SA",
+      "variant": "ar",
+      "indexable": false,
+      "S": "ar"
+    },
+    {
+      "rel": "pakistan",
+      "url": "https://sastamilaga.com/pakistan/",
+      "lang": "en",
+      "dir": "ltr",
+      "robots": "index, follow, max-image-preview:large",
+      "market": "pakistan",
+      "locale": "en-PK",
+      "variant": "en",
+      "indexable": true
+    },
+    {
+      "rel": "ur/pakistan",
+      "url": "https://sastamilaga.com/ur/pakistan/",
+      "lang": "ur",
+      "dir": "rtl",
+      "robots": "index, follow, max-image-preview:large",
+      "market": "pakistan",
+      "locale": "ur-PK",
+      "variant": "ur",
+      "indexable": true
+    },
+    {
+      "rel": "shipping-to",
+      "url": "https://sastamilaga.com/shipping-to/",
+      "lang": "en",
+      "dir": "ltr",
+      "robots": "noindex, follow",
+      "market": "hub",
+      "locale": "en",
+      "variant": "hub",
+      "indexable": false
+    }
+  ]
+}

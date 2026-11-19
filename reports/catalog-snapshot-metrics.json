@@ -1,0 +1,120 @@
+{
+  "snapshot": "2026-11-05",
+  "declaredTotal": 451812,
+  "categories": 572,
+  "groups": 16,
+  "shardsRead": 572,
+  "shardsFailed": [],
+  "rows": 451812,
+  "noImage": 0,
+  "noPrice": 0,
+  "noName": 0,
+  "noSku": 0,
+  "withVideo": 5804,
+  "shortName": 3380,
+  "dupId": 0,
+  "dupSku": 2,
+  "dupName": 19741,
+  "priceMin": 0.01,
+  "priceMax": 999999,
+  "perGroup": {
+    "Tools & DIY": {
+      "rows": 26284,
+      "noImage": 0,
+      "noPrice": 0,
+      "withVideo": 343
+    },
+    "Home & Living": {
+      "rows": 29515,
+      "noImage": 0,
+      "noPrice": 0,
+      "withVideo": 639
+    },
+    "Fashion & Apparel": {
+      "rows": 114141,
+      "noImage": 0,
+      "noPrice": 0,
+      "withVideo": 1044
+    },
+    "Health & Beauty": {
+      "rows": 54645,
+      "noImage": 0,
+      "noPrice": 0,
+      "withVideo": 689
+    },
+    "Electronics & Appliances": {
+      "rows": 47524,
+      "noImage": 0,
+      "noPrice": 0,
+      "withVideo": 741
+    },
+    "Kids Accessories": {
+      "rows": 19277,
+      "noImage": 0,
+      "noPrice": 0,
+      "withVideo": 41
+    },
+    "Jewelry & Watches": {
+      "rows": 37169,
+      "noImage": 0,
+      "noPrice": 0,
+      "withVideo": 326
+    },
+    "Bags & Shoes": {
+      "rows": 31833,
+      "noImage": 0,
+      "noPrice": 0,
+      "withVideo": 359
+    },
+    "Events & Gifting": {
+      "rows": 9139,
+      "noImage": 0,
+      "noPrice": 0,
+      "withVideo": 167
+    },
+    "Baby & Kids Accessories": {
+      "rows": 11857,
+      "noImage": 0,
+      "noPrice": 0,
+      "withVideo": 65
+    },
+    "Automotive": {
+      "rows": 16540,
+      "noImage": 0,
+      "noPrice": 0,
+      "withVideo": 263
+    },
+    "Pets & Animals": {
+      "rows": 30376,
+      "noImage": 0,
+      "noPrice": 0,
+      "withVideo": 662
+    },
+    "Toys & Games": {
+      "rows": 7403,
+      "noImage": 0,
+      "noPrice": 0,
+      "withVideo": 142
+    },
+    "Sports & Outdoor": {
+      "rows": 7067,
+      "noImage": 0,
+      "noPrice": 0,
+      "withVideo": 143
+    },
+    "Books & Stationery": {
+      "rows": 8284,
+      "noImage": 0,
+      "noPrice": 0,
+      "withVideo": 171
+    },
+    "More Global Finds": {
+      "rows": 758,
+      "noImage": 0,
+      "noPrice": 0,
+      "withVideo": 9
+    }
+  },
+  "measuredAt": "2026-11-19T19:16:47.017Z",
+  "note": "Measures the dated GitHub Pages snapshot only. Live stock, live price and publication status are NOT measured here. Video links in the snapshot are known to return 403 and are counted only as \"has a stored video link\"."
+}

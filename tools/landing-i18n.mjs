@@ -1,0 +1,175 @@
+/* UI strings and market copy for the landing pages. Languages: en, de, sr (Latin; Cyrillic is derived by transliteration), ar.
+ * Placeholders: {to} destination as used after "to/in", {label} short destination, {loc} locative, {region}, {x} another destination.
+ * STATUS: German, Serbian and Arabic copy is drafted by the assistant and has NOT been reviewed by a native speaker.
+ * Pages in those languages stay noindex until a reviewer signs off (see data/landing/locale-registry.json). */
+
+export const fmt = (s, v = {}) => String(s).replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m));
+
+/* ---- Serbian Latin -> Cyrillic (deterministic). Brand names, URLs and technical tokens stay Latin. ---- */
+const PROTECT = /(Sasta Milaga|WhatsApp(?:-a)?|https?:\/\/\S+|\bEU\b|\bUSD\b)/g;
+const DIGRAPHS = [['Lj', 'Љ'], ['LJ', 'Љ'], ['lj', 'љ'], ['Nj', 'Њ'], ['NJ', 'Њ'], ['nj', 'њ'], ['Dž', 'Џ'], ['DŽ', 'Џ'], ['dž', 'џ']];
+const SINGLE = {A: 'А', B: 'Б', V: 'В', G: 'Г', D: 'Д', 'Đ': 'Ђ', E: 'Е', Ž: 'Ж', Z: 'З', I: 'И', J: 'Ј', K: 'К', L: 'Л', M: 'М', N: 'Н', O: 'О', P: 'П', R: 'Р', S: 'С', Š: 'Ш', T: 'Т', 'Ć': 'Ћ', U: 'У', F: 'Ф', H: 'Х', C: 'Ц', 'Č': 'Ч',
+  a: 'а', b: 'б', v: 'в', g: 'г', d: 'д', 'đ': 'ђ', e: 'е', ž: 'ж', z: 'з', i: 'и', j: 'ј', k: 'к', l: 'л', m: 'м', n: 'н', o: 'о', p: 'п', r: 'р', s: 'с', š: 'ш', t: 'т', 'ć': 'ћ', u: 'у', f: 'ф', h: 'х', c: 'ц', 'č': 'ч'};
+export function toCyrillic(text) {
+  return String(text).split(PROTECT).map((part, i) => {
+    if (i % 2 === 1) return part;
+    let out = part;
+    for (const [lat, cyr] of DIGRAPHS) out = out.split(lat).join(cyr);
+    return [...out].map(ch => SINGLE[ch] ?? ch).join('');
+  }).join('');
+}
+export function cyrillicStrings(obj) {
+  if (typeof obj === 'string') return toCyrillic(obj);
+  if (Array.isArray(obj)) return obj.map(cyrillicStrings);
+  if (obj && typeof obj === 'object') return Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, cyrillicStrings(v)]));
+  return obj;
+}
+
+export const S = {
+  en: {
+    names: {germany: 'Germany', uk: 'UK', usa: 'USA', serbia: 'Serbia', 'saudi-arabia': 'Saudi Arabia', pakistan: 'Pakistan'},
+    title: 'Shop global items for delivery to {to} | Sasta Milaga',
+    desc: 'Choose an item, check shipping and the full total for delivery to {to}, then pay by prepaid checkout. Taxes and duties are not included in the price.',
+    pill: 'Global collection · {region}', h1: 'Global items, delivered to {to}', browse: 'Browse the global collection', check: 'Check my order',
+    howH: 'How an order to {label} works',
+    steps: [['Choose the item and option', 'Pick the colour, size or model on the product page. Each option can differ in price and stock.'],
+      ['Check shipping to {label}', 'Shipping depends on the option, quantity and your address. We confirm the method and cost with you.'],
+      ['Review the full total', 'You see item price, shipping and what is not included before you pay.'],
+      ['Pay by prepaid checkout', 'Global items are not cash on delivery. Nothing is ordered until your payment is confirmed.']],
+    priceH: 'What you pay, and what is not included',
+    rows: [['Item price', 'Estimate in US dollars on the product page; confirmed before you pay', 'ok', 'shown'], ['Shipping', 'Quoted for your option, quantity and address', 'wait', 'confirmed with you'],
+      ['Delivery time', 'An estimate from the carrier, not a promise', 'wait', 'estimate only'], ['Taxes and duties', 'Not included in our price', 'wait', 'you may owe more'], ['Payment', 'Prepaid checkout; no cash on delivery', '', '']],
+    taxH: 'Customs, taxes and product rules for {label}', note: 'This is general guidance, not legal or tax advice. Rules change; check the official source for your country.',
+    orderH: 'Check your order before you send it',
+    orderP: 'Fill in what a supplier order needs. The button unlocks when the essentials are there, and opens WhatsApp with your details so we can confirm the shipping and total.',
+    fProduct: 'Product link or name', fProductPh: 'Paste the product page link or type its name', fOption: 'Option (colour, size, model)', fOptionPh: 'For example: black, size 42', fQty: 'Quantity',
+    fCountry: 'Delivery country', fCity: 'Town or city, and postcode', fCityPh: 'Used to quote shipping',
+    cTax: 'I understand that taxes and duties may be charged in {label} and are not included in the price.', cPaid: 'I understand this is a prepaid order, not cash on delivery.',
+    readyOk: 'Ready to send', readyNot: 'Add the item, quantity, city and tick both confirmations', send: 'Send my order details on WhatsApp',
+    faqH: 'Questions about delivery to {label}',
+    faq: [['How do I know the total before I pay?', 'Sasta Milaga confirms the item option, quantity, shipping method and total with you before you pay. The price on a product page is an estimate in US dollars before shipping, taxes and duties.'],
+      ['Can I return an item ordered for delivery to {to}?', 'Return eligibility depends on the item and the reason. Read the returns and refunds page before you order and ask us about a specific item if you are unsure.'],
+      ['Is this page available in my language?', 'Not yet. Sasta Milaga publishes English and Urdu pages. Other-language pages will be added only after they are properly translated and reviewed.'],
+      ['Do you list every product for {to}?', 'No. The global collection is a supplier catalogue. Whether a given item can be shipped to {to} depends on the item, its option and the available shipping methods, so it is checked for your order.']],
+    moreH: 'Keep reading', moreP: "Policies, guides and the rest of the global collection.", otherDest: 'Other destinations', deliveryTo: 'Delivery to {x}', shopPK: 'Shopping in Pakistan',
+    bandH: 'Not sure an item can reach {label}?', bandP: 'Send us the link. We check the options and shipping before you pay.', bandBtn: 'Contact Sasta Milaga',
+    home: 'Home', hub: 'Shipping by country', langLabel: 'Language',
+    links: ['Global categories', 'Shipping and delivery', 'Returns and refunds', 'How to order', 'Safe shopping', 'FAQ', 'Guide: shopping the global collection', 'Contact us'],
+    wa: {greeting: 'Assalam o Alaikum! I would like a shipping quote for a global item.', country: 'Country', item: 'Item', option: 'Option', qty: 'Quantity', city: 'City / postcode', tax: 'Taxes and duties understood', pay: 'Payment', page: 'Page', yes: 'yes', prepaid: 'prepaid'}
+  },
+  de: {
+    names: {germany: 'Deutschland', uk: 'Vereinigtes Königreich', usa: 'USA', serbia: 'Serbien', 'saudi-arabia': 'Saudi-Arabien', pakistan: 'Pakistan'},
+    title: 'Globale Artikel mit Lieferung nach {to} | Sasta Milaga',
+    desc: 'Artikel wählen, Versand und Gesamtbetrag für die Lieferung nach {to} prüfen und per Vorkasse bezahlen. Steuern und Zölle sind im Preis nicht enthalten.',
+    pill: 'Globales Sortiment · {region}', h1: 'Globale Artikel, geliefert nach {to}', browse: 'Globales Sortiment ansehen', check: 'Meine Bestellung prüfen',
+    howH: 'So läuft eine Bestellung nach {label} ab',
+    steps: [['Artikel und Variante wählen', 'Wählen Sie Farbe, Größe oder Modell auf der Produktseite. Preis und Verfügbarkeit können je nach Variante abweichen.'],
+      ['Versand nach {label} prüfen', 'Der Versand hängt von Variante, Menge und Ihrer Adresse ab. Wir bestätigen Versandart und Kosten mit Ihnen.'],
+      ['Gesamtbetrag prüfen', 'Sie sehen Artikelpreis, Versand und alles, was nicht enthalten ist, bevor Sie bezahlen.'],
+      ['Per Vorkasse bezahlen', 'Globale Artikel gibt es nicht per Nachnahme. Bestellt wird erst, wenn Ihre Zahlung bestätigt ist.']],
+    priceH: 'Was Sie zahlen und was nicht enthalten ist',
+    rows: [['Artikelpreis', 'Schätzung in US-Dollar auf der Produktseite; vor der Zahlung bestätigt', 'ok', 'angezeigt'], ['Versand', 'Für Ihre Variante, Menge und Adresse berechnet', 'wait', 'mit Ihnen bestätigt'],
+      ['Lieferzeit', 'Eine Schätzung des Versanddienstleisters, kein Versprechen', 'wait', 'nur Schätzung'], ['Steuern und Zölle', 'In unserem Preis nicht enthalten', 'wait', 'können zusätzlich anfallen'], ['Zahlung', 'Vorkasse beim Checkout; keine Nachnahme', '', '']],
+    taxH: 'Zoll, Steuern und Produktvorschriften für {label}', note: 'Dies ist eine allgemeine Orientierung, keine Rechts- oder Steuerberatung. Regeln ändern sich; prüfen Sie die offizielle Quelle für Ihr Land.',
+    orderH: 'Bestellung prüfen, bevor Sie sie senden',
+    orderP: 'Tragen Sie ein, was für eine Lieferantenbestellung nötig ist. Die Schaltfläche wird freigeschaltet, sobald die wichtigsten Angaben vorliegen, und öffnet WhatsApp mit Ihren Angaben, damit wir Versand und Gesamtbetrag bestätigen können.',
+    fProduct: 'Produktlink oder Name', fProductPh: 'Produktlink einfügen oder Namen eingeben', fOption: 'Variante (Farbe, Größe, Modell)', fOptionPh: 'Zum Beispiel: schwarz, Größe 42', fQty: 'Menge',
+    fCountry: 'Lieferland', fCity: 'Ort und Postleitzahl', fCityPh: 'Zur Berechnung des Versands',
+    cTax: 'Mir ist bekannt, dass in {label} Steuern und Zölle anfallen können und im Preis nicht enthalten sind.', cPaid: 'Mir ist bekannt, dass dies eine Bestellung per Vorkasse ist, keine Nachnahme.',
+    readyOk: 'Bereit zum Senden', readyNot: 'Artikel, Menge und Ort angeben und beide Bestätigungen ankreuzen', send: 'Bestellangaben per WhatsApp senden',
+    faqH: 'Fragen zur Lieferung nach {label}',
+    faq: [['Wie erfahre ich den Gesamtbetrag vor der Zahlung?', 'Sasta Milaga bestätigt Variante, Menge, Versandart und Gesamtbetrag mit Ihnen, bevor Sie zahlen. Der Preis auf einer Produktseite ist eine Schätzung in US-Dollar vor Versand, Steuern und Zöllen.'],
+      ['Kann ich einen Artikel zurücksenden, der nach {to} geliefert wurde?', 'Ob eine Rücksendung möglich ist, hängt vom Artikel und vom Grund ab. Lesen Sie vor der Bestellung die Seite zu Rückgabe und Erstattung und fragen Sie uns bei Unsicherheit zu einem bestimmten Artikel.'],
+      ['Gibt es diese Seite in meiner Sprache?', 'Sasta Milaga veröffentlicht Seiten auf Englisch und Urdu sowie für ausgewählte Märkte in weiteren Sprachen. Weitere Sprachen folgen erst nach sorgfältiger Übersetzung und Prüfung.'],
+      ['Führen Sie jeden Artikel für {to}?', 'Nein. Das globale Sortiment ist ein Lieferantenkatalog. Ob ein Artikel nach {to} geliefert werden kann, hängt von Artikel, Variante und den verfügbaren Versandarten ab und wird für Ihre Bestellung geprüft.']],
+    moreH: 'Weiterlesen', moreP: 'Richtlinien, Ratgeber und das übrige globale Sortiment.', otherDest: 'Weitere Ziele', deliveryTo: 'Lieferung nach {x}', shopPK: 'Einkaufen in Pakistan',
+    bandH: 'Nicht sicher, ob ein Artikel {label} erreicht?', bandP: 'Senden Sie uns den Link. Wir prüfen Varianten und Versand, bevor Sie zahlen.', bandBtn: 'Sasta Milaga kontaktieren',
+    home: 'Startseite', hub: 'Versand nach Land', langLabel: 'Sprache',
+    links: ['Globale Kategorien', 'Versand und Lieferung', 'Rückgabe und Erstattung', 'So bestellen Sie', 'Sicher einkaufen', 'FAQ', 'Ratgeber: Einkaufen im globalen Sortiment', 'Kontakt'],
+    wa: {greeting: 'Hallo! Ich möchte ein Versandangebot für einen globalen Artikel.', country: 'Land', item: 'Artikel', option: 'Variante', qty: 'Menge', city: 'Ort / PLZ', tax: 'Steuern und Zölle zur Kenntnis genommen', pay: 'Zahlung', page: 'Seite', yes: 'ja', prepaid: 'Vorkasse'}
+  },
+  sr: {
+    names: {germany: 'Nemačka', uk: 'Ujedinjeno Kraljevstvo', usa: 'SAD', serbia: 'Srbija', 'saudi-arabia': 'Saudijska Arabija', pakistan: 'Pakistan'},
+    title: 'Globalni artikli sa isporukom u {to} | Sasta Milaga',
+    desc: 'Izaberite artikal, proverite dostavu i ukupan iznos za isporuku u {to}, pa platite unapred. Porezi i carine nisu uračunati u cenu.',
+    pill: 'Globalna ponuda · {region}', h1: 'Globalni artikli, isporučeni u {to}', browse: 'Pogledajte globalnu ponudu', check: 'Proverite moju porudžbinu',
+    howH: 'Kako funkcioniše porudžbina za {label}',
+    steps: [['Izaberite artikal i opciju', 'Na stranici proizvoda izaberite boju, veličinu ili model. Cena i dostupnost mogu se razlikovati po opciji.'],
+      ['Proverite dostavu za {label}', 'Dostava zavisi od opcije, količine i vaše adrese. Način i trošak potvrđujemo sa vama.'],
+      ['Proverite ukupan iznos', 'Pre plaćanja vidite cenu artikla, dostavu i ono što nije uračunato.'],
+      ['Platite unapred', 'Globalni artikli se ne plaćaju pouzećem. Ništa se ne naručuje dok se vaša uplata ne potvrdi.']],
+    priceH: 'Šta plaćate, a šta nije uračunato',
+    rows: [['Cena artikla', 'Procena u američkim dolarima na stranici proizvoda; potvrđuje se pre plaćanja', 'ok', 'prikazano'], ['Dostava', 'Izračunava se za vašu opciju, količinu i adresu', 'wait', 'potvrđuje se sa vama'],
+      ['Rok isporuke', 'Procena kurirske službe, a ne obećanje', 'wait', 'samo procena'], ['Porezi i carine', 'Nisu uračunati u našu cenu', 'wait', 'možda ćete platiti više'], ['Plaćanje', 'Plaćanje unapred pri kasi; bez plaćanja pouzećem', '', '']],
+    taxH: 'Carina, porezi i pravila za proizvode u {loc}', note: 'Ovo je opšta orijentacija, a ne pravni ili poreski savet. Pravila se menjaju; proverite zvaničan izvor za vašu zemlju.',
+    orderH: 'Proverite porudžbinu pre slanja',
+    orderP: 'Unesite ono što je potrebno za porudžbinu kod dobavljača. Dugme se otključava kada su osnovni podaci tu i otvara WhatsApp sa vašim podacima kako bismo potvrdili dostavu i ukupan iznos.',
+    fProduct: 'Link ili naziv proizvoda', fProductPh: 'Nalepite link proizvoda ili upišite naziv', fOption: 'Opcija (boja, veličina, model)', fOptionPh: 'Na primer: crna, veličina 42', fQty: 'Količina',
+    fCountry: 'Zemlja isporuke', fCity: 'Grad i poštanski broj', fCityPh: 'Koristi se za obračun dostave',
+    cTax: 'Razumem da se u {loc} mogu naplatiti porezi i carine i da nisu uračunati u cenu.', cPaid: 'Razumem da je ovo porudžbina sa plaćanjem unapred, a ne pouzećem.',
+    readyOk: 'Spremno za slanje', readyNot: 'Unesite artikal, količinu i grad i označite obe potvrde', send: 'Pošalji podatke o porudžbini preko WhatsApp-a',
+    faqH: 'Pitanja o dostavi za {label}',
+    faq: [['Kako da saznam ukupan iznos pre plaćanja?', 'Sasta Milaga sa vama potvrđuje opciju, količinu, način dostave i ukupan iznos pre nego što platite. Cena na stranici proizvoda je procena u američkim dolarima pre dostave, poreza i carina.'],
+      ['Mogu li da vratim artikal poručen za {label}?', 'Mogućnost povraćaja zavisi od artikla i razloga. Pročitajte stranicu o povraćaju i refundaciji pre porudžbine, a za konkretan artikal pitajte nas.'],
+      ['Da li je ova stranica dostupna na mom jeziku?', 'Sasta Milaga objavljuje stranice na engleskom i urdu jeziku, a za izabrana tržišta i na drugim jezicima. Dodatni jezici dolaze tek posle pažljivog prevoda i provere.'],
+      ['Da li imate svaki artikal za {label}?', 'Ne. Globalna ponuda je katalog dobavljača. Da li se artikal može isporučiti u {to} zavisi od artikla, opcije i dostupnih načina dostave, pa se proverava za vašu porudžbinu.']],
+    moreH: 'Nastavite sa čitanjem', moreP: 'Politike, vodiči i ostatak globalne ponude.', otherDest: 'Druge destinacije', deliveryTo: 'Dostava: {x}', shopPK: 'Kupovina u Pakistanu',
+    bandH: 'Niste sigurni da artikal može stići u {to}?', bandP: 'Pošaljite nam link. Proveravamo opcije i dostavu pre nego što platite.', bandBtn: 'Kontaktirajte Sasta Milaga',
+    home: 'Početna', hub: 'Dostava po zemljama', langLabel: 'Jezik',
+    links: ['Globalne kategorije', 'Dostava i isporuka', 'Povraćaj i refundacija', 'Kako da naručite', 'Bezbedna kupovina', 'Česta pitanja', 'Vodič: kupovina iz globalne ponude', 'Kontakt'],
+    wa: {greeting: 'Zdravo! Želim ponudu za dostavu globalnog artikla.', country: 'Zemlja', item: 'Artikal', option: 'Opcija', qty: 'Količina', city: 'Grad / poštanski broj', tax: 'Porezi i carine uzeti u obzir', pay: 'Plaćanje', page: 'Stranica', yes: 'da', prepaid: 'unapred'}
+  },
+  ar: {
+    names: {germany: 'ألمانيا', uk: 'المملكة المتحدة', usa: 'الولايات المتحدة', serbia: 'صربيا', 'saudi-arabia': 'المملكة العربية السعودية', pakistan: 'باكستان'},
+    title: 'منتجات عالمية بالتوصيل إلى {to} | Sasta Milaga',
+    desc: 'اختر المنتج وتحقق من الشحن والإجمالي الكامل للتوصيل إلى {to}، ثم ادفع مسبقًا. الضرائب والرسوم الجمركية غير مشمولة في السعر.',
+    pill: 'المجموعة العالمية · {region}', h1: 'منتجات عالمية تصلك إلى {to}', browse: 'تصفح المجموعة العالمية', check: 'تحقق من طلبي',
+    howH: 'كيف يتم الطلب إلى {label}',
+    steps: [['اختر المنتج والخيار', 'حدد اللون أو المقاس أو الطراز في صفحة المنتج. قد يختلف السعر والتوفر باختلاف الخيار.'],
+      ['تحقق من الشحن إلى {label}', 'يعتمد الشحن على الخيار والكمية وعنوانك. نؤكد معك طريقة الشحن وتكلفته.'],
+      ['راجع الإجمالي الكامل', 'ترى سعر المنتج والشحن وما هو غير مشمول قبل الدفع.'],
+      ['ادفع مسبقًا', 'المنتجات العالمية لا تُدفع عند الاستلام. لا يتم طلب أي شيء قبل تأكيد دفعتك.']],
+    priceH: 'ما تدفعه وما هو غير مشمول',
+    rows: [['سعر المنتج', 'تقدير بالدولار الأمريكي في صفحة المنتج؛ يُؤكد قبل الدفع', 'ok', 'معروض'], ['الشحن', 'يُحسب للخيار والكمية والعنوان', 'wait', 'يُؤكد معك'],
+      ['مدة التوصيل', 'تقدير من شركة الشحن وليست وعدًا', 'wait', 'تقدير فقط'], ['الضرائب والرسوم الجمركية', 'غير مشمولة في سعرنا', 'wait', 'قد تدفع مبلغًا إضافيًا'], ['الدفع', 'دفع مسبق عند إتمام الطلب؛ لا يوجد دفع عند الاستلام', '', '']],
+    taxH: 'الجمارك والضرائب وقواعد المنتجات في {label}', note: 'هذه إرشادات عامة وليست استشارة قانونية أو ضريبية. القواعد تتغير؛ راجع المصدر الرسمي لبلدك.',
+    orderH: 'تحقق من طلبك قبل إرساله',
+    orderP: 'أدخل ما يلزم لطلب المورّد. يُفتح الزر عند اكتمال البيانات الأساسية، ثم يفتح واتساب ببياناتك لنؤكد الشحن والإجمالي.',
+    fProduct: 'رابط المنتج أو اسمه', fProductPh: 'الصق رابط المنتج أو اكتب اسمه', fOption: 'الخيار (اللون، المقاس، الطراز)', fOptionPh: 'مثال: أسود، مقاس 42', fQty: 'الكمية',
+    fCountry: 'بلد التوصيل', fCity: 'المدينة والرمز البريدي', fCityPh: 'يُستخدم لحساب الشحن',
+    cTax: 'أفهم أنه قد تُفرض ضرائب ورسوم جمركية في {label} وأنها غير مشمولة في السعر.', cPaid: 'أفهم أن هذا طلب بدفع مسبق وليس دفعًا عند الاستلام.',
+    readyOk: 'جاهز للإرسال', readyNot: 'أدخل المنتج والكمية والمدينة وحدد التأكيدين', send: 'أرسل بيانات الطلب عبر واتساب',
+    faqH: 'أسئلة حول التوصيل إلى {label}',
+    faq: [['كيف أعرف الإجمالي قبل الدفع؟', 'تؤكد Sasta Milaga معك الخيار والكمية وطريقة الشحن والإجمالي قبل الدفع. السعر في صفحة المنتج تقدير بالدولار الأمريكي قبل الشحن والضرائب والرسوم.'],
+      ['هل يمكنني إرجاع منتج طُلب للتوصيل إلى {label}؟', 'يعتمد الإرجاع على المنتج والسبب. اقرأ صفحة الإرجاع والاسترداد قبل الطلب واسألنا عن منتج محدد إن لم تكن متأكدًا.'],
+      ['هل هذه الصفحة متاحة بلغتي؟', 'تنشر Sasta Milaga صفحات بالإنجليزية والأردية، ولأسواق مختارة بلغات أخرى. تُضاف لغات أخرى بعد ترجمة ومراجعة دقيقة.'],
+      ['هل تتوفر كل المنتجات للتوصيل إلى {label}؟', 'لا. المجموعة العالمية كتالوج موردين. إمكانية شحن منتج إلى {label} تعتمد على المنتج والخيار وطرق الشحن المتاحة، ويُتحقق منها لطلبك.']],
+    moreH: 'تابع القراءة', moreP: 'السياسات والأدلة وبقية المجموعة العالمية.', otherDest: 'وجهات أخرى', deliveryTo: 'التوصيل إلى {x}', shopPK: 'التسوق في باكستان',
+    bandH: 'لست متأكدًا أن المنتج يصل إلى {label}؟', bandP: 'أرسل لنا الرابط. نتحقق من الخيارات والشحن قبل أن تدفع.', bandBtn: 'تواصل مع Sasta Milaga',
+    home: 'الرئيسية', hub: 'الشحن حسب البلد', langLabel: 'اللغة',
+    links: ['الفئات العالمية', 'الشحن والتوصيل', 'الإرجاع والاسترداد', 'طريقة الطلب', 'التسوق الآمن', 'الأسئلة الشائعة', 'دليل: التسوق من المجموعة العالمية', 'اتصل بنا'],
+    wa: {greeting: 'السلام عليكم! أرغب بعرض سعر شحن لمنتج عالمي.', country: 'البلد', item: 'المنتج', option: 'الخيار', qty: 'الكمية', city: 'المدينة / الرمز البريدي', tax: 'الضرائب والرسوم مفهومة', pay: 'الدفع', page: 'الصفحة', yes: 'نعم', prepaid: 'مسبق'}
+  }
+};
+
+/* Market copy per language. Keys: to (after "to/in"), label, loc (locative), region, intro, tax, safety, question, answer. */
+export const M = {
+  germany: {de: {to: 'Deutschland', label: 'Deutschland', loc: 'Deutschland', region: 'Europäische Union',
+    intro: 'Bestellen Sie aus dem globalen Sortiment von Sasta Milaga mit Lieferung an eine Adresse in Deutschland. Sie wählen Artikel und Variante, wir bestätigen Versandart und Gesamtbetrag, und Sie zahlen per Vorkasse, bevor etwas bestellt wird. Diese Seite ist auf Deutsch; der Kundendienst arbeitet derzeit auf Englisch.',
+    tax: 'Deutschland gehört zum EU-Binnenmarkt. Für Sendungen aus Nicht-EU-Ländern kann Einfuhrumsatzsteuer und je nach Ware und Wert auch Zoll anfallen. Diese Beträge sind im Preis auf Sasta Milaga nicht enthalten; Zusteller oder Zoll teilen Ihnen mit, was fällig ist.',
+    safety: 'Elektrogeräte, Spielzeug und Kosmetik, die in der EU verkauft werden, müssen die EU-Produktsicherheitsvorschriften erfüllen, etwa die CE-Kennzeichnung, wo sie gilt. Fragen Sie uns vor der Bestellung zu einem bestimmten Artikel.',
+    question: 'Fällt bei einer Lieferung nach Deutschland Einfuhrumsatzsteuer an?',
+    answer: 'Das kann sein. Bei Waren aus Nicht-EU-Ländern fällt in der Regel Einfuhrumsatzsteuer an, für manche Waren auch Zoll. Der Preis bei Sasta Milaga enthält diese Beträge nicht; planen Sie sie ein und prüfen Sie vor der Bestellung die aktuellen Hinweise des deutschen Zolls.'}},
+  serbia: {sr: {to: 'Srbiju', label: 'Srbiju', loc: 'Srbiji', region: 'Srbija',
+    intro: 'Naručite iz globalne ponude Sasta Milaga uz isporuku na adresu u Srbiji. Vi birate artikal i opciju, mi potvrđujemo način dostave i ukupan iznos, a vi plaćate unapred pre nego što se bilo šta naruči. Ova stranica je na srpskom; podrška je trenutno na engleskom jeziku.',
+    tax: 'Srbija nije članica EU, pa paketi iz inostranstva prolaze kroz srpsku carinu. Carina i PDV mogu se naplatiti u zavisnosti od robe i njene vrednosti, a poštanski operater ili kurir obavestiće vas šta treba da platite. Ovi troškovi nisu uračunati u cenu koju prikazuje Sasta Milaga.',
+    safety: 'Za neke proizvode važe zahtevi u pogledu označavanja i usaglašenosti u Srbiji. Pitajte nas o konkretnom artiklu pre porudžbine.',
+    question: 'Da li je carina uračunata kada naručujem u Srbiju?',
+    answer: 'Ne. Srbija je van carinskog područja EU, pa se carina i PDV mogu naplatiti pri isporuci, zavisno od robe i njene vrednosti. Cena koju prikazuje Sasta Milaga je procena cene artikla pre dostave, poreza i carina.'}},
+  'saudi-arabia': {ar: {to: 'المملكة العربية السعودية', label: 'المملكة العربية السعودية', loc: 'المملكة العربية السعودية', region: 'المملكة العربية السعودية',
+    intro: 'اطلب من المجموعة العالمية في Sasta Milaga بالتوصيل إلى عنوان في المملكة العربية السعودية. تختار المنتج والخيار، ونؤكد نحن طريقة الشحن والإجمالي، وتدفع مسبقًا قبل أن يُطلب أي شيء. هذه الصفحة بالعربية، والدعم حاليًا بالإنجليزية.',
+    tax: 'قد تخضع الشحنات الواردة إلى المملكة العربية السعودية لضريبة القيمة المضافة والرسوم الجمركية، وبعض فئات المنتجات مقيّدة أو تحتاج إلى موافقة. هذه الرسوم غير مشمولة في سعر Sasta Milaga. راجع الإرشادات الجمركية السعودية الحالية قبل الطلب.',
+    safety: 'بعض المنتجات، مثل الإلكترونيات ومستحضرات التجميل والمكملات، تحتاج إلى موافقة مطابقة أو تسجيل في السعودية. اسألنا عن المنتج المحدد قبل طلبه.',
+    question: 'هل يمكنني الدفع عند الاستلام لطلب إلى السعودية؟',
+    answer: 'لا. الدفع عند الاستلام متاح للمنتجات المحلية داخل باكستان فقط. تُشترى المنتجات العالمية بالدفع المسبق، ونؤكد معك الإجمالي النهائي قبل الدفع.'}}
+};

@@ -9,6 +9,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {S, M, fmt, cyrillicStrings} from './landing-i18n.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const data = JSON.parse(fs.readFileSync(path.join(root, 'data/landing/markets.json'), 'utf8'));
 const ORIGIN = data.siteOrigin, WA = data.whatsapp, FEE = data.pakistan.delivery_fee_pkr, FREE = data.pakistan.free_delivery_from_pkr;
@@ -16,13 +17,14 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '
 const num = n => new Intl.NumberFormat('en-US').format(n);
 const prefixFor = rel => '../'.repeat(rel.split('/').filter(Boolean).length);
 const ROBOTS_ON = 'index, follow, max-image-preview:large', ROBOTS_OFF = 'noindex, follow';
-const written = [];
+const written = [], routes = [];
 
-function write(rel, html) {
+function write(rel, html, meta = {}) {
   const file = path.join(root, rel, 'index.html');
   fs.mkdirSync(path.dirname(file), {recursive: true});
   fs.writeFileSync(file, html);
   written.push(rel);
+  routes.push({rel, url: ORIGIN + '/' + rel + '/', lang: (html.match(/<html lang="([^"]+)"/) || [])[1], dir: (html.match(/<html lang="[^"]+" dir="([^"]+)"/) || [])[1], robots: (html.match(/name="robots" content="([^"]+)"/) || [])[1], ...meta});
 }
 
 function shell({rel, lang, dir, title, desc, indexable, alternates, graph, body}) {
@@ -39,7 +41,7 @@ function shell({rel, lang, dir, title, desc, indexable, alternates, graph, body}
 <meta name="robots" content="${indexable ? ROBOTS_ON : ROBOTS_OFF}">
 <link rel="canonical" href="${url}">
 ${hreflang}
-<meta property="og:type" content="website"><meta property="og:site_name" content="Sasta Milaga"><meta property="og:locale" content="${lang === 'ur' ? 'ur_PK' : 'en_PK'}">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Sasta Milaga"><meta property="og:locale" content="${ogLocale(lang)}">
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${url}"><meta property="og:image" content="${ORIGIN}/assets/brand/og-default-1200x630.jpg">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(title)}"><meta name="twitter:description" content="${esc(desc)}">
 <meta name="theme-color" content="#0F7A3B">
@@ -86,70 +88,82 @@ const SHARED_LINKS = (pre) => [
   [pre + 'b/shopping-from-the-cj-supplier-collection.html', 'Guide: shopping the global collection'], [pre + 'contact/', 'Contact us']
 ];
 
-/* ---------------- International market page ---------------- */
+/* ---------------- International market pages (one renderer, many locales) ---------------- */
+const VARIANTS = {
+  germany: [{id: 'en', rel: 'shipping-to/germany', S: 'en', lang: 'en', native: 'English'}, {id: 'de', rel: 'shipping-to/germany/de', S: 'de', lang: 'de-DE', native: 'Deutsch'}],
+  uk: [{id: 'en', rel: 'shipping-to/uk', S: 'en', lang: 'en-GB', native: 'English (UK)'}],
+  usa: [{id: 'en', rel: 'shipping-to/usa', S: 'en', lang: 'en-US', native: 'English (US)'}],
+  serbia: [{id: 'en', rel: 'shipping-to/serbia', S: 'en', lang: 'en', native: 'English'},
+    {id: 'sr-latn', rel: 'shipping-to/serbia/sr-latn', S: 'sr', lang: 'sr-Latn-RS', native: 'Srpski (latinica)'},
+    {id: 'sr-cyrl', rel: 'shipping-to/serbia/sr-cyrl', S: 'sr', cyr: true, lang: 'sr-Cyrl-RS', native: 'Српски (ћирилица)'}],
+  'saudi-arabia': [{id: 'en', rel: 'shipping-to/saudi-arabia', S: 'en', lang: 'en-SA', native: 'English'}, {id: 'ar', rel: 'shipping-to/saudi-arabia/ar', S: 'ar', dir: 'rtl', lang: 'ar-SA', native: 'العربية'}]
+};
+const ogLocale = lang => { const p = lang.split('-'); if (p.length === 1) return p[0] === 'en' ? 'en_PK' : p[0]; return p[0] + '_' + p[p.length - 1]; };
+
+function marketText(m, v) {
+  if (v.S === 'en') return {to: m.name, label: m.short || m.name, loc: m.name, region: m.region, intro: m.intro, tax: m.tax, safety: m.safety, question: m.question, answer: m.answer, nom: m.name};
+  const base = M[m.slug][v.S];
+  const out = {...base, nom: S[v.S].names[m.slug]};
+  return v.cyr ? cyrillicStrings(out) : out;
+}
+
 function renderMarket(m) {
-  const rel = `shipping-to/${m.slug}`, pre = prefixFor(rel), url = `${ORIGIN}/${rel}/`, nm = m.name, label = m.short || m.name;
-  const title = `Shop global items for delivery to ${nm} | Sasta Milaga`;
-  const desc = `Choose an item, check shipping and the full total for delivery to ${nm}, then pay by prepaid checkout. Taxes and duties are not included in the price.`;
-  const faq = [
-    [m.question, m.answer],
-    ['How do I know the total before I pay?', `Sasta Milaga confirms the item option, quantity, shipping method and total with you before you pay. The price on a product page is an estimate in US dollars before shipping, taxes and duties.`],
-    ['Can I return an item ordered for delivery to ' + nm + '?', 'Return eligibility depends on the item and the reason. Read the returns and refunds page before you order and ask us about a specific item if you are unsure.'],
-    ['Is this page available in my language?', 'Not yet. Sasta Milaga publishes English and Urdu pages. Other-language pages will be added only after they are properly translated and reviewed.'],
-    ['Do you list every product for ' + nm + '?', 'No. The global collection is a supplier catalogue. Whether a given item can be shipped to ' + nm + ' depends on the item, its option and the available shipping methods, so it is checked for your order.']
-  ];
-  const others = data.markets.filter(x => x.slug !== m.slug).map(x => [pre + 'shipping-to/' + x.slug + '/', 'Delivery to ' + (x.short || x.name)]);
-  const graph = [pageSchema(title, desc, url, 'en'),
-    crumbSchema([['Home', ORIGIN + '/'], ['Shipping by country', ORIGIN + '/shipping-to/'], [label, url]]), faqSchema(faq)];
-  const body = `<div class="sml" dir="ltr"><div class="sml-wrap">
-<nav class="sml-crumbs" aria-label="Breadcrumb"><a href="${pre}">Home</a> <span aria-hidden="true">&rsaquo;</span> <a href="${pre}shipping-to/">Shipping by country</a> <span aria-hidden="true">&rsaquo;</span> <span aria-current="page">${esc(label)}</span></nav>
-<header class="sml-hero"><span class="sml-pill">Global collection &middot; ${esc(m.region)}</span>
-<h1>Global items, delivered to ${esc(nm)}</h1>
-<p class="sml-answer">${esc(m.intro)}</p>
-<div class="sml-actions"><a class="sml-btn sml-btn--go" href="${pre}c/global/index.html">Browse the global collection</a><a class="sml-btn sml-btn--ghost" href="#order">Check my order</a></div></header>
+  const variants = VARIANTS[m.slug];
+  for (const v of variants) {
+    const T = v.cyr ? cyrillicStrings(S.sr) : S[v.S], X = marketText(m, v), dir = v.dir || 'ltr', rel = v.rel, pre = prefixFor(rel), url = `${ORIGIN}/${rel}/`;
+    const f = s => fmt(s, {to: X.to, label: X.label, loc: X.loc, region: X.region});
+    const title = f(T.title), desc = f(T.desc);
+    const faq = [[X.question, X.answer], ...T.faq.map(([q, a]) => [f(q), f(a)])];
+    const sib = Object.keys(VARIANTS).filter(s => s !== m.slug);
+    const nameOf = s => T.names[s];
+    const others = sib.map(s => [pre + 'shipping-to/' + s + '/', fmt(T.deliveryTo, {x: nameOf(s)})]);
+    const alternates = variants.map(x => ({lang: x.lang, rel: x.rel}));
+    const graph = [pageSchema(title, desc, url, v.lang), crumbSchema([[T.home, ORIGIN + '/'], [T.hub, ORIGIN + '/shipping-to/'], [X.nom, url]]), faqSchema(faq)];
+    const switcher = variants.length > 1 ? `<nav class="sml-links" aria-label="${esc(T.langLabel)}" style="margin:0 0 8px">${variants.map(x => x.id === v.id
+      ? `<a href="${pre}${x.rel}/" lang="${x.lang}" hreflang="${x.lang}" aria-current="true" style="background:var(--g);color:#fff">${esc(x.native)}</a>`
+      : `<a href="${pre}${x.rel}/" lang="${x.lang}" hreflang="${x.lang}">${esc(x.native)}</a>`).join('')}</nav>` : '';
+    const body = `<div class="sml" dir="${dir}"><div class="sml-wrap">
+<nav class="sml-crumbs" aria-label="Breadcrumb"><a href="${pre}">${esc(T.home)}</a> <span aria-hidden="true">${dir === 'rtl' ? '&lsaquo;' : '&rsaquo;'}</span> <a href="${pre}shipping-to/">${esc(T.hub)}</a> <span aria-hidden="true">${dir === 'rtl' ? '&lsaquo;' : '&rsaquo;'}</span> <span aria-current="page">${esc(X.nom)}</span></nav>
+${switcher}<header class="sml-hero"><span class="sml-pill">${esc(f(T.pill))}</span>
+<h1>${esc(f(T.h1))}</h1>
+<p class="sml-answer">${esc(X.intro)}</p>
+<div class="sml-actions"><a class="sml-btn sml-btn--go" href="${pre}c/global/index.html">${esc(T.browse)}</a><a class="sml-btn sml-btn--ghost" href="#order">${esc(T.check)}</a></div></header>
 
 <div class="sml-grid sml-grid--2">
-<section class="sml-card" aria-labelledby="how"><h2 id="how">How an order to ${esc(label)} works</h2>
-<ol class="sml-steps"><li><div><b>Choose the item and option</b>Pick the colour, size or model on the product page. Each option can differ in price and stock.</div></li>
-<li><div><b>Check shipping to ${esc(label)}</b>Shipping depends on the option, quantity and your address. We confirm the method and cost with you.</div></li>
-<li><div><b>Review the full total</b>You see item price, shipping and what is not included before you pay.</div></li>
-<li><div><b>Pay by prepaid checkout</b>Global items are not cash on delivery. Nothing is ordered until your payment is confirmed.</div></li></ol></section>
-<section class="sml-card" aria-labelledby="price"><h2 id="price">What you pay, and what is not included</h2>
+<section class="sml-card" aria-labelledby="how"><h2 id="how">${esc(f(T.howH))}</h2>
+<ol class="sml-steps">${T.steps.map(([h, p]) => `<li><div><b>${esc(f(h))}</b>${esc(f(p))}</div></li>`).join('')}</ol></section>
+<section class="sml-card" aria-labelledby="price"><h2 id="price">${esc(T.priceH)}</h2>
 <table class="sml-table"><tbody>
-<tr><th scope="row">Item price</th><td>Estimate in US dollars on the product page; confirmed before you pay <span class="sml-chip sml-chip--ok">shown</span></td></tr>
-<tr><th scope="row">Shipping</th><td>Quoted for your option, quantity and address <span class="sml-chip sml-chip--wait">confirmed with you</span></td></tr>
-<tr><th scope="row">Delivery time</th><td>An estimate from the carrier, not a promise <span class="sml-chip sml-chip--wait">estimate only</span></td></tr>
-<tr><th scope="row">Taxes and duties</th><td>Not included in our price <span class="sml-chip sml-chip--wait">you may owe more</span></td></tr>
-<tr><th scope="row">Payment</th><td>Prepaid checkout; no cash on delivery</td></tr></tbody></table></section></div>
+${T.rows.map(([a, b, kind, chip]) => `<tr><th scope="row">${esc(a)}</th><td>${esc(b)}${kind ? ` <span class="sml-chip sml-chip--${kind}">${esc(chip)}</span>` : ''}</td></tr>`).join('\n')}</tbody></table></section></div>
 
-<section class="sml-card" style="margin-top:clamp(16px,2vw,26px)" aria-labelledby="tax"><h2 id="tax">Customs, taxes and product rules for ${esc(label)}</h2>
-<p>${esc(m.tax)}</p><p>${esc(m.safety)}</p>
-<p class="sml-note">This is general guidance, not legal or tax advice. Rules change; check the official source for your country.</p></section>
+<section class="sml-card" style="margin-top:clamp(16px,2vw,26px)" aria-labelledby="tax"><h2 id="tax">${esc(f(T.taxH))}</h2>
+<p>${esc(X.tax)}</p><p>${esc(X.safety)}</p>
+<p class="sml-note">${esc(T.note)}</p></section>
 
-<section id="order" class="sml-card sml-order" style="margin-top:clamp(16px,2vw,26px)" aria-labelledby="orderh"><h2 id="orderh">Check your order before you send it</h2>
-<p>Fill in what a supplier order needs. The button unlocks when the essentials are there, and opens WhatsApp with your details so we can confirm the shipping and total.</p>
+<section id="order" class="sml-card sml-order" style="margin-top:clamp(16px,2vw,26px)" aria-labelledby="orderh"><h2 id="orderh">${esc(T.orderH)}</h2>
+<p>${esc(T.orderP)}</p>
 <form id="sml-order" class="sml-form" novalidate>
-<label>Product link or name<input name="product" type="text" required placeholder="Paste the product page link or type its name" autocomplete="off"></label>
-<label>Option (colour, size, model)<input name="option" type="text" placeholder="For example: black, size 42"></label>
-<label>Quantity<input name="quantity" type="number" min="1" max="99" value="1" inputmode="numeric"></label>
-<label>Delivery country<select name="country"><option value="${esc(nm)}" selected>${esc(nm)}</option></select></label>
-<label>Town or city, and postcode<input name="city" type="text" required placeholder="Used to quote shipping" autocomplete="address-level2"></label>
-<label class="sml-check"><input name="tax" type="checkbox" required><span>I understand that taxes and duties may be charged in ${esc(label)} and are not included in the price.</span></label>
-<label class="sml-check"><input name="paid" type="checkbox" required><span>I understand this is a prepaid order, not cash on delivery.</span></label>
+<label>${esc(T.fProduct)}<input name="product" type="text" required placeholder="${esc(T.fProductPh)}" autocomplete="off"></label>
+<label>${esc(T.fOption)}<input name="option" type="text" placeholder="${esc(T.fOptionPh)}"></label>
+<label>${esc(T.fQty)}<input name="quantity" type="number" min="1" max="99" value="1" inputmode="numeric"></label>
+<label>${esc(T.fCountry)}<select name="country"><option value="${esc(X.nom)}" selected>${esc(X.nom)}</option></select></label>
+<label>${esc(T.fCity)}<input name="city" type="text" required placeholder="${esc(T.fCityPh)}" autocomplete="address-level2"></label>
+<label class="sml-check"><input name="tax" type="checkbox" required><span>${esc(f(T.cTax))}</span></label>
+<label class="sml-check"><input name="paid" type="checkbox" required><span>${esc(T.cPaid)}</span></label>
 <div class="sml-ready" data-ready data-ok="0"><i aria-hidden="true"></i><b role="status" aria-live="polite"></b></div>
-<button class="sml-btn sml-btn--solid" type="submit" data-go disabled>Send my order details on WhatsApp</button></form></section>
+<button class="sml-btn sml-btn--solid" type="submit" data-go disabled>${esc(T.send)}</button></form></section>
 
 <div class="sml-grid sml-grid--2" style="margin-top:clamp(16px,2vw,26px)">
-<section class="sml-card" aria-labelledby="faq"><h2 id="faq">Questions about delivery to ${esc(label)}</h2>${faqHtml(faq)}</section>
-<section class="sml-card" aria-labelledby="more"><h2 id="more">Keep reading</h2><p>Policies, guides and the rest of the global collection.</p>${chips(SHARED_LINKS(pre))}
-<h3 style="margin-top:18px">Other destinations</h3>${chips(others.concat([[pre + 'pakistan/', 'Shopping in Pakistan']]))}</section></div>
+<section class="sml-card" aria-labelledby="faq"><h2 id="faq">${esc(f(T.faqH))}</h2>${faqHtml(faq)}</section>
+<section class="sml-card" aria-labelledby="more"><h2 id="more">${esc(T.moreH)}</h2><p>${esc(T.moreP)}</p>${chips(SHARED_LINKS(pre).map(([h], i) => [h, T.links[i]]))}
+<h3 style="margin-top:18px">${esc(T.otherDest)}</h3>${chips(others.concat([[pre + 'pakistan/', T.shopPK]]))}</section></div>
 
-<div class="sml-band"><div><b>Not sure an item can reach ${esc(label)}?</b><small>Send us the link. We check the options and shipping before you pay.</small></div><a class="sml-btn sml-btn--go" href="${pre}contact/">Contact Sasta Milaga</a></div>
+<div class="sml-band"><div><b>${esc(f(T.bandH))}</b><small>${esc(T.bandP)}</small></div><a class="sml-btn sml-btn--go" href="${pre}contact/">${esc(T.bandBtn)}</a></div>
 </div></div>
-${orderScript({required: ['product', 'quantity', 'city', 'tax', 'paid'], ready: 'Ready to send', notReady: 'Add the item, quantity, city and tick both confirmations',
-    greeting: 'Assalam o Alaikum! I would like a shipping quote for a global item.',
-    lines: [['Country', '@country'], ['Item', '@product'], ['Option', '@option'], ['Quantity', '@quantity'], ['City / postcode', '@city'], ['Taxes and duties understood', 'yes'], ['Payment', 'prepaid'], ['Page', '@url']]})}`;
-  write(rel, shell({rel, lang: 'en', dir: 'ltr', title, desc, indexable: m.indexable, alternates: [{lang: 'en', rel}], graph, body}));
+${orderScript({required: ['product', 'quantity', 'city', 'tax', 'paid'], ready: T.readyOk, notReady: T.readyNot, greeting: T.wa.greeting,
+      lines: [[T.wa.country, '@country'], [T.wa.item, '@product'], [T.wa.option, '@option'], [T.wa.qty, '@quantity'], [T.wa.city, '@city'], [T.wa.tax, T.wa.yes], [T.wa.pay, T.wa.prepaid], [T.wa.page, '@url']]})}`;
+    write(rel, shell({rel, lang: v.lang, dir, title, desc, indexable: m.indexable, alternates, graph, body}), {market: m.slug, locale: v.lang, variant: v.id, indexable: !!m.indexable, dir, S: v.S + (v.cyr ? '-cyrl' : '')});
+  }
 }
 
 /* ---------------- Pakistan: English ---------------- */
@@ -203,7 +217,7 @@ function renderPK() {
 ${orderScript({required: ['product', 'quantity', 'city', 'addr'], ready: 'Ready to send', notReady: 'Add the item, quantity and city, and tick the confirmation',
     greeting: 'Assalam o Alaikum! I want to order from Sasta Milaga.',
     lines: [['Item', '@product'], ['Option', '@option'], ['Quantity', '@quantity'], ['City', '@city'], ['Page', '@url']]})}`;
-  write(rel, shell({rel, lang: 'en', dir: 'ltr', title, desc, indexable: true, alternates: [{lang: 'en', rel}, {lang: 'ur', rel: 'ur/pakistan'}], graph, body}));
+  write(rel, shell({rel, lang: 'en', dir: 'ltr', title, desc, indexable: true, alternates: [{lang: 'en', rel}, {lang: 'ur', rel: 'ur/pakistan'}], graph, body}), {market: 'pakistan', locale: 'en-PK', variant: 'en', indexable: true});
 }
 
 /* ---------------- Pakistan: Urdu (native copy; review by a native speaker is recommended) ---------------- */
@@ -255,7 +269,7 @@ function renderPKur() {
 ${orderScript({required: ['product', 'quantity', 'city', 'addr'], ready: 'بھیجنے کے لیے تیار', notReady: 'پروڈکٹ، تعداد اور شہر لکھیں اور تصدیق پر نشان لگائیں',
     greeting: 'السلام علیکم! میں ساسٹا ملاگا سے آرڈر کرنا چاہتا/چاہتی ہوں۔',
     lines: [['پروڈکٹ', '@product'], ['آپشن', '@option'], ['تعداد', '@quantity'], ['شہر', '@city'], ['صفحہ', '@url']]})}`;
-  write(rel, shell({rel, lang: 'ur', dir: 'rtl', title, desc, indexable: true, alternates: [{lang: 'en', rel: 'pakistan'}, {lang: 'ur', rel}], graph, body}));
+  write(rel, shell({rel, lang: 'ur', dir: 'rtl', title, desc, indexable: true, alternates: [{lang: 'en', rel: 'pakistan'}, {lang: 'ur', rel}], graph, body}), {market: 'pakistan', locale: 'ur-PK', variant: 'ur', indexable: true});
 }
 
 /* ---------------- Hub ---------------- */
@@ -275,13 +289,14 @@ ${data.markets.map(x => `<a class="sml-card" style="text-decoration:none" href="
 <p class="sml-note" style="margin-top:18px">More countries are added only after delivery, payment and returns are checked for them.</p>
 ${chips(SHARED_LINKS(pre))}
 </div></div>`;
-  write(rel, shell({rel, lang: 'en', dir: 'ltr', title, desc, indexable: false, alternates: [], graph, body}));
+  write(rel, shell({rel, lang: 'en', dir: 'ltr', title, desc, indexable: false, alternates: [], graph, body}), {market: 'hub', locale: 'en', variant: 'hub', indexable: false});
 }
 
 for (const m of data.markets) renderMarket(m);
 renderPK(); renderPKur(); renderHub();
 
 /* sitemap of indexable landing pages only (not yet referenced from sitemap.xml: add it there when the owner approves) */
-const indexable = ['pakistan', 'ur/pakistan', ...data.markets.filter(m => m.indexable).map(m => 'shipping-to/' + m.slug)];
+const indexable = routes.filter(r => r.indexable).map(r => r.rel);
 fs.writeFileSync(path.join(root, 'sitemap-landing.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${indexable.map(r => `<url><loc>${ORIGIN}/${r}/</loc>${r.includes('pakistan') ? `<xhtml:link rel="alternate" hreflang="en" href="${ORIGIN}/pakistan/"/><xhtml:link rel="alternate" hreflang="ur" href="${ORIGIN}/ur/pakistan/"/>` : ''}</url>`).join('\n')}\n</urlset>\n`);
+fs.writeFileSync(path.join(root, 'data/landing/routes.json'), JSON.stringify({generator: 'tools/build-landing-pages.mjs', routes}, null, 2) + '\n');
 console.log(JSON.stringify({pages: written.length, written, indexable}));
