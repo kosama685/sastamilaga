@@ -1,0 +1,78 @@
+{
+  "_note": "Landing-page facts. Only statements that are true of the live store or generally true of cross-border parcels may appear here. No transit days, no shipping prices, no guarantees. A market is indexable only after its evidence gate passes (see tools/audit-market-locale-readiness.mjs: indexableCountryLandingAllowed). Flip `indexable` to true only with evidence recorded in `evidence`.",
+  "whatsapp": "966510451995",
+  "siteOrigin": "https://sastamilaga.com",
+  "pakistan": {
+    "delivery_fee_pkr": 250,
+    "free_delivery_from_pkr": 5000
+  },
+  "markets": [
+    {
+      "slug": "germany",
+      "code": "DE",
+      "name": "Germany",
+      "region": "European Union",
+      "indexable": false,
+      "evidence": "No verified shipping, checkout, tax or return policy for this country yet.",
+      "intro": "Order from Sasta Milaga's global supplier collection and have it delivered to a German address. You choose the item and option, we confirm the shipping method and the total, and you pay by prepaid checkout before anything is ordered.",
+      "tax": "Germany is part of the EU single market. Parcels sent from outside the EU can be charged import VAT and, depending on the goods and their value, customs duty. Those charges are not included in the price you see on Sasta Milaga; the carrier or customs office tells you what is due.",
+      "safety": "Electrical goods, toys and cosmetics sold in the EU must meet EU product-safety rules, such as CE marking where it applies. Ask us about a specific item before you order it.",
+      "question": "Will I pay import VAT on an order delivered to Germany?",
+      "answer": "It can happen. Goods shipped from outside the EU are generally subject to import VAT, and customs duty can apply to some goods. Sasta Milaga's price does not include these charges, so allow for them and check current German customs guidance before you order."
+    },
+    {
+      "slug": "uk",
+      "code": "GB",
+      "name": "the United Kingdom",
+      "short": "UK",
+      "region": "United Kingdom",
+      "indexable": false,
+      "evidence": "No verified shipping, checkout, tax or return policy for this country yet.",
+      "intro": "Order from Sasta Milaga's global supplier collection for delivery to a UK address. Pick the item and option, review the shipping method and the total we confirm with you, then pay by prepaid checkout.",
+      "tax": "Goods delivered to the UK from abroad can attract UK VAT and, for some goods, customs duty. These are not part of Sasta Milaga's displayed price. Check HMRC's current rules for goods you import and allow for any charge the carrier collects.",
+      "safety": "Some goods, such as electricals, toys and cosmetics, must carry UK product-safety markings. Ask us about the specific item before you order it.",
+      "question": "Are UK VAT and customs duty included in the price?",
+      "answer": "No. The price shown on Sasta Milaga is the item price estimate before shipping, taxes and duties. UK VAT or duty may be charged on delivery depending on the goods and their value, so check HMRC guidance for imported goods."
+    },
+    {
+      "slug": "usa",
+      "code": "US",
+      "name": "the United States",
+      "short": "USA",
+      "region": "United States",
+      "indexable": false,
+      "evidence": "No verified shipping, checkout, tax or return policy for this country yet.",
+      "intro": "Order from Sasta Milaga's global supplier collection for delivery to a US address. Choose the item and option, we confirm the shipping method and total with you, and you pay by prepaid checkout before the order is placed.",
+      "tax": "Imported parcels can be subject to duties, taxes and carrier fees, and the US rules for low-value parcels have changed more than once. Sasta Milaga's price does not include them. Check current US Customs and Border Protection guidance before you order.",
+      "safety": "Some goods, such as electronics, toys, cosmetics and food contact items, must meet US safety and labelling rules. Ask us about the specific item before you order it.",
+      "question": "Do I pay import duty on an order delivered to the USA?",
+      "answer": "You may. Duties, taxes and carrier fees on imported parcels depend on the goods, their value and the rules in force when the parcel arrives. They are not included in Sasta Milaga's price, so check current US Customs and Border Protection guidance first."
+    },
+    {
+      "slug": "serbia",
+      "code": "RS",
+      "name": "Serbia",
+      "region": "Serbia",
+      "indexable": false,
+      "evidence": "No verified shipping, checkout, tax or return policy for this country yet. Serbian-language pages are not published.",
+      "intro": "Order from Sasta Milaga's global supplier collection for delivery to an address in Serbia. You pick the item and option, we confirm the shipping method and the total, and you pay by prepaid checkout. This page and our support are in English; there is no Serbian-language version yet.",
+      "tax": "Serbia is not in the EU, so parcels from abroad pass through Serbian customs. Customs duty and VAT can apply depending on the goods and their value, and the postal operator or courier will tell you what is due. These charges are not included in Sasta Milaga's price.",
+      "safety": "Some goods have labelling and conformity requirements in Serbia. Ask us about the specific item before you order it.",
+      "question": "Is customs duty included when I order to Serbia?",
+      "answer": "No. Serbia sits outside the EU customs area, so duty and VAT can be charged on delivery depending on the goods and their value. Sasta Milaga's displayed price is an item estimate before shipping, taxes and duties."
+    },
+    {
+      "slug": "saudi-arabia",
+      "code": "SA",
+      "name": "Saudi Arabia",
+      "region": "Saudi Arabia",
+      "indexable": false,
+      "evidence": "No verified shipping, checkout, tax or return policy for this country yet. Arabic-language pages are not published.",
+      "intro": "Order from Sasta Milaga's global supplier collection for delivery to an address in Saudi Arabia. Choose the item and option, we confirm the shipping method and the total, and you pay by prepaid checkout. This page and our support are in English; there is no Arabic-language version yet.",
+      "tax": "Parcels entering Saudi Arabia can be subject to VAT and customs duty, and some product categories are restricted or need approval. These charges are not included in Sasta Milaga's price. Check current Saudi customs guidance before you order.",
+      "safety": "Some goods, such as electronics, cosmetics and supplements, need conformity or registration approval in Saudi Arabia. Ask us about the specific item before you order it.",
+      "question": "Can I pay cash on delivery for an order to Saudi Arabia?",
+      "answer": "No. Cash on delivery is offered for local products inside Pakistan. Global supplier items use a prepaid checkout, and the final total is confirmed with you before you pay."
+    }
+  ]
+}

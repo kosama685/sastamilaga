@@ -1,0 +1,34 @@
+# Verifies the verified-first landing pages: generated output is committed and current, and the content rules hold.
+# Does not deploy anything and does not touch chrome.js, build-chrome-runtime.mjs or the audit tools.
+name: Landing pages CI
+
+on:
+  pull_request:
+    paths:
+      - 'data/landing/**'
+      - 'assets/css/landing.css'
+      - 'tools/build-landing-pages*.mjs'
+      - 'pakistan/**'
+      - 'ur/pakistan/**'
+      - 'shipping-to/**'
+      - 'sitemap-landing.xml'
+      - '.github/workflows/landing-pages-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  landing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+      - name: Regenerate pages
+        run: node tools/build-landing-pages.mjs
+      - name: Committed output must equal generated output
+        run: git diff --exit-code -- pakistan ur/pakistan shipping-to sitemap-landing.xml
+      - name: Content, SEO, link and order-panel tests
+        run: node --test tools/build-landing-pages.test.mjs
