@@ -164,3 +164,29 @@ test('build is idempotent', async () => {
   execFileSync(process.execPath, [path.join(root, 'tools/build-landing-pages.mjs')], {cwd: root});
   assert.equal(snap(), a);
 });
+
+/* ---- live CJ shipping estimate in the order panel ---- */
+import vm from 'node:vm';
+const CC = {germany: 'DE', uk: 'GB', usa: 'US', serbia: 'RS', 'saudi-arabia': 'SA'};
+for (const r of intl) {
+  test(`${r.rel} [${r.lang}]: live-estimate block, country code, hidden quote field, parsable script`, () => {
+    const h = read(r.rel);
+    assert.match(h, new RegExp(`<div id="sml-quote" class="sml-quote" data-cc="${CC[r.market]}">`));
+    assert.match(h, /<input type="hidden" name="quote" value="">/);
+    assert.match(h, /<button type="button" class="sml-btn sml-btn--line" data-quote disabled>/);
+    const m = h.match(/<script>\(function\(\)\{var f=document\.getElementById\('sml-order'\),q=document\.getElementById\('sml-quote'\)[\s\S]*?<\/script>/);
+    assert.ok(m, 'quote script present');
+    assert.doesNotThrow(() => new vm.Script(m[0].replace(/^<script>|<\/script>$/g, '')));
+    assert.match(m[0], /https:\/\/sastamilaga\.com\/api\/cj\//);
+    assert.doesNotMatch(m[0], /innerHTML|document\.write|eval\(/, 'rates are written with textContent only');
+    assert.doesNotMatch(strip(h).replace(/\s+/g, ' '), /\b\d+(?:\.\d+)?\s*(?:USD|US\$)\b.*\bdays\b/i, 'no static prices or day counts in the HTML');
+  });
+}
+test('Pakistan pages have no CJ quote block (local products, cash on delivery)', () => {
+  for (const rel of ['pakistan', 'ur/pakistan']) assert.doesNotMatch(read(rel), /sml-quote|api\/cj/);
+});
+test('sitemap.xml lists sitemap-landing.xml exactly once', () => {
+  const sm = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
+  assert.equal((sm.match(/sitemap-landing\.xml/g) || []).length, 1);
+  assert.match(sm, /<sitemapindex[\s\S]*<\/sitemapindex>/);
+});

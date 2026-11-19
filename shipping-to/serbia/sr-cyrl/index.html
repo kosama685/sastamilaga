@@ -51,6 +51,11 @@
 <label>Количина<input name="quantity" type="number" min="1" max="99" value="1" inputmode="numeric"></label>
 <label>Земља испоруке<select name="country"><option value="Србија" selected>Србија</option></select></label>
 <label>Град и поштански број<input name="city" type="text" required placeholder="Користи се за обрачун доставе" autocomplete="address-level2"></label>
+<div id="sml-quote" class="sml-quote" data-cc="RS"><h3>Процена доставе уживо (опционо)</h3><p class="sml-note">Налепите горе линк производа из глобалне продавнице, изаберите опцију и проверите доставу за {лабел}. Цене долазе од курирске службе за ту опцију, количину и земљу.</p>
+<label>Опција за процену<select name="qvid" disabled><option value="">&mdash;</option></select></label>
+<button type="button" class="sml-btn sml-btn--line" data-quote disabled>Проверите доставу за {лабел}</button>
+<p role="status" aria-live="polite" data-status class="sml-note">Налепите линк производа из глобалне продавнице (адреса садржи /глобал-схоп/п/) да бисте добили процену уживо.</p><div data-out></div>
+<p class="sml-note">Оквирне цене у америчким доларима за изабрану опцију, количину и земљу. Порези, царине, доплате за удаљена подручја и коначна цена могу се разликовати. Овде се ништа не наручује; укупан износ потврђујемо са вама пре плаћања.</p></div><input type="hidden" name="quote" value="">
 <label class="sml-check"><input name="tax" type="checkbox" required><span>Разумем да се у {лоц} могу наплатити порези и царине и да нису урачунати у цену.</span></label>
 <label class="sml-check"><input name="paid" type="checkbox" required><span>Разумем да је ово поруџбина са плаћањем унапред, а не поузећем.</span></label>
 <div class="sml-ready" data-ready data-ok="0"><i aria-hidden="true"></i><b role="status" aria-live="polite"></b></div>
@@ -64,13 +69,37 @@
 <div class="sml-band"><div><b>Нисте сигурни да артикал може стићи у {то}?</b><small>Пошаљите нам линк. Проверавамо опције и доставу пре него што платите.</small></div><a class="sml-btn sml-btn--go" href="../../../contact/">Контактирајте Sasta Milaga</a></div>
 </div></div>
 <script>(function(){var f=document.getElementById('sml-order');if(!f)return;var b=f.querySelector('[data-go]'),s=f.querySelector('[data-ready]'),t=s.querySelector('b');
-var need=["product","quantity","city","tax","paid"],WA="966510451995",C=[["Земља","@country"],["Артикал","@product"],["Опција","@option"],["Количина","@quantity"],["Град / поштански број","@city"],["Порези и царине узети у обзир","да"],["Плаћање","унапред"],["Страница","@url"]];
+var need=["product","quantity","city","tax","paid"],WA="966510451995",C=[["Земља","@country"],["Артикал","@product"],["Опција","@option"],["Количина","@quantity"],["Град / поштански број","@city"],["Приказана процена доставе","@quote"],["Порези и царине узети у обзир","да"],["Плаћање","унапред"],["Страница","@url"]];
 function v(n){var e=f.elements[n];return e?(e.type==='checkbox'?(e.checked?'yes':''):String(e.value||'').trim()):''}
 function ok(){for(var i=0;i<need.length;i++){var n=need[i];if(n==='quantity'){var q=+v('quantity');if(!(q>=1&&q<=99&&q%1===0))return false}else if(n==='product'){if(v(n).length<3)return false}else if(!v(n))return false}return true}
 function sync(){var r=ok();b.disabled=!r;s.setAttribute('data-ok',r?'1':'0');t.textContent=r?"Спремно за слање":"Унесите артикал, количину и град и означите обе потврде"}
 f.addEventListener('input',sync);f.addEventListener('change',sync);
 f.addEventListener('submit',function(e){e.preventDefault();if(!ok())return;var m=C.map(function(l){var val=l[1]==='@url'?location.href.split('#')[0]:(l[1].charAt(0)==='@'?v(l[1].slice(1)):l[1]);return val?l[0]+': '+val:''}).filter(Boolean);
 m.unshift("Здраво! Желим понуду за доставу глобалног артикла.");window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(m.join('\n')),'_blank','noopener')});sync()})();</script>
+<script>(function(){var f=document.getElementById('sml-order'),q=document.getElementById('sml-quote');if(!f||!q)return;
+var API='https://sastamilaga.com/api/cj/',CC=q.getAttribute('data-cc'),T={"qLoadingV":"Учитавање опција…","qNoV":"За овај производ нису враћене опције. Пошаљите податке преко WhatsApp-a.","qLoading":"Провера цена доставе…","qFail":"Процена уживо тренутно није доступна. И даље можете послати податке о поруџбини преко WhatsApp-a.","qNone":"Ниједна курирска служба није вратила цену за ову опцију и земљу. Пошаљите податке преко WhatsApp-a, проверићемо.","qNeedLink":"Налепите линк производа из глобалне продавнице (адреса садржи /глобал-схоп/п/) да бисте добили процену уживо.","qThCarrier":"Курирска служба","qThShip":"Достава (US$)","qThTotal":"Артикал + достава (US$, оквирно)","qThEta":"Процена курирске службе (дани)"};
+var sel=q.querySelector('select'),btn=q.querySelector('[data-quote]'),out=q.querySelector('[data-out]'),st=q.querySelector('[data-status]'),hid=f.elements.quote;
+var pid='',busy=false,timer=0;
+function pidOf(){var m=String(f.elements.product.value).match(/\/global-shop\/p\/([A-Fa-f0-9-]{36}|\d{19})(?:\/|$|\?)/);return m?m[1]:''}
+function qtyOk(){var n=+f.elements.quantity.value;return n>=1&&n<=99&&n%1===0}
+function sync(){btn.disabled=busy||!pid||!sel.value||!qtyOk()}
+function say(t){st.textContent=t}
+function get(u,ms){var c=new AbortController(),t=setTimeout(function(){c.abort()},ms||15000);return fetch(u,{credentials:'omit',signal:c.signal}).then(function(r){clearTimeout(t);if(!r.ok)throw Error('http '+r.status);return r.json()},function(e){clearTimeout(t);throw e})}
+function reset(){sel.replaceChildren();var o=document.createElement('option');o.value='';o.textContent='\u2014';sel.appendChild(o);sel.disabled=true;out.replaceChildren();hid.value=''}
+function loadVariants(p){reset();say(T.qLoadingV);get(API+'variants?pid='+encodeURIComponent(p)).then(function(d){if(pidOf()!==p)return;var vs=((d&&d.variants)||[]).filter(function(v){return v&&/^[A-Za-z0-9-]{8,64}$/.test(String(v.vid))}).slice(0,300);if(!vs.length){say(T.qNoV);return}sel.replaceChildren();vs.forEach(function(v){var o=document.createElement('option');o.value=v.vid;o.textContent=String(v.name||v.key||v.sku||v.vid).slice(0,80);sel.appendChild(o)});sel.disabled=false;say('');sync()}).catch(function(){if(pidOf()===p)say(T.qFail)})}
+function onProduct(){var p=pidOf();if(p===pid){sync();return}pid=p;if(!p){reset();say(T.qNeedLink);sync();return}loadVariants(p)}
+f.elements.product.addEventListener('input',function(){clearTimeout(timer);timer=setTimeout(onProduct,350)});f.elements.product.addEventListener('change',onProduct);
+f.elements.quantity.addEventListener('input',sync);sel.addEventListener('change',function(){out.replaceChildren();hid.value='';sync()});
+function money(n){return (Math.round(+n*100)/100).toFixed(2)}
+function render(rs){var w=document.createElement('div');w.style.overflowX='auto';var t=document.createElement('table');t.className='sml-table';var h=t.createTHead().insertRow();[T.qThCarrier,T.qThShip,T.qThTotal,T.qThEta].forEach(function(x){var c=document.createElement('th');c.scope='col';c.textContent=x;h.appendChild(c)});var b=t.createTBody();
+rs.slice(0,8).forEach(function(r){var row=b.insertRow();var tot=r.indicativeTotalUsd!=null?money(r.indicativeTotalUsd):'\u2014';[r.carrier,money(r.shippingUsd),tot,String(r.eta||'\u2014')].forEach(function(x){row.insertCell().textContent=x});row.style.cursor='pointer';row.tabIndex=0;
+function pick(){hid.value=r.carrier+' | '+T.qThShip+' '+money(r.shippingUsd)+' | '+T.qThTotal+' '+tot+' | '+T.qThEta+' '+(r.eta||'\u2014');[].forEach.call(b.rows,function(x){x.style.outline=''});row.style.outline='2px solid #0F7A3B'}
+row.addEventListener('click',pick);row.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}})});
+w.appendChild(t);out.appendChild(w);if(b.rows[0])b.rows[0].click()}
+btn.addEventListener('click',function(){if(btn.disabled)return;busy=true;sync();out.replaceChildren();hid.value='';say(T.qLoading);
+var url=API+'shipping?pid='+encodeURIComponent(pid)+'&vid='+encodeURIComponent(sel.value)+'&country='+encodeURIComponent(CC)+'&quantity='+encodeURIComponent(+f.elements.quantity.value);
+get(url,20000).then(function(d){var rs=((d&&d.rates)||[]).filter(function(r){return r&&r.carrier&&isFinite(+r.shippingUsd)});if(!rs.length){say(T.qNone);return}say('');render(rs)}).catch(function(){say(T.qFail)}).then(function(){busy=false;sync()})});
+onProduct();sync()})();</script>
 </div></main>
 <div id="sm-chrome-footer"></div>
 <script src="../../../assets/js/chrome.js" defer></script>

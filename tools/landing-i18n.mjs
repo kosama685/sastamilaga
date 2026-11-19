@@ -6,7 +6,7 @@
 export const fmt = (s, v = {}) => String(s).replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m));
 
 /* ---- Serbian Latin -> Cyrillic (deterministic). Brand names, URLs and technical tokens stay Latin. ---- */
-const PROTECT = /(Sasta Milaga|WhatsApp(?:-a)?|https?:\/\/\S+|\bEU\b|\bUSD\b)/g;
+const PROTECT = /(Sasta Milaga|WhatsApp(?:-a)?|US\$|https?:\/\/\S+|\bEU\b|\bUSD\b)/g;
 const DIGRAPHS = [['Lj', 'Љ'], ['LJ', 'Љ'], ['lj', 'љ'], ['Nj', 'Њ'], ['NJ', 'Њ'], ['nj', 'њ'], ['Dž', 'Џ'], ['DŽ', 'Џ'], ['dž', 'џ']];
 const SINGLE = {A: 'А', B: 'Б', V: 'В', G: 'Г', D: 'Д', 'Đ': 'Ђ', E: 'Е', Ž: 'Ж', Z: 'З', I: 'И', J: 'Ј', K: 'К', L: 'Л', M: 'М', N: 'Н', O: 'О', P: 'П', R: 'Р', S: 'С', Š: 'Ш', T: 'Т', 'Ć': 'Ћ', U: 'У', F: 'Ф', H: 'Х', C: 'Ц', 'Č': 'Ч',
   a: 'а', b: 'б', v: 'в', g: 'г', d: 'д', 'đ': 'ђ', e: 'е', ž: 'ж', z: 'з', i: 'и', j: 'ј', k: 'к', l: 'л', m: 'м', n: 'н', o: 'о', p: 'п', r: 'р', s: 'с', š: 'ш', t: 'т', 'ć': 'ћ', u: 'у', f: 'ф', h: 'х', c: 'ц', 'č': 'ч'};
@@ -55,7 +55,22 @@ export const S = {
     bandH: 'Not sure an item can reach {label}?', bandP: 'Send us the link. We check the options and shipping before you pay.', bandBtn: 'Contact Sasta Milaga',
     home: 'Home', hub: 'Shipping by country', langLabel: 'Language',
     links: ['Global categories', 'Shipping and delivery', 'Returns and refunds', 'How to order', 'Safe shopping', 'FAQ', 'Guide: shopping the global collection', 'Contact us'],
-    wa: {greeting: 'Assalam o Alaikum! I would like a shipping quote for a global item.', country: 'Country', item: 'Item', option: 'Option', qty: 'Quantity', city: 'City / postcode', tax: 'Taxes and duties understood', pay: 'Payment', page: 'Page', yes: 'yes', prepaid: 'prepaid'}
+    qH: "Live shipping estimate (optional)",
+    qP: "Paste a global shop product link above, choose the option and check shipping to {label}. Rates come from the carrier service for that option, quantity and country.",
+    qVariant: "Option for the estimate",
+    qBtn: "Check shipping to {label}",
+    qNeedLink: "Paste a global shop product link (the address contains /global-shop/p/) to get a live estimate.",
+    qLoadingV: "Loading options…",
+    qNoV: "No options were returned for this product. Send your details on WhatsApp instead.",
+    qLoading: "Checking carrier rates…",
+    qFail: "The live estimate is unavailable right now. You can still send your order details on WhatsApp.",
+    qNone: "No carrier returned a rate for this option and country. Send your details on WhatsApp and we will check.",
+    qThCarrier: "Carrier",
+    qThShip: "Shipping (US$)",
+    qThTotal: "Item + shipping (US$, indicative)",
+    qThEta: "Carrier estimate (days)",
+    qNote: "Indicative US-dollar rates for the selected option, quantity and country. Taxes, customs, remote-area fees and the final price may differ. Nothing is ordered here; the total is confirmed with you before you pay.",
+    wa: {greeting: 'Assalam o Alaikum! I would like a shipping quote for a global item.', country: 'Country', item: 'Item', option: 'Option', qty: 'Quantity', city: 'City / postcode', tax: 'Taxes and duties understood', pay: 'Payment', page: 'Page', yes: 'yes', prepaid: 'prepaid', quote: "Shipping estimate shown"}
   },
   de: {
     names: {germany: 'Deutschland', uk: 'Vereinigtes Königreich', usa: 'USA', serbia: 'Serbien', 'saudi-arabia': 'Saudi-Arabien', pakistan: 'Pakistan'},
@@ -86,7 +101,22 @@ export const S = {
     bandH: 'Nicht sicher, ob ein Artikel {label} erreicht?', bandP: 'Senden Sie uns den Link. Wir prüfen Varianten und Versand, bevor Sie zahlen.', bandBtn: 'Sasta Milaga kontaktieren',
     home: 'Startseite', hub: 'Versand nach Land', langLabel: 'Sprache',
     links: ['Globale Kategorien', 'Versand und Lieferung', 'Rückgabe und Erstattung', 'So bestellen Sie', 'Sicher einkaufen', 'FAQ', 'Ratgeber: Einkaufen im globalen Sortiment', 'Kontakt'],
-    wa: {greeting: 'Hallo! Ich möchte ein Versandangebot für einen globalen Artikel.', country: 'Land', item: 'Artikel', option: 'Variante', qty: 'Menge', city: 'Ort / PLZ', tax: 'Steuern und Zölle zur Kenntnis genommen', pay: 'Zahlung', page: 'Seite', yes: 'ja', prepaid: 'Vorkasse'}
+    qH: "Live-Versandschätzung (optional)",
+    qP: "Fügen Sie oben einen Produktlink aus dem globalen Shop ein, wählen Sie die Variante und prüfen Sie den Versand nach {label}. Die Preise stammen vom Versanddienst für diese Variante, Menge und dieses Land.",
+    qVariant: "Variante für die Schätzung",
+    qBtn: "Versand nach {label} prüfen",
+    qNeedLink: "Fügen Sie einen Produktlink aus dem globalen Shop ein (die Adresse enthält /global-shop/p/), um eine Live-Schätzung zu erhalten.",
+    qLoadingV: "Varianten werden geladen…",
+    qNoV: "Für dieses Produkt wurden keine Varianten geliefert. Senden Sie Ihre Angaben stattdessen per WhatsApp.",
+    qLoading: "Versandpreise werden abgefragt…",
+    qFail: "Die Live-Schätzung ist derzeit nicht verfügbar. Sie können Ihre Bestellangaben weiterhin per WhatsApp senden.",
+    qNone: "Für diese Variante und dieses Land hat kein Versanddienst einen Preis geliefert. Senden Sie uns Ihre Angaben per WhatsApp, wir prüfen es.",
+    qThCarrier: "Versanddienst",
+    qThShip: "Versand (US$)",
+    qThTotal: "Artikel + Versand (US$, unverbindlich)",
+    qThEta: "Schätzung des Dienstleisters (Tage)",
+    qNote: "Unverbindliche US-Dollar-Preise für die gewählte Variante, Menge und das Land. Steuern, Zoll, Zuschläge für abgelegene Gebiete und der Endpreis können abweichen. Hier wird nichts bestellt; der Gesamtbetrag wird vor der Zahlung mit Ihnen bestätigt.",
+    wa: {greeting: 'Hallo! Ich möchte ein Versandangebot für einen globalen Artikel.', country: 'Land', item: 'Artikel', option: 'Variante', qty: 'Menge', city: 'Ort / PLZ', tax: 'Steuern und Zölle zur Kenntnis genommen', pay: 'Zahlung', page: 'Seite', yes: 'ja', prepaid: 'Vorkasse', quote: "Angezeigte Versandschätzung"}
   },
   sr: {
     names: {germany: 'Nemačka', uk: 'Ujedinjeno Kraljevstvo', usa: 'SAD', serbia: 'Srbija', 'saudi-arabia': 'Saudijska Arabija', pakistan: 'Pakistan'},
@@ -117,7 +147,22 @@ export const S = {
     bandH: 'Niste sigurni da artikal može stići u {to}?', bandP: 'Pošaljite nam link. Proveravamo opcije i dostavu pre nego što platite.', bandBtn: 'Kontaktirajte Sasta Milaga',
     home: 'Početna', hub: 'Dostava po zemljama', langLabel: 'Jezik',
     links: ['Globalne kategorije', 'Dostava i isporuka', 'Povraćaj i refundacija', 'Kako da naručite', 'Bezbedna kupovina', 'Česta pitanja', 'Vodič: kupovina iz globalne ponude', 'Kontakt'],
-    wa: {greeting: 'Zdravo! Želim ponudu za dostavu globalnog artikla.', country: 'Zemlja', item: 'Artikal', option: 'Opcija', qty: 'Količina', city: 'Grad / poštanski broj', tax: 'Porezi i carine uzeti u obzir', pay: 'Plaćanje', page: 'Stranica', yes: 'da', prepaid: 'unapred'}
+    qH: "Procena dostave uživo (opciono)",
+    qP: "Nalepite gore link proizvoda iz globalne prodavnice, izaberite opciju i proverite dostavu za {label}. Cene dolaze od kurirske službe za tu opciju, količinu i zemlju.",
+    qVariant: "Opcija za procenu",
+    qBtn: "Proverite dostavu za {label}",
+    qNeedLink: "Nalepite link proizvoda iz globalne prodavnice (adresa sadrži /global-shop/p/) da biste dobili procenu uživo.",
+    qLoadingV: "Učitavanje opcija…",
+    qNoV: "Za ovaj proizvod nisu vraćene opcije. Pošaljite podatke preko WhatsApp-a.",
+    qLoading: "Provera cena dostave…",
+    qFail: "Procena uživo trenutno nije dostupna. I dalje možete poslati podatke o porudžbini preko WhatsApp-a.",
+    qNone: "Nijedna kurirska služba nije vratila cenu za ovu opciju i zemlju. Pošaljite podatke preko WhatsApp-a, proverićemo.",
+    qThCarrier: "Kurirska služba",
+    qThShip: "Dostava (US$)",
+    qThTotal: "Artikal + dostava (US$, okvirno)",
+    qThEta: "Procena kurirske službe (dani)",
+    qNote: "Okvirne cene u američkim dolarima za izabranu opciju, količinu i zemlju. Porezi, carine, doplate za udaljena područja i konačna cena mogu se razlikovati. Ovde se ništa ne naručuje; ukupan iznos potvrđujemo sa vama pre plaćanja.",
+    wa: {greeting: 'Zdravo! Želim ponudu za dostavu globalnog artikla.', country: 'Zemlja', item: 'Artikal', option: 'Opcija', qty: 'Količina', city: 'Grad / poštanski broj', tax: 'Porezi i carine uzeti u obzir', pay: 'Plaćanje', page: 'Stranica', yes: 'da', prepaid: 'unapred', quote: "Prikazana procena dostave"}
   },
   ar: {
     names: {germany: 'ألمانيا', uk: 'المملكة المتحدة', usa: 'الولايات المتحدة', serbia: 'صربيا', 'saudi-arabia': 'المملكة العربية السعودية', pakistan: 'باكستان'},
@@ -148,7 +193,22 @@ export const S = {
     bandH: 'لست متأكدًا أن المنتج يصل إلى {label}؟', bandP: 'أرسل لنا الرابط. نتحقق من الخيارات والشحن قبل أن تدفع.', bandBtn: 'تواصل مع Sasta Milaga',
     home: 'الرئيسية', hub: 'الشحن حسب البلد', langLabel: 'اللغة',
     links: ['الفئات العالمية', 'الشحن والتوصيل', 'الإرجاع والاسترداد', 'طريقة الطلب', 'التسوق الآمن', 'الأسئلة الشائعة', 'دليل: التسوق من المجموعة العالمية', 'اتصل بنا'],
-    wa: {greeting: 'السلام عليكم! أرغب بعرض سعر شحن لمنتج عالمي.', country: 'البلد', item: 'المنتج', option: 'الخيار', qty: 'الكمية', city: 'المدينة / الرمز البريدي', tax: 'الضرائب والرسوم مفهومة', pay: 'الدفع', page: 'الصفحة', yes: 'نعم', prepaid: 'مسبق'}
+    qH: "تقدير الشحن المباشر (اختياري)",
+    qP: "الصق أعلاه رابط منتج من المتجر العالمي، واختر الخيار، ثم تحقق من الشحن إلى {label}. تأتي الأسعار من خدمة الشحن لهذا الخيار والكمية والبلد.",
+    qVariant: "الخيار المستخدم للتقدير",
+    qBtn: "تحقق من الشحن إلى {label}",
+    qNeedLink: "الصق رابط منتج من المتجر العالمي (يحتوي العنوان على /global-shop/p/) للحصول على تقدير مباشر.",
+    qLoadingV: "جارٍ تحميل الخيارات…",
+    qNoV: "لم تُرجع أي خيارات لهذا المنتج. أرسل بياناتك عبر واتساب بدلاً من ذلك.",
+    qLoading: "جارٍ فحص أسعار الشحن…",
+    qFail: "التقدير المباشر غير متاح حاليًا. يمكنك مع ذلك إرسال بيانات الطلب عبر واتساب.",
+    qNone: "لم تُرجع أي شركة شحن سعرًا لهذا الخيار وهذا البلد. أرسل بياناتك عبر واتساب وسنتحقق.",
+    qThCarrier: "شركة الشحن",
+    qThShip: "الشحن (US$)",
+    qThTotal: "المنتج + الشحن (US$، تقريبي)",
+    qThEta: "تقدير الشركة (أيام)",
+    qNote: "أسعار تقريبية بالدولار الأمريكي للخيار والكمية والبلد المحددين. قد تختلف الضرائب والجمارك ورسوم المناطق النائية والسعر النهائي. لا يُطلب أي شيء هنا؛ يُؤكد الإجمالي معك قبل الدفع.",
+    wa: {greeting: 'السلام عليكم! أرغب بعرض سعر شحن لمنتج عالمي.', country: 'البلد', item: 'المنتج', option: 'الخيار', qty: 'الكمية', city: 'المدينة / الرمز البريدي', tax: 'الضرائب والرسوم مفهومة', pay: 'الدفع', page: 'الصفحة', yes: 'نعم', prepaid: 'مسبق', quote: "تقدير الشحن المعروض"}
   }
 };
 

@@ -68,3 +68,12 @@
 @media(max-width:900px){.sml-grid--3{grid-template-columns:1fr 1fr}}
 @media(max-width:680px){.sml-grid--2,.sml-grid--3{grid-template-columns:1fr}.sml-hero{border-radius:20px}.sml-actions .sml-btn{width:100%}}
 @media(prefers-reduced-motion:reduce){.sml-btn,.sml-links a{transition:none}.sml-btn:hover,.sml-links a:hover{transform:none}}
+
+.sml-btn--line{background:#fff;color:var(--gd)!important;border:2px solid var(--g)}
+.sml-btn--line:hover{background:var(--m)}
+.sml-quote{display:grid;gap:10px;border:1px dashed rgba(15,122,59,.45);border-radius:14px;padding:14px 16px;background:#fff}
+.sml-quote h3{font-size:1.05rem}
+.sml-quote label{display:grid;gap:5px;font-weight:700;color:var(--t);font-size:.93rem}
+.sml-quote select{min-height:46px;padding:10px 12px;border:1px solid #b4cabc;border-radius:10px;font:inherit;background:#fff}
+.sml-quote tbody tr:hover{background:var(--ms)}
+.sml-quote td,.sml-quote th{font-size:.9rem}

@@ -7,7 +7,7 @@ One template, generated from data. Pages are static HTML on GitHub Pages and use
 | `data/landing/markets.json` | Market facts (English copy, `indexable` flag, evidence note, Pakistan fee/threshold) |
 | `tools/landing-i18n.mjs` | UI strings for en, de, sr (Latin), ar and per-market copy for de, sr, ar. Serbian Cyrillic is transliterated from the Latin text |
 | `tools/build-landing-pages.mjs` | Generates every page, `sitemap-landing.xml` and `data/landing/routes.json` |
-| `tools/build-landing-pages.test.mjs` | 75 content, SEO, link and locale tests |
+| `tools/build-landing-pages.test.mjs` | 86 content, SEO, link, locale and live-estimate tests |
 | `tools/build-locale-registry.mjs` | Writes `data/landing/locale-registry.json` and the CSV/MD reports under `reports/` |
 | `tools/measure-catalog-snapshot.mjs` | Read-only measurement of the catalogue snapshot |
 | `assets/css/landing.css` | Theme tokens (green #0F7A3B, orange #FF8A00, mint #EAF6EE, dark green #0B3B20) |
@@ -36,6 +36,9 @@ Only after: verified shipping, payment, tax and returns for that country, and na
 
 ## Verify prices and policies
 Pakistan fee and threshold are asserted against `assets/js/config.js` by a test. International pages carry no prices and no Offer markup by design.
+
+## Live shipping estimate
+International pages call the store's own `/api/cj/variants` and `/api/cj/shipping` (same origin on sastamilaga.com). The panel parses the product id from a `/global-shop/p/<id>/` link, lists the CJ variants, then requests rates for the market's country code. Rates are shown as returned (indicative USD); if the service fails or the link is missing, the order still goes through WhatsApp. These endpoints reject other origins, so test locally with captured responses.
 
 ## Roll back
 The change adds files only. Revert the merge commit, or delete `pakistan/`, `ur/pakistan/`, `shipping-to/`, `sitemap-landing.xml`, `data/landing/`, `assets/css/landing.css` and the tools above. No existing URL, redirect or template was changed.

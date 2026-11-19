@@ -51,6 +51,11 @@
 <label>Quantity<input name="quantity" type="number" min="1" max="99" value="1" inputmode="numeric"></label>
 <label>Delivery country<select name="country"><option value="Saudi Arabia" selected>Saudi Arabia</option></select></label>
 <label>Town or city, and postcode<input name="city" type="text" required placeholder="Used to quote shipping" autocomplete="address-level2"></label>
+<div id="sml-quote" class="sml-quote" data-cc="SA"><h3>Live shipping estimate (optional)</h3><p class="sml-note">Paste a global shop product link above, choose the option and check shipping to Saudi Arabia. Rates come from the carrier service for that option, quantity and country.</p>
+<label>Option for the estimate<select name="qvid" disabled><option value="">&mdash;</option></select></label>
+<button type="button" class="sml-btn sml-btn--line" data-quote disabled>Check shipping to Saudi Arabia</button>
+<p role="status" aria-live="polite" data-status class="sml-note">Paste a global shop product link (the address contains /global-shop/p/) to get a live estimate.</p><div data-out></div>
+<p class="sml-note">Indicative US-dollar rates for the selected option, quantity and country. Taxes, customs, remote-area fees and the final price may differ. Nothing is ordered here; the total is confirmed with you before you pay.</p></div><input type="hidden" name="quote" value="">
 <label class="sml-check"><input name="tax" type="checkbox" required><span>I understand that taxes and duties may be charged in Saudi Arabia and are not included in the price.</span></label>
 <label class="sml-check"><input name="paid" type="checkbox" required><span>I understand this is a prepaid order, not cash on delivery.</span></label>
 <div class="sml-ready" data-ready data-ok="0"><i aria-hidden="true"></i><b role="status" aria-live="polite"></b></div>
@@ -64,13 +69,37 @@
 <div class="sml-band"><div><b>Not sure an item can reach Saudi Arabia?</b><small>Send us the link. We check the options and shipping before you pay.</small></div><a class="sml-btn sml-btn--go" href="../../contact/">Contact Sasta Milaga</a></div>
 </div></div>
 <script>(function(){var f=document.getElementById('sml-order');if(!f)return;var b=f.querySelector('[data-go]'),s=f.querySelector('[data-ready]'),t=s.querySelector('b');
-var need=["product","quantity","city","tax","paid"],WA="966510451995",C=[["Country","@country"],["Item","@product"],["Option","@option"],["Quantity","@quantity"],["City / postcode","@city"],["Taxes and duties understood","yes"],["Payment","prepaid"],["Page","@url"]];
+var need=["product","quantity","city","tax","paid"],WA="966510451995",C=[["Country","@country"],["Item","@product"],["Option","@option"],["Quantity","@quantity"],["City / postcode","@city"],["Shipping estimate shown","@quote"],["Taxes and duties understood","yes"],["Payment","prepaid"],["Page","@url"]];
 function v(n){var e=f.elements[n];return e?(e.type==='checkbox'?(e.checked?'yes':''):String(e.value||'').trim()):''}
 function ok(){for(var i=0;i<need.length;i++){var n=need[i];if(n==='quantity'){var q=+v('quantity');if(!(q>=1&&q<=99&&q%1===0))return false}else if(n==='product'){if(v(n).length<3)return false}else if(!v(n))return false}return true}
 function sync(){var r=ok();b.disabled=!r;s.setAttribute('data-ok',r?'1':'0');t.textContent=r?"Ready to send":"Add the item, quantity, city and tick both confirmations"}
 f.addEventListener('input',sync);f.addEventListener('change',sync);
 f.addEventListener('submit',function(e){e.preventDefault();if(!ok())return;var m=C.map(function(l){var val=l[1]==='@url'?location.href.split('#')[0]:(l[1].charAt(0)==='@'?v(l[1].slice(1)):l[1]);return val?l[0]+': '+val:''}).filter(Boolean);
 m.unshift("Assalam o Alaikum! I would like a shipping quote for a global item.");window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(m.join('\n')),'_blank','noopener')});sync()})();</script>
+<script>(function(){var f=document.getElementById('sml-order'),q=document.getElementById('sml-quote');if(!f||!q)return;
+var API='https://sastamilaga.com/api/cj/',CC=q.getAttribute('data-cc'),T={"qLoadingV":"Loading options…","qNoV":"No options were returned for this product. Send your details on WhatsApp instead.","qLoading":"Checking carrier rates…","qFail":"The live estimate is unavailable right now. You can still send your order details on WhatsApp.","qNone":"No carrier returned a rate for this option and country. Send your details on WhatsApp and we will check.","qNeedLink":"Paste a global shop product link (the address contains /global-shop/p/) to get a live estimate.","qThCarrier":"Carrier","qThShip":"Shipping (US$)","qThTotal":"Item + shipping (US$, indicative)","qThEta":"Carrier estimate (days)"};
+var sel=q.querySelector('select'),btn=q.querySelector('[data-quote]'),out=q.querySelector('[data-out]'),st=q.querySelector('[data-status]'),hid=f.elements.quote;
+var pid='',busy=false,timer=0;
+function pidOf(){var m=String(f.elements.product.value).match(/\/global-shop\/p\/([A-Fa-f0-9-]{36}|\d{19})(?:\/|$|\?)/);return m?m[1]:''}
+function qtyOk(){var n=+f.elements.quantity.value;return n>=1&&n<=99&&n%1===0}
+function sync(){btn.disabled=busy||!pid||!sel.value||!qtyOk()}
+function say(t){st.textContent=t}
+function get(u,ms){var c=new AbortController(),t=setTimeout(function(){c.abort()},ms||15000);return fetch(u,{credentials:'omit',signal:c.signal}).then(function(r){clearTimeout(t);if(!r.ok)throw Error('http '+r.status);return r.json()},function(e){clearTimeout(t);throw e})}
+function reset(){sel.replaceChildren();var o=document.createElement('option');o.value='';o.textContent='\u2014';sel.appendChild(o);sel.disabled=true;out.replaceChildren();hid.value=''}
+function loadVariants(p){reset();say(T.qLoadingV);get(API+'variants?pid='+encodeURIComponent(p)).then(function(d){if(pidOf()!==p)return;var vs=((d&&d.variants)||[]).filter(function(v){return v&&/^[A-Za-z0-9-]{8,64}$/.test(String(v.vid))}).slice(0,300);if(!vs.length){say(T.qNoV);return}sel.replaceChildren();vs.forEach(function(v){var o=document.createElement('option');o.value=v.vid;o.textContent=String(v.name||v.key||v.sku||v.vid).slice(0,80);sel.appendChild(o)});sel.disabled=false;say('');sync()}).catch(function(){if(pidOf()===p)say(T.qFail)})}
+function onProduct(){var p=pidOf();if(p===pid){sync();return}pid=p;if(!p){reset();say(T.qNeedLink);sync();return}loadVariants(p)}
+f.elements.product.addEventListener('input',function(){clearTimeout(timer);timer=setTimeout(onProduct,350)});f.elements.product.addEventListener('change',onProduct);
+f.elements.quantity.addEventListener('input',sync);sel.addEventListener('change',function(){out.replaceChildren();hid.value='';sync()});
+function money(n){return (Math.round(+n*100)/100).toFixed(2)}
+function render(rs){var w=document.createElement('div');w.style.overflowX='auto';var t=document.createElement('table');t.className='sml-table';var h=t.createTHead().insertRow();[T.qThCarrier,T.qThShip,T.qThTotal,T.qThEta].forEach(function(x){var c=document.createElement('th');c.scope='col';c.textContent=x;h.appendChild(c)});var b=t.createTBody();
+rs.slice(0,8).forEach(function(r){var row=b.insertRow();var tot=r.indicativeTotalUsd!=null?money(r.indicativeTotalUsd):'\u2014';[r.carrier,money(r.shippingUsd),tot,String(r.eta||'\u2014')].forEach(function(x){row.insertCell().textContent=x});row.style.cursor='pointer';row.tabIndex=0;
+function pick(){hid.value=r.carrier+' | '+T.qThShip+' '+money(r.shippingUsd)+' | '+T.qThTotal+' '+tot+' | '+T.qThEta+' '+(r.eta||'\u2014');[].forEach.call(b.rows,function(x){x.style.outline=''});row.style.outline='2px solid #0F7A3B'}
+row.addEventListener('click',pick);row.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}})});
+w.appendChild(t);out.appendChild(w);if(b.rows[0])b.rows[0].click()}
+btn.addEventListener('click',function(){if(btn.disabled)return;busy=true;sync();out.replaceChildren();hid.value='';say(T.qLoading);
+var url=API+'shipping?pid='+encodeURIComponent(pid)+'&vid='+encodeURIComponent(sel.value)+'&country='+encodeURIComponent(CC)+'&quantity='+encodeURIComponent(+f.elements.quantity.value);
+get(url,20000).then(function(d){var rs=((d&&d.rates)||[]).filter(function(r){return r&&r.carrier&&isFinite(+r.shippingUsd)});if(!rs.length){say(T.qNone);return}say('');render(rs)}).catch(function(){say(T.qFail)}).then(function(){busy=false;sync()})});
+onProduct();sync()})();</script>
 </div></main>
 <div id="sm-chrome-footer"></div>
 <script src="../../assets/js/chrome.js" defer></script>

@@ -88,6 +88,44 @@ const SHARED_LINKS = (pre) => [
   [pre + 'b/shopping-from-the-cj-supplier-collection.html', 'Guide: shopping the global collection'], [pre + 'contact/', 'Contact us']
 ];
 
+
+/* Live shipping estimate: CJ variants then CJ freight, through the store's own /api/cj endpoints (same origin on sastamilaga.com).
+ * Rates are shown exactly as returned; any failure falls back to the WhatsApp hand-off. Nothing is ordered here. */
+function quoteBlock(T, f, cc) {
+  return `<div id="sml-quote" class="sml-quote" data-cc="${esc(cc)}"><h3>${esc(T.qH)}</h3><p class="sml-note">${esc(f(T.qP))}</p>
+<label>${esc(T.qVariant)}<select name="qvid" disabled><option value="">&mdash;</option></select></label>
+<button type="button" class="sml-btn sml-btn--line" data-quote disabled>${esc(f(T.qBtn))}</button>
+<p role="status" aria-live="polite" data-status class="sml-note">${esc(T.qNeedLink)}</p><div data-out></div>
+<p class="sml-note">${esc(T.qNote)}</p></div><input type="hidden" name="quote" value="">`;
+}
+function quoteScript(T, f) {
+  const S2 = {qLoadingV: T.qLoadingV, qNoV: T.qNoV, qLoading: T.qLoading, qFail: T.qFail, qNone: T.qNone, qNeedLink: T.qNeedLink, qThCarrier: T.qThCarrier, qThShip: T.qThShip, qThTotal: T.qThTotal, qThEta: T.qThEta};
+  return `<script>(function(){var f=document.getElementById('sml-order'),q=document.getElementById('sml-quote');if(!f||!q)return;
+var API='https://sastamilaga.com/api/cj/',CC=q.getAttribute('data-cc'),T=${JSON.stringify(S2)};
+var sel=q.querySelector('select'),btn=q.querySelector('[data-quote]'),out=q.querySelector('[data-out]'),st=q.querySelector('[data-status]'),hid=f.elements.quote;
+var pid='',busy=false,timer=0;
+function pidOf(){var m=String(f.elements.product.value).match(/\\/global-shop\\/p\\/([A-Fa-f0-9-]{36}|\\d{19})(?:\\/|$|\\?)/);return m?m[1]:''}
+function qtyOk(){var n=+f.elements.quantity.value;return n>=1&&n<=99&&n%1===0}
+function sync(){btn.disabled=busy||!pid||!sel.value||!qtyOk()}
+function say(t){st.textContent=t}
+function get(u,ms){var c=new AbortController(),t=setTimeout(function(){c.abort()},ms||15000);return fetch(u,{credentials:'omit',signal:c.signal}).then(function(r){clearTimeout(t);if(!r.ok)throw Error('http '+r.status);return r.json()},function(e){clearTimeout(t);throw e})}
+function reset(){sel.replaceChildren();var o=document.createElement('option');o.value='';o.textContent='\\u2014';sel.appendChild(o);sel.disabled=true;out.replaceChildren();hid.value=''}
+function loadVariants(p){reset();say(T.qLoadingV);get(API+'variants?pid='+encodeURIComponent(p)).then(function(d){if(pidOf()!==p)return;var vs=((d&&d.variants)||[]).filter(function(v){return v&&/^[A-Za-z0-9-]{8,64}$/.test(String(v.vid))}).slice(0,300);if(!vs.length){say(T.qNoV);return}sel.replaceChildren();vs.forEach(function(v){var o=document.createElement('option');o.value=v.vid;o.textContent=String(v.name||v.key||v.sku||v.vid).slice(0,80);sel.appendChild(o)});sel.disabled=false;say('');sync()}).catch(function(){if(pidOf()===p)say(T.qFail)})}
+function onProduct(){var p=pidOf();if(p===pid){sync();return}pid=p;if(!p){reset();say(T.qNeedLink);sync();return}loadVariants(p)}
+f.elements.product.addEventListener('input',function(){clearTimeout(timer);timer=setTimeout(onProduct,350)});f.elements.product.addEventListener('change',onProduct);
+f.elements.quantity.addEventListener('input',sync);sel.addEventListener('change',function(){out.replaceChildren();hid.value='';sync()});
+function money(n){return (Math.round(+n*100)/100).toFixed(2)}
+function render(rs){var w=document.createElement('div');w.style.overflowX='auto';var t=document.createElement('table');t.className='sml-table';var h=t.createTHead().insertRow();[T.qThCarrier,T.qThShip,T.qThTotal,T.qThEta].forEach(function(x){var c=document.createElement('th');c.scope='col';c.textContent=x;h.appendChild(c)});var b=t.createTBody();
+rs.slice(0,8).forEach(function(r){var row=b.insertRow();var tot=r.indicativeTotalUsd!=null?money(r.indicativeTotalUsd):'\\u2014';[r.carrier,money(r.shippingUsd),tot,String(r.eta||'\\u2014')].forEach(function(x){row.insertCell().textContent=x});row.style.cursor='pointer';row.tabIndex=0;
+function pick(){hid.value=r.carrier+' | '+T.qThShip+' '+money(r.shippingUsd)+' | '+T.qThTotal+' '+tot+' | '+T.qThEta+' '+(r.eta||'\\u2014');[].forEach.call(b.rows,function(x){x.style.outline=''});row.style.outline='2px solid #0F7A3B'}
+row.addEventListener('click',pick);row.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}})});
+w.appendChild(t);out.appendChild(w);if(b.rows[0])b.rows[0].click()}
+btn.addEventListener('click',function(){if(btn.disabled)return;busy=true;sync();out.replaceChildren();hid.value='';say(T.qLoading);
+var url=API+'shipping?pid='+encodeURIComponent(pid)+'&vid='+encodeURIComponent(sel.value)+'&country='+encodeURIComponent(CC)+'&quantity='+encodeURIComponent(+f.elements.quantity.value);
+get(url,20000).then(function(d){var rs=((d&&d.rates)||[]).filter(function(r){return r&&r.carrier&&isFinite(+r.shippingUsd)});if(!rs.length){say(T.qNone);return}say('');render(rs)}).catch(function(){say(T.qFail)}).then(function(){busy=false;sync()})});
+onProduct();sync()})();</script>`;
+}
+
 /* ---------------- International market pages (one renderer, many locales) ---------------- */
 const VARIANTS = {
   germany: [{id: 'en', rel: 'shipping-to/germany', S: 'en', lang: 'en', native: 'English'}, {id: 'de', rel: 'shipping-to/germany/de', S: 'de', lang: 'de-DE', native: 'Deutsch'}],
@@ -148,6 +186,7 @@ ${T.rows.map(([a, b, kind, chip]) => `<tr><th scope="row">${esc(a)}</th><td>${es
 <label>${esc(T.fQty)}<input name="quantity" type="number" min="1" max="99" value="1" inputmode="numeric"></label>
 <label>${esc(T.fCountry)}<select name="country"><option value="${esc(X.nom)}" selected>${esc(X.nom)}</option></select></label>
 <label>${esc(T.fCity)}<input name="city" type="text" required placeholder="${esc(T.fCityPh)}" autocomplete="address-level2"></label>
+${quoteBlock(T, f, m.code)}
 <label class="sml-check"><input name="tax" type="checkbox" required><span>${esc(f(T.cTax))}</span></label>
 <label class="sml-check"><input name="paid" type="checkbox" required><span>${esc(T.cPaid)}</span></label>
 <div class="sml-ready" data-ready data-ok="0"><i aria-hidden="true"></i><b role="status" aria-live="polite"></b></div>
@@ -161,7 +200,8 @@ ${T.rows.map(([a, b, kind, chip]) => `<tr><th scope="row">${esc(a)}</th><td>${es
 <div class="sml-band"><div><b>${esc(f(T.bandH))}</b><small>${esc(T.bandP)}</small></div><a class="sml-btn sml-btn--go" href="${pre}contact/">${esc(T.bandBtn)}</a></div>
 </div></div>
 ${orderScript({required: ['product', 'quantity', 'city', 'tax', 'paid'], ready: T.readyOk, notReady: T.readyNot, greeting: T.wa.greeting,
-      lines: [[T.wa.country, '@country'], [T.wa.item, '@product'], [T.wa.option, '@option'], [T.wa.qty, '@quantity'], [T.wa.city, '@city'], [T.wa.tax, T.wa.yes], [T.wa.pay, T.wa.prepaid], [T.wa.page, '@url']]})}`;
+      lines: [[T.wa.country, '@country'], [T.wa.item, '@product'], [T.wa.option, '@option'], [T.wa.qty, '@quantity'], [T.wa.city, '@city'], [T.wa.quote, '@quote'], [T.wa.tax, T.wa.yes], [T.wa.pay, T.wa.prepaid], [T.wa.page, '@url']]})}
+${quoteScript(T, f)}`;
     write(rel, shell({rel, lang: v.lang, dir, title, desc, indexable: m.indexable, alternates, graph, body}), {market: m.slug, locale: v.lang, variant: v.id, indexable: !!m.indexable, dir, S: v.S + (v.cyr ? '-cyrl' : '')});
   }
 }

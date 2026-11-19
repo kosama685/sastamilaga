@@ -51,6 +51,11 @@
 <label>الكمية<input name="quantity" type="number" min="1" max="99" value="1" inputmode="numeric"></label>
 <label>بلد التوصيل<select name="country"><option value="المملكة العربية السعودية" selected>المملكة العربية السعودية</option></select></label>
 <label>المدينة والرمز البريدي<input name="city" type="text" required placeholder="يُستخدم لحساب الشحن" autocomplete="address-level2"></label>
+<div id="sml-quote" class="sml-quote" data-cc="SA"><h3>تقدير الشحن المباشر (اختياري)</h3><p class="sml-note">الصق أعلاه رابط منتج من المتجر العالمي، واختر الخيار، ثم تحقق من الشحن إلى المملكة العربية السعودية. تأتي الأسعار من خدمة الشحن لهذا الخيار والكمية والبلد.</p>
+<label>الخيار المستخدم للتقدير<select name="qvid" disabled><option value="">&mdash;</option></select></label>
+<button type="button" class="sml-btn sml-btn--line" data-quote disabled>تحقق من الشحن إلى المملكة العربية السعودية</button>
+<p role="status" aria-live="polite" data-status class="sml-note">الصق رابط منتج من المتجر العالمي (يحتوي العنوان على /global-shop/p/) للحصول على تقدير مباشر.</p><div data-out></div>
+<p class="sml-note">أسعار تقريبية بالدولار الأمريكي للخيار والكمية والبلد المحددين. قد تختلف الضرائب والجمارك ورسوم المناطق النائية والسعر النهائي. لا يُطلب أي شيء هنا؛ يُؤكد الإجمالي معك قبل الدفع.</p></div><input type="hidden" name="quote" value="">
 <label class="sml-check"><input name="tax" type="checkbox" required><span>أفهم أنه قد تُفرض ضرائب ورسوم جمركية في المملكة العربية السعودية وأنها غير مشمولة في السعر.</span></label>
 <label class="sml-check"><input name="paid" type="checkbox" required><span>أفهم أن هذا طلب بدفع مسبق وليس دفعًا عند الاستلام.</span></label>
 <div class="sml-ready" data-ready data-ok="0"><i aria-hidden="true"></i><b role="status" aria-live="polite"></b></div>
@@ -64,13 +69,37 @@
 <div class="sml-band"><div><b>لست متأكدًا أن المنتج يصل إلى المملكة العربية السعودية؟</b><small>أرسل لنا الرابط. نتحقق من الخيارات والشحن قبل أن تدفع.</small></div><a class="sml-btn sml-btn--go" href="../../../contact/">تواصل مع Sasta Milaga</a></div>
 </div></div>
 <script>(function(){var f=document.getElementById('sml-order');if(!f)return;var b=f.querySelector('[data-go]'),s=f.querySelector('[data-ready]'),t=s.querySelector('b');
-var need=["product","quantity","city","tax","paid"],WA="966510451995",C=[["البلد","@country"],["المنتج","@product"],["الخيار","@option"],["الكمية","@quantity"],["المدينة / الرمز البريدي","@city"],["الضرائب والرسوم مفهومة","نعم"],["الدفع","مسبق"],["الصفحة","@url"]];
+var need=["product","quantity","city","tax","paid"],WA="966510451995",C=[["البلد","@country"],["المنتج","@product"],["الخيار","@option"],["الكمية","@quantity"],["المدينة / الرمز البريدي","@city"],["تقدير الشحن المعروض","@quote"],["الضرائب والرسوم مفهومة","نعم"],["الدفع","مسبق"],["الصفحة","@url"]];
 function v(n){var e=f.elements[n];return e?(e.type==='checkbox'?(e.checked?'yes':''):String(e.value||'').trim()):''}
 function ok(){for(var i=0;i<need.length;i++){var n=need[i];if(n==='quantity'){var q=+v('quantity');if(!(q>=1&&q<=99&&q%1===0))return false}else if(n==='product'){if(v(n).length<3)return false}else if(!v(n))return false}return true}
 function sync(){var r=ok();b.disabled=!r;s.setAttribute('data-ok',r?'1':'0');t.textContent=r?"جاهز للإرسال":"أدخل المنتج والكمية والمدينة وحدد التأكيدين"}
 f.addEventListener('input',sync);f.addEventListener('change',sync);
 f.addEventListener('submit',function(e){e.preventDefault();if(!ok())return;var m=C.map(function(l){var val=l[1]==='@url'?location.href.split('#')[0]:(l[1].charAt(0)==='@'?v(l[1].slice(1)):l[1]);return val?l[0]+': '+val:''}).filter(Boolean);
 m.unshift("السلام عليكم! أرغب بعرض سعر شحن لمنتج عالمي.");window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(m.join('\n')),'_blank','noopener')});sync()})();</script>
+<script>(function(){var f=document.getElementById('sml-order'),q=document.getElementById('sml-quote');if(!f||!q)return;
+var API='https://sastamilaga.com/api/cj/',CC=q.getAttribute('data-cc'),T={"qLoadingV":"جارٍ تحميل الخيارات…","qNoV":"لم تُرجع أي خيارات لهذا المنتج. أرسل بياناتك عبر واتساب بدلاً من ذلك.","qLoading":"جارٍ فحص أسعار الشحن…","qFail":"التقدير المباشر غير متاح حاليًا. يمكنك مع ذلك إرسال بيانات الطلب عبر واتساب.","qNone":"لم تُرجع أي شركة شحن سعرًا لهذا الخيار وهذا البلد. أرسل بياناتك عبر واتساب وسنتحقق.","qNeedLink":"الصق رابط منتج من المتجر العالمي (يحتوي العنوان على /global-shop/p/) للحصول على تقدير مباشر.","qThCarrier":"شركة الشحن","qThShip":"الشحن (US$)","qThTotal":"المنتج + الشحن (US$، تقريبي)","qThEta":"تقدير الشركة (أيام)"};
+var sel=q.querySelector('select'),btn=q.querySelector('[data-quote]'),out=q.querySelector('[data-out]'),st=q.querySelector('[data-status]'),hid=f.elements.quote;
+var pid='',busy=false,timer=0;
+function pidOf(){var m=String(f.elements.product.value).match(/\/global-shop\/p\/([A-Fa-f0-9-]{36}|\d{19})(?:\/|$|\?)/);return m?m[1]:''}
+function qtyOk(){var n=+f.elements.quantity.value;return n>=1&&n<=99&&n%1===0}
+function sync(){btn.disabled=busy||!pid||!sel.value||!qtyOk()}
+function say(t){st.textContent=t}
+function get(u,ms){var c=new AbortController(),t=setTimeout(function(){c.abort()},ms||15000);return fetch(u,{credentials:'omit',signal:c.signal}).then(function(r){clearTimeout(t);if(!r.ok)throw Error('http '+r.status);return r.json()},function(e){clearTimeout(t);throw e})}
+function reset(){sel.replaceChildren();var o=document.createElement('option');o.value='';o.textContent='\u2014';sel.appendChild(o);sel.disabled=true;out.replaceChildren();hid.value=''}
+function loadVariants(p){reset();say(T.qLoadingV);get(API+'variants?pid='+encodeURIComponent(p)).then(function(d){if(pidOf()!==p)return;var vs=((d&&d.variants)||[]).filter(function(v){return v&&/^[A-Za-z0-9-]{8,64}$/.test(String(v.vid))}).slice(0,300);if(!vs.length){say(T.qNoV);return}sel.replaceChildren();vs.forEach(function(v){var o=document.createElement('option');o.value=v.vid;o.textContent=String(v.name||v.key||v.sku||v.vid).slice(0,80);sel.appendChild(o)});sel.disabled=false;say('');sync()}).catch(function(){if(pidOf()===p)say(T.qFail)})}
+function onProduct(){var p=pidOf();if(p===pid){sync();return}pid=p;if(!p){reset();say(T.qNeedLink);sync();return}loadVariants(p)}
+f.elements.product.addEventListener('input',function(){clearTimeout(timer);timer=setTimeout(onProduct,350)});f.elements.product.addEventListener('change',onProduct);
+f.elements.quantity.addEventListener('input',sync);sel.addEventListener('change',function(){out.replaceChildren();hid.value='';sync()});
+function money(n){return (Math.round(+n*100)/100).toFixed(2)}
+function render(rs){var w=document.createElement('div');w.style.overflowX='auto';var t=document.createElement('table');t.className='sml-table';var h=t.createTHead().insertRow();[T.qThCarrier,T.qThShip,T.qThTotal,T.qThEta].forEach(function(x){var c=document.createElement('th');c.scope='col';c.textContent=x;h.appendChild(c)});var b=t.createTBody();
+rs.slice(0,8).forEach(function(r){var row=b.insertRow();var tot=r.indicativeTotalUsd!=null?money(r.indicativeTotalUsd):'\u2014';[r.carrier,money(r.shippingUsd),tot,String(r.eta||'\u2014')].forEach(function(x){row.insertCell().textContent=x});row.style.cursor='pointer';row.tabIndex=0;
+function pick(){hid.value=r.carrier+' | '+T.qThShip+' '+money(r.shippingUsd)+' | '+T.qThTotal+' '+tot+' | '+T.qThEta+' '+(r.eta||'\u2014');[].forEach.call(b.rows,function(x){x.style.outline=''});row.style.outline='2px solid #0F7A3B'}
+row.addEventListener('click',pick);row.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}})});
+w.appendChild(t);out.appendChild(w);if(b.rows[0])b.rows[0].click()}
+btn.addEventListener('click',function(){if(btn.disabled)return;busy=true;sync();out.replaceChildren();hid.value='';say(T.qLoading);
+var url=API+'shipping?pid='+encodeURIComponent(pid)+'&vid='+encodeURIComponent(sel.value)+'&country='+encodeURIComponent(CC)+'&quantity='+encodeURIComponent(+f.elements.quantity.value);
+get(url,20000).then(function(d){var rs=((d&&d.rates)||[]).filter(function(r){return r&&r.carrier&&isFinite(+r.shippingUsd)});if(!rs.length){say(T.qNone);return}say('');render(rs)}).catch(function(){say(T.qFail)}).then(function(){busy=false;sync()})});
+onProduct();sync()})();</script>
 </div></main>
 <div id="sm-chrome-footer"></div>
 <script src="../../../assets/js/chrome.js" defer></script>
