@@ -3,17 +3,20 @@
   "source": "User-provided eBay UK product hunt plus specified local Sasta product pages. Snapshot; refresh before any buying.",
   "scenario": {
     "pkrPerGbp": 375,
-    "pkrFirstKgShipping": 8300,
+    "pkrFirstKgShipping": 7300,
     "pkrPacking": 300,
     "feeRateOnBuyerTotal": 0.129,
     "feeFixedGbp": 0.4,
-    "vatRate": 0.2
+    "vatRate": 0.2,
+    "pkrAdditionalKgShipping": 3000,
+    "tariffSource": "https://pakpost.gov.pk/2026-3-11-International-Parcel-Tariff-Rates.pdf (UK row, effective 2026-03-12; quote and restrictions require current confirmation)"
   },
   "caveats": [
     "These are scenario estimates, NOT competitive sold eBay prices or contracted shipping rates",
     "No current UK parcel rate, paid order, carrier quote, product weight, or verified UK warehouse stock",
     "Do not publish listings or feed any candidate until current merchant seller fee, VAT treatment and compliance are verified",
-    "Attached file 2026-11-19 supplied 9 cost scenarios and 1 neck-massager retail proxy"
+    "Attached file 2026-11-19 supplied 9 cost scenarios and 1 neck-massager retail proxy",
+    "Previous attachment used 2024/25 UK PKR 8300 first kg; official March 2026 table states PKR 7300 first kg and PKR 3000 per added kg."
   ],
   "products": [
     {
