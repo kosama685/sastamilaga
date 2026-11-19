@@ -1,0 +1,70 @@
+{
+  "date": "2026-11-19",
+  "scope": "7 independently checked HHC SKUs (6 matched GitHub Product JSON-LD to WooCommerce; Zellbury cross-checked Merchant preview and live)",
+  "policy": "Read-only evidence. No prices, stock, GTIN or payment settings modified.",
+  "cases": [
+    {
+      "sku": "hhc-3767010",
+      "title": "19-litre bottle cleaning brush",
+      "staticPrice": 624,
+      "wooPrice": 507.6,
+      "delta": 116.4,
+      "mismatch": true
+    },
+    {
+      "sku": "hhc-3766998",
+      "title": "3-in-1 vegetable shredder and peeler",
+      "staticPrice": 434,
+      "wooPrice": 304.8,
+      "delta": 129.2,
+      "mismatch": true
+    },
+    {
+      "sku": "hhc-3766972",
+      "title": "Cotton mop towels pack of 3",
+      "staticPrice": 736,
+      "wooPrice": 627.6,
+      "delta": 108.4,
+      "mismatch": true
+    },
+    {
+      "sku": "hhc-3766951",
+      "title": "Compact wooden side table",
+      "staticPrice": 2575,
+      "wooPrice": 2598,
+      "delta": -23,
+      "mismatch": true
+    },
+    {
+      "sku": "hhc-3766928",
+      "title": "100% cotton napkin 45x70cm",
+      "staticPrice": 562,
+      "wooPrice": 441.6,
+      "delta": 120.4,
+      "mismatch": true
+    },
+    {
+      "sku": "hhc-3766926",
+      "title": "Dining table cover 60x72in",
+      "staticPrice": 766,
+      "wooPrice": 660,
+      "delta": 106,
+      "mismatch": true
+    },
+    {
+      "sku": "hhc-3765680",
+      "title": "Zellbury embroidered Dhanak suit",
+      "staticPrice": 4934,
+      "wooPrice": 5125.2,
+      "delta": -191.2,
+      "mismatch": true
+    }
+  ],
+  "finding": "Every sampled SKU has a price mismatch; do not enable broad Google Merchant synchronization until upstream pricing ownership and static build rules are resolved.",
+  "next": [
+    "Establish pricing source of truth and currency rounding",
+    "Compare prices, stock status, title and source URLs per SKU",
+    "Regenerate static offers and Merchant data from identical verified snapshot",
+    "Revalidate landing page and checkout before Merchant review"
+  ]
+}
