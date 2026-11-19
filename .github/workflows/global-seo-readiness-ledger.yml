@@ -1,0 +1,46 @@
+name: All-source global SEO readiness ledger (no publication)
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '21 2 * * 2'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/build-global-seo-readiness-ledger.mjs'
+      - 'data/cj/lookup/manifest.json'
+      - '.github/workflows/global-seo-readiness-ledger.yml'
+permissions:
+  contents: read
+concurrency:
+  group: global-seo-ledger
+  cancel-in-progress: false
+jobs:
+  ledger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate source
+        run: node --check tools/build-global-seo-readiness-ledger.mjs
+      - name: Scan all 451812 supplier IDs into category-labelled evidence ledger
+        run: node tools/build-global-seo-readiness-ledger.mjs
+      - name: Verify report totals match source manifest
+        run: |
+          node --input-type=module - <<'NODE'
+          import fs from 'node:fs';
+          const manifest=JSON.parse(fs.readFileSync('data/cj/lookup/manifest.json'));
+          const report=JSON.parse(fs.readFileSync('artifacts/global-seo/source-completeness.json'));
+          if(report.counts.uniqueIds!==manifest.unique_ids||report.counts.sourceRows!==manifest.source_catalogue_rows||report.counts.duplicateIDs||report.counts.invalidBuckets||report.counts.eligibleForIndex!==0)throw Error('Source accounting or publication safety gate failure');
+          console.log('PASS, 100% snapshot identities accounted for; no unverified product approved for indexing',report.counts.sourceRows);
+          NODE
+      - name: Upload full compressed per-product ledger and category reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: global-seo-readiness-${{ github.run_id }}
+          path: artifacts/global-seo/
+          retention-days: 30
+          if-no-files-found: error
