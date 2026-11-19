@@ -1,0 +1,33 @@
+name: UK marketplace product evidence gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'data/research/uk-ebay-candidates-2026-11-19.json'
+      - 'tools/audit-uk-ebay-candidates.mjs'
+      - '.github/workflows/uk-market-product-screen.yml'
+permissions:
+  contents: read
+jobs:
+  evidence-screen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check tools/audit-uk-ebay-candidates.mjs
+      - name: Evaluate real product identities against labelled hypothetical UK cost scenario
+        run: node tools/audit-uk-ebay-candidates.mjs
+      - name: Retain JSON and Markdown report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uk-feasibility-${{ github.run_id }}
+          path: |
+            reports/research/uk-ebay-feasibility-2026-11-19.json
+            reports/research/uk-ebay-feasibility-2026-11-19.md
+          if-no-files-found: warn
+          retention-days: 30
