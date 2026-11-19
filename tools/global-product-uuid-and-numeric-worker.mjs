@@ -68,20 +68,37 @@ async function refresh(){
  if(old&&old.currency===cc&&old.at&&Date.now()-old.at<TTL&&Number.isFinite(old.rate)&&old.rate>0){rate=old.rate;stamp=old.date||new Date(old.at).toISOString().slice(0,10);note();window.dispatchEvent(new Event("sm:cj-fx-updated"));return}
  var token=cc+":"+Date.now();lastRequested=token;
  try{
-   var controller=new AbortController(),timer=setTimeout(function(){controller.abort()},8500);
-   var response=await fetch("https://open.er-api.com/v6/latest/USD",{mode:"cors",signal:controller.signal,cache:"no-store"});
-   clearTimeout(timer);
-   if(!response.ok)throw Error("exchange_http_"+response.status);
-   var payload=await response.json(),n=Number(payload&&payload.rates&&payload.rates[cc]);
+   // Reuse the site's shared, validated PKR-base currency table whenever available.
+   var table=window.SMMarket&&window.SMMarket.fx&&window.SMMarket.fx.snapshot();
+   var fromShared=table&&Number(table[cc])/Number(table.USD);
+   var n=Number.isFinite(fromShared)&&fromShared>0?fromShared:null;
+   var date=n&&window.SMMarket.fx.rateTimestamp?new Date(window.SMMarket.fx.rateTimestamp()).toISOString().slice(0,10):"";
+   if(!n){
+     var controller=new AbortController(),timer=setTimeout(function(){controller.abort()},8500),payload;
+     try{
+       var response=await fetch("https://open.er-api.com/v6/latest/USD",{mode:"cors",signal:controller.signal,cache:"no-store"});
+       if(!response.ok)throw Error("exchange_http_"+response.status);
+       payload=await response.json();
+       n=Number(payload&&payload.rates&&payload.rates[cc]);
+       if(payload.result!=="success"||!Number.isFinite(n)||n<=0)throw Error("exchange_invalid");
+       date=payload.time_last_update_utc||"";
+     }catch(first){
+       var second=await fetch("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.min.json",{mode:"cors",signal:controller.signal,cache:"no-store"});
+       if(!second.ok)throw Error("backup_exchange_http_"+second.status);
+       payload=await second.json();n=Number(payload&&payload.usd&&payload.usd[cc.toLowerCase()]);
+       if(!Number.isFinite(n)||n<=0)throw Error("backup_exchange_invalid");
+       date=payload.date||"";
+     }finally{clearTimeout(timer)}
+   }
    if(lastRequested!==token||currency()!==cc)return;
-   if(payload.result!=="success"||!Number.isFinite(n)||n<=0)throw Error("exchange_invalid");
-   rate=n;stamp=payload.time_last_update_utc||new Date().toISOString().slice(0,10);
+   rate=n;stamp=date||new Date().toISOString().slice(0,10);
    try{localStorage.setItem(KEY,JSON.stringify({currency:cc,rate:n,at:Date.now(),date:stamp}))}catch(e){}
  }catch(e){rate=null;stamp="";console.warn("Sasta display FX not available:",e&&e.message)}
  note();window.dispatchEvent(new Event("sm:cj-fx-updated"));
 }
 window.SMCJCurrency={formatUSD:formatUSD,refresh:refresh,currency:function(){return target},rate:function(){return rate}};
 window.addEventListener("sm:market",refresh);
+window.addEventListener("sm:fx-rates",refresh);
 window.addEventListener("storage",function(e){if(e.key==="sm_market")refresh()});
 refresh();
 })();</script>`;
