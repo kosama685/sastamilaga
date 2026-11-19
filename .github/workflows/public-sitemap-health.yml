@@ -11,6 +11,7 @@ on:
 permissions:
   contents: read
   issues: write
+  actions: read
 concurrency:
   group: sitemap-public-health
   cancel-in-progress: false
@@ -38,6 +39,20 @@ jobs:
           path: reports/sitemaps/live-verification-*.json
           if-no-files-found: warn
           retention-days: 30
+      - name: Report seven consecutive successful scheduled runs
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          result=$(gh api -X GET "repos/$GH_REPO/actions/workflows/public-sitemap-health.yml/runs" -f event=schedule -f per_page=30 --jq '[.workflow_runs[] | select(.status == "completed") | .conclusion] | .[:7]')
+          echo "### Scheduled sitemap monitoring" >> "$GITHUB_STEP_SUMMARY"
+          echo "Last completed scheduled conclusions: $result" >> "$GITHUB_STEP_SUMMARY"
+          if echo "$result" | jq -e 'length == 7 and all(.[]; . == "success")' > /dev/null; then
+            echo 'Seven consecutive scheduled successes: VERIFIED' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Seven consecutive scheduled successes: NOT YET VERIFIED' >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Open or update a single GitHub issue on failure
         if: failure()
         env:
