@@ -1,0 +1,97 @@
+{
+  "audit_date": "2026-11-19",
+  "source": "Live in-page same-origin fetch through Cloudflare Browser Rendering; independent public web search for Google visibility",
+  "scope": "Primary, legacy, and qualified sitemap indexes; all advertised child sitemaps; 17 representative destination URLs",
+  "sitemap_endpoints": [
+    {
+      "path": "/sitemap.xml",
+      "status": 200,
+      "xml_valid": true,
+      "children": 7
+    },
+    {
+      "path": "/sitemap_index.xml",
+      "status": 200,
+      "xml_valid": true,
+      "children": 7
+    },
+    {
+      "path": "/sitemap-global-qualified.xml",
+      "status": 200,
+      "xml_valid": true,
+      "children": 1
+    },
+    {
+      "path": "/sitemap-pages.xml",
+      "status": 200,
+      "xml_valid": true,
+      "urls": 279
+    },
+    {
+      "path": "/sitemap-products-1.xml",
+      "status": 200,
+      "xml_valid": true,
+      "urls": 9955
+    },
+    {
+      "path": "/sitemap-products-2.xml",
+      "status": 200,
+      "xml_valid": true,
+      "urls": 9775
+    },
+    {
+      "path": "/sitemap-products-3.xml",
+      "status": 200,
+      "xml_valid": true,
+      "urls": 157
+    },
+    {
+      "path": "/sitemap-blog.xml",
+      "status": 200,
+      "xml_valid": true,
+      "urls": 51
+    },
+    {
+      "path": "/blog/sitemap.xml",
+      "status": 200,
+      "xml_valid": true,
+      "urls": 3
+    },
+    {
+      "path": "/sitemaps/global-qualified/1.xml",
+      "status": 200,
+      "xml_valid": true,
+      "urls": 2
+    },
+    {
+      "path": "/robots.txt",
+      "status": 200,
+      "format": "text/plain"
+    }
+  ],
+  "summary": {
+    "distinct_url_locs": 20221,
+    "duplicate_url_occurrences": 1,
+    "duplicate_url": "https://sastamilaga.com/b/",
+    "malformed_xml": 0,
+    "offdomain_loc_entries": 0,
+    "failed_sitemap_endpoints": 0,
+    "sampled_destination_urls": 17,
+    "sample_http_200": 17,
+    "sample_canonical_self": 17,
+    "sample_noindex_found": 0
+  },
+  "global_catalog": {
+    "d1_eligible_count": 2,
+    "eligibility": "seo_approved=1, description length >=100, name present and HTTPS image; approved supplier records only",
+    "all_supplier_records_not_assumed_eligible": true
+  },
+  "limitations": [
+    "In-page/browser HTTP 200 is not a verified Googlebot request",
+    "Authenticated Search Console tool still returns invalid_grant; resubmission and latest last-read status not verified",
+    "Indexing decisions for all URLs are Google's, not inferred from sitemap listing",
+    "No full HTTP GET or structured data audit was run for every listed destination URL",
+    "The duplicate /b/ inclusion is noncritical but should be deduplicated when consolidating blog indexes",
+    "No bulk supplier indexing or merchant sync executed"
+  ]
+}
