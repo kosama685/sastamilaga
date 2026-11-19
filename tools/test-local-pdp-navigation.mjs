@@ -11,8 +11,8 @@ const app=fs.readFileSync('app.js','utf8');
 const cards=fs.readFileSync('assets/js/related-product-cards.js','utf8');
 const chrome=fs.readFileSync('assets/js/chrome.js','utf8');
 const css=fs.readFileSync('assets/theme/static-bundle.css','utf8');
-const sample=fs.readFileSync('p/electric-super-micro-bubble-beauty-blackhead-remover-pore-vacuum-cleaner-facial-pe-96-00-00-964.html','utf8');
-
+assert.ok(app.includes('Product pages are authoritative static documents') && app.includes('location.assign(url); return;'), 'Native local PDP navigation is missing');
+assert.ok(app.includes('Let the browser load canonical /p/*.html') && app.includes('if (/^\\/p\\/'), 'Local canonical PDP click bypass is missing');
 assert.match(app,/if \(!replace && clean && \^p\\\//, 'Native navigation for local product routes missing');
 assert.match(app,/if \(\/\^\\\/p\\\//, 'Product links are still intercepted by the SPA');
 assert.match(cards,/admin\.yourmart\.pk/, 'Actual local supplier image origin missing');
