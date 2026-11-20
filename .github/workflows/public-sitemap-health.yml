@@ -20,8 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
       - name: Install strict XML streaming parser
@@ -33,7 +33,7 @@ jobs:
         run: node scripts/sitemap-audit.js --out reports/sitemaps/live-verification-$(date -u +%F).json
       - name: Upload raw evidence even if the audit fails
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: sitemap-health-${{ github.run_id }}
           path: reports/sitemaps/live-verification-*.json

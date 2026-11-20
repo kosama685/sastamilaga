@@ -15,8 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
       - name: Validate source
@@ -24,7 +24,7 @@ jobs:
       - name: Audit all checked-in local product shipping snippets
         run: node tools/audit-local-shipping-parity.mjs
       - name: Retain results for operational tariff reconciliation
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: shipping-parity-${{ github.run_id }}
