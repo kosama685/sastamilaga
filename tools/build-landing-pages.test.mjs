@@ -190,3 +190,18 @@ test('sitemap.xml lists sitemap-landing.xml exactly once', () => {
   assert.equal((sm.match(/sitemap-landing\.xml/g) || []).length, 1);
   assert.match(sm, /<sitemapindex[\s\S]*<\/sitemapindex>/);
 });
+
+test('no landing-page link or button trips the site-wide click guard (words like checkout, order now, cash on delivery in link text make the edge script swallow the click)', () => {
+  const guard = /add.?to.?cart|buy.?now|place.?order|order.?now|checkout|pay.?now|paypal|cash.?on.?delivery/i;
+  const files = [['shipping-to/index.html'], ['pakistan/index.html'], ['ur/pakistan/index.html'], ...['germany', 'uk', 'usa', 'serbia', 'saudi-arabia'].map(m => [`shipping-to/${m}/index.html`])];
+  for (const [f] of files) {
+    const html = fs.readFileSync(path.join(root, f), 'utf8');
+    const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
+    for (const m of main.matchAll(/<(a|button)\b([^>]*)>([\s\S]*?)<\/\1>/g)) {
+      const href = (m[2].match(/href="([^"]*)"/) || [])[1] || '';
+      if (/^\/(?:cart|checkout|my-account)(?:\/|$)/i.test(href)) continue;
+      const text = m[3].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+      assert.ok(!guard.test([text, m[2], href].join(' ')), `${f}: guarded wording in <${m[1]}>: ${text.slice(0, 80)}`);
+    }
+  }
+});

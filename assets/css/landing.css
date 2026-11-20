@@ -77,3 +77,26 @@
 .sml-quote select{min-height:46px;padding:10px 12px;border:1px solid #b4cabc;border-radius:10px;font:inherit;background:#fff}
 .sml-quote tbody tr:hover{background:var(--ms)}
 .sml-quote td,.sml-quote th{font-size:.9rem}
+
+/* Hub country cards */
+.sml-cty{position:relative;display:flex;flex-direction:column;gap:2px;overflow:hidden;transition:transform .28s cubic-bezier(.34,1.56,.64,1)}
+.sml-cty::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,#0F7A3B,#FF8A00)}
+.sml-cc{align-self:flex-start;display:inline-grid;place-items:center;min-width:44px;height:30px;padding:0 10px;margin-bottom:12px;border-radius:8px;background:#EAF6EE;color:#0B3B20;font:700 .8rem/1 system-ui,sans-serif;letter-spacing:.08em}
+.sml-cty h2{margin-bottom:8px}
+.sml-cty-link{color:inherit;text-decoration:none}
+.sml-cty-link::after{content:"";position:absolute;inset:0;z-index:1;border-radius:inherit}
+.sml-cty-link:focus-visible{outline:none}
+.sml-cty:has(.sml-cty-link:focus-visible){outline:3px solid #FF8A00;outline-offset:2px}
+.sml-mode{display:inline-block;align-self:flex-start;margin:4px 0 12px!important;padding:5px 12px;border-radius:999px;background:#EAF6EE;color:#0B3B20;font-size:.82rem;font-weight:600}
+.sml-langs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px!important;font-size:.88rem}
+.sml-langs span{color:#4b5d54}
+.sml-langs a{position:relative;z-index:2;padding:4px 12px;border:1px solid rgba(15,122,59,.3);border-radius:999px;color:#0F7A3B;font-weight:600;text-decoration:none;transition:transform .2s ease,opacity .2s ease}
+.sml-langs a:hover{transform:translateY(-1px);background:#EAF6EE}
+.sml-langs a:focus-visible{outline:3px solid #FF8A00;outline-offset:2px}
+.sml-langs a:active{transform:translateY(0);opacity:.85}
+.sml-go{margin-top:auto;padding-top:6px;color:#0F7A3B;font-weight:700;font-size:.92rem;transition:transform .25s ease}
+.sml-cty:hover{transform:translateY(-4px);box-shadow:0 30px 44px -28px rgba(11,59,32,.55),0 4px 10px -2px rgba(11,59,32,.12)}
+.sml-cty:hover .sml-go{transform:translateX(4px)}
+.sml-cty:active{transform:translateY(-1px)}
+[dir=rtl] .sml-cty:hover .sml-go{transform:translateX(-4px)}
+@media(prefers-reduced-motion:reduce){.sml-cty,.sml-go,.sml-langs a{transition:none}.sml-cty:hover{transform:none}}

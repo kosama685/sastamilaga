@@ -313,6 +313,17 @@ ${orderScript({required: ['product', 'quantity', 'city', 'addr'], ready: 'بھی
 }
 
 /* ---------------- Hub ---------------- */
+const HUB_CC = {germany: 'DE', uk: 'GB', usa: 'US', serbia: 'RS', 'saudi-arabia': 'SA'};
+const HUB_LANGS = {
+  germany: [['de', 'Deutsch', 'shipping-to/germany/de/']],
+  serbia: [['sr-Latn', 'Srpski', 'shipping-to/serbia/sr-latn/'], ['sr-Cyrl', 'Српски', 'shipping-to/serbia/sr-cyrl/']],
+  'saudi-arabia': [['ar', 'العربية', 'shipping-to/saudi-arabia/ar/']]
+};
+/* One card = one stretched link (the country name) plus separate language links. The link text stays free of cart/payment words: the edge click guard swallows clicks on those. */
+function hubCard({pre, cc, name, href, mode, text, langs}) {
+  const l = langs.length ? `<p class="sml-langs"><span>Also in</span>${langs.map(([code, label, to]) => `<a lang="${code}" hreflang="${code}" href="${pre}${to}">${label}</a>`).join('')}</p>` : '';
+  return `<article class="sml-card sml-cty"><span class="sml-cc" aria-hidden="true">${cc}</span><h2><a class="sml-cty-link" href="${pre}${href}">${esc(name)}</a></h2><p>${esc(text)}</p><p class="sml-mode">${esc(mode)}</p>${l}<span class="sml-go" aria-hidden="true">View delivery details &rarr;</span></article>`;
+}
 function renderHub() {
   const rel = 'shipping-to', pre = prefixFor(rel), url = `${ORIGIN}/${rel}/`;
   const title = 'Shipping by country | Sasta Milaga';
@@ -323,8 +334,8 @@ function renderHub() {
 <header class="sml-hero"><span class="sml-pill">Delivery guide</span><h1>Shipping by country</h1>
 <p class="sml-answer">Pick your destination to see how ordering, pricing and delivery work there. Taxes, duties and delivery times depend on your country and the item, so each page says what is confirmed and what is not.</p></header>
 <div class="sml-grid sml-grid--3">
-<a class="sml-card" style="text-decoration:none" href="${pre}pakistan/"><h2>Pakistan</h2><p>Cash on delivery on local products. Rs ${num(FEE)} delivery, free from Rs ${num(FREE)}.</p></a>
-${data.markets.map(x => `<a class="sml-card" style="text-decoration:none" href="${pre}shipping-to/${x.slug}/"><h2>${esc(x.short || x.name)}</h2><p>Global supplier items, prepaid checkout, shipping and total confirmed before you pay.</p></a>`).join('\n')}
+${hubCard({pre, cc: 'PK', name: 'Pakistan', href: 'pakistan/', mode: 'Pay when it arrives', text: `Local products, delivered across Pakistan. Rs ${num(FEE)} delivery, free from Rs ${num(FREE)}.`, langs: [['ur', 'اردو', 'ur/pakistan/']]})}
+${data.markets.map(x => hubCard({pre, cc: HUB_CC[x.slug], name: x.short || x.name, href: `shipping-to/${x.slug}/`, mode: 'Paid in advance', text: 'Global supplier items. We confirm shipping and the full total before you pay.', langs: HUB_LANGS[x.slug] || []})).join('\n')}
 </div>
 <p class="sml-note" style="margin-top:18px">More countries are added only after delivery, payment and returns are checked for them.</p>
 ${chips(SHARED_LINKS(pre))}
