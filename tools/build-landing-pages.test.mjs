@@ -219,7 +219,7 @@ test('Serbian Cyrillic keeps interpolation tokens until after transliteration', 
 
 test('all country storefront pages use isolated showcase CSS and readable scenic hero copy', () => {
   const css = fs.readFileSync(path.join(root, 'assets/css/country-showcase.css'), 'utf8');
-  assert.match(css, /\\.smxc\\{/);
+  assert.ok(css.includes('.smxc{'), 'isolated showcase wrapper style');
   assert.match(css, /color:#084629!important/);
   assert.match(css, /color:#254b36!important/);
   assert.match(css, /color:#0b613a!important/);
@@ -227,7 +227,7 @@ test('all country storefront pages use isolated showcase CSS and readable scenic
     const html = read(r.rel);
     assert.match(html, /class="smxc" data-smx-market=/, r.rel + ' must use dedicated showcase namespace');
     assert.doesNotMatch(html, /<div class="smx" data-smx-market=/, 'legacy travel CSS namespace conflicts: ' + r.rel);
-    assert.match(html, /country-showcase\\.css/, 'missing shared responsive CSS: ' + r.rel);
+    assert.ok(html.includes('country-showcase.css'), 'missing shared responsive CSS: ' + r.rel);
     assert.match(html, /id="sm-chrome-footer"/, 'shared footer unchanged: ' + r.rel);
   }
 });
