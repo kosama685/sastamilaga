@@ -76,25 +76,32 @@ test('approved numeric CJ product IDs are eligible for sitemap XML when D1 gate 
 });
 
 
-test('D1 free tier quota error serves only last-reviewed supplier URLs as temporary XML',async()=>{
- const db={prepare(){throw new Error("Your account has exceeded D1 free tier daily row read limit")}};
+test('D1 quota fallback fails closed after its reviewed expiry',async()=>{
+ const db={prepare(){throw new Error('Your account has exceeded D1 free tier daily row read limit')}};
  const e={DB:db};
- const a=await worker.fetch(new Request(url+'/sitemap-global-qualified.xml'),e);
- assert.equal(a.status,200);
- assert.equal(a.headers.get('x-sasta-sitemap-source'),'last-reviewed-2026-11-14');
- const ix=await a.text();assert.match(ix,/<sitemapindex/);assert.match(ix,/global-qualified\/1.xml/);
- const page=await worker.fetch(new Request(url+'/sitemaps/global-qualified/1.xml'),e);
- assert.equal(page.status,200);
- const xml=await page.text();
- assert.equal((xml.match(/<url>/g)||[]).length,2);
- assert.match(xml,/solar-simulation-anti-theft-warning-light/);
- assert.match(xml,/simulation-flame-mute-aroma-diffuser-humidifier/);
- assert.doesNotMatch(xml,/1111111111111111111/);
- const extraPage=await worker.fetch(new Request(url+'/sitemaps/global-qualified/2.xml'),e);
- assert.equal(extraPage.status,404);
+ const expiry=Date.parse('2026-11-17T00:00:00Z');
+ for(const path of ['/sitemap-global-qualified.xml','/sitemaps/global-qualified/1.xml']){
+   const r=await worker.fetch(new Request(url+path),e);
+   if(Date.now()>=expiry){
+     assert.equal(r.status,503,'expired review may not be served as current indexing evidence');
+     assert.equal(r.headers.get('x-robots-tag'),'noindex');
+     assert.doesNotMatch(await r.text(),/<loc>/);
+   }else{
+     assert.equal(r.status,200);
+     assert.equal(r.headers.get('x-sasta-sitemap-source'),'last-reviewed-2026-11-14');
+   }
+ }
+ const extra=await worker.fetch(new Request(url+'/sitemaps/global-qualified/2.xml'),e);
+ assert.equal(extra.status,Date.now()>=expiry?503:404);
 });
-test('missing DB no longer breaks the last-reviewed qualified sitemap index',async()=>{
+test('missing DB never publishes unverified supplier pages',async()=>{
  const r=await worker.fetch(new Request(url+'/sitemap-global-qualified.xml'),{});
- assert.equal(r.status,200);
- assert.match(await r.text(),/sitemapindex/);
+ const expiry=Date.parse('2026-11-17T00:00:00Z');
+ if(Date.now()>=expiry){
+   assert.equal(r.status,503);
+   assert.doesNotMatch(await r.text(),/<loc>/);
+ }else{
+   assert.equal(r.status,200);
+   assert.match(await r.text(),/<sitemapindex/);
+ }
 });
