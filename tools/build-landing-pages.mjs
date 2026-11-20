@@ -10,6 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {S, M, fmt, cyrillicStrings} from './landing-i18n.mjs';
+import {buildShowcase} from './landing-showcase.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const data = JSON.parse(fs.readFileSync(path.join(root, 'data/landing/markets.json'), 'utf8'));
 const ORIGIN = data.siteOrigin, WA = data.whatsapp, FEE = data.pakistan.delivery_fee_pkr, FREE = data.pakistan.free_delivery_from_pkr;
@@ -49,12 +50,13 @@ ${hreflang}
 <link rel="preload" href="${pre}assets/fonts/host-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${pre}assets/theme/static-bundle.css">
 <link rel="stylesheet" href="${pre}assets/css/landing.css">
+<link rel="stylesheet" href="${pre}assets/css/country-showcase.css">
 <script type="application/ld+json">${JSON.stringify({'@context': 'https://schema.org', '@graph': graph}).replace(/</g, '\\u003c')}</script>
 </head>
 <body class="sm-static sm-page-static">
 <div id="sm-chrome-header" data-prefix="${pre}"><header class="sm-fallback-head"><a href="${pre}"><img src="${pre}assets/brand/logo-46.png" width="171" height="46" alt="Sasta Milaga"></a></header></div>
 <main id="main" class="sm-main"><div id="app" class="sm-app">
-${body}
+${body.replace('</header>', '</header>\n' + buildShowcase({rel,lang,dir}))}
 </div></main>
 <div id="sm-chrome-footer"></div>
 <script src="${pre}assets/js/chrome.js" defer></script>
