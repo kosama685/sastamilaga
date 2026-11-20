@@ -24,7 +24,19 @@
     if (el.tagName === 'INPUT' && SKIP_TYPES.test(t)) return false;
     if (BLOCK.test([el.name, el.id, el.getAttribute('autocomplete'), el.getAttribute('placeholder')].join(' '))) return false;
     if (el.offsetParent === null && getComputedStyle(el).position !== 'fixed') return false;
+    // Anti-spam honeypots are hidden from people: a mic there is visible clutter and filling it gets the message rejected as spam.
+    if (el.getAttribute('aria-hidden') === 'true' || el.closest('[aria-hidden="true"]') || el.getAttribute('tabindex') === '-1' || /honeypot|hpot|\bhp\b/i.test(el.className + ' ' + el.name + ' ' + el.id)) return false;
+    // One mic per field: if the field's own form or search box already has a voice button (header search, chat), do not add a second.
+    if (ownVoice(el)) return false;
     return true;
+  }
+  function ownVoice(el) {
+    var box = el.closest('form, [role="search"]') || el.parentElement;
+    if (!box) return false;
+    return Array.prototype.some.call(box.querySelectorAll('button, [role="button"]'), function (b) {
+      if (b.classList.contains('sm-vf__mic') || b.classList.contains('sm-vf-fill')) return false;
+      return /voice|mic\b|microphone|speak|dictat/i.test([b.getAttribute('aria-label'), b.title, b.className, b.getAttribute('data-action')].join(' '));
+    });
   }
   function labelOf(el) {
     var l = el.id && document.querySelector('label[for="' + (window.CSS && CSS.escape ? CSS.escape(el.id) : el.id) + '"]');
