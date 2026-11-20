@@ -42,7 +42,7 @@ export function buildShowcase({rel,lang,dir}){
  const local=market==='pakistan',hub=market==='hub', flag=flags[market];
  const merchandise=local?dataset.local:[...dataset.global,...dataset.globalCategories.slice(0,6).map(c=>({name:c.name+' collection',category:t.global,image:c.image,url:c.url}))];
  const intro=local?t.localInfo:t.notice;
- let markup='<div class="smx" data-smx-market="'+escape(market)+'" data-smx-lang="'+escape(lang)+'" dir="'+dir+'">';
+ let markup='<div class="smxc" data-smx-market="'+escape(market)+'" data-smx-lang="'+escape(lang)+'" dir="'+dir+'">';
  markup+='<div class="smx-trust" aria-label="Store guidance"><span>'+flag+' '+escape(market==='hub'?t.hub:t.country)+'</span><span>✓ '+escape(intro)+'</span><a href="/safe-shopping/">'+escape(t.details)+' ↗</a></div>';
  if(hub){
   markup+='<section class="smx-section smx-countries">'+header(t.hub,t.hubNote,'/shipping-to/',t.view)+'<div class="smx-country-grid">'+countries.map(([slug,name,url])=>'<a class="smx-country" href="'+url+'"><span class="smx-flag">'+flags[slug]+'</span><strong>'+escape(name)+'</strong><small>'+escape(t.view)+' ↗</small></a>').join('')+'</div></section>';
