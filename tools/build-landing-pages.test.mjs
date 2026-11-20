@@ -205,3 +205,10 @@ test('no landing-page link or button trips the site-wide click guard (words like
     }
   }
 });
+
+test('Serbian Cyrillic keeps interpolation tokens until after transliteration', () => {
+  assert.equal(toCyrillic('Dostava u {to} i {region}'), 'Достава у {to} и {region}');
+  const html = read('shipping-to/serbia/sr-cyrl');
+  assert.doesNotMatch(html, /\{(?:то|лабел|лоц|регион)\}/, 'no transliterated variables in public page');
+  assert.match(html, /Глобални артикли са испоруком у Србију/);
+});
