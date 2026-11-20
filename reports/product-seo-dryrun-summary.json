@@ -1,0 +1,23 @@
+{
+ "mode": "DRY RUN: nothing was changed in the shop",
+ "snapshotRows": 11763,
+ "products": 11763,
+ "duplicateTitleGroups": 522,
+ "productsInDuplicateTitleGroups": 1457,
+ "byIssue": {
+  "missing_featured_image": 2889,
+  "missing_sku": 2175,
+  "missing_price": 19,
+  "thin_content": 43,
+  "duplicate_title": 1457,
+  "duplicate_sku": 0
+ },
+ "byState": {
+  "EXTERNAL_DEPENDENCY": 2874,
+  "PROPOSED_SAFE": 2252,
+  "NEEDS_ATTRIBUTE_DATA": 1457
+ },
+ "productsWithAtLeastOneIssue": 3816,
+ "issuesTotal": 6583,
+ "rowsAnalysed": 11763
+}
