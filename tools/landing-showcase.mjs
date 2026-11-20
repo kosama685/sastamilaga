@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import {toCyrillic} from './landing-i18n.mjs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {storefrontText,catalogControls,filterControls,dailyControls} from './landing-storefront.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const dataset=JSON.parse(fs.readFileSync(path.join(root,'data/landing/showcase.json'),'utf8'));
 const ORIGIN='https://sastamilaga.com';
@@ -40,22 +41,25 @@ export function buildShowcase({rel,lang,dir}){
  // Serbian Cyrillic is a script, not a new translation; use deterministic transliteration after compiling.
  const market=rel==='shipping-to'?'hub':rel.includes('serbia')?'serbia':rel.includes('germany')?'germany':rel.includes('saudi-arabia')?'saudi-arabia':rel.includes('/uk')?'uk':rel.includes('/usa')?'usa':'pakistan';
  const local=market==='pakistan',hub=market==='hub', flag=flags[market];
- const merchandise=local?dataset.local:[...dataset.global,...dataset.globalCategories.slice(0,6).map(c=>({name:c.name+' collection',category:t.global,image:c.image,url:c.url}))];
+ const merchandise=local?dataset.local:dataset.global;
+ const ui=storefrontText(lang);
  const intro=local?t.localInfo:t.notice;
  let markup='<div class="smxc" data-smx-market="'+escape(market)+'" data-smx-lang="'+escape(lang)+'" dir="'+dir+'">';
  markup+='<div class="smx-trust" aria-label="Store guidance"><span>'+flag+' '+escape(market==='hub'?t.hub:t.country)+'</span><span>✓ '+escape(intro)+'</span><a href="/safe-shopping/">'+escape(t.details)+' ↗</a></div>';
  if(hub){
   markup+='<section class="smx-section smx-countries">'+header(t.hub,t.hubNote,'/shipping-to/',t.view)+'<div class="smx-country-grid">'+countries.map(([slug,name,url])=>'<a class="smx-country" href="'+url+'"><span class="smx-flag">'+flags[slug]+'</span><strong>'+escape(name)+'</strong><small>'+escape(t.view)+' ↗</small></a>').join('')+'</div></section>';
  }
- markup+='<section class="smx-section smx-categories">'+header(t.categories,t.selected,local?'/c/fashion-and-apparel.html':'/c/global/index.html',t.all)+'<div class="smx-category-grid">';
- if(local)markup+=categoriesLocal.map(([name,url,emoji])=>'<a class="smx-category-card" href="'+url+'"><span class="smx-category-emoji">'+emoji+'</span><strong>'+escape(name)+'</strong><small>'+escape(t.visit)+' ↗</small></a>').join('');
- else markup+=dataset.globalCategories.slice(0,8).map(c=>'<a class="smx-category-card" href="'+escape(c.url)+'">'+photo(c.image,c.name)+'<strong>'+escape(c.name)+'</strong><small>'+escape(t.visit)+' ↗</small></a>').join('');
- markup+='</div></section>';
+ let categoryMarkup='<section class="smx-section smx-categories">'+header(t.categories,t.selected,local?'/c/fashion-and-apparel.html':'/c/global/index.html',t.all)+'<div class="smx-category-grid">';
+ if(local)categoryMarkup+=categoriesLocal.map(([name,url,emoji])=>'<a class="smx-category-card" href="'+url+'"><span class="smx-category-emoji">'+emoji+'</span><strong>'+escape(name)+'</strong><small>'+escape(t.visit)+'</small></a>').join('');
+ else categoryMarkup+=dataset.globalCategories.slice(0,8).map(c=>'<a class="smx-category-card" href="'+escape(c.url)+'">'+photo(c.image,c.name)+'<strong>'+escape(c.name)+'</strong><small>'+escape(t.visit)+'</small></a>').join('');
+ categoryMarkup+='</div></section>';
  markup+='<section id="smx-featured" class="smx-section smx-catalog">'+header(t.products,local?t.localInfo:t.notice,local?'/c/fashion-and-apparel.html':'/c/global/index.html',t.more);
- markup+='<div class="smx-shop-layout"><aside class="smx-filter" aria-label="'+escape(t.filters)+'"><strong>'+escape(t.filters)+'</strong><div class="smx-filter-links">'+
+ markup+=dailyControls(ui);
+ markup+='<div class="smx-shop-layout"><aside class="smx-filter" aria-label="'+escape(ui.filter)+'"><strong>'+escape(ui.filter)+'</strong>'+filterControls(ui,merchandise,local)+'<details class="smx-category-directory"><summary>'+escape(t.all)+'</summary><div class="smx-filter-links">'+
  (local?categoriesLocal.map(([name,url])=>'<a href="'+url+'">'+escape(name)+' <span>↗</span></a>'):dataset.globalCategories.slice(0,8).map(c=>'<a href="'+escape(c.url)+'">'+escape(c.name)+' <span>↗</span></a>')).join('')+
- '</div><p>'+escape(t.notice)+'</p></aside><div class="smx-products">'+merchandise.map(x=>productCard(x,t,local)).join('')+'</div></div></section>';
+ '</div></details><p>'+escape(t.notice)+'</p></aside><div class="smx-results">'+catalogControls(ui,merchandise,local)+'<div class="smx-products">'+merchandise.map(x=>productCard(x,t,local)).join('')+'</div><p class="smx-empty" data-empty hidden>'+escape(ui.empty)+'</p><button type="button" class="smx-more" data-show-more hidden>'+escape(ui.more)+'</button></div></div></section>';
  markup+=offerRow(t,local);
+ markup+=categoryMarkup;
  markup+='<section class="smx-section smx-time">'+header(t.deals,t.current,local?'/shop/':'/c/global/index.html',t.shop)+'<div class="smx-time-grid"><a href="'+(local?'/shop/':'/c/global/index.html')+'"><span>☀</span><strong>'+escape(t.today)+'</strong><small>'+escape(t.current)+'</small></a><a href="/shipping-to/"><span>◷</span><strong>'+escape(t.weekend)+'</strong><small>'+escape(t.hubNote)+'</small></a><a href="'+(local?'/c/home-and-living.html':'/c/global/bedding-sets.html')+'"><span>✦</span><strong>'+escape(t.week)+'</strong><small>'+escape(t.visit)+'</small></a></div></section>';
  markup+='<section class="smx-section smx-explore">'+header(t.events,t.eventNote,'/travel/',t.visit)+'<div class="smx-explore-grid"><a href="/travel/"><span>✈</span><strong>'+escape(t.travel)+'</strong><small>'+escape(t.travelNote)+'</small></a><a href="/live-tv/"><span>▣</span><strong>'+escape(t.tv)+'</strong><small>'+escape(t.tvNote)+'</small></a><a href="/shipping-to/"><span>◉</span><strong>'+escape(t.hub)+'</strong><small>'+escape(t.hubNote)+'</small></a></div></section>';
  markup+='<p class="smx-disclaimer">'+escape(t.notice)+'</p></div>';
