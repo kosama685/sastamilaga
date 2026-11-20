@@ -19,7 +19,16 @@ node tools/build-landing-pages.mjs       # regenerate pages (idempotent)
 node --test tools/build-landing-pages.test.mjs
 node tools/build-locale-registry.mjs     # refresh the registry and reports
 node tools/measure-catalog-snapshot.mjs  # refresh catalogue metrics (network, a few minutes)
+
+# global coverage (2026-11-20)
+node tools/survey-cj-shipping.mjs        # read-only CJ quote for one sample item to all 246 countries (~25 min, throttled)
+node tools/validate-landing-live.mjs     # read-only live check: hreflang, canonicals, sitemaps -> reports/hreflang-validation.md, sitemap-validation.md
+node tools/build-city-pages.mjs          # city pages: generates only cities that pass the evidence gates (registry is empty)
+node tools/build-global-coverage.mjs     # country/language/fulfilment/payment/returns matrices and the completion reports
+node --test tools/build-city-pages.test.mjs tools/build-global-coverage.test.mjs
 ```
+
+Evidence files read by the coverage builder: `data/landing/country-shipping-evidence.json` (CJ sample quotes), `woocommerce-config-2026-11-20.json` (read-only WooCommerce settings), `catalog-audit-2026-11-20.json` (read-only catalogue counts), `cities.json`, `test-run.json`. Refresh them before regenerating the reports; the builder never invents a value that has no evidence file behind it.
 
 ## Add a market
 1. Add an entry to `data/landing/markets.json` (`slug`, `code`, `name`, `region`, `intro`, `tax`, `safety`, `question`, `answer`, `indexable: false`, `evidence`). Use only statements that are true of the live store or generally true of cross-border parcels. No transit days, prices, guarantees.

@@ -1,0 +1,26 @@
+﻿{
+    "landing":  {
+                    "tests":  86,
+                    "pass":  86,
+                    "fail":  0,
+                    "command":  "node --test tools/build-landing-pages.test.mjs"
+                },
+    "city":  {
+                 "tests":  5,
+                 "pass":  5,
+                 "fail":  0,
+                 "command":  "node --test tools/build-city-pages.test.mjs"
+             },
+    "coverage":  {
+                     "tests":  8,
+                     "pass":  8,
+                     "fail":  0,
+                     "command":  "node --test tools/build-global-coverage.test.mjs"
+                 },
+    "chromeRuntime":  {
+                          "tests":  2,
+                          "pass":  1,
+                          "fail":  1,
+                          "command":  "node --test tools/build-chrome-runtime.test.mjs"
+                      }
+}

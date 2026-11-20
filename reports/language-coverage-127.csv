@@ -1,0 +1,129 @@
+language_code,language_name,direction,in_translate_overlay,1_not_started,2_machine_translated,3_translation_validated,4_native_review_pending,5_native_review_completed,6_published,7_indexable,current_status,landing_urls,note
+en,English,ltr,no (source language),no,no,no,n/a,no (0 reviewers recorded),yes,yes,"source language, published, indexable",https://sastamilaga.com/shipping-to/germany/ https://sastamilaga.com/shipping-to/uk/ https://sastamilaga.com/shipping-to/usa/ https://sastamilaga.com/shipping-to/serbia/ https://sastamilaga.com/shipping-to/saudi-arabia/ https://sastamilaga.com/pakistan/,"English pages exist for DE, GB, US, RS, SA, PK"
+af,Afrikaans,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ak,Akan,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+am,Amharic,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ar,Arabic,rtl,yes,no,assistant-drafted (not a human translation),"automated checks only (script, placeholders, no leftover English); no linguistic validation",yes,no (0 reviewers recorded),yes,yes,"assistant-drafted translation, automated checks passed, native review pending, published, indexable",https://sastamilaga.com/shipping-to/saudi-arabia/ar/,Copy drafted by the assistant. Never describe as native-reviewed.
+as,Assamese,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ast,Asturian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+av,Avaric,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ay,Aymara,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+az,Azerbaijani,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ba,Bashkir,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+be,Belarusian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+bg,Bulgarian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+bn,Bangla,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+bo,Tibetan,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+bs,Bosnian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+bua,Buriat,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ca,Catalan,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ce,Chechen,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ceb,Cebuano,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ch,Chamorro,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ckb,Central Kurdish,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+cs,Czech,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+cy,Welsh,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+da,Danish,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+de,German,ltr,yes,no,assistant-drafted (not a human translation),"automated checks only (script, placeholders, no leftover English); no linguistic validation",yes,no (0 reviewers recorded),yes,yes,"assistant-drafted translation, automated checks passed, native review pending, published, indexable",https://sastamilaga.com/shipping-to/germany/de/,Copy drafted by the assistant. Never describe as native-reviewed.
+dv,Divehi,rtl,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+dz,Dzongkha,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ee,Ewe,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+el,Greek,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+es,Spanish,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+et,Estonian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+eu,Basque,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+fa,Persian,rtl,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ff,Fula,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+fi,Finnish,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+fil,Filipino,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+fr,French,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+fy,Western Frisian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ga,Irish,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+gd,Scottish Gaelic,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+gl,Galician,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+gu,Gujarati,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+he,Hebrew,rtl,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+hi,Hindi,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+hr,Croatian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ht,Haitian Creole,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+hu,Hungarian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+hy,Armenian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+id,Indonesian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ilo,Iloko,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+is,Icelandic,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+it,Italian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ja,Japanese,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ka,Georgian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+kg,Kongo,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+kha,Khasi,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+kk,Kazakh,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+kl,Kalaallisut,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+km,Khmer,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+kn,Kannada,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ko,Korean,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+kok,Konkani,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+kv,Komi,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ky,Kyrgyz,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+lb,Luxembourgish,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ln,Lingala,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+lo,Lao,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+lt,Lithuanian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+lua,Luba-Lulua,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+lv,Latvian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+mai,Maithili,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+mg,Malagasy,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+mh,Marshallese,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+mi,Māori,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+mk,Macedonian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ml,Malayalam,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+mn,Mongolian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+mr,Marathi,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ms,Malay,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+mt,Maltese,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+my,Burmese,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+nb,Norwegian Bokmål,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ne,Nepali,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+nl,Dutch,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+no,Norwegian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+nr,South Ndebele,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+nso,Northern Sotho,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ny,Nyanja,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+oc,Occitan,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+or,Odia,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+os,Ossetic,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+pa,Punjabi,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+pag,Pangasinan,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+pap,Papiamento,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+pl,Polish,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ps,Pashto,rtl,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+pt,Portuguese,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ro,Romanian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ru,Russian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+sd,Sindhi,rtl,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+si,Sinhala,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+sk,Slovak,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+sl,Slovenian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+sn,Shona,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+so,Somali,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+sq,Albanian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+sr,Serbian,ltr,yes,no,assistant-drafted (not a human translation),"automated checks only (script, placeholders, no leftover English); no linguistic validation",yes,no (0 reviewers recorded),yes,yes,"assistant-drafted translation, automated checks passed, native review pending, published, indexable",https://sastamilaga.com/shipping-to/serbia/sr-latn/ https://sastamilaga.com/shipping-to/serbia/sr-cyrl/,Latin (sr-Latn-RS) and Cyrillic (sr-Cyrl-RS) are separate published pages; Cyrillic is transliterated from the Latin text
+sr-cyrl,Serbian (Cyrillic),ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ss,Swati,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+st,Southern Sotho,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+sv,Swedish,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+sw,Swahili,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ta,Tamil,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+th,Thai,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+tn,Tswana,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+tr,Turkish,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+uk,Ukrainian,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+ur,Urdu,rtl,yes,no,assistant-drafted (not a human translation),"automated checks only (script, placeholders, no leftover English); no linguistic validation",yes,no (0 reviewers recorded),yes,yes,"assistant-drafted translation, automated checks passed, native review pending, published, indexable",https://sastamilaga.com/ur/pakistan/,Copy drafted by the assistant. Never describe as native-reviewed.
+uz,Uzbek,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+vi,Vietnamese,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+war,Waray,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+wo,Wolof,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+xh,Xhosa,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+yo,Yoruba,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+zh,Chinese,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+zh-hans,Simplified Chinese,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
+zu,Zulu,ltr,yes,yes,no,no,no,no (0 reviewers recorded),no,no,not started,,Only a browser translate overlay exists; no dedicated URLs or localized metadata
