@@ -3,6 +3,7 @@
  * Never manufacture discounts, review counts, delivery windows, local events or cross-border availability.
  */
 import fs from 'node:fs';
+import {toCyrillic} from './landing-i18n.mjs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -39,7 +40,7 @@ export function buildShowcase({rel,lang,dir}){
  // Serbian Cyrillic is a script, not a new translation; use deterministic transliteration after compiling.
  const market=rel==='shipping-to'?'hub':rel.includes('serbia')?'serbia':rel.includes('germany')?'germany':rel.includes('saudi-arabia')?'saudi-arabia':rel.includes('/uk')?'uk':rel.includes('/usa')?'usa':'pakistan';
  const local=market==='pakistan',hub=market==='hub', flag=flags[market];
- const merchandise=local?dataset.local:dataset.global;
+ const merchandise=local?dataset.local:[...dataset.global,...dataset.globalCategories.slice(0,6).map(c=>({name:c.name+' collection',category:t.global,image:c.image,url:c.url}))];
  const intro=local?t.localInfo:t.notice;
  let markup='<div class="smx" data-smx-market="'+escape(market)+'" data-smx-lang="'+escape(lang)+'" dir="'+dir+'">';
  markup+='<div class="smx-trust" aria-label="Store guidance"><span>'+flag+' '+escape(market==='hub'?t.hub:t.country)+'</span><span>✓ '+escape(intro)+'</span><a href="/safe-shopping/">'+escape(t.details)+' ↗</a></div>';
@@ -61,8 +62,7 @@ export function buildShowcase({rel,lang,dir}){
  if(cyr){
   // Preserve link URLs, tags and existing non-Serbian names while transliterating user-facing labels only.
   // The categories are established English product taxonomy names and should retain their identifiers.
-  const transliterate=src=>src; // Content in Latin script remains clearly labelled; no fabricated translation.
-  markup=transliterate(markup);
+  markup=markup.replace(/>([^<>]+)</g, (m,text)=>'>'+toCyrillic(text)+'<');
  }
  return markup;
 }
