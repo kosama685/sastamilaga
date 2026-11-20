@@ -12,6 +12,7 @@ import {fileURLToPath} from 'node:url';
 import {S, M, fmt, cyrillicStrings} from './landing-i18n.mjs';
 import {buildShowcase} from './landing-showcase.mjs';
 import {scenicHero} from './landing-storefront.mjs';
+import {buildCampaignPages} from './build-campaign-pages.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const data = JSON.parse(fs.readFileSync(path.join(root, 'data/landing/markets.json'), 'utf8'));
 const ORIGIN = data.siteOrigin, WA = data.whatsapp, FEE = data.pakistan.delivery_fee_pkr, FREE = data.pakistan.free_delivery_from_pkr;
@@ -29,7 +30,7 @@ function write(rel, html, meta = {}) {
   routes.push({rel, url: ORIGIN + '/' + rel + '/', lang: (html.match(/<html lang="([^"]+)"/) || [])[1], dir: (html.match(/<html lang="[^"]+" dir="([^"]+)"/) || [])[1], robots: (html.match(/name="robots" content="([^"]+)"/) || [])[1], ...meta});
 }
 
-function shell({rel, lang, dir, title, desc, indexable, alternates, graph, body}) {
+function shell({rel, lang, dir, title, desc, indexable, alternates, graph, body, enhance = true}) {
   const pre = prefixFor(rel), url = `${ORIGIN}/${rel}/`;
   const hreflang = indexable && alternates.length
     ? alternates.map(a => `<link rel="alternate" hreflang="${a.lang}" href="${ORIGIN}/${a.rel}/">`).join('') + `<link rel="alternate" hreflang="x-default" href="${ORIGIN}/${alternates[0].rel}/">` : '';
@@ -52,15 +53,17 @@ ${hreflang}
 <link rel="stylesheet" href="${pre}assets/theme/static-bundle.css">
 <link rel="stylesheet" href="${pre}assets/css/landing.css">
 <link rel="stylesheet" href="${pre}assets/css/country-showcase.css">
+<link rel="stylesheet" href="${pre}assets/css/campaigns.css">
 <script type="application/ld+json">${JSON.stringify({'@context': 'https://schema.org', '@graph': graph}).replace(/</g, '\\u003c')}</script>
 </head>
 <body class="sm-static sm-page-static">
 <div id="sm-chrome-header" data-prefix="${pre}"><header class="sm-fallback-head"><a href="${pre}"><img src="${pre}assets/brand/logo-46.png" width="171" height="46" alt="Sasta Milaga"></a></header></div>
 <main id="main" class="sm-main"><div id="app" class="sm-app">
-${body.replace(/<header class="sml-hero">([\s\S]*?)<\/header>/, (_, original) => scenicHero({rel,lang,dir}) + buildShowcase({rel,lang,dir}) + '<section id="delivery-guide" class="sml-overview">' + original.replace('<h1>', '<h2>').replace('</h1>', '</h2>') + '</section>')}
+${enhance ? body.replace(/<header class="sml-hero">([\s\S]*?)<\/header>/, (_, original) => scenicHero({rel,lang,dir}) + buildShowcase({rel,lang,dir}) + '<section id="delivery-guide" class="sml-overview">' + original.replace('<h1>', '<h2>').replace('</h1>', '</h2>') + '</section>') : body}
 </div></main>
 <div id="sm-chrome-footer"></div>
 <script src="${pre}assets/js/landing-storefront.js" defer></script>
+<script src="${pre}assets/js/campaigns.js" defer></script>
 <script src="${pre}assets/js/chrome.js" defer></script>
 </body>
 </html>
@@ -355,3 +358,4 @@ const indexable = routes.filter(r => r.indexable).map(r => r.rel);
 fs.writeFileSync(path.join(root, 'sitemap-landing.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${indexable.map(rel => { const r = routes.find(x => x.rel === rel), sibs = routes.filter(x => x.market === r.market && x.indexable); const alts = sibs.length > 1 ? sibs.map(x => `<xhtml:link rel="alternate" hreflang="${x.lang}" href="${ORIGIN}/${x.rel}/"/>`).join('') + `<xhtml:link rel="alternate" hreflang="x-default" href="${ORIGIN}/${sibs[0].rel}/"/>` : ''; return `<url><loc>${ORIGIN}/${rel}/</loc>${alts}</url>`; }).join('\n')}\n</urlset>\n`);
 fs.writeFileSync(path.join(root, 'data/landing/routes.json'), JSON.stringify({generator: 'tools/build-landing-pages.mjs', routes}, null, 2) + '\n');
 console.log(JSON.stringify({pages: written.length, written, indexable}));
+buildCampaignPages({shell,landingRoutes:routes});

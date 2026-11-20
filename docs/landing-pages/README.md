@@ -52,8 +52,28 @@ Pakistan fee and threshold are asserted against `assets/js/config.js` by a test.
 ## Live shipping estimate
 International pages call the store's own `/api/cj/variants` and `/api/cj/shipping` (same origin on sastamilaga.com). The panel parses the product id from a `/global-shop/p/<id>/` link, lists the CJ variants, then requests rates for the market's country code. Rates are shown as returned (indicative USD); if the service fails or the link is missing, the order still goes through WhatsApp. These endpoints reject other origins, so test locally with captured responses.
 
+## Occasion, offer and special-day collections
+
+`node tools/build-landing-pages.mjs` now also builds 58 collection pages: three country hubs and two detailed occasion guides for each of the 11 existing market/language variants, plus three global hubs. This covers all six supported landing markets, not every destination in the worldwide country picker. Existing locale and RTL behavior is retained.
+
+The editorial calendar is `data/campaigns/registry.json`. Localized topic copy is in `guides.json`, `special-day-guides.json` and `tools/campaign-i18n.mjs`. `data/campaigns/local-catalog.json` contains existing Pakistan product-page references; refresh it with `python tools/prepare-campaign-catalog.py`. Supplier selections come from the existing category shards. Prices and live availability are intentionally confirmed on the product pages.
+
+Every page has a self-canonical, reciprocal language alternates, visible FAQs, breadcrumbs and CollectionPage/ItemList markup. `sitemap-campaigns.xml` is registered in the root sitemap. `data/campaigns/keyword-map.csv` records page intent and semantic topic targets; it does not claim measured volume, rankings, Google indexing or Ads approval. Calendar sources are linked next to the relevant occasions. Lunar dates, school calendars and family-specific Slava dates are not guessed.
+
+### Publish a documented promotion
+
+Add a record to `data/campaigns/promotions.json` with `market`, `verified: true`, `title`, `description`, `url`, `termsUrl`, `evidenceUrl`, `startsAt` and `endsAt`. Use full ISO timestamps with timezone offsets. The purchase destination and terms URLs must stay on sastamilaga.com; evidence must use HTTPS. Confirm the discount, eligible products and destination before marking it verified. Without a matching active record, a country offer hub explicitly says no verified limited-time discount is published.
+
+Only current, evidenced promotions are emitted. `assets/js/campaigns.js` also hides expired promotion cards on cached pages. `.github/workflows/campaign-refresh.yml` rebuilds and publishes changed generated pages daily at 01:15 UTC (04:15 Asia/Riyadh). It makes no write when the output is unchanged. The promotion registry currently contains no verified discounts.
+
+### Validate collections
+
+Run the original landing and storefront suites and `node --test tools/build-campaign-pages.test.mjs`. The DOM tests require Linkedom; set `SM_DOM_MODULE` to an installed module path as in the GitHub workflows. Collection checks cover 58 routes, source/category/product links, fragment anchors, reciprocal alternates, schema, promotion eligibility, cached expiration and deterministic output. The normal Pages deploy runs these checks before publishing.
+
+Native-language editorial review remains recorded separately from generated-page validation. Do not infer reviewed shipping, translation, discounts or customer feedback from a successful build.
+
 ## Roll back
-The change adds files only. Revert the merge commit, or delete `pakistan/`, `ur/pakistan/`, `shipping-to/`, `sitemap-landing.xml`, `data/landing/`, `assets/css/landing.css` and the tools above. No existing URL, redirect or template was changed.
+Revert the relevant landing/campaign commit and redeploy. Keep the existing country routes and shared chrome files; do not delete the entire country tree to reverse an occasion-page update.
 
 ## Protected paths
 `chrome.js`, `tools/build-chrome-runtime*.mjs`, the audit tools and the cart handler were not edited. The landing pages only use the existing chrome placeholders.

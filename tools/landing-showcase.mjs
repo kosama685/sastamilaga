@@ -8,6 +8,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {storefrontText,catalogControls,filterControls,dailyControls} from './landing-storefront.mjs';
 import {promoSections,sectionText} from './landing-sections.mjs';
+import {campaignNavigation} from './campaign-navigation.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const dataset=JSON.parse(fs.readFileSync(path.join(root,'data/landing/showcase.json'),'utf8'));
 const ORIGIN='https://sastamilaga.com';
@@ -30,12 +31,12 @@ function productCard(p,t,isLocal){
  let link=escape(p.url);
  return '<article class="smx-product" data-sx-category="'+escape(p.category)+'" data-sx-price="'+(isLocal?p.price:0)+'"><a class="smx-product-image" href="'+link+'" aria-label="'+escape(p.name)+'">'+photo(p.image,p.name)+'</a><div class="smx-prod-body"><span class="smx-prod-category">'+escape(p.category)+'</span><h3><a href="'+link+'">'+escape(p.name)+'</a></h3><div class="smx-prod-bottom">'+price+'<a href="'+link+'" class="smx-prod-btn">'+escape(t.details)+' <span aria-hidden="true">↗</span></a></div></div></article>';
 }
-export function buildShowcase({rel,lang,dir}){
- const code=lang.split('-')[0], t=i18n[code]||i18n.en, cyr=lang.startsWith('sr-Cyrl');
+export function buildShowcase({rel,lang,dir,items,previewLabel}){
+ const code=lang.split('-')[0], t={...(i18n[code]||i18n.en),...(previewLabel?{verified:previewLabel}:{})}, cyr=lang.startsWith('sr-Cyrl');
  // Serbian Cyrillic is a script, not a new translation; use deterministic transliteration after compiling.
  const market=rel==='shipping-to'?'hub':rel.includes('serbia')?'serbia':rel.includes('germany')?'germany':rel.includes('saudi-arabia')?'saudi-arabia':rel.includes('/uk')?'uk':rel.includes('/usa')?'usa':'pakistan';
  const local=market==='pakistan',hub=market==='hub', flag=flags[market];
- const merchandise=local?dataset.local:dataset.global;
+ const merchandise=items||(local?dataset.local:dataset.global);
  const ui=storefrontText(lang);
  const intro=local?t.localInfo:t.notice;
  let markup='<div class="smxc" data-smx-market="'+escape(market)+'" data-smx-lang="'+escape(lang)+'" dir="'+dir+'">';
@@ -54,6 +55,7 @@ export function buildShowcase({rel,lang,dir}){
  '</div></details><p>'+escape(t.notice)+'</p></aside><div class="smx-results">'+catalogControls(ui,merchandise,local)+'<div class="smx-products">'+merchandise.map(x=>productCard(x,t,local)).join('')+'</div><p class="smx-empty" data-empty hidden>'+escape(ui.empty)+'</p><button type="button" class="smx-more" data-show-more hidden>'+escape(ui.more)+'</button></div></div></section>';
  markup+=promoSections({lang,market,ui});
  markup+=categoryMarkup;
+ markup+=campaignNavigation({rel,lang});
  markup+='<p class="smx-disclaimer">'+escape(t.notice)+'</p></div>';
  if(cyr){
   // Preserve link URLs, tags and existing non-Serbian names while transliterating user-facing labels only.

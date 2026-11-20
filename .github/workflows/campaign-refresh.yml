@@ -1,0 +1,52 @@
+name: Refresh occasion collections and expire promotions
+on:
+  schedule:
+    - cron: '15 1 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Rebuild eligible occasion pages and promotions
+        run: node tools/build-landing-pages.mjs
+      - name: Validate generated collections
+        run: |
+          npm install --prefix "$RUNNER_TEMP/sasta-dom" linkedom@0.18.15 --no-audit --no-fund
+          SM_DOM_MODULE="$RUNNER_TEMP/sasta-dom/node_modules/linkedom" node --test tools/build-campaign-pages.test.mjs
+      - name: Commit changed generated pages
+        id: source
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pakistan/ ur/pakistan/ shipping-to/ offers/ events/ special-days/ data/campaigns/routes.json data/campaigns/keyword-map.csv data/landing/routes.json sitemap-campaigns.xml sitemap-landing.xml
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "Refresh occasion collections and expire promotions [skip ci]"
+            git push origin HEAD:main
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/configure-pages@v6
+        if: steps.source.outputs.changed == 'true'
+      - uses: actions/upload-pages-artifact@v5
+        if: steps.source.outputs.changed == 'true'
+        with:
+          path: '.'
+      - uses: actions/deploy-pages@v5
+        id: deployment
+        if: steps.source.outputs.changed == 'true'

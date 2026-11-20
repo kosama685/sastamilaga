@@ -1,0 +1,852 @@
+{
+  "generator": "tools/build-campaign-pages.mjs",
+  "routes": [
+    {
+      "rel": "shipping-to/germany/offers",
+      "url": "https://sastamilaga.com/shipping-to/germany/offers/",
+      "market": "germany",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "offers",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Offers & collections",
+        "Germany"
+      ]
+    },
+    {
+      "rel": "shipping-to/germany/events",
+      "url": "https://sastamilaga.com/shipping-to/germany/events/",
+      "market": "germany",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "events",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Events & occasions",
+        "Germany"
+      ]
+    },
+    {
+      "rel": "shipping-to/germany/special-days",
+      "url": "https://sastamilaga.com/shipping-to/germany/special-days/",
+      "market": "germany",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "special-days",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Special days",
+        "Germany"
+      ]
+    },
+    {
+      "rel": "shipping-to/germany/events/christmas",
+      "url": "https://sastamilaga.com/shipping-to/germany/events/christmas/",
+      "market": "germany",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "christmas",
+      "indexable": true,
+      "keywords": [
+        "Christmas gift ideas",
+        "Christmas decorations",
+        "gifts for the home",
+        "family Christmas gifts"
+      ]
+    },
+    {
+      "rel": "shipping-to/germany/events/black-friday",
+      "url": "https://sastamilaga.com/shipping-to/germany/events/black-friday/",
+      "market": "germany",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "black-friday",
+      "indexable": true,
+      "keywords": [
+        "Black Friday shopping",
+        "Black Friday offers",
+        "electronics shopping guide",
+        "compare delivered prices"
+      ]
+    },
+    {
+      "rel": "shipping-to/germany/de/offers",
+      "url": "https://sastamilaga.com/shipping-to/germany/de/offers/",
+      "market": "germany",
+      "lang": "de-DE",
+      "dir": "ltr",
+      "kind": "offers",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Angebote & Kollektionen",
+        "Germany"
+      ]
+    },
+    {
+      "rel": "shipping-to/germany/de/events",
+      "url": "https://sastamilaga.com/shipping-to/germany/de/events/",
+      "market": "germany",
+      "lang": "de-DE",
+      "dir": "ltr",
+      "kind": "events",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Feste & Anlässe",
+        "Germany"
+      ]
+    },
+    {
+      "rel": "shipping-to/germany/de/special-days",
+      "url": "https://sastamilaga.com/shipping-to/germany/de/special-days/",
+      "market": "germany",
+      "lang": "de-DE",
+      "dir": "ltr",
+      "kind": "special-days",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Besondere Tage",
+        "Germany"
+      ]
+    },
+    {
+      "rel": "shipping-to/germany/de/events/christmas",
+      "url": "https://sastamilaga.com/shipping-to/germany/de/events/christmas/",
+      "market": "germany",
+      "lang": "de-DE",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "christmas",
+      "indexable": true,
+      "keywords": [
+        "Christmas gift ideas",
+        "Christmas decorations",
+        "gifts for the home",
+        "family Christmas gifts"
+      ]
+    },
+    {
+      "rel": "shipping-to/germany/de/events/black-friday",
+      "url": "https://sastamilaga.com/shipping-to/germany/de/events/black-friday/",
+      "market": "germany",
+      "lang": "de-DE",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "black-friday",
+      "indexable": true,
+      "keywords": [
+        "Black Friday shopping",
+        "Black Friday offers",
+        "electronics shopping guide",
+        "compare delivered prices"
+      ]
+    },
+    {
+      "rel": "shipping-to/uk/offers",
+      "url": "https://sastamilaga.com/shipping-to/uk/offers/",
+      "market": "uk",
+      "lang": "en-GB",
+      "dir": "ltr",
+      "kind": "offers",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Offers & collections",
+        "United Kingdom"
+      ]
+    },
+    {
+      "rel": "shipping-to/uk/events",
+      "url": "https://sastamilaga.com/shipping-to/uk/events/",
+      "market": "uk",
+      "lang": "en-GB",
+      "dir": "ltr",
+      "kind": "events",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Events & occasions",
+        "United Kingdom"
+      ]
+    },
+    {
+      "rel": "shipping-to/uk/special-days",
+      "url": "https://sastamilaga.com/shipping-to/uk/special-days/",
+      "market": "uk",
+      "lang": "en-GB",
+      "dir": "ltr",
+      "kind": "special-days",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Special days",
+        "United Kingdom"
+      ]
+    },
+    {
+      "rel": "shipping-to/uk/events/christmas",
+      "url": "https://sastamilaga.com/shipping-to/uk/events/christmas/",
+      "market": "uk",
+      "lang": "en-GB",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "christmas",
+      "indexable": true,
+      "keywords": [
+        "Christmas gift ideas",
+        "Christmas decorations",
+        "gifts for the home",
+        "family Christmas gifts"
+      ]
+    },
+    {
+      "rel": "shipping-to/uk/events/black-friday",
+      "url": "https://sastamilaga.com/shipping-to/uk/events/black-friday/",
+      "market": "uk",
+      "lang": "en-GB",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "black-friday",
+      "indexable": true,
+      "keywords": [
+        "Black Friday shopping",
+        "Black Friday offers",
+        "electronics shopping guide",
+        "compare delivered prices"
+      ]
+    },
+    {
+      "rel": "shipping-to/usa/offers",
+      "url": "https://sastamilaga.com/shipping-to/usa/offers/",
+      "market": "usa",
+      "lang": "en-US",
+      "dir": "ltr",
+      "kind": "offers",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Offers & collections",
+        "United States"
+      ]
+    },
+    {
+      "rel": "shipping-to/usa/events",
+      "url": "https://sastamilaga.com/shipping-to/usa/events/",
+      "market": "usa",
+      "lang": "en-US",
+      "dir": "ltr",
+      "kind": "events",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Events & occasions",
+        "United States"
+      ]
+    },
+    {
+      "rel": "shipping-to/usa/special-days",
+      "url": "https://sastamilaga.com/shipping-to/usa/special-days/",
+      "market": "usa",
+      "lang": "en-US",
+      "dir": "ltr",
+      "kind": "special-days",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Special days",
+        "United States"
+      ]
+    },
+    {
+      "rel": "shipping-to/usa/events/christmas",
+      "url": "https://sastamilaga.com/shipping-to/usa/events/christmas/",
+      "market": "usa",
+      "lang": "en-US",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "christmas",
+      "indexable": true,
+      "keywords": [
+        "Christmas gift ideas",
+        "Christmas decorations",
+        "gifts for the home",
+        "family Christmas gifts"
+      ]
+    },
+    {
+      "rel": "shipping-to/usa/events/black-friday",
+      "url": "https://sastamilaga.com/shipping-to/usa/events/black-friday/",
+      "market": "usa",
+      "lang": "en-US",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "black-friday",
+      "indexable": true,
+      "keywords": [
+        "Black Friday shopping",
+        "Black Friday offers",
+        "electronics shopping guide",
+        "compare delivered prices"
+      ]
+    },
+    {
+      "rel": "shipping-to/serbia/offers",
+      "url": "https://sastamilaga.com/shipping-to/serbia/offers/",
+      "market": "serbia",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "offers",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Offers & collections",
+        "Serbia"
+      ]
+    },
+    {
+      "rel": "shipping-to/serbia/events",
+      "url": "https://sastamilaga.com/shipping-to/serbia/events/",
+      "market": "serbia",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "events",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Events & occasions",
+        "Serbia"
+      ]
+    },
+    {
+      "rel": "shipping-to/serbia/special-days",
+      "url": "https://sastamilaga.com/shipping-to/serbia/special-days/",
+      "market": "serbia",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "special-days",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Special days",
+        "Serbia"
+      ]
+    },
+    {
+      "rel": "shipping-to/serbia/events/orthodox-christmas",
+      "url": "https://sastamilaga.com/shipping-to/serbia/events/orthodox-christmas/",
+      "market": "serbia",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "orthodox-christmas",
+      "indexable": true,
+      "keywords": [
+        "Orthodox Christmas gifts Serbia",
+        "Serbian Christmas home essentials",
+        "Christmas hosting ideas"
+      ]
+    },
+    {
+      "rel": "shipping-to/serbia/events/slava",
+      "url": "https://sastamilaga.com/shipping-to/serbia/events/slava/",
+      "market": "serbia",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "slava",
+      "indexable": true,
+      "keywords": [
+        "Slava gift ideas",
+        "Slava hosting essentials",
+        "host gifts Serbia"
+      ]
+    },
+    {
+      "rel": "shipping-to/serbia/sr-latn/offers",
+      "url": "https://sastamilaga.com/shipping-to/serbia/sr-latn/offers/",
+      "market": "serbia",
+      "lang": "sr-Latn-RS",
+      "dir": "ltr",
+      "kind": "offers",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Ponude i kolekcije",
+        "Serbia"
+      ]
+    },
+    {
+      "rel": "shipping-to/serbia/sr-latn/events",
+      "url": "https://sastamilaga.com/shipping-to/serbia/sr-latn/events/",
+      "market": "serbia",
+      "lang": "sr-Latn-RS",
+      "dir": "ltr",
+      "kind": "events",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Praznici i prilike",
+        "Serbia"
+      ]
+    },
+    {
+      "rel": "shipping-to/serbia/sr-latn/special-days",
+      "url": "https://sastamilaga.com/shipping-to/serbia/sr-latn/special-days/",
+      "market": "serbia",
+      "lang": "sr-Latn-RS",
+      "dir": "ltr",
+      "kind": "special-days",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Posebni dani",
+        "Serbia"
+      ]
+    },
+    {
+      "rel": "shipping-to/serbia/sr-latn/events/orthodox-christmas",
+      "url": "https://sastamilaga.com/shipping-to/serbia/sr-latn/events/orthodox-christmas/",
+      "market": "serbia",
+      "lang": "sr-Latn-RS",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "orthodox-christmas",
+      "indexable": true,
+      "keywords": [
+        "Orthodox Christmas gifts Serbia",
+        "Serbian Christmas home essentials",
+        "Christmas hosting ideas"
+      ]
+    },
+    {
+      "rel": "shipping-to/serbia/sr-latn/events/slava",
+      "url": "https://sastamilaga.com/shipping-to/serbia/sr-latn/events/slava/",
+      "market": "serbia",
+      "lang": "sr-Latn-RS",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "slava",
+      "indexable": true,
+      "keywords": [
+        "Slava gift ideas",
+        "Slava hosting essentials",
+        "host gifts Serbia"
+      ]
+    },
+    {
+      "rel": "shipping-to/serbia/sr-cyrl/offers",
+      "url": "https://sastamilaga.com/shipping-to/serbia/sr-cyrl/offers/",
+      "market": "serbia",
+      "lang": "sr-Cyrl-RS",
+      "dir": "ltr",
+      "kind": "offers",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Понуде и колекције",
+        "Serbia"
+      ]
+    },
+    {
+      "rel": "shipping-to/serbia/sr-cyrl/events",
+      "url": "https://sastamilaga.com/shipping-to/serbia/sr-cyrl/events/",
+      "market": "serbia",
+      "lang": "sr-Cyrl-RS",
+      "dir": "ltr",
+      "kind": "events",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Празници и прилике",
+        "Serbia"
+      ]
+    },
+    {
+      "rel": "shipping-to/serbia/sr-cyrl/special-days",
+      "url": "https://sastamilaga.com/shipping-to/serbia/sr-cyrl/special-days/",
+      "market": "serbia",
+      "lang": "sr-Cyrl-RS",
+      "dir": "ltr",
+      "kind": "special-days",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Посебни дани",
+        "Serbia"
+      ]
+    },
+    {
+      "rel": "shipping-to/serbia/sr-cyrl/events/orthodox-christmas",
+      "url": "https://sastamilaga.com/shipping-to/serbia/sr-cyrl/events/orthodox-christmas/",
+      "market": "serbia",
+      "lang": "sr-Cyrl-RS",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "orthodox-christmas",
+      "indexable": true,
+      "keywords": [
+        "Orthodox Christmas gifts Serbia",
+        "Serbian Christmas home essentials",
+        "Christmas hosting ideas"
+      ]
+    },
+    {
+      "rel": "shipping-to/serbia/sr-cyrl/events/slava",
+      "url": "https://sastamilaga.com/shipping-to/serbia/sr-cyrl/events/slava/",
+      "market": "serbia",
+      "lang": "sr-Cyrl-RS",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "slava",
+      "indexable": true,
+      "keywords": [
+        "Slava gift ideas",
+        "Slava hosting essentials",
+        "host gifts Serbia"
+      ]
+    },
+    {
+      "rel": "shipping-to/saudi-arabia/offers",
+      "url": "https://sastamilaga.com/shipping-to/saudi-arabia/offers/",
+      "market": "saudi-arabia",
+      "lang": "en-SA",
+      "dir": "ltr",
+      "kind": "offers",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Offers & collections",
+        "Saudi Arabia"
+      ]
+    },
+    {
+      "rel": "shipping-to/saudi-arabia/events",
+      "url": "https://sastamilaga.com/shipping-to/saudi-arabia/events/",
+      "market": "saudi-arabia",
+      "lang": "en-SA",
+      "dir": "ltr",
+      "kind": "events",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Events & occasions",
+        "Saudi Arabia"
+      ]
+    },
+    {
+      "rel": "shipping-to/saudi-arabia/special-days",
+      "url": "https://sastamilaga.com/shipping-to/saudi-arabia/special-days/",
+      "market": "saudi-arabia",
+      "lang": "en-SA",
+      "dir": "ltr",
+      "kind": "special-days",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Special days",
+        "Saudi Arabia"
+      ]
+    },
+    {
+      "rel": "shipping-to/saudi-arabia/events/ramadan",
+      "url": "https://sastamilaga.com/shipping-to/saudi-arabia/events/ramadan/",
+      "market": "saudi-arabia",
+      "lang": "en-SA",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "ramadan",
+      "indexable": true,
+      "keywords": [
+        "Ramadan essentials",
+        "Ramadan home decor",
+        "iftar table accessories",
+        "Ramadan gift ideas"
+      ]
+    },
+    {
+      "rel": "shipping-to/saudi-arabia/events/eid-al-fitr",
+      "url": "https://sastamilaga.com/shipping-to/saudi-arabia/events/eid-al-fitr/",
+      "market": "saudi-arabia",
+      "lang": "en-SA",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "eid-al-fitr",
+      "indexable": true,
+      "keywords": [
+        "Eid gifts",
+        "Eid al-Fitr gift ideas",
+        "Eid accessories",
+        "Eid home essentials"
+      ]
+    },
+    {
+      "rel": "shipping-to/saudi-arabia/ar/offers",
+      "url": "https://sastamilaga.com/shipping-to/saudi-arabia/ar/offers/",
+      "market": "saudi-arabia",
+      "lang": "ar-SA",
+      "dir": "rtl",
+      "kind": "offers",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "العروض والمجموعات",
+        "Saudi Arabia"
+      ]
+    },
+    {
+      "rel": "shipping-to/saudi-arabia/ar/events",
+      "url": "https://sastamilaga.com/shipping-to/saudi-arabia/ar/events/",
+      "market": "saudi-arabia",
+      "lang": "ar-SA",
+      "dir": "rtl",
+      "kind": "events",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "المواسم والمناسبات",
+        "Saudi Arabia"
+      ]
+    },
+    {
+      "rel": "shipping-to/saudi-arabia/ar/special-days",
+      "url": "https://sastamilaga.com/shipping-to/saudi-arabia/ar/special-days/",
+      "market": "saudi-arabia",
+      "lang": "ar-SA",
+      "dir": "rtl",
+      "kind": "special-days",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "الأيام الخاصة",
+        "Saudi Arabia"
+      ]
+    },
+    {
+      "rel": "shipping-to/saudi-arabia/ar/events/ramadan",
+      "url": "https://sastamilaga.com/shipping-to/saudi-arabia/ar/events/ramadan/",
+      "market": "saudi-arabia",
+      "lang": "ar-SA",
+      "dir": "rtl",
+      "kind": "occasion",
+      "topic": "ramadan",
+      "indexable": true,
+      "keywords": [
+        "Ramadan essentials",
+        "Ramadan home decor",
+        "iftar table accessories",
+        "Ramadan gift ideas"
+      ]
+    },
+    {
+      "rel": "shipping-to/saudi-arabia/ar/events/eid-al-fitr",
+      "url": "https://sastamilaga.com/shipping-to/saudi-arabia/ar/events/eid-al-fitr/",
+      "market": "saudi-arabia",
+      "lang": "ar-SA",
+      "dir": "rtl",
+      "kind": "occasion",
+      "topic": "eid-al-fitr",
+      "indexable": true,
+      "keywords": [
+        "Eid gifts",
+        "Eid al-Fitr gift ideas",
+        "Eid accessories",
+        "Eid home essentials"
+      ]
+    },
+    {
+      "rel": "pakistan/offers",
+      "url": "https://sastamilaga.com/pakistan/offers/",
+      "market": "pakistan",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "offers",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Offers & collections",
+        "Pakistan"
+      ]
+    },
+    {
+      "rel": "pakistan/events",
+      "url": "https://sastamilaga.com/pakistan/events/",
+      "market": "pakistan",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "events",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Events & occasions",
+        "Pakistan"
+      ]
+    },
+    {
+      "rel": "pakistan/special-days",
+      "url": "https://sastamilaga.com/pakistan/special-days/",
+      "market": "pakistan",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "special-days",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Special days",
+        "Pakistan"
+      ]
+    },
+    {
+      "rel": "pakistan/events/ramadan",
+      "url": "https://sastamilaga.com/pakistan/events/ramadan/",
+      "market": "pakistan",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "ramadan",
+      "indexable": true,
+      "keywords": [
+        "Ramadan essentials",
+        "Ramadan home decor",
+        "iftar table accessories",
+        "Ramadan gift ideas"
+      ]
+    },
+    {
+      "rel": "pakistan/events/eid-al-fitr",
+      "url": "https://sastamilaga.com/pakistan/events/eid-al-fitr/",
+      "market": "pakistan",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "occasion",
+      "topic": "eid-al-fitr",
+      "indexable": true,
+      "keywords": [
+        "Eid gifts",
+        "Eid al-Fitr gift ideas",
+        "Eid accessories",
+        "Eid home essentials"
+      ]
+    },
+    {
+      "rel": "ur/pakistan/offers",
+      "url": "https://sastamilaga.com/ur/pakistan/offers/",
+      "market": "pakistan",
+      "lang": "ur",
+      "dir": "rtl",
+      "kind": "offers",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "پیشکشیں اور مجموعے",
+        "Pakistan"
+      ]
+    },
+    {
+      "rel": "ur/pakistan/events",
+      "url": "https://sastamilaga.com/ur/pakistan/events/",
+      "market": "pakistan",
+      "lang": "ur",
+      "dir": "rtl",
+      "kind": "events",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "تقریبات اور مواقع",
+        "Pakistan"
+      ]
+    },
+    {
+      "rel": "ur/pakistan/special-days",
+      "url": "https://sastamilaga.com/ur/pakistan/special-days/",
+      "market": "pakistan",
+      "lang": "ur",
+      "dir": "rtl",
+      "kind": "special-days",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "خاص دن",
+        "Pakistan"
+      ]
+    },
+    {
+      "rel": "ur/pakistan/events/ramadan",
+      "url": "https://sastamilaga.com/ur/pakistan/events/ramadan/",
+      "market": "pakistan",
+      "lang": "ur",
+      "dir": "rtl",
+      "kind": "occasion",
+      "topic": "ramadan",
+      "indexable": true,
+      "keywords": [
+        "Ramadan essentials",
+        "Ramadan home decor",
+        "iftar table accessories",
+        "Ramadan gift ideas"
+      ]
+    },
+    {
+      "rel": "ur/pakistan/events/eid-al-fitr",
+      "url": "https://sastamilaga.com/ur/pakistan/events/eid-al-fitr/",
+      "market": "pakistan",
+      "lang": "ur",
+      "dir": "rtl",
+      "kind": "occasion",
+      "topic": "eid-al-fitr",
+      "indexable": true,
+      "keywords": [
+        "Eid gifts",
+        "Eid al-Fitr gift ideas",
+        "Eid accessories",
+        "Eid home essentials"
+      ]
+    },
+    {
+      "rel": "offers",
+      "url": "https://sastamilaga.com/offers/",
+      "market": "hub",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "offers",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Offers & collections"
+      ]
+    },
+    {
+      "rel": "events",
+      "url": "https://sastamilaga.com/events/",
+      "market": "hub",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "events",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Events & occasions"
+      ]
+    },
+    {
+      "rel": "special-days",
+      "url": "https://sastamilaga.com/special-days/",
+      "market": "hub",
+      "lang": "en",
+      "dir": "ltr",
+      "kind": "special-days",
+      "topic": null,
+      "indexable": true,
+      "keywords": [
+        "Special days"
+      ]
+    }
+  ]
+}
