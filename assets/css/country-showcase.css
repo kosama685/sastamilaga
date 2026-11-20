@@ -12,15 +12,15 @@
 .sml:has([data-smx-market="uk"]) .sml-hero{background:linear-gradient(110deg,#f7fdf9 0%,#eef4f2 43%,rgba(167,200,212,.6) 100%)}
 .sml:has([data-smx-market="usa"]) .sml-hero{background:linear-gradient(110deg,#f6fbfa 0%,#e6f5ee 50%,rgba(157,206,230,.56) 100%)}
 .sml:has([data-smx-market="pakistan"]) .sml-hero{background:linear-gradient(110deg,#f9fff9 0%,#eff9ed 44%,rgba(169,224,184,.6) 100%)}
-.sml .sml-hero h1{max-width:780px;font-size:clamp(2.1rem,4.6vw,4.8rem);font-weight:850;line-height:1.06;letter-spacing:-.042em;color:#084629;text-wrap:balance}
-.sml .sml-hero .sml-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 17px;background:#fff;border:1px solid #cae5d5;box-shadow:0 3px 10px #144b2510;color:#0b613a;font-weight:750}
-.sml .sml-hero .sml-answer{max-width:640px;font-size:clamp(.96rem,1.12vw,1.12rem);line-height:1.78;color:#254b36}
+.sml .sml-hero h1{max-width:780px;font-size:clamp(2.1rem,4.6vw,4.8rem);font-weight:850;line-height:1.06;letter-spacing:-.042em;color:#084629!important;text-shadow:none!important;text-wrap:balance}
+.sml .sml-hero .sml-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 17px;background:#fff;border:1px solid #cae5d5;box-shadow:0 3px 10px #144b2510;color:#0b613a!important;font-weight:750}
+.sml .sml-hero .sml-answer{max-width:640px;font-size:clamp(.96rem,1.12vw,1.12rem);line-height:1.78;color:#254b36!important;text-shadow:none!important}
 .sml .sml-hero .sml-btn{box-shadow:0 12px 24px -14px #bc6b13}
 .sml .sml-hero .sml-btn--go{background:linear-gradient(115deg,#ff911e,#ff6513)!important;color:white!important}
 .sml .sml-card{border:1px solid #e4eee7;border-radius:20px;box-shadow:0 9px 28px -22px #0b4d2b}
-.smx{margin-top:12px;--g:#11693d;--o:#fb7d18;--smx-radius:19px;direction:inherit}
-.smx *{box-sizing:border-box}
-.smx a{text-decoration:none}
+.smxc{margin-top:12px;--g:#11693d;--o:#fb7d18;--smx-radius:19px;direction:inherit}
+.smxc *{box-sizing:border-box}
+.smxc a{text-decoration:none}
 .smx-trust{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:0 0 28px;padding:13px 21px;background:#e9f7ee;border:1px solid #d6e9df;border-radius:15px;color:#1f593a;font-size:.83rem}
 .smx-trust span:first-child{font-weight:800;white-space:nowrap}
 .smx-trust span:nth-child(2){flex:1;min-width:230px;line-height:1.5}
@@ -92,3 +92,9 @@
 
 /* Attribution for publicly licensed Serbian panorama by Danimir (Wikimedia Commons). */
 .sml:has([data-smx-market="serbia"]) .sml-hero:before{content:"Photo: Danimir · Wikimedia Commons";position:absolute;bottom:8px;right:14px;font-size:10px;color:#174b2d;background:rgba(255,255,255,.78);padding:3px 7px;border-radius:5px}
+
+/* Existing global landing hero CSS uses !important for dark-hero lettering. Keep high contrast on the new light scenic hero. */
+.sml .sml-hero .sml-btn--ghost{color:#0c643c!important;background:#fff!important;border:1px solid #c8dfd1!important;box-shadow:0 6px 18px -13px rgba(6,62,35,.3)}
+.sml .sml-hero .sml-btn--ghost:hover{background:#f3fbf6!important}
+/* Unique .smxc wrapper avoids the existing .smx travel widget background, padding and pseudo-elements. */
+.sml .smxc{position:static;background:transparent;border:0;box-shadow:none;padding:0;max-width:none}
