@@ -19,7 +19,7 @@ function walk(dir='') {
 walk();
 const knownDynamic=/^\/(?:api\/|wp-json\/|wp-admin\/|global-shop\/p\/|global\/p\/|product\/|category\/|sitemaps\/|cart\/|checkout\/|my-account\/|wc-api\/|shop\/search\/|wp-content\/plugins\/woocommerce\/assets\/client\/blocks\/)/i;
 const knownHash=/#\/(?:global|product|category|cart|checkout|shop|search|travel)/i;
-const problems=[],chromeIssues=[],oldCategoryLinks=[],internalRefs=new Set();
+const problems=[],chromeIssues=[],oldCategoryLinks=[],internalRefs=new Set(),wordpressMediaRefs=new Set();
 const slashNormalize=s=>s.replace(/\/{2,}/g,'/');
 function staticTarget(u) {
  const p=decodeURIComponent(u.pathname).replace(/\/{2,}/g,'/');
@@ -61,6 +61,9 @@ for(const filename of htmlFiles){
     continue;
   }
   if(knownDynamic.test(p))continue;
+  // WordPress media is served by the live origin, not checked into the static GitHub tree.
+  // Keep these URLs visible as separate evidence; do not misclassify them as absent static assets.
+  if(/^\/wp-content\/uploads\//i.test(p)){wordpressMediaRefs.add(p);continue;}
   if(p.startsWith('/#/'))continue;
   if(staticTarget(url))continue;
   // An extensionless route can be an intentional app route; report only exact asset/html references.
@@ -68,8 +71,10 @@ for(const filename of htmlFiles){
   if(problems.length<LIMIT)problems.push({source:filename,target:p,attribute:m[1]});
  }
 }
-const result={generatedAt:new Date().toISOString(),htmlFiles:htmlFiles.length,repoFiles:validFiles.size,distinctInternalPaths:internalRefs.size,legacyShopCategoryLinks:oldCategoryLinks.length,missingStaticReferences:problems.length,missingIsTruncated:problems.length===LIMIT,chromeIssues:chromeIssues.length,notes:['Dynamic supplier/API/checkout routes and WordPress-served WooCommerce block CSS are excluded from repository-only existence checks. The WooCommerce CSS returned HTTP 200 on production on 2026-11-15.','A static audit does not prove live HTTP status or working checkout.','Legacy /shop/category.html links are redirected only when a corresponding category exists.'],sampleMissing:problems.slice(0,100),sampleChrome:chromeIssues.slice(0,70),sampleLegacy:oldCategoryLinks.slice(0,30)};
+const result={generatedAt:new Date().toISOString(),htmlFiles:htmlFiles.length,repoFiles:validFiles.size,distinctInternalPaths:internalRefs.size,legacyShopCategoryLinks:oldCategoryLinks.length,missingStaticReferences:problems.length,wordpressMediaPaths:wordpressMediaRefs.size,missingIsTruncated:problems.length===LIMIT,chromeIssues:chromeIssues.length,notes:['Dynamic supplier/API/checkout routes, WordPress upload media, and WooCommerce block CSS are excluded from repository-only existence checks. The identified WordPress media image returned HTTP 200 on production on 2026-11-20; this does not prove every media URL is healthy.','A static audit does not prove live HTTP status or working checkout.','Legacy /shop/category.html links are redirected only when a corresponding category exists.'],sampleMissing:problems.slice(0,100),sampleChrome:chromeIssues.slice(0,70),sampleLegacy:oldCategoryLinks.slice(0,30)};
 fs.mkdirSync(path.join(ROOT,'reports'),{recursive:true});
 fs.writeFileSync(path.join(ROOT,'reports','url-audit-ci.json'),JSON.stringify(result,null,2));
 console.log(JSON.stringify({htmlFiles:result.htmlFiles,distinctInternalPaths:result.distinctInternalPaths,missingStaticReferences:result.missingStaticReferences,chromeIssues:result.chromeIssues,legacyShopCategoryLinks:result.legacyShopCategoryLinks}));
+if(problems.length) console.error('MISSING_STATIC_REFERENCES '+JSON.stringify(problems.slice(0,100)));
+if(chromeIssues.length) console.error('SHARED_CHROME_ISSUES '+JSON.stringify(chromeIssues.slice(0,50)));
 if(process.argv.includes('--strict')&&(problems.length||chromeIssues.length))process.exitCode=1;
