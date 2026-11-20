@@ -499,5 +499,13 @@
   window.SMMarketCounts = { run: run, paint: function (d) { return paint(d || data); } };
   window.addEventListener('sm:market', run);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
-  window.addEventListener('load', function () { run(); setTimeout(run, 1500); });   // the header can be injected after load
+  window.addEventListener('load', function () { run(); setTimeout(run, 1500); });
+  /* On pages where chrome.js injects the header later, paint as soon as unpainted menu items appear (watch for 30 s, debounced). */
+  if (window.MutationObserver) {
+    var t = 0, mo = new MutationObserver(function () {
+      clearTimeout(t); t = setTimeout(function () { if (document.querySelector('a.smh-item:not([data-sm-local-href])')) run(); }, 120);
+    });
+    mo.observe(document.documentElement, { childList: true, subtree: true });
+    setTimeout(function () { mo.disconnect(); }, 30000);
+  }
 })();
