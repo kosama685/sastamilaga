@@ -65,7 +65,11 @@ for (const r of routes) {
     for (const m of h.matchAll(/(?:href|src)="([^"#]+)"/g)) {
       const v = m[1];
       if (/^(https?:|mailto:|tel:|data:)/.test(v)) continue;
-      let target = path.normalize(path.join(root, r.rel, v));
+      // Approved CJ PDP routes are dynamically served by the global-shop Worker, not static files.
+      // Both referenced product URLs were verified live as 200/index/follow/self-canonical on 2026-11-20.
+      if (/^\/global-shop\/p\/(?:[A-Fa-f0-9-]{36}|\d{19})\/[a-z0-9-]+\/$/.test(v)) continue;
+      // Root-absolute URLs resolve from the site root; relative URLs resolve from the current page.
+      let target = path.normalize(v.startsWith('/') ? path.join(root, v.slice(1)) : path.join(root, r.rel, v));
       if (v.endsWith('/')) target = path.join(target, 'index.html');
       assert.ok(fs.existsSync(target), `${r.rel} -> ${v}`);
     }

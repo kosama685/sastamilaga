@@ -1,0 +1,94 @@
+/* Sasta Milaga country landing design system 2026
+   Scoped to .sml/.smx. Shared header, footer, WooCommerce, and payment paths are untouched. */
+:root{--smx-green:#064b2a;--smx-deep:#073c26;--smx-emerald:#11844a;--smx-orange:#fb7d18;--smx-ink:#132a20;--smx-muted:#60756a;--smx-line:#e0eae2;--smx-soft:#f5f9f5}
+.sml{font-family:inherit;color:var(--smx-ink);background:linear-gradient(180deg,#f4fbf7 0,#fff 18%,#f8fbf9 100%);overflow:hidden}
+.sml .sml-wrap{max-width:1400px;padding:0 clamp(16px,2.6vw,36px) 58px}
+.sml .sml-crumbs{padding-block:18px 10px;color:#52705d;font-size:.86rem}
+.sml .sml-hero{position:relative;isolation:isolate;overflow:hidden;padding:clamp(32px,5.3vw,82px) clamp(24px,4.1vw,60px);min-height:320px;border-radius:25px;background:linear-gradient(90deg,rgba(244,255,248,.98) 0%,rgba(233,247,238,.96) 45%,rgba(235,245,232,.54) 74%,rgba(10,79,40,.2) 100%),radial-gradient(circle at 85% 40%,#a4d5bf 0%,#e9f9ee 60%);box-shadow:0 22px 46px -37px #123d2c; margin-bottom:16px}
+.sml .sml-hero:after{position:absolute;z-index:-1;content:"◈";font-size:clamp(185px,23vw,390px);font-weight:900;line-height:1;right:0;top:-10px;opacity:.11;color:#0d6c40;transform:rotate(-12deg)}
+.sml:has([data-smx-market="serbia"]) .sml-hero{background:linear-gradient(90deg,rgba(246,254,250,.98) 0%,rgba(246,254,250,.94) 37%,rgba(237,251,242,.5) 66%,rgba(9,59,26,.13) 100%),url("https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Kalemegdan_-_panorama_Apr-2011wtmk.jpg/1280px-Kalemegdan_-_panorama_Apr-2011wtmk.jpg") center 46%/cover no-repeat}
+.sml:has([data-smx-market="saudi-arabia"]) .sml-hero{background:linear-gradient(90deg,#f4fcf6 0%,rgba(246,254,250,.94) 42%,rgba(247,248,235,.37) 100%)}
+.sml:has([data-smx-market="germany"]) .sml-hero{background:linear-gradient(100deg,#f6fdf9 0%,#f0f7f1 46%,rgba(209,223,196,.45) 100%)}
+.sml:has([data-smx-market="uk"]) .sml-hero{background:linear-gradient(110deg,#f7fdf9 0%,#eef4f2 43%,rgba(167,200,212,.6) 100%)}
+.sml:has([data-smx-market="usa"]) .sml-hero{background:linear-gradient(110deg,#f6fbfa 0%,#e6f5ee 50%,rgba(157,206,230,.56) 100%)}
+.sml:has([data-smx-market="pakistan"]) .sml-hero{background:linear-gradient(110deg,#f9fff9 0%,#eff9ed 44%,rgba(169,224,184,.6) 100%)}
+.sml .sml-hero h1{max-width:780px;font-size:clamp(2.1rem,4.6vw,4.8rem);font-weight:850;line-height:1.06;letter-spacing:-.042em;color:#084629;text-wrap:balance}
+.sml .sml-hero .sml-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 17px;background:#fff;border:1px solid #cae5d5;box-shadow:0 3px 10px #144b2510;color:#0b613a;font-weight:750}
+.sml .sml-hero .sml-answer{max-width:640px;font-size:clamp(.96rem,1.12vw,1.12rem);line-height:1.78;color:#254b36}
+.sml .sml-hero .sml-btn{box-shadow:0 12px 24px -14px #bc6b13}
+.sml .sml-hero .sml-btn--go{background:linear-gradient(115deg,#ff911e,#ff6513)!important;color:white!important}
+.sml .sml-card{border:1px solid #e4eee7;border-radius:20px;box-shadow:0 9px 28px -22px #0b4d2b}
+.smx{margin-top:12px;--g:#11693d;--o:#fb7d18;--smx-radius:19px;direction:inherit}
+.smx *{box-sizing:border-box}
+.smx a{text-decoration:none}
+.smx-trust{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:0 0 28px;padding:13px 21px;background:#e9f7ee;border:1px solid #d6e9df;border-radius:15px;color:#1f593a;font-size:.83rem}
+.smx-trust span:first-child{font-weight:800;white-space:nowrap}
+.smx-trust span:nth-child(2){flex:1;min-width:230px;line-height:1.5}
+.smx-trust a{font-weight:750;color:#116c43}
+.smx-section{margin:0 0 32px}
+.smx-title{display:flex;justify-content:space-between;align-items:end;gap:20px;margin:0 0 17px}
+.smx-eyebrow{display:block;margin-bottom:7px;color:#ed791e;text-transform:uppercase;letter-spacing:.14em;font-weight:800;font-size:.68rem}
+.smx-title h2{margin:0 0 4px;color:var(--smx-deep);font-size:clamp(1.26rem,1.72vw,1.9rem);letter-spacing:-.026em;line-height:1.25}
+.smx-title p{margin:0;color:#647569;font-size:.9rem;line-height:1.5;max-width:750px}
+.smx-link{flex-shrink:0;color:#0e6c3d;font-size:.87rem;font-weight:800;white-space:nowrap}
+.smx-category-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px}
+.smx-category-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:162px;padding:13px 9px;background:white;border:1px solid #dcebe2;border-radius:16px;box-shadow:0 6px 19px -17px #0c4728;color:#1d3c2c;transition:transform .2s,box-shadow .2s,border-color .2s;text-align:center}
+.smx-category-card:hover,.smx-product:hover,.smx-country:hover{transform:translateY(-4px);box-shadow:0 17px 30px -22px #115832;border-color:#8cc7a1}
+.smx-category-card img{width:100%;height:95px;object-fit:contain;mix-blend-mode:multiply}
+.smx-category-emoji{font-size:3.4rem;line-height:1.2}
+.smx-category-card strong{font-size:.89rem;line-height:1.2}
+.smx-category-card small{font-size:.74rem;color:#238754;font-weight:750}
+.smx-country-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+.smx-country{display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 9px;background:#fff;border:1px solid #dbe9df;border-radius:17px;transition:transform .2s,box-shadow .2s}
+.smx-country .smx-flag{font-size:2.7rem}
+.smx-country strong{font-size:.94rem;color:#183a28}
+.smx-country small{font-size:.76rem;color:#238754}
+.smx-shop-layout{display:grid;grid-template-columns:minmax(188px,225px) minmax(0,1fr);gap:18px;align-items:start}
+.smx-filter{position:sticky;top:20px;background:white;padding:19px;border:1px solid #e1eae5;border-radius:17px;box-shadow:0 8px 24px -20px #0b4e2a}
+.smx-filter>strong{display:block;background:linear-gradient(120deg,#055c32,#16844b);color:white;margin:-19px -19px 12px;padding:15px 17px;border-radius:16px 16px 6px 6px;font-size:.97rem}
+.smx-filter-links{display:grid;gap:2px}
+.smx-filter-links a{display:flex;justify-content:space-between;gap:8px;color:#28513a;font-size:.88rem;padding:10px 5px;border-bottom:1px solid #ecf2ed}
+.smx-filter-links a span{color:#148347}
+.smx-filter p{font-size:.72rem;line-height:1.6;color:#6d8173;margin:16px 0 0}
+.smx-products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;align-items:stretch}
+.smx-product{min-width:0;overflow:hidden;background:white;border:1px solid #e1e9e5;border-radius:16px;box-shadow:0 7px 17px -15px #164b2c;transition:transform .18s,box-shadow .18s;display:flex;flex-direction:column}
+.smx-product-image{display:flex;align-items:center;justify-content:center;height:174px;padding:13px;background:linear-gradient(155deg,#fff,#f6faf7)}
+.smx-product-image img{max-width:100%;width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
+.smx-prod-body{padding:13px;display:flex;flex-direction:column;gap:9px;flex:1}
+.smx-prod-category{font-size:.69rem;color:#198451;font-weight:750;letter-spacing:.035em}
+.smx-prod-body h3{margin:0;font-size:.84rem;line-height:1.45;font-weight:750;flex:1;overflow-wrap:anywhere}
+.smx-prod-body h3 a{color:#193d29;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+.smx-prod-bottom{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.smx-price{font-size:1.02rem;color:#142b20;font-weight:850;white-space:nowrap}
+.smx-quote{font-size:.71rem;color:#65786b}
+.smx-prod-btn{display:block;width:100%;text-align:center;padding:9px 11px;background:linear-gradient(120deg,#0a6336,#108c48);color:white!important;border-radius:9px;font-size:.8rem;font-weight:800}
+.smx-promos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.smx-promo{position:relative;display:flex;align-items:center;gap:16px;min-height:151px;padding:20px;border-radius:18px;overflow:hidden;background:linear-gradient(115deg,#d5ecff,#8cc8ef);color:#053c60}
+.smx-promo--shopping{background:linear-gradient(120deg,#fff3a8,#f7c755);color:#563c08}
+.smx-promo--tv{background:linear-gradient(120deg,#063e85,#167ada);color:white}
+.smx-promo-icon{font-size:3.3rem;min-width:54px;text-align:center}
+.smx-promo span:last-child{display:flex;flex-direction:column;gap:7px;position:relative;z-index:1}
+.smx-promo strong{font-size:clamp(1.08rem,1.6vw,1.53rem);line-height:1.08}
+.smx-promo small{font-size:.78rem;line-height:1.47}
+.smx-promo em{display:inline-block;align-self:flex-start;font-weight:850;font-size:.79rem;font-style:normal;background:#ff7718;color:#fff;padding:7px 14px;border-radius:99px}
+.smx-promo--tv em{background:#f6423c}
+.smx-time-grid,.smx-explore-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.smx-time-grid a,.smx-explore-grid a{display:flex;flex-direction:column;gap:6px;padding:17px 21px;min-height:122px;border:1px solid #dce9e1;border-radius:16px;background:#fff;color:#173d28}
+.smx-time-grid a:first-child{background:linear-gradient(120deg,#ff8f23,#ff6319);border:0;color:#fff}
+.smx-time-grid span,.smx-explore-grid span{font-size:1.5rem}
+.smx-time-grid strong,.smx-explore-grid strong{font-size:1rem}
+.smx-time-grid small,.smx-explore-grid small{font-size:.75rem;line-height:1.45;opacity:.79}
+.smx-explore-grid a:first-child{background:#e8f6ff}
+.smx-explore-grid a:nth-child(2){background:#e8ecff}
+.smx-explore-grid a:nth-child(3){background:#e4f5e9}
+.smx-disclaimer{border-left:3px solid #f98b32;padding:12px 16px;margin:12px 0 37px!important;border-radius:0 9px 9px 0;background:#fff9ef;color:#556f5c;font-size:.8rem;line-height:1.55}
+[dir=rtl] .smx-disclaimer{border-left:0;border-right:3px solid #f98b32;border-radius:9px 0 0 9px}
+[dir=rtl] .smx-trust,[dir=rtl] .smx-title,[dir=rtl] .smx-promo{direction:rtl}
+[dir=rtl] .smx-product,[dir=rtl] .smx-category-card{text-align:right}
+@media(max-width:1100px){.smx-products{grid-template-columns:repeat(3,minmax(0,1fr))}.smx-category-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.smx-country-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:780px){.smx-shop-layout{grid-template-columns:1fr}.smx-filter{position:static}.smx-filter-links{display:flex;flex-wrap:wrap;gap:9px}.smx-filter-links a{border:1px solid #dcece2;border-radius:99px;padding:8px 12px}.smx-promos{grid-template-columns:1fr}.smx-products{grid-template-columns:repeat(2,minmax(0,1fr))}.smx-category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.smx-time-grid,.smx-explore-grid{grid-template-columns:1fr}.sml .sml-hero{min-height:0;padding:34px 25px}.smx-promo{min-height:118px}}
+@media(max-width:510px){.smx-title{align-items:start;gap:12px}.smx-title p{font-size:.79rem}.smx-link{font-size:.74rem}.smx-products{gap:8px}.smx-product-image{height:145px}.smx-prod-body{padding:10px}.smx-category-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.smx-category-card{min-height:143px}.smx-country-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.smx-product-image img{object-fit:contain}.smx-prod-body h3{font-size:.77rem}.smx-trust{font-size:.73rem}.sml .sml-hero h1{font-size:clamp(2.15rem,8vw,3rem)}}
+@media(prefers-reduced-motion:reduce){.smx-product,.smx-country,.smx-category-card{transition:none!important}}
+
+/* Attribution for publicly licensed Serbian panorama by Danimir (Wikimedia Commons). */
+.sml:has([data-smx-market="serbia"]) .sml-hero:before{content:"Photo: Danimir · Wikimedia Commons";position:absolute;bottom:8px;right:14px;font-size:10px;color:#174b2d;background:rgba(255,255,255,.78);padding:3px 7px;border-radius:5px}
