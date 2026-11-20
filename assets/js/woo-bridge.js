@@ -26,15 +26,31 @@
     if (nonce && !force) return Promise.resolve(nonce);
     return fetch(ROOT + 'wp-json/wc/store/v1/cart', { credentials: 'include' }).then(function (r) { nonce = r.headers.get('nonce') || ''; return nonce; });
   }
-  function post(id, qty, retried) {
+  var REASONS = { woocommerce_rest_product_not_purchasable: 'not_purchasable', woocommerce_rest_missing_attributes: 'choose_option', woocommerce_rest_product_out_of_stock: 'out_of_stock', woocommerce_rest_cart_product_no_stock: 'out_of_stock' };
+  function post(id, qty, retried, variation) {
+    var body = { id: id, quantity: qty }; if (variation && variation.length) body.variation = variation;
     return getNonce(retried).then(function (n) {
-      return json(ROOT + 'wp-json/wc/store/v1/cart/add-item', { method: 'POST', headers: { 'Content-Type': 'application/json', Nonce: n }, body: JSON.stringify({ id: id, quantity: qty }) });
+      return json(ROOT + 'wp-json/wc/store/v1/cart/add-item', { method: 'POST', headers: { 'Content-Type': 'application/json', Nonce: n }, body: JSON.stringify(body) });
     }).then(function (x) {
-      if (x.r.status === 403 && !retried) return post(id, qty, true);   // the nonce had expired
+      if (x.r.status === 403 && !retried) return post(id, qty, true, variation);   // the nonce had expired
       if (x.r.status === 201 || x.r.status === 200) return { ok: true, status: x.r.status, count: x.j && x.j.items_count };
-      return { ok: false, status: x.r.status, message: plain(x.j && x.j.message) || 'The cart could not be updated.', reason: (x.j && x.j.code) || 'error' };
+      var code = (x.j && x.j.code) || 'error';
+      return { ok: false, status: x.r.status, code: code, message: plain(x.j && x.j.message) || 'The cart could not be updated.', reason: REASONS[code] || (x.r.status >= 500 ? 'network' : 'error') };
     });
   }
+  /* What the shopper sees after an add attempt. Pure: no DOM, no network (unit-tested in tools/woo-bridge-flow.test.mjs).
+     WooCommerce is the only cart: success goes to /cart/ or /checkout/, never to the old static checkout (/#/checkout). */
+  W.decide = function (res, buyNow, waHref) {
+    var wa = waHref ? { href: waHref, label: 'Ask about this item on WhatsApp' } : null;
+    if (res && res.ok) return buyNow ? { kind: 'go', href: '/checkout/' } : { kind: 'added', message: 'Added to your cart.', link: { href: '/cart/', label: 'View cart' } };
+    var r = (res && res.reason) || 'error';
+    if (r === 'not_purchasable') return { kind: 'refused', message: 'This item is delivered in Pakistan only.', link: { href: '/global-shop/', label: 'See items that ship to you' }, alt: wa };
+    if (r === 'choose_option') return { kind: 'refused', message: 'Please choose an option (size, colour or model) first.', link: null, alt: null };
+    if (r === 'out_of_stock') return { kind: 'refused', message: 'This item is out of stock right now.', link: wa, alt: null };
+    if (r === 'unmapped') return { kind: 'refused', message: 'This item is ordered on WhatsApp.', link: wa, alt: null };
+    if (r === 'network') return { kind: 'refused', message: 'The store could not be reached. Please try again.', link: wa, alt: null };
+    return { kind: 'refused', message: (res && res.message) || 'The cart could not be updated.', link: wa, alt: null };
+  };
   /* Read-only SKU availability for CJ option dialogs. Does not create or price products. */
   W.hasSKU = function (sku) {
     return loadIds().then(function (map) { return Boolean(map && map[String(sku)]); }).catch(function () { return null; });
@@ -42,20 +58,25 @@
   W.sync = syncContext;
   // The store answers in 2-10 seconds, so everything a click needs is prepared in the background first (in this order: the country decides the session).
   W.warm = function () { return loadIds().then(function () { return syncContext(); }).then(function () { return getNonce(false); }).catch(function () {}); };
-  W.add = function (sku, qty) {
+  W.add = function (sku, qty, variation) {
     qty = Math.max(1, Math.min(99, parseInt(qty, 10) || 1));
     return loadIds().then(function (map) {
       var id = map[String(sku)]; if (!id) return { ok: false, reason: 'unmapped', message: 'This item is ordered on WhatsApp.' };
-      return syncContext().then(function () { return post(id, qty); });
+      return syncContext().then(function () { return post(id, qty, false, variation); });
     }).catch(function () { return { ok: false, reason: 'network', message: 'The store could not be reached. Please try again.' }; }).then(function (res) { if (res.ok) W.badge(); return res; });
   };
   W.count = function () { return fetch(ROOT + 'wp-json/wc/store/v1/cart', { credentials: 'include' }).then(function (r) { return r.json(); }).then(function (j) { return (j && j.items_count) || 0; }).catch(function () { return 0; }); };
+  /* The header badge shows the WooCommerce cart count (the cart the shopper will actually pay for). */
   W.badge = function () {
-    var sum = function (k) { try { return JSON.parse(localStorage.getItem(k) || '[]').reduce(function (a, x) { return a + (x.qty || 0); }, 0); } catch (e) { return 0; } }, n = sum('sm_cart') + sum('sm_gcart');
-    document.querySelectorAll('.smh-cart__count').forEach(function (el) { el.textContent = n; el.setAttribute('data-n', n); });
+    return W.count().then(function (n) {
+      document.querySelectorAll('.smh-cart__count').forEach(function (el) { el.textContent = n; el.setAttribute('data-n', n); });
+      return n;
+    });
   };
-  /* The site's own cart feeds the site's checkout (order record + PayPal). The WooCommerce cart accepted none of 15 sampled products
-     (8 are not mapped to a WooCommerce product, 7 are "not available for purchase"), so it is no longer the first choice. */
+  /* LEGACY browser-only cart (localStorage sm_cart). No longer used by this file's buttons: the static checkout it fed is switched off
+     at the edge, so items put here could never be paid for. Re-tested 2026-11-20 (tools/probe-woo-purchasable.mjs): in a Pakistan
+     session WooCommerce accepted 20 of 20 mapped products (variable ones once the variation is sent); outside Pakistan local products
+     are refused by the store's Pakistan-only policy, which W.decide() explains to the shopper. Kept only for other legacy callers. */
   W.localAdd = function (sku, qty) {
     qty = Math.max(1, Math.min(99, parseInt(qty, 10) || 1)); var cart = []; try { cart = JSON.parse(localStorage.getItem('sm_cart') || '[]'); } catch (e) {}
     var row = cart.filter(function (x) { return String(x.id).toLowerCase() === String(sku).toLowerCase(); })[0]; if (row) row.qty = Math.min(99, (row.qty || 0) + qty); else cart.push({ id: sku, qty: qty });
@@ -73,12 +94,26 @@
     return out;
   }
   function wa() { var a = document.querySelector('main a.sm-wa-btn'); return a ? a.href : ''; }
+  function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function linkHtml(l) { if (!l) return ''; var ext = /^https?:/.test(l.href) && l.href.indexOf(location.origin) !== 0; return ' <a href="' + esc(l.href) + '"' + (ext ? ' target="_blank" rel="noopener"' : '') + ' style="color:#FFB347;margin-left:8px">' + esc(l.label) + '</a>'; }
+  /* Chosen options on the page (WooCommerce attribute selects), sent so variable products can be added. */
+  function pageVariation() {
+    var out = []; document.querySelectorAll('main select[name^="attribute_"]').forEach(function (s) { if (s.value) out.push({ attribute: s.name.replace(/^attribute_/, ''), value: s.value }); });
+    return out;
+  }
+  function show(d) {
+    if (d.kind === 'go') { toast('Opening secure checkout…'); location.href = d.href; return; }
+    toast(esc(d.message) + linkHtml(d.link) + linkHtml(d.alt));
+  }
   function run(sku, qty, buyNow, el) {
     if (!sku || (el && el.getAttribute('aria-busy'))) return; if (el) el.setAttribute('aria-busy', 'true');
     qty = Math.max(1, parseInt((document.getElementById('pdpQty') || {}).textContent, 10) || qty || 1);
-    var ok = W.localAdd(sku, qty); if (el) el.removeAttribute('aria-busy');
-    if (!ok) { toast('The cart could not be updated.' + (wa() ? ' <a href="' + wa() + '" target="_blank" rel="noopener" style="color:#FFB347;margin-left:8px">Order on WhatsApp</a>' : '')); return; }
-    if (buyNow) { toast('Preparing your checkout…'); location.href = '/#/checkout'; } else toast('Added to cart. <a href="/cart/" style="color:#FFB347;margin-left:8px">View cart</a>');
+    toast('Adding to your cart…');
+    return W.add(sku, qty, pageVariation()).then(function (res) {
+      if (el) el.removeAttribute('aria-busy');
+      show(W.decide(res, buyNow, wa()));
+      return res;
+    });
   }
   var remote = /\.github\.io$/.test(host);   // the GitHub copy cannot share a WooCommerce session with the store: it hands the shopper over to the store with the item
   function go(sku, buyNow) { location.href = 'https://sastamilaga.com/?sm_do=' + (buyNow ? 'buy' : 'add') + '&sku=' + encodeURIComponent(sku); }
@@ -96,7 +131,7 @@
     var q = new URLSearchParams(location.search), act = q.get('sm_do'), want = q.get('sku');
     if (act && want && /^[A-Za-z0-9_-]{3,40}$/.test(want)) {
       history.replaceState(null, '', location.pathname);
-      var start = function () { if (W.localAdd(want, 1)) { if (act === 'buy') location.href = '/#/checkout'; else toast('Added to cart. <a href="/cart/" style="color:#FFB347;margin-left:8px">View cart</a>'); } else toast('The cart could not be updated.'); };
+      var start = function () { W.add(want, 1).then(function (res) { show(W.decide(res, act === 'buy', wa())); }); };
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
     }
   }
