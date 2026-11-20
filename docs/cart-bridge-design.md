@@ -1,5 +1,17 @@
 # Cart bridge: findings and purchase-flow design (2026-11-20)
 
+## Status (owner chose option B, authorized editing woo-bridge.js and a Pakistan-session test)
+| Step | State | Evidence |
+|---|---|---|
+| 1. Pakistan-session purchasability | DONE | `tools/probe-woo-purchasable.mjs`: PK session 20/20 mapped products accepted (2 variable, with variation); SA session 0/20 (18 not purchasable by policy, 2 variations hidden). `data/cart/purchasable-probe-*.json`. No order created. |
+| 2. `SMWoo.add` sends variations; buttons use the real WooCommerce cart | DONE | `assets/js/woo-bridge.js`: `run()` calls `W.add(sku, qty, pageVariation())`; success opens `/cart/` or `/checkout/`; the static `/#/checkout` and the localStorage cart are no longer used by these buttons; header badge reads the WooCommerce count. |
+| 3. Non-PK sessions and unmapped items | DONE | `W.decide()`: "delivered in Pakistan only" + "See items that ship to you" (`/global-shop/`) + WhatsApp; unmapped and out-of-stock go to WhatsApp; labels are guard-safe (option B). |
+| 4. Tests | DONE | `tools/woo-bridge-flow.test.mjs` 5/5 (with the 5 existing cart tests: 10/10). `tools/cart-bridge.e2e.mjs` against live WooCommerce with the local file swapped in: 11/11 (PK add lands in the real cart, Rs 742, `/cart/` shows it, item removed; SA gets the honest refusal; the guard message never appears). |
+| 5. Guard change | NOT NEEDED for these buttons | woo-bridge handles the click at window capture before the guard. New buttons elsewhere must go through `data-add-cart`. |
+| 6. Sandbox checkout order | PENDING OWNER | needs an authorized test gateway |
+
+Not covered yet: "Buy now" was unit-tested (goes to `/checkout/`) but not exercised live; variable products on static pages only work where the page has WooCommerce `attribute_*` selects (otherwise the shopper gets "Please choose an option first"); the separate static checkout in `checkout.js`/`app.js` still exists for other legacy callers.
+
 Branch `cart-bridge`, from `main` `f257840`. Design only: no cart, checkout, Worker or WordPress code is changed by this document.
 
 ## 1. What happens today (observed)
