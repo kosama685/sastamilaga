@@ -323,8 +323,8 @@ function renderHub() {
 <header class="sml-hero"><span class="sml-pill">Delivery guide</span><h1>Shipping by country</h1>
 <p class="sml-answer">Pick your destination to see how ordering, pricing and delivery work there. Taxes, duties and delivery times depend on your country and the item, so each page says what is confirmed and what is not.</p></header>
 <div class="sml-grid sml-grid--3">
-<a class="sml-card" style="text-decoration:none" href="${pre}pakistan/"><h2>Pakistan</h2><p>Cash on delivery on local products. Rs ${num(FEE)} delivery, free from Rs ${num(FREE)}.</p></a>
-${data.markets.map(x => `<a class="sml-card" style="text-decoration:none" href="${pre}shipping-to/${x.slug}/"><h2>${esc(x.short || x.name)}</h2><p>Global supplier items, prepaid checkout, shipping and total confirmed before you pay.</p></a>`).join('\n')}
+<a class="sml-card" style="text-decoration:none" href="${pre}pakistan/"><h2>Pakistan</h2><p>Pay when it arrives on local products. Rs ${num(FEE)} delivery, free from Rs ${num(FREE)}.</p></a>
+${data.markets.map(x => `<a class="sml-card" style="text-decoration:none" href="${pre}shipping-to/${x.slug}/"><h2>${esc(x.short || x.name)}</h2><p>Global supplier items, paid in advance, with shipping and the full total confirmed before you pay.</p></a>`).join('\n')}
 </div>
 <p class="sml-note" style="margin-top:18px">More countries are added only after delivery, payment and returns are checked for them.</p>
 ${chips(SHARED_LINKS(pre))}
