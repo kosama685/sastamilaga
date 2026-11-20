@@ -1,0 +1,53 @@
+name: Paid landing pages — SEO and destination readiness
+on:
+  pull_request:
+    paths:
+      - 'data/landing/**'
+      - 'pakistan/**'
+      - 'ur/pakistan/**'
+      - 'shipping-to/**'
+      - 'sitemap-landing.xml'
+      - 'sitemap.xml'
+      - 'tools/validate-paid-landing-readiness.mjs'
+      - '.github/workflows/paid-landing-readiness.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'data/landing/**'
+      - 'pakistan/**'
+      - 'ur/pakistan/**'
+      - 'shipping-to/**'
+      - 'sitemap-landing.xml'
+      - 'sitemap.xml'
+      - 'tools/validate-paid-landing-readiness.mjs'
+      - '.github/workflows/paid-landing-readiness.yml'
+  schedule:
+    - cron: '27 3 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: paid-landing-readiness
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify static pages and sitemap membership
+        run: node tools/validate-paid-landing-readiness.mjs
+      - name: Verify public HTTP, canonical and robots after deployment
+        if: github.event_name != 'pull_request'
+        run: node tools/validate-paid-landing-readiness.mjs --live
+      - name: Preserve evidence even after an error
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: paid-landing-readiness
+          path: reports/paid-landing-readiness.json
+          if-no-files-found: warn
+          retention-days: 30
