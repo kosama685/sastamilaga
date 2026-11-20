@@ -117,6 +117,33 @@
   }
   var remote = /\.github\.io$/.test(host);   // the GitHub copy cannot share a WooCommerce session with the store: it hands the shopper over to the store with the item
   function go(sku, buyNow) { location.href = 'https://sastamilaga.com/?sm_do=' + (buyNow ? 'buy' : 'add') + '&sku=' + encodeURIComponent(sku); }
+  /* Product-video quick-buy dialog (#smvm, inline on static pages). Its own buttons still call the legacy static cart, which the edge
+     guard blocks, so this listener remembers which video card opened the dialog and sends its two buttons to the real cart instead. */
+  var vmCard = null;
+  function vmSku() {
+    if (!vmCard) return '';
+    var opts = []; try { opts = JSON.parse(vmCard.getAttribute('data-vm-opts') || '[]'); } catch (err) { opts = []; }
+    var sel = document.getElementById('smvm-opt');
+    if (opts.length && sel && opts[sel.selectedIndex] && opts[sel.selectedIndex].q) return String(opts[sel.selectedIndex].q);
+    return vmCard.getAttribute('data-vm-q') || '';
+  }
+  function vmWa() { var a = document.getElementById('smvm-wa'); return a && /^https:\/\/wa\.me\//.test(a.href) ? a.href : ''; }
+  window.addEventListener('click', function (e) {
+    var t = e.target; if (!t || !t.closest) return;
+    var opener = t.closest('[data-vm-src]'); if (opener) { vmCard = opener; return; }
+    var vb = t.closest('#smvm-buy, #smvm-cart'); if (!vb || (!W.active && !remote)) return;
+    var sku = vmSku(); if (!sku) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    var buy = vb.id === 'smvm-buy', q = parseInt((document.getElementById('smvm-qty') || {}).value, 10) || 1, dlg = document.getElementById('smvm');
+    if (remote) { go(sku, buy); return; }
+    vb.setAttribute('aria-busy', 'true'); toast('Adding to your cart…');
+    W.add(sku, q).then(function (res) {
+      vb.removeAttribute('aria-busy');
+      var d = W.decide(res, buy, vmWa());
+      if (res.ok && dlg && typeof dlg.close === 'function') dlg.close();
+      show(d);
+    });
+  }, true);
   window.addEventListener('click', function (e) {
     if (!W.active && !remote) return; var t = e.target; if (!t || !t.closest) return;
     var card = t.closest('[data-add-cart]');   // product cards (home, shop, search, categories)
