@@ -1,6 +1,25 @@
 /* Progressive enhancement: products and links remain crawlable without JavaScript. */
 (function(){
   'use strict';
+  var slider=document.querySelector('[data-hero-slider]');
+  if(slider){
+    var slides=Array.from(slider.querySelectorAll('[data-hero-slide]')),dots=Array.from(slider.querySelectorAll('[data-slide-to]'));
+    var current=0,timer=null,hovered=false,focused=false,reduced=window.matchMedia('(prefers-reduced-motion: reduce)'),playing=!reduced.matches;
+    var pause=slider.querySelector('[data-slide-pause]');
+    function schedule(){clearInterval(timer);if(playing&&!hovered&&!focused&&!document.hidden)timer=setInterval(function(){show(current+1);},6500);}
+    function show(n){current=(n+slides.length)%slides.length;slides.forEach(function(s,i){s.hidden=i!==current;s.inert=i!==current;s.classList.toggle('smx-slide--active',i===current);});dots.forEach(function(d,i){d.setAttribute('aria-pressed',String(i===current));});schedule();}
+    function syncPlaying(){pause.textContent=playing?'Ⅱ':'▷';pause.setAttribute('aria-label',slider.dataset[playing?'pause':'play']);schedule();}
+    slider.querySelector('[data-slider-controls]').hidden=false;
+    slider.querySelector('[data-slide-prev]').addEventListener('click',function(){show(current-1);});
+    slider.querySelector('[data-slide-next]').addEventListener('click',function(){show(current+1);});
+    dots.forEach(function(d){d.addEventListener('click',function(){show(Number(d.dataset.slideTo));});});
+    pause.addEventListener('click',function(){playing=!playing;syncPlaying();});
+    slider.addEventListener('mouseenter',function(){hovered=true;schedule();});slider.addEventListener('mouseleave',function(){hovered=false;schedule();});
+    slider.addEventListener('focusin',function(){focused=true;schedule();});slider.addEventListener('focusout',function(){setTimeout(function(){focused=slider.contains(document.activeElement);schedule();},0);});
+    document.addEventListener('visibilitychange',schedule);
+    reduced.addEventListener('change',function(){if(reduced.matches){playing=false;syncPlaying();}});
+    show(0);syncPlaying();
+  }
   var root=document.querySelector('[data-smx-market]');if(!root)return;
   var grid=root.querySelector('.smx-products'),cards=Array.from(root.querySelectorAll('[data-sx-category]'));
   if(!grid||!cards.length)return;

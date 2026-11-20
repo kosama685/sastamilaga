@@ -7,6 +7,10 @@ on:
     paths:
       - 'data/landing/**'
       - 'assets/css/landing.css'
+      - 'assets/css/country-showcase.css'
+      - 'assets/js/landing-storefront.js'
+      - 'assets/landing/**'
+      - 'tools/landing-*.mjs'
       - 'tools/build-landing-pages*.mjs'
       - 'pakistan/**'
       - 'ur/pakistan/**'
@@ -32,3 +36,7 @@ jobs:
         run: git diff --exit-code -- pakistan ur/pakistan shipping-to sitemap-landing.xml
       - name: Content, SEO, link and order-panel tests
         run: node --test tools/build-landing-pages.test.mjs
+      - name: Slider and product interaction tests
+        run: |
+          npm install --prefix "$RUNNER_TEMP/sasta-dom" linkedom@0.18.15 --no-audit --no-fund
+          SM_DOM_MODULE="$RUNNER_TEMP/sasta-dom/node_modules/linkedom" node --test tools/landing-storefront.test.mjs

@@ -390,5 +390,42 @@
     }
   ],
   "verifiedOffers": [],
-  "reviewedEvents": []
+  "reviewedEvents": [],
+  "categoryStrip": [
+    {
+      "globalUrl": "/c/global/earphones-and-headphones.html",
+      "localUrl": "/c/electronics-and-appliances.html",
+      "image": "https://cf.cjdropshipping.com/2053/6083235235842.jpg"
+    },
+    {
+      "globalUrl": "/c/global/men-s-shirts.html",
+      "localUrl": "/c/fashion-and-apparel.html",
+      "image": "https://cf.cjdropshipping.com/quick/product/f20470d5-e5ad-4b51-9b99-774a680a8943.jpg"
+    },
+    {
+      "globalUrl": "/c/global/bedding-sets.html",
+      "localUrl": "/c/home-and-living.html",
+      "image": "https://cf.cjdropshipping.com/20200530/1093359129457.jpg"
+    },
+    {
+      "globalUrl": "/c/global/lipstick.html",
+      "localUrl": "/c/health-and-beauty.html",
+      "image": "https://cf.cjdropshipping.com/b8122684-0788-4f68-bc24-8784efcfb9a8.jpg"
+    },
+    {
+      "globalUrl": "/c/global/sports-accessories.html",
+      "localUrl": "/c/outdoor-and-sports-toys.html",
+      "image": "https://cf.cjdropshipping.com/2059/1094117902782.jpg"
+    },
+    {
+      "globalUrl": "/c/global/stuffed-and-plush-animals.html",
+      "localUrl": "/c/toys-and-games.html",
+      "image": "https://cf.cjdropshipping.com/1612504042434.jpg"
+    },
+    {
+      "globalUrl": "/c/books-and-stationery.html",
+      "localUrl": "/c/books-and-stationery.html",
+      "icon": "book"
+    }
+  ]
 }
