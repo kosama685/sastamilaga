@@ -44,19 +44,21 @@ const localeRows = routes.filter(r => r.market !== 'hub').map(r => {
     shipping: isPK ? 'Pakistan delivery fee and free-delivery threshold match assets/js/config.js' : 'not verified (no live quote on the page; handed to WhatsApp)',
     payment: isPK ? 'cash on delivery for local products (stated in policy pages)' : 'prepaid stated; payment methods not verified',
     taxReturns: isPK ? 'see returns/ page' : 'general guidance only; country policy not verified',
-    status: {translated: native !== 'source-language' ? 'drafted' : 'source', reviewed: false, marketConfigured: false, published: false, indexable: !!r.indexable, submitted: false},
+    status: {translated: native !== 'source-language' ? 'drafted' : 'source', reviewed: false, marketConfigured: false, published: true, indexable: !!r.indexable, submitted: false},
     hreflang: r.indexable ? 'complete reciprocal set emitted' : 'withheld while noindex',
     sitemap: r.indexable ? 'sitemap-landing.xml' : 'excluded (noindex)',
-    blockers: r.indexable
-      ? ['branch not merged or deployed', ...(r.lang === 'ur' ? ['Urdu copy needs native review'] : [])]
-      : ['branch not merged or deployed', 'no verified shipping, checkout, tax or returns for this country', ...(ASSISTANT.has(r.lang) ? ['copy drafted by the assistant, needs native-speaker review'] : []), 'noindex until evidence gate passes']
+    blockers: isPK
+      ? ['not submitted to Search Console', ...(r.lang === 'ur' ? ['Urdu copy needs native review'] : [])]
+      : r.indexable
+        ? ['INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence', ...(ASSISTANT.has(r.lang) ? ['copy drafted by the assistant, no native-speaker review'] : []), 'not submitted to Search Console']
+        : ['no verified shipping, checkout, tax or returns for this country', ...(ASSISTANT.has(r.lang) ? ['copy drafted by the assistant, needs native-speaker review'] : []), 'noindex until evidence gate passes']
   };
 });
 
 const countryRows = countries.map(c => {
   const slug = codeToSlug[c], pages = slug ? (landingByMarket[slug] || []).map(r => r.lang) : [];
-  return {kind: 'country', code: c, currencyDisplay: CUR[c], landingLocales: pages, status: pages.length ? 'landing-built-noindex' : 'not-started',
-    blockers: pages.length ? ['evidence gate not passed'] : ['no landing page', 'shipping, payment, tax, returns and translation not verified']};
+  return {kind: 'country', code: c, currencyDisplay: CUR[c], landingLocales: pages, status: pages.length ? (slug === 'pakistan' ? 'landing-live-indexed' : 'landing-live-indexed-by-owner-override') : 'not-started',
+    blockers: pages.length ? (slug === 'pakistan' ? ['not submitted to Search Console'] : ['evidence gate not passed; indexed by owner override 2026-11-20', 'not submitted to Search Console']) : ['no landing page', 'shipping, payment, tax, returns and translation not verified']};
 });
 const languageRows = overlayLangs.map(l => ({kind: 'language', code: l, rtl: !!overlay[l][1], mechanism: 'browser translate overlay (no dedicated URLs)', urls: 0, humanReviewed: false,
   status: 'overlay-only', blockers: ['no localized URLs', 'translation not reviewed', 'must not be indexed as doorway pages']}));

@@ -8,7 +8,7 @@
     "countriesInPicker": 246,
     "languagesInOverlay": 127,
     "landingLocalesBuilt": 11,
-    "landingLocalesIndexable": 2,
+    "landingLocalesIndexable": 11,
     "landingLocalesHumanReviewed": 0,
     "countriesWithLanding": 6
   },
@@ -30,16 +30,15 @@
         "translated": "source",
         "reviewed": false,
         "marketConfigured": false,
-        "published": false,
-        "indexable": false,
+        "published": true,
+        "indexable": true,
         "submitted": false
       },
-      "hreflang": "withheld while noindex",
-      "sitemap": "excluded (noindex)",
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
       "blockers": [
-        "branch not merged or deployed",
-        "no verified shipping, checkout, tax or returns for this country",
-        "noindex until evidence gate passes"
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "not submitted to Search Console"
       ]
     },
     {
@@ -58,17 +57,16 @@
         "translated": "drafted",
         "reviewed": false,
         "marketConfigured": false,
-        "published": false,
-        "indexable": false,
+        "published": true,
+        "indexable": true,
         "submitted": false
       },
-      "hreflang": "withheld while noindex",
-      "sitemap": "excluded (noindex)",
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
       "blockers": [
-        "branch not merged or deployed",
-        "no verified shipping, checkout, tax or returns for this country",
-        "copy drafted by the assistant, needs native-speaker review",
-        "noindex until evidence gate passes"
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "copy drafted by the assistant, no native-speaker review",
+        "not submitted to Search Console"
       ]
     },
     {
@@ -87,16 +85,15 @@
         "translated": "source",
         "reviewed": false,
         "marketConfigured": false,
-        "published": false,
-        "indexable": false,
+        "published": true,
+        "indexable": true,
         "submitted": false
       },
-      "hreflang": "withheld while noindex",
-      "sitemap": "excluded (noindex)",
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
       "blockers": [
-        "branch not merged or deployed",
-        "no verified shipping, checkout, tax or returns for this country",
-        "noindex until evidence gate passes"
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "not submitted to Search Console"
       ]
     },
     {
@@ -115,16 +112,15 @@
         "translated": "source",
         "reviewed": false,
         "marketConfigured": false,
-        "published": false,
-        "indexable": false,
+        "published": true,
+        "indexable": true,
         "submitted": false
       },
-      "hreflang": "withheld while noindex",
-      "sitemap": "excluded (noindex)",
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
       "blockers": [
-        "branch not merged or deployed",
-        "no verified shipping, checkout, tax or returns for this country",
-        "noindex until evidence gate passes"
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "not submitted to Search Console"
       ]
     },
     {
@@ -143,16 +139,15 @@
         "translated": "source",
         "reviewed": false,
         "marketConfigured": false,
-        "published": false,
-        "indexable": false,
+        "published": true,
+        "indexable": true,
         "submitted": false
       },
-      "hreflang": "withheld while noindex",
-      "sitemap": "excluded (noindex)",
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
       "blockers": [
-        "branch not merged or deployed",
-        "no verified shipping, checkout, tax or returns for this country",
-        "noindex until evidence gate passes"
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "not submitted to Search Console"
       ]
     },
     {
@@ -171,17 +166,16 @@
         "translated": "drafted",
         "reviewed": false,
         "marketConfigured": false,
-        "published": false,
-        "indexable": false,
+        "published": true,
+        "indexable": true,
         "submitted": false
       },
-      "hreflang": "withheld while noindex",
-      "sitemap": "excluded (noindex)",
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
       "blockers": [
-        "branch not merged or deployed",
-        "no verified shipping, checkout, tax or returns for this country",
-        "copy drafted by the assistant, needs native-speaker review",
-        "noindex until evidence gate passes"
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "copy drafted by the assistant, no native-speaker review",
+        "not submitted to Search Console"
       ]
     },
     {
@@ -200,17 +194,16 @@
         "translated": "drafted",
         "reviewed": false,
         "marketConfigured": false,
-        "published": false,
-        "indexable": false,
+        "published": true,
+        "indexable": true,
         "submitted": false
       },
-      "hreflang": "withheld while noindex",
-      "sitemap": "excluded (noindex)",
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
       "blockers": [
-        "branch not merged or deployed",
-        "no verified shipping, checkout, tax or returns for this country",
-        "copy drafted by the assistant, needs native-speaker review",
-        "noindex until evidence gate passes"
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "copy drafted by the assistant, no native-speaker review",
+        "not submitted to Search Console"
       ]
     },
     {
@@ -229,16 +222,15 @@
         "translated": "source",
         "reviewed": false,
         "marketConfigured": false,
-        "published": false,
-        "indexable": false,
+        "published": true,
+        "indexable": true,
         "submitted": false
       },
-      "hreflang": "withheld while noindex",
-      "sitemap": "excluded (noindex)",
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
       "blockers": [
-        "branch not merged or deployed",
-        "no verified shipping, checkout, tax or returns for this country",
-        "noindex until evidence gate passes"
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "not submitted to Search Console"
       ]
     },
     {
@@ -257,17 +249,16 @@
         "translated": "drafted",
         "reviewed": false,
         "marketConfigured": false,
-        "published": false,
-        "indexable": false,
+        "published": true,
+        "indexable": true,
         "submitted": false
       },
-      "hreflang": "withheld while noindex",
-      "sitemap": "excluded (noindex)",
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
       "blockers": [
-        "branch not merged or deployed",
-        "no verified shipping, checkout, tax or returns for this country",
-        "copy drafted by the assistant, needs native-speaker review",
-        "noindex until evidence gate passes"
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "copy drafted by the assistant, no native-speaker review",
+        "not submitted to Search Console"
       ]
     },
     {
@@ -286,14 +277,14 @@
         "translated": "source",
         "reviewed": false,
         "marketConfigured": false,
-        "published": false,
+        "published": true,
         "indexable": true,
         "submitted": false
       },
       "hreflang": "complete reciprocal set emitted",
       "sitemap": "sitemap-landing.xml",
       "blockers": [
-        "branch not merged or deployed"
+        "not submitted to Search Console"
       ]
     },
     {
@@ -312,14 +303,14 @@
         "translated": "drafted",
         "reviewed": false,
         "marketConfigured": false,
-        "published": false,
+        "published": true,
         "indexable": true,
         "submitted": false
       },
       "hreflang": "complete reciprocal set emitted",
       "sitemap": "sitemap-landing.xml",
       "blockers": [
-        "branch not merged or deployed",
+        "not submitted to Search Console",
         "Urdu copy needs native review"
       ]
     }
@@ -927,9 +918,10 @@
         "en",
         "de-DE"
       ],
-      "status": "landing-built-noindex",
+      "status": "landing-live-indexed-by-owner-override",
       "blockers": [
-        "evidence gate not passed"
+        "evidence gate not passed; indexed by owner override 2026-11-20",
+        "not submitted to Search Console"
       ]
     },
     {
@@ -1148,9 +1140,10 @@
       "landingLocales": [
         "en-GB"
       ],
-      "status": "landing-built-noindex",
+      "status": "landing-live-indexed-by-owner-override",
       "blockers": [
-        "evidence gate not passed"
+        "evidence gate not passed; indexed by owner override 2026-11-20",
+        "not submitted to Search Console"
       ]
     },
     {
@@ -2239,9 +2232,9 @@
         "en",
         "ur"
       ],
-      "status": "landing-built-noindex",
+      "status": "landing-live-indexed",
       "blockers": [
-        "evidence gate not passed"
+        "not submitted to Search Console"
       ]
     },
     {
@@ -2374,9 +2367,10 @@
         "sr-Latn-RS",
         "sr-Cyrl-RS"
       ],
-      "status": "landing-built-noindex",
+      "status": "landing-live-indexed-by-owner-override",
       "blockers": [
-        "evidence gate not passed"
+        "evidence gate not passed; indexed by owner override 2026-11-20",
+        "not submitted to Search Console"
       ]
     },
     {
@@ -2409,9 +2403,10 @@
         "en-SA",
         "ar-SA"
       ],
-      "status": "landing-built-noindex",
+      "status": "landing-live-indexed-by-owner-override",
       "blockers": [
-        "evidence gate not passed"
+        "evidence gate not passed; indexed by owner override 2026-11-20",
+        "not submitted to Search Console"
       ]
     },
     {
@@ -2850,9 +2845,10 @@
       "landingLocales": [
         "en-US"
       ],
-      "status": "landing-built-noindex",
+      "status": "landing-live-indexed-by-owner-override",
       "blockers": [
-        "evidence gate not passed"
+        "evidence gate not passed; indexed by owner override 2026-11-20",
+        "not submitted to Search Console"
       ]
     },
     {

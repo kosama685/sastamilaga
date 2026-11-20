@@ -329,7 +329,7 @@ ${data.markets.map(x => `<a class="sml-card" style="text-decoration:none" href="
 <p class="sml-note" style="margin-top:18px">More countries are added only after delivery, payment and returns are checked for them.</p>
 ${chips(SHARED_LINKS(pre))}
 </div></div>`;
-  write(rel, shell({rel, lang: 'en', dir: 'ltr', title, desc, indexable: false, alternates: [], graph, body}), {market: 'hub', locale: 'en', variant: 'hub', indexable: false});
+  write(rel, shell({rel, lang: 'en', dir: 'ltr', title, desc, indexable: true, alternates: [{lang: 'en', rel}], graph, body}), {market: 'hub', locale: 'en', variant: 'hub', indexable: true});
 }
 
 for (const m of data.markets) renderMarket(m);
@@ -337,6 +337,6 @@ renderPK(); renderPKur(); renderHub();
 
 /* sitemap of indexable landing pages only (not yet referenced from sitemap.xml: add it there when the owner approves) */
 const indexable = routes.filter(r => r.indexable).map(r => r.rel);
-fs.writeFileSync(path.join(root, 'sitemap-landing.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${indexable.map(r => `<url><loc>${ORIGIN}/${r}/</loc>${r.includes('pakistan') ? `<xhtml:link rel="alternate" hreflang="en" href="${ORIGIN}/pakistan/"/><xhtml:link rel="alternate" hreflang="ur" href="${ORIGIN}/ur/pakistan/"/>` : ''}</url>`).join('\n')}\n</urlset>\n`);
+fs.writeFileSync(path.join(root, 'sitemap-landing.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${indexable.map(rel => { const r = routes.find(x => x.rel === rel), sibs = routes.filter(x => x.market === r.market && x.indexable); const alts = sibs.length > 1 ? sibs.map(x => `<xhtml:link rel="alternate" hreflang="${x.lang}" href="${ORIGIN}/${x.rel}/"/>`).join('') + `<xhtml:link rel="alternate" hreflang="x-default" href="${ORIGIN}/${sibs[0].rel}/"/>` : ''; return `<url><loc>${ORIGIN}/${rel}/</loc>${alts}</url>`; }).join('\n')}\n</urlset>\n`);
 fs.writeFileSync(path.join(root, 'data/landing/routes.json'), JSON.stringify({generator: 'tools/build-landing-pages.mjs', routes}, null, 2) + '\n');
 console.log(JSON.stringify({pages: written.length, written, indexable}));

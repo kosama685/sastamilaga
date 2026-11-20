@@ -46,10 +46,10 @@ Real product `1830116277370114048`. Cases: Germany DE and EN, UK, USA, Serbia La
 |---|---|---|
 | Initial locale pages built | 11 of 11 | the 11 locales in the brief's matrix (en-PK, ur-PK, de-DE, en-GB, en-US, sr-Latn-RS, sr-Cyrl-RS, ar-SA, en-SA) plus English variants for DE and RS |
 | Locale copy human-reviewed | 0 of 11 | no reviewer available |
-| Markets configured for commerce (verified shipping, payment, tax, returns) | 0 of 6 | evidence gate not passed; Pakistan config matches `config.js` but checkout not tested here |
+| Markets configured for commerce (verified shipping, payment, tax, returns) | 0 of 6 | no verified evidence on file; the five foreign markets are indexed by owner override; Pakistan config matches `config.js` but checkout not tested here |
 | Automated tests | 86 of 86 pass | |
 | Real-browser cases | 14 of 14 order-panel and 7 of 7 live-estimate pass | |
-| Pages indexable and listed in the sitemap | 2 of 12 | by design |
+| Pages indexable and listed in the sitemap | 12 of 12 | all pages after the owner override of 2026-11-20 (2 of 12 before) |
 | Sitemap / index submission | 0 of 2 | nothing deployed; no Search Console access |
 | Countries with a landing page | 6 of 246 | market picker count |
 | Languages with dedicated URLs | 4 (en, ur, de, sr, ar = 5 incl. both Serbian scripts as one language) of 127 overlay languages | |
@@ -59,3 +59,6 @@ Added one line, `<sitemap><loc>https://sastamilaga.com/sitemap-landing.xml</loc>
 
 ## Inbound links added
 Guide post /shopping-from-the-cj-supplier-collection.html (source data/wp/posts/shopping-from-the-cj-supplier-collection.html): new section Delivery by country linking /shipping-to/, the five market pages, /pakistan/ and /ur/pakistan/. Shipping page: a Shipping by country paragraph appended to shipping in data/wp/pages.json (and the mirrored data/wp/policy-shipping.html), and an Urdu link to /ur/pakistan/ appended to ur/shipping. Not edited: partials/chrome.json (footer), chrome.js, cart files.
+
+## Owner override: indexing (2026-11-20)
+All five foreign markets, their variants and the hub were set to index, follow and added to sitemap-landing.xml at the owner's instruction, with no shipping, payment, returns or reviewer evidence supplied. Each market's evidence field in data/landing/markets.json says so. See the risk register in eports/seo-technical-validation.md.

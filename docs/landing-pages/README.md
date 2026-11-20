@@ -31,6 +31,9 @@ node tools/measure-catalog-snapshot.mjs  # refresh catalogue metrics (network, a
 2. Add a variant (`id`, `rel`, `S`, `lang` BCP-47, `native`, `dir` if RTL) to the market's `VARIANTS` entry. Add the locale expectations in `LOCALE` in the test file.
 3. Have a native speaker review it before the market is made indexable.
 
+## Index status
+Since 2026-11-20 all markets are indexable by owner override (see each `evidence` field). Recommended practice remains: verify shipping, payment, tax and returns, and have a native speaker review each language, before indexing a market. To withdraw one, set `"indexable": false` and rebuild.
+
 ## Make a market indexable
 Only after: verified shipping, payment, tax and returns for that country, and native-speaker review of each language. Record the evidence in `markets.json` (`evidence`), set `"indexable": true`, rebuild. The build then emits the full reciprocal hreflang set and lists the pages in `sitemap-landing.xml`. Add `sitemap-landing.xml` to the sitemap index (not done here).
 
