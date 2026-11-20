@@ -6,7 +6,7 @@
 export const fmt = (s, v = {}) => String(s).replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m));
 
 /* ---- Serbian Latin -> Cyrillic (deterministic). Brand names, URLs and technical tokens stay Latin. ---- */
-const PROTECT = /(Sasta Milaga|WhatsApp(?:-a)?|US\$|https?:\/\/\S+|\bEU\b|\bUSD\b)/g;
+const PROTECT = /(\{[a-z][a-zA-Z0-9_]*\}|Sasta Milaga|WhatsApp(?:-a)?|US\$|https?:\/\/\S+|\bEU\b|\bUSD\b)/g;
 const DIGRAPHS = [['Lj', 'Љ'], ['LJ', 'Љ'], ['lj', 'љ'], ['Nj', 'Њ'], ['NJ', 'Њ'], ['nj', 'њ'], ['Dž', 'Џ'], ['DŽ', 'Џ'], ['dž', 'џ']];
 const SINGLE = {A: 'А', B: 'Б', V: 'В', G: 'Г', D: 'Д', 'Đ': 'Ђ', E: 'Е', Ž: 'Ж', Z: 'З', I: 'И', J: 'Ј', K: 'К', L: 'Л', M: 'М', N: 'Н', O: 'О', P: 'П', R: 'Р', S: 'С', Š: 'Ш', T: 'Т', 'Ć': 'Ћ', U: 'У', F: 'Ф', H: 'Х', C: 'Ц', 'Č': 'Ч',
   a: 'а', b: 'б', v: 'в', g: 'г', d: 'д', 'đ': 'ђ', e: 'е', ž: 'ж', z: 'з', i: 'и', j: 'ј', k: 'к', l: 'л', m: 'м', n: 'н', o: 'о', p: 'п', r: 'р', s: 'с', š: 'ш', t: 'т', 'ć': 'ћ', u: 'у', f: 'ф', h: 'х', c: 'ц', 'č': 'ч'};
