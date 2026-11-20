@@ -1,0 +1,84 @@
+{
+ "generatedFrom": {
+  "local": "partials/chrome.json",
+  "global": "reports/catalog-snapshot-metrics.json (snapshot 2026-11-05)"
+ },
+ "snapshot": "2026-11-05",
+ "localTotal": 20165,
+ "globalTotal": 451812,
+ "globalAllHref": "c/global/index.html",
+ "local": {
+  "home-and-living": {
+   "name": "Home & Living",
+   "count": 4933,
+   "href": "c/home-and-living.html"
+  },
+  "health-and-beauty": {
+   "name": "Health & Beauty",
+   "count": 4445,
+   "href": "c/health-and-beauty.html"
+  },
+  "fashion-and-apparel": {
+   "name": "Fashion & Apparel",
+   "count": 4486,
+   "href": "c/fashion-and-apparel.html"
+  },
+  "electronics-and-appliances": {
+   "name": "Electronics & Appliances",
+   "count": 2064,
+   "href": "c/electronics-and-appliances.html"
+  },
+  "automotive": {
+   "name": "Automotive",
+   "count": 938,
+   "href": "c/automotive.html"
+  },
+  "tools-and-diy": {
+   "name": "Tools & DIY",
+   "count": 294,
+   "href": "c/tools-and-diy.html"
+  },
+  "travel-and-outdoor": {
+   "name": "Travel & Outdoor",
+   "count": 413,
+   "href": "c/travel-and-outdoor.html"
+  }
+ },
+ "global": {
+  "home-and-living": {
+   "name": "Home & Living",
+   "count": 29515,
+   "href": "global/g/home-and-living/"
+  },
+  "health-and-beauty": {
+   "name": "Health & Beauty",
+   "count": 54645,
+   "href": "global/g/health-and-beauty/"
+  },
+  "fashion-and-apparel": {
+   "name": "Fashion & Apparel",
+   "count": 114141,
+   "href": "global/g/fashion-and-apparel/"
+  },
+  "electronics-and-appliances": {
+   "name": "Electronics & Appliances",
+   "count": 47524,
+   "href": "global/g/electronics-and-appliances/"
+  },
+  "automotive": {
+   "name": "Automotive",
+   "count": 16540,
+   "href": "global/g/automotive/"
+  },
+  "tools-and-diy": {
+   "name": "Tools & DIY",
+   "count": 26284,
+   "href": "global/g/tools-and-diy/"
+  },
+  "travel-and-outdoor": {
+   "name": "Sports & Outdoor",
+   "count": 7067,
+   "href": "global/g/sports-and-outdoor/"
+  }
+ }
+}

@@ -459,3 +459,45 @@
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
+
+/* Mega-menu counts follow the shopping destination.
+ * Pakistan (and visitors with no destination yet, including search crawlers): the local catalogue counts and /c/ links already in the markup.
+ * Any other destination: local products are not sold there, so each category shows the global supplier count and links to its
+ * global category page, which shows the same number. Data: data/market-counts.json (tools/build-market-counts.mjs). */
+(function () {
+  'use strict';
+  if (window.__smMarketCounts) return; window.__smMarketCounts = true;
+  var me = document.currentScript, src = (me && me.src) || '';
+  var base = /assets\/js\/market\.js/.test(src) ? src.replace(/assets\/js\/market\.js.*$/, '') : '/';
+  var data = null, loading = null;
+  function fmt(n) { return Number(n).toLocaleString('en-US'); }
+  function country() { try { return (JSON.parse(localStorage.getItem('sm_market') || '{}').country || '').toUpperCase(); } catch (e) { return ''; } }
+  function load() { if (data) return Promise.resolve(data); if (!loading) loading = fetch(base + 'data/market-counts.json').then(function (r) { return r.json(); }).then(function (j) { data = j; return j; }); return loading; }
+  function paint(d) {
+    var cc = country(); if (!cc) return 0;
+    var global = cc !== 'PK', n = 0;
+    document.querySelectorAll('a.smh-item').forEach(function (a) {
+      var m = (a.getAttribute('data-sm-local-href') || a.getAttribute('href') || '').match(/(?:^|\/)c\/([a-z-]+)\.html$/);
+      if (!m || !d.local[m[1]] || !d.global[m[1]]) return;
+      var strong = a.querySelector('strong'), small = a.querySelector('small'); if (!strong || !small) return;
+      if (!a.hasAttribute('data-sm-local-href')) { a.setAttribute('data-sm-local-href', a.getAttribute('href')); a.setAttribute('data-sm-local-name', strong.textContent); a.setAttribute('data-sm-local-count', small.textContent); }
+      if (global) { var g = d.global[m[1]]; a.setAttribute('href', base + g.href); strong.textContent = g.name; small.textContent = fmt(g.count) + ' global products'; }
+      else { a.setAttribute('href', a.getAttribute('data-sm-local-href')); strong.textContent = a.getAttribute('data-sm-local-name'); small.textContent = a.getAttribute('data-sm-local-count'); }
+      n++;
+    });
+    document.querySelectorAll('a').forEach(function (a) {
+      var t = (a.getAttribute('data-sm-local-text') || a.textContent || '').trim();
+      if (!/^Shop all [\d,]+ products/.test(t)) return;   // matches the original label (kept in data-sm-local-text)
+      if (!a.hasAttribute('data-sm-local-text')) { a.setAttribute('data-sm-local-text', t); a.setAttribute('data-sm-local-href', a.getAttribute('href') || ''); a.setAttribute('data-sm-local-html', a.innerHTML); }
+      if (global) { var arrow = a.querySelector('svg'); a.textContent = 'Shop ' + fmt(d.globalTotal) + ' global products '; if (arrow) a.appendChild(arrow.cloneNode(true)); a.setAttribute('href', base + d.globalAllHref); }
+      else { a.innerHTML = a.getAttribute('data-sm-local-html'); a.setAttribute('href', a.getAttribute('data-sm-local-href')); }
+      n++;
+    });
+    return n;
+  }
+  function run() { if (!country()) return; load().then(paint).catch(function () { }); }
+  window.SMMarketCounts = { run: run, paint: function (d) { return paint(d || data); } };
+  window.addEventListener('sm:market', run);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+  window.addEventListener('load', function () { run(); setTimeout(run, 1500); });   // the header can be injected after load
+})();
