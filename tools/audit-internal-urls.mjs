@@ -72,4 +72,6 @@ const result={generatedAt:new Date().toISOString(),htmlFiles:htmlFiles.length,re
 fs.mkdirSync(path.join(ROOT,'reports'),{recursive:true});
 fs.writeFileSync(path.join(ROOT,'reports','url-audit-ci.json'),JSON.stringify(result,null,2));
 console.log(JSON.stringify({htmlFiles:result.htmlFiles,distinctInternalPaths:result.distinctInternalPaths,missingStaticReferences:result.missingStaticReferences,chromeIssues:result.chromeIssues,legacyShopCategoryLinks:result.legacyShopCategoryLinks}));
+if(problems.length) console.error('MISSING_STATIC_REFERENCES '+JSON.stringify(problems.slice(0,100)));
+if(chromeIssues.length) console.error('SHARED_CHROME_ISSUES '+JSON.stringify(chromeIssues.slice(0,50)));
 if(process.argv.includes('--strict')&&(problems.length||chromeIssues.length))process.exitCode=1;
