@@ -65,7 +65,8 @@ for (const r of routes) {
     for (const m of h.matchAll(/(?:href|src)="([^"#]+)"/g)) {
       const v = m[1];
       if (/^(https?:|mailto:|tel:|data:)/.test(v)) continue;
-      let target = path.normalize(path.join(root, r.rel, v));
+      // Root-absolute URLs resolve from the site root; relative URLs resolve from the current page.
+      let target = path.normalize(v.startsWith('/') ? path.join(root, v.slice(1)) : path.join(root, r.rel, v));
       if (v.endsWith('/')) target = path.join(target, 'index.html');
       assert.ok(fs.existsSync(target), `${r.rel} -> ${v}`);
     }
