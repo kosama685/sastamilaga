@@ -1473,7 +1473,11 @@ function mediaElement(url, type, alt) {
 /* ============================================================
    PRODUCT CARD
    ============================================================ */
-/* Listing and homepage cards are navigation/merchandising, not Product rich-result targets.\n * Google supports Product rich results on dedicated /p/ pages; declaring these\n * 24 cards as standalone Product microdata caused 24 invalid homepage items.\n * Preserve all visible prices, images, links, interactions and CSS classes. */\nfunction productCard(p) {
+/* Listing and homepage cards are navigation/merchandising, not Product rich-result targets.
+ * Google supports Product rich results on dedicated /p/ pages; declaring these
+ * 24 cards as standalone Product microdata caused 24 invalid homepage items.
+ * Preserve all visible prices, images, links, interactions and CSS classes. */
+function productCard(p) {
   if (!price(p)) {
     return `<article class="sm-card" data-local-videos="${esc(encodeURIComponent(JSON.stringify(p.vids || [])))}"><a class="sm-card__media" href="#/product/${p._slug}" tabindex="-1" aria-hidden="true"><img src="${esc(img(p))}" alt="${esc(p.n)}" width="480" height="480" loading="lazy" decoding="async" onerror="this.src=window.fallbackImg"></a>
       <div class="sm-card__body"><h3 class="sm-card__title"><a href="#/product/${p._slug}">${esc(p.n)}</a></h3><p class="sm-card__price">Price on request</p>
