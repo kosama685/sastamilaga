@@ -111,7 +111,7 @@ function emptyDiv(h, openRe) {
   while ((x = re.exec(h))) { depth += x[0] === '</div>' ? -1 : 1; if (depth === 0) return h.slice(0, m.index) + m[0] + '</div>' + h.slice(re.lastIndex); }
   return h;
 }
-function shell({ key, keepHome = false, keepTv = false, lang = 'en', dir = 'ltr', base, title, desc, url, robots, body, isStatic, alts, locale }) {
+function shell({ key, keepHome = false, keepTv = false, lang = 'en', dir = 'ltr', base, title, desc, url, robots, body, isStatic, alts, locale, after = '' }) {
   let h = index
     .replace('<html lang="en" dir="ltr">', () => `<html lang="${lang}" dir="${dir}"${lang !== 'en' ? ' data-native' : ''}>`)
     .replace(/<head>/, () => `<head>\n<base href="${base}">`);
@@ -132,7 +132,8 @@ function shell({ key, keepHome = false, keepTv = false, lang = 'en', dir = 'ltr'
   if (!keepHome) h = emptyDiv(h, /<div id="home-view"[^>]*>/);
   else if (key === 'travel') h = h.replace(/<h1 class="wp-block-heading is-style-sm-accent">([\s\S]*?)<\/h1>/, '<h2 class="wp-block-heading is-style-sm-accent">$1</h2>');   // the travel page keeps the home hero: its heading must not be a second H1      // one H1 and no repeated home content on pages that do not need it
   if (!keepTv) h = emptyDiv(h, /<div id="view-livetv"[^>]*>/);
-  h = h.replace('<div id="app" class="sm-app" hidden></div>', () => `<div id="app" class="sm-app"${isStatic ? ' data-static="1"' : ''}>${body}</div>`);
+  /* `after` sits outside #app, so it stays visible when the app renders into #app (used for the visa guides directory). */
+  h = h.replace('<div id="app" class="sm-app" hidden></div>', () => `<div id="app" class="sm-app"${isStatic ? ' data-static="1"' : ''}>${body}</div>${after}`);
   /* BreadcrumbList for every indexable page (Home > [Global shop >] page), so search results can show the path */
   if (!/noindex/.test(robots || '') && key !== 'global' && key !== 'global-shop') {
     const nm = s => String(s).replace(/ (\||–|-) (Sasta Milaga|global shop)$/i, '').replace(/ \| Sasta Milaga$/, '');
@@ -151,7 +152,9 @@ for (const { key, title, desc } of pages) {
   const intro = `<section class="sm-page"><header class="sm-page-head"><h1>${esc(title.replace(/ \| Sasta Milaga$/, ''))}</h1><p>${esc(desc)}</p></header></section>`;
   // content pages use the cloned text and its own SEO title/description; shipping and returns keep the country-wise app and add the full policy under it
   const body = pure ? (key === 'contact' ? wpArticle(rec).replace('</header>', () => '</header>' + waDirectory('page')) : wpArticle(rec)) : rec ? intro + `<div class="sm-page sm-page--wide"><div class="sm-prose">${rec.body}</div></div>` : intro;
-  const h = shell({ key, keepHome: key === 'travel', keepTv: key === 'live-tv', base: '../'.repeat(key.split('/').length), title: pure ? titleTag(rec.seoTitle) : titleTag(title), desc: pure ? rec.description : desc, url, robots: priv ? 'noindex, nofollow' : 'index, follow, max-image-preview:large', body, isStatic: pure, alts: alt1(url, urRec ? `${SITE}/ur/${key}/` : '') });
+  // visa/: the country and visa-type guides directory built by tools/build-visa-pages.mjs (data/visa/hub.html)
+  const after = key === 'visa' && fs.existsSync(path.join(ROOT, 'data/visa/hub.html')) ? read('data/visa/hub.html') : '';
+  const h = shell({ key, keepHome: key === 'travel', keepTv: key === 'live-tv', base: '../'.repeat(key.split('/').length), title: pure ? titleTag(rec.seoTitle) : titleTag(title), desc: pure ? rec.description : desc, url, robots: priv ? 'noindex, nofollow' : 'index, follow, max-image-preview:large', body, isStatic: pure, alts: alt1(url, urRec ? `${SITE}/ur/${key}/` : ''), after });
   fs.mkdirSync(path.join(ROOT, key), { recursive: true });
   fs.writeFileSync(path.join(ROOT, key, 'index.html'), h); made++;
 }
