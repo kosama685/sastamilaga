@@ -1,0 +1,39 @@
+name: Product rich-result regression — homepage and 24 GSC URLs
+on:
+  pull_request:
+    paths:
+      - 'app.js'
+      - 'tools/home-product-microdata.test.mjs'
+      - '.github/workflows/product-rich-results-regression.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'app.js'
+      - 'tools/home-product-microdata.test.mjs'
+      - '.github/workflows/product-rich-results-regression.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  product-rich-results:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Check product renderer syntax
+        run: node --check app.js
+      - name: Test all 24 reported invalid items and zero microdata on collection cards
+        run: node --test tools/home-product-microdata.test.mjs
+      - name: Audit all checked-in static product pages and global categories
+        run: node tools/audit-static-global-seo.mjs
+      - name: Archive site-wide audit
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: local-and-global-technical-seo-audit
+          path: artifacts/seo-static-coverage.json
+          if-no-files-found: warn
+          retention-days: 30
