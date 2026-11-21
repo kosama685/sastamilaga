@@ -3,13 +3,14 @@ on:
   schedule:
     - cron: '0 */6 * * *'
   workflow_dispatch:
+  # Run after Pages has published sitemap XML; immediate push checks race the deployment.
+  workflow_run:
+    workflows: ['Deploy static content to Pages']
+    types: [completed]
   push:
     branches: [main]
     paths:
       - 'scripts/sitemap-audit.js'
-      - 'sitemap.xml'
-      - 'sitemap_index.xml'
-      - 'sitemap-cj-global-categories.xml'
       - '.github/workflows/public-sitemap-health.yml'
 permissions:
   contents: read
@@ -20,6 +21,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   audit:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
