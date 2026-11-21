@@ -204,15 +204,35 @@
     const chosen = { v: null };
     const gTotal = () => {
       const el = document.getElementById('gtotal'), f = document.getElementById('greq'); if (!el || !f) return;
+      if (!chosen.v) {
+        el.innerHTML = '<p role="status"><strong>Live price and shipping require a verified supplier option.</strong> ' +
+          'Catalogue estimates are not a payable total. Confirm your size or colour on WhatsApp if options are unavailable.</p>';
+        return;
+      }
       const q = Math.max(1, Math.min(99, parseInt(f.qty.value, 10) || 1)), unit = (chosen.v ? chosen.v.price : (r[3] || 0)) * MARGIN, items = unit * q;
       if (!unit) { el.innerHTML = '<small>This item has no listed price yet. Order it on WhatsApp and we will quote it.</small>'; return; }
       const s = document.querySelector('.sm-ship-card [name=ship]:checked'), amt = s ? parseFloat(s.dataset.amt) : NaN, cur = s ? (s.dataset.cur || 'USD') : 'USD';
       const money = (n, c) => { try { return new Intl.NumberFormat('en', { style: 'currency', currency: c }).format(n); } catch (e) { return `${c} ${n.toFixed(2)}`; } };
-      const ship = isNaN(amt) ? '<dd>Calculating for your country…</dd>' : `<dd>${money(amt, cur)}</dd>`;
-      const total = isNaN(amt) ? `${USD.format(items)} + delivery` : (cur === 'USD' ? USD.format(items + amt) : `${USD.format(items)} + ${money(amt, cur)}`);
+      const shippingText = String((document.getElementById('gship-out') || {}).textContent || '');
+      const failed = /not available|unavailable|could not|cannot|temporarily|request limit|confirm shipping/i.test(shippingText);
+      const ship = isNaN(amt) ? (failed ? '<dd>Confirm with support</dd>' : '<dd>Checking live rates…</dd>') : `<dd>${money(amt, cur)}</dd>`;
+      const total = isNaN(amt) ? 'Final total pending shipping verification' : (cur === 'USD' ? USD.format(items + amt) : `${USD.format(items)} + ${money(amt, cur)}`);
       el.innerHTML = `<dl><div><dt>${USD.format(unit)} × ${q}${chosen.v && (chosen.v.key || chosen.v.name) ? ' · ' + esc(chosen.v.key || chosen.v.name) : ''}</dt><dd>${USD.format(items)}</dd></div><div><dt>Delivery to ${esc((document.getElementById('gship-to') || {}).textContent || (f.to.value || 'your country'))}</dt>${ship}</div><div class="sm-total__sum"><dt>Total</dt><dd>${total}</dd></div></dl><small>Estimated prices in US dollars. Stock and the final total are confirmed before you pay.</small>`;
     };
     window.__gTotal = gTotal;
+    const setVerifiedOrderState = ready => {
+      for (const button of document.querySelectorAll('#gadd, #gbuy')) {
+        if (!button.dataset.smOriginalLabel) button.dataset.smOriginalLabel = button.textContent;
+        button.disabled = !ready;
+        button.setAttribute('aria-disabled', String(!ready));
+        button.title = ready ? '' : 'Select a verified option or ask about this product on WhatsApp';
+        button.textContent = ready ? button.dataset.smOriginalLabel : 'Verification required';
+      }
+      const shippingButton = document.getElementById('gship-go');
+      if (shippingButton) shippingButton.disabled = !ready;
+    };
+    window.__gOrderReady = setVerifiedOrderState;
+    setVerifiedOrderState(false);
     ['change', 'input'].forEach(ev => document.getElementById('greq').addEventListener(ev, e => { if (e.target.name === 'qty') { gTotal(); if (ev === 'change') quoteSoon(); } }));
     document.addEventListener('change', e => { if (e.target && e.target.name === 'ship') gTotal(); });
     { const so = document.getElementById('gship-out'); if (so) new MutationObserver(gTotal).observe(so, { childList: true, subtree: true }); }
@@ -355,7 +375,7 @@
   function quoteSoon() { clearTimeout(quoteTimer); quoteTimer = setTimeout(() => { const go = document.getElementById('gship-go'); if (go && !go.disabled) go.click(); }, 250); }
   /* The supplier allows one request per second for the whole shop, so a busy moment answers 503 once and succeeds a few seconds later (successes are cached for an hour). Ask again quietly before telling the visitor anything. */
   function fetchRetry(u, n = 2) {
-    return fetch(u).then(x => {
+    return fetch(u, {signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(9000) : undefined}).then(x => {
       if (!x.ok) { const error = new Error('HTTP ' + x.status); error.status = x.status; throw error; }
       return x;
     }).catch(e => {
@@ -368,6 +388,7 @@
     const C = window.SM_CONFIG || {}, W = supplierWorker();
     const pick = v => {
       chosen.v = v;
+      if (typeof window.__gOrderReady === 'function') window.__gOrderReady(true);
       const price = document.querySelector('.buy-panel .big-price'); if (price) price.textContent = v.label || USD.format(v.price * MARGIN);
       const img = document.querySelector('.sm-global-pdp .gallery-main img');
       if (img && v.image && /^https:\/\//i.test(v.image)) {
@@ -462,6 +483,10 @@
       })();
     }).catch(error => {
       chosen.v = null;
+      if (typeof window.__gOrderReady === 'function') window.__gOrderReady(false);
+      if (typeof window.__gTotal === 'function') window.__gTotal();
+      const shipping = document.getElementById('gship-out');
+      if (shipping) shipping.textContent = 'Shipping cannot be confirmed until a supplier variation is verified.';
       const limited = error && error.status === 429;
       box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">' +
         (limited ? 'Supplier options are temporarily unavailable because the live service reached its request limit. No order has been placed.' :
