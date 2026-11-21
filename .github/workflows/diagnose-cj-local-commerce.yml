@@ -34,5 +34,9 @@ jobs:
             length=$(wc -c < "$b")
             if grep -qi 'Error establishing a database connection' "$b"; then diag='database_error'; elif grep -Eqi 'Error 1027|workers free plan|exceeded' "$b"; then diag='worker_quota'; elif grep -Eqi 'Too Many Requests|rate limit' "$b"; then diag='rate_limited'; elif grep -qi 'Sasta Milaga' "$b"; then diag='html_brand'; else diag='other'; fi
             echo "url=$url http=$r bytes=$length type=${type:-n/a} location=${location:-none} class=$diag"
+            if [ "$r" = 429 ]; then
+              echo "429 headers: $(grep -iE '^(server:|cf-ray:|retry-after:|x-|cache-control:)' "$h" | tr -d '\r' | head -6 | tr '\n' ' ' || true)"
+              echo "429 body: $(head -c 80 "$b" | tr '\n' ' ' | tr -cd '[:print:]' || true)"
+            fi
             rm -f "$h" "$b"
           done
