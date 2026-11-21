@@ -16,6 +16,18 @@ import {buildCampaignPages} from './build-campaign-pages.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const data = JSON.parse(fs.readFileSync(path.join(root, 'data/landing/markets.json'), 'utf8'));
 const ORIGIN = data.siteOrigin, WA = data.whatsapp, FEE = data.pakistan.delivery_fee_pkr, FREE = data.pakistan.free_delivery_from_pkr;
+// The country pages are independent HTML documents, not cloned from index.html.
+// Emit one static Clarity project loader in each generated page's <head>.
+const CLARITY_SCRIPT = `<!-- Microsoft Clarity project zh6iif5boz -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "zh6iif5boz");
+</script>
+`;
+
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
 const num = n => new Intl.NumberFormat('en-US').format(n);
 const prefixFor = rel => '../'.repeat(rel.split('/').filter(Boolean).length);
@@ -37,7 +49,7 @@ function shell({rel, lang, dir, title, desc, indexable, alternates, graph, body,
   return `<!doctype html>
 <html lang="${lang}" dir="${dir}">
 <head>
-<meta charset="utf-8">
+${CLARITY_SCRIPT}<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
