@@ -19,8 +19,8 @@ import crypto from 'node:crypto';
 import {once} from 'node:events';
 
 const ROOT=process.cwd();
-const SOURCE=path.join(ROOT,'data/cj/lookup');
-const OUT=path.join(ROOT,'artifacts/cj-seo-evidence');
+const SOURCE=path.resolve(process.env.CJ_LOOKUP_ROOT||path.join(ROOT,'data/cj/lookup'));
+const OUT=path.resolve(process.env.CJ_EXPORT_OUT||path.join(ROOT,'artifacts/cj-seo-evidence'));
 const META=JSON.parse(fs.readFileSync(path.join(SOURCE,'manifest.json'),'utf8'));
 const paths=fs.readdirSync(SOURCE).filter(s=>/^[0-9a-f]{3}\.json$/.test(s)).sort();
 if(META.allow_indexing!==false)throw Error('Fail closed: source snapshot must remain nonindexable');
@@ -101,7 +101,7 @@ for(const file of paths){
   if(!sku)item.blockedReasons.push('missing_supplier_sku');
   if(!name)item.blockedReasons.push('missing_title');
   if(!validImage)item.blockedReasons.push('missing_https_image');
-  const rel='seo-structured-data/cj/'+catSlug+'/'+id.toLowerCase()+'.json';
+  const rel='seo-structured-data/cj/'+catSlug+'/'+id+'.json';
   await tarAppend(rel,JSON.stringify(item)+'\n');
   manifestBatch+=JSON.stringify({id,category:catSlug,path:rel,indexEligible:false})+'\n';
   if(manifestBatch.length>=1<<18){await appendManifest(manifestBatch);manifestBatch=''}
