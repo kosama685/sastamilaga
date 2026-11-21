@@ -98,7 +98,8 @@ jobs:
             git commit -m "data: persist checked supplier categories and public shop/search shells [skip ci]"
             # User merges and other Pages jobs can advance main while we build.
             # Never force-push or overwrite newer changes. Rebase only our
-            # deterministic generated artifact commit; abort on any conflict.
+            # deterministic generated artifact commit; auto-stash uncommitted build files
+            # during rebase, abort on conflict and never force-push.
             published=0
             for attempt in 1 2 3; do
               if git push origin HEAD:main; then
@@ -112,7 +113,7 @@ jobs:
               else
                 git fetch origin main
               fi
-              if ! git rebase origin/main; then
+              if ! git -c rebase.autoStash=true rebase origin/main; then
                 git rebase --abort || true
                 echo "::error::Generated artifact conflicts with a newer main commit; manual review required"
                 exit 1
