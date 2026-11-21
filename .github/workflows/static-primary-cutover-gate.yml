@@ -1,0 +1,27 @@
+name: GitHub primary / Namecheap preserved cutover gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/static-primary-preflight.mjs'
+      - '.github/workflows/static-primary-cutover-gate.yml'
+permissions:
+  contents: read
+  pages: read
+jobs:
+  verify-split-hosting:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Check cutover preflight syntax
+        run: node --check tools/static-primary-preflight.mjs
+      - name: Read-only preflight; block unsafe DNS or commerce rerouting
+        run: node tools/static-primary-preflight.mjs
