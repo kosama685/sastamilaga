@@ -1,6 +1,6 @@
 {
   "_note": "Landing-page facts. Only statements that are true of the live store or generally true of cross-border parcels may appear here. No transit days, no shipping prices, no guarantees. Recommended practice: a market is indexable only after its evidence gate passes (see tools/audit-market-locale-readiness.mjs: indexableCountryLandingAllowed) and a native speaker has reviewed each language. On 2026-11-20 the site owner overrode that gate for all five markets; each `evidence` field records the override. Set `indexable` to false to withdraw a market.",
-  "whatsapp": "966510451995",
+  "whatsapp": "923343582295",
   "siteOrigin": "https://sastamilaga.com",
   "pakistan": {
     "delivery_fee_pkr": 250,
