@@ -1,0 +1,52 @@
+name: Verify direct COD fallback and CJ routing
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - cod-checkout/**
+      - assets/js/cod-recovery.js
+      - assets/js/woo-bridge.js
+      - assets/js/global.js
+      - .github/workflows/cod-fallback-live-smoke.yml
+permissions: {contents: read}
+jobs:
+  production-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify public COD checkout and revised browser script without placing an order
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in /cod-checkout/ /assets/js/cod-recovery.js?v=cod-20261121-1; do
+            ok=0
+            for attempt in 1 2 3 4; do
+              content=$(mktemp)
+              h=$(mktemp)
+              status=$(curl -sS --connect-timeout 5 --max-time 18 --max-redirs 0 \
+                -D "$h" -o "$content" -w '%{http_code}' "https://sastamilaga.com$path") || status=000
+              if [[ "$status" == 200 ]] && \
+                { [[ "$path" != /cod-checkout/ ]] || grep -q 'id="sm-cod-order-form"' "$content"; } && \
+                { [[ "$path" == /cod-checkout/ ]] || grep -q 'window.SMCOD=' "$content"; }; then
+                ok=1; echo "static_production path=$path http=$status verified=yes";break
+              fi
+              echo "static_production attempt=$attempt path=$path http=$status verified=no"
+              rm -f "$content" "$h"
+              sleep 12
+            done
+            if [[ "$ok" != 1 ]]; then echo "::error::Static COD recovery not verifiably published: $path";exit 1;fi
+            rm -f "$content" "$h"
+          done
+          # Public API probes are GET-only and must NOT place, mutate or pay for orders.
+          for path in /wp-json/wc/store/v1/cart /api/cj/health; do
+            h=$(mktemp);b=$(mktemp)
+            code=$(curl -sS --max-time 12 --max-redirs 0 -D "$h" -o "$b" -w '%{http_code}' "https://sastamilaga.com$path") || code=000
+            state=normal
+            if grep -qi 'error code: 1027' "$b";then state=cloudflare_workers_quota
+            elif grep -qi 'Error establishing a database connection' "$b";then state=wordpress_database
+            fi
+            echo "dynamic_production path=$path http=$code state=$state"
+            if [[ "$state" == cloudflare_workers_quota ]]; then echo "::warning::Cloudflare 1027 blocks dynamic commerce; independent Formspree COD path remains available";fi
+            rm -f "$h" "$b"
+          done
