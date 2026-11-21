@@ -9,6 +9,12 @@
   var host = location.hostname, ROOT = '/';
   var W = window.SMWoo = { active: /(^|\.)sastamilaga\.com$/.test(host) || !!window.SM_FORCE_WOO };
   var ids = null, nonce = '', synced = false;
+  var quotaUntil = 0, cartCount = null, cartCountAt = 0, countInflight = null;
+  function cartCookiePresent() {
+    return /(?:^|;\s*)(?:woocommerce_items_in_cart|woocommerce_cart_hash|wp_woocommerce_session_)/.test(String(document.cookie || ''));
+  }
+  function quotaActive() { return Date.now() < quotaUntil; }
+  function quotaDenied() { quotaUntil = Date.now() + 120000; }
   function json(u, o) { o = o || {}; o.credentials = 'include'; return fetch(u, o).then(function (r) { return r.json().catch(function () { return null; }).then(function (j) { return { r: r, j: j }; }); }); }
   function plain(s) { var d = document.createElement('div'); d.innerHTML = String(s || ''); return d.textContent || ''; }
   function loadIds() { if (ids) return Promise.resolve(ids); return fetch(ROOT + 'data/wp/product-ids.json').then(function (r) { return r.json(); }).then(function (j) { ids = j; return j; }); }
@@ -28,6 +34,7 @@
       nonce = r.ok ? (r.headers.get('nonce') || '') : '';
       if (!r.ok || !nonce) {
         var err = new Error('Secure cart service unavailable');
+        if (r.status === 429) quotaDenied();
         err.code = r.status === 429 ? 'worker_limit' : 'service_unavailable';
         throw err;
       }
@@ -51,6 +58,7 @@
         return {ok:false,status:x.r.status,reason:'service_unavailable',
           message:'The secure cart returned an invalid response; no item was confirmed.'};
       }
+      if (x.r.status === 429) quotaDenied();
       var code = (x.j && x.j.code) || 'error';
       return { ok: false, status: x.r.status, code: code, message: plain(x.j && x.j.message) || 'The cart could not be updated.', reason: (x.r.status === 429 ? 'worker_limit' : (x.r.status >= 500 ? 'service_unavailable' : (REASONS[code] || 'error'))) };
     });
@@ -76,18 +84,48 @@
   };
   W.sync = syncContext;
   // The store answers in 2-10 seconds, so everything a click needs is prepared in the background first (in this order: the country decides the session).
-  W.warm = function () { return loadIds().then(function () { return syncContext(); }).then(function () { return getNonce(false); }).catch(function () {}); };
+  // Do not consume a dynamic WooCommerce Worker request merely for browsing;
+  // fetching a cart nonce before the user selects a product exhausts free quotas.
+  W.warm = function () { return loadIds().catch(function () {}); };
   W.add = function (sku, qty, variation) {
+    if (quotaActive()) return Promise.resolve({ok:false,reason:'worker_limit',message:'Secure checkout is temporarily at capacity.'});
     qty = Math.max(1, Math.min(99, parseInt(qty, 10) || 1));
     return loadIds().then(function (map) {
       var id = map[String(sku)]; if (!id) return { ok: false, reason: 'unmapped', message: 'This item is ordered on WhatsApp.' };
       return syncContext().then(function () { return post(id, qty, false, variation); });
-    }).catch(function (e) { return { ok: false, reason: e && e.code === 'worker_limit' ? 'worker_limit' : e && e.code === 'service_unavailable' ? 'service_unavailable' : 'network', message: 'Secure checkout could not be reached.' }; }).then(function (res) { if (res.ok) W.badge(); return res; });
+    }).catch(function (e) { return { ok: false, reason: e && e.code === 'worker_limit' ? 'worker_limit' : e && e.code === 'service_unavailable' ? 'service_unavailable' : 'network', message: 'Secure checkout could not be reached.' }; }).then(function (res) {
+      if (res.ok) {
+        if (Number.isFinite(Number(res.count))) {
+          cartCount = Number(res.count); cartCountAt = Date.now();
+          document.querySelectorAll('.smh-cart__count').forEach(function (el) {
+            el.textContent = cartCount; el.setAttribute('data-n', cartCount);
+          });
+        } else W.badge(true);
+      }
+      return res;
+    });
   };
-  W.count = function () { return fetch(ROOT + 'wp-json/wc/store/v1/cart', { credentials: 'include' }).then(function (r) { if (!r.ok) return null; return r.json().then(function (j) { return j && Number.isFinite(Number(j.items_count)) ? Number(j.items_count) : null; }); }).catch(function () { return null; }); };
-  /* The header badge shows the WooCommerce cart count (the cart the shopper will actually pay for). */
-  W.badge = function () {
-    return W.count().then(function (n) {
+  // Empty-cart browsers never need to call WordPress just to render a zero badge.
+  // A small read-through cache also prevents repeated requests from the same tab.
+  W.count = function (force) {
+    if (!force && (!cartCookiePresent() || quotaActive())) return Promise.resolve(quotaActive() ? null : 0);
+    if (!force && cartCount !== null && Date.now() - cartCountAt < 45000) return Promise.resolve(cartCount);
+    if (countInflight) return countInflight;
+    countInflight = fetch(ROOT + 'wp-json/wc/store/v1/cart', {
+      credentials:'include',
+      signal:typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined
+    }).then(function (r) {
+      if (!r.ok) { if (r.status === 429) quotaDenied(); return null; }
+      return r.json().then(function (j) {
+        var n = Number(j && j.items_count);
+        if (!Number.isFinite(n)) return null;
+        cartCount = n; cartCountAt = Date.now(); return n;
+      }).catch(function () { return null; });
+    }).catch(function () { return null; }).then(function (n) { countInflight = null; return n; });
+    return countInflight;
+  };
+  W.badge = function (force) {
+    return W.count(force).then(function (n) {
       if (n !== null) document.querySelectorAll('.smh-cart__count').forEach(function (el) { el.textContent = n; el.setAttribute('data-n', n); });
       return n;
     });
