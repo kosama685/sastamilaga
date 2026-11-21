@@ -11,7 +11,13 @@
  */
 export const PAGES = 'https://kosama685.github.io/sastamilaga';
 export const SITE = 'https://sastamilaga.com';
-const WA = '966510451995';
+const WA = '923343582295';
+const CLARITY_SCRIPT = "<!-- Microsoft Clarity project zh6iif5boz -->\n<script type=\"text/javascript\">\n    (function(c,l,a,r,i,t,y){\n        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};\n        t=l.createElement(r);t.async=1;t.src=\"https://www.clarity.ms/tag/\"+i;\n        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);\n    })(window, document, \"clarity\", \"script\", \"zh6iif5boz\");\n</script>\n";
+function withClarity(html) {
+  // The fetched HTML template may already contain Clarity; avoid double loading.
+  if (html.includes('clarity.ms/tag/') || html.includes('"zh6iif5boz"')) return html;
+  return html.replace(/<head\b[^>]*>/i, head => head + '\n' + CLARITY_SCRIPT);
+}
 const BLOCKED_CATEGORY = /adult|sex\s*toy|erotic|condom|lubricant/i;   // same catalogue the WordPress side removes (mu-plugins/sm-live-card-actions.php)
 
 export const bucketOf = id => { let h = 2166136261; for (let i = 0; i < id.length; i++) h = Math.imul(h ^ id.charCodeAt(i), 16777619) >>> 0; return (h >>> 0) & 1023; };
@@ -98,7 +104,7 @@ export function mainHtml(p, canonical) {
 function notFound(template) {
   const head = '<title>Product not available | Sasta Milaga</title><meta name="robots" content="noindex, follow">';
   const main = '<section class="sm-page sm-page--wide"><div class="sm-prose"><h1>This product is not available</h1><p>It may have been removed by the supplier. Browse the <a href="/c/global/index.html">global collection</a> or <a href="/search/">search products</a>.</p></div></section>';
-  return new Response(template.replace('<!--GPDP:HEAD-->', head).replace('<!--GPDP:MAIN-->', main), {status: 404, headers: {'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=60', 'X-Sasta-Renderer': 'global-pdp-v6'}});
+  return new Response(withClarity(template.replace('<!--GPDP:HEAD-->', head).replace('<!--GPDP:MAIN-->', main)), {status: 404, headers: {'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=60', 'X-Sasta-Renderer': 'global-pdp-v6'}});
 }
 
 export async function handle(request, fetcher = fetch) {
@@ -114,7 +120,7 @@ export async function handle(request, fetcher = fetch) {
   if (!p || BLOCKED_CATEGORY.test(p.category || '')) return notFound(template);
   const slug = slugify(p.name), canonical = `${SITE}/global-shop/p/${p.id}/${slug}/`;
   if (!m[2]) return Response.redirect(canonical + url.search, 301);
-  const html = template.replace('<!--GPDP:HEAD-->', headHtml(p, canonical)).replace('<!--GPDP:MAIN-->', mainHtml(p, canonical));
+  const html = withClarity(template.replace('<!--GPDP:HEAD-->', headHtml(p, canonical)).replace('<!--GPDP:MAIN-->', mainHtml(p, canonical)));
   return new Response(request.method === 'HEAD' ? null : html, {status: 200, headers: {
     'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=120, s-maxage=600', 'X-Sasta-Renderer': 'global-pdp-v6',
     'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin'}});
