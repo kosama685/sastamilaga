@@ -4,6 +4,11 @@ on:
     paths:
       - 'tools/export-cj-product-evidence.mjs'
       - 'tools/cj-category-product-evidence.test.mjs'
+      - 'tools/build-cj-category-sitemap.mjs'
+      - 'sitemap-cj-global-categories.xml'
+      - 'sitemap.xml'
+      - 'sitemap_index.xml'
+      - 'docs/CJ_COMPLETE_PRODUCT_DIRECTORY.md'
       - '.github/workflows/cj-category-seo-evidence.yml'
   push:
     branches: [main]
@@ -11,6 +16,8 @@ on:
       - 'tools/export-cj-product-evidence.mjs'
       - 'tools/cj-category-product-evidence.test.mjs'
       - 'data/cj/lookup/**'
+      - 'data/cj/c/**'
+      - 'data/cj/manifest.js'
       - '.github/workflows/cj-category-seo-evidence.yml'
   workflow_dispatch:
   schedule:
@@ -32,6 +39,16 @@ jobs:
           node-version: '24'
       - name: Unit test folder/category handling and missing-data quarantine
         run: node --test tools/cj-category-product-evidence.test.mjs
+      - name: Validate exact source-derived sitemap file and 572 category URLs
+        run: |
+          node --check tools/build-cj-category-sitemap.mjs
+          node tools/build-cj-category-sitemap.mjs --check
+          node --input-type=module - <<'NODE'
+          import fs from 'node:fs';
+          const a=fs.readFileSync('sitemap.xml','utf8');
+          const b=fs.readFileSync('sitemap_index.xml','utf8');
+          if(a!==b||!a.includes('<loc>https://sastamilaga.com/sitemap-cj-global-categories.xml</loc>'))throw Error('Primary/legacy sitemap index mismatch');
+          NODE
       - name: Verify complete Git category index and source totals
         run: |
           node --input-type=module - <<'NODE'
