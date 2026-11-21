@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-15T10:19:04Z",
+  "checked_at": "2026-11-21T07:57:41Z",
   "token": {
     "success": true,
     "status": "active"
@@ -255,7 +255,7 @@
       },
       {
         "id": "sasta-global-product-design-v6",
-        "modified_on": "2026-11-14T21:23:07.037572Z",
+        "modified_on": "2026-11-19T13:54:07.594299Z",
         "created_on": "2026-11-14T20:14:23.534775Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-14"
@@ -276,7 +276,7 @@
       },
       {
         "id": "sasta-global-product-quota-resilient-v5",
-        "modified_on": "2026-11-14T18:02:12.574667Z",
+        "modified_on": "2026-11-15T10:20:56.675228Z",
         "created_on": "2026-11-14T18:02:12.574667Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-14"
@@ -292,6 +292,20 @@
         "id": "sasta-global-product-rich-v4",
         "modified_on": "2026-11-14T10:41:27.880233Z",
         "created_on": "2026-11-14T10:41:27.880233Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-14"
+      },
+      {
+        "id": "sasta-global-product-seo-preview-v7",
+        "modified_on": "2026-11-18T08:06:16.569681Z",
+        "created_on": "2026-11-18T08:06:16.569681Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-14"
+      },
+      {
+        "id": "sasta-global-product-ui-preview-20261116",
+        "modified_on": "2026-11-16T10:52:42.610559Z",
+        "created_on": "2026-11-16T10:48:26.849043Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-14"
       },
@@ -364,6 +378,13 @@
         "created_on": "2026-11-14T18:19:07.834771Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-14"
+      },
+      {
+        "id": "sasta-robots-policy-v1",
+        "modified_on": "2026-11-16T05:35:23.77291Z",
+        "created_on": "2026-11-16T05:28:32.446362Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-16"
       },
       {
         "id": "sasta-seo-origin-probe-v1",
@@ -444,28 +465,28 @@
       },
       {
         "id": "sastamilaga-cj-shipping",
-        "modified_on": "2026-11-15T10:17:56.269207Z",
+        "modified_on": "2026-11-21T07:56:32.83842Z",
         "created_on": "2026-11-11T03:54:36.589467Z",
         "usage_model": "standard",
         "compatibility_date": "2025-07-18"
       },
       {
         "id": "sastamilaga-global-pages",
-        "modified_on": "2026-11-15T10:18:04.531422Z",
+        "modified_on": "2026-11-21T07:56:39.489993Z",
         "created_on": "2026-11-11T03:54:44.151298Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-paypal",
-        "modified_on": "2026-11-15T10:18:00.592395Z",
+        "modified_on": "2026-11-21T07:56:36.59265Z",
         "created_on": "2026-11-11T03:54:41.174076Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-redirects",
-        "modified_on": "2026-11-15T10:18:08.828529Z",
+        "modified_on": "2026-11-21T07:56:42.93276Z",
         "created_on": "2026-11-11T05:14:22.59741Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
@@ -704,6 +725,10 @@
         "script": "sasta-static-blog-reader"
       },
       {
+        "pattern": "sastamilaga.com/robots.txt",
+        "script": "sasta-robots-policy-v1"
+      },
+      {
         "pattern": "sastamilaga.com/__ops-health.json",
         "script": "sasta-ops-guard-v1"
       },
@@ -713,7 +738,7 @@
       },
       {
         "pattern": "sastamilaga.com/global-shop/p/*",
-        "script": "sasta-cj-storefront-v1"
+        "script": "sasta-global-product-design-v6"
       },
       {
         "pattern": "sastamilaga.com/__cj-preview/*",
@@ -721,7 +746,7 @@
       },
       {
         "pattern": "sastamilaga.com/global/p/*",
-        "script": "sasta-clean-global-route-v1"
+        "script": "sasta-global-legacy-resilient-v2"
       },
       {
         "pattern": "sastamilaga.com/assets/js/cj-storefront.js*",
@@ -772,10 +797,6 @@
         "script": "sasta-cj-storefront-v1"
       },
       {
-        "pattern": "sastamilaga.com/*",
-        "script": "sasta-public-github-recovery-v1"
-      },
-      {
         "pattern": "sastamilaga.com/faq/*",
         "script": "sasta-cj-storefront-v1"
       },
@@ -793,7 +814,7 @@
       },
       {
         "pattern": "sastamilaga.com/sitemap-global-qualified.xml",
-        "script": "sasta-cj-storefront-v1"
+        "script": "sasta-qualified-sitemaps-quota-v2"
       },
       {
         "pattern": "sastamilaga.com/account/*",
@@ -805,7 +826,7 @@
       },
       {
         "pattern": "sastamilaga.com/sitemaps/global-qualified/*",
-        "script": "sasta-cj-storefront-v1"
+        "script": "sasta-qualified-sitemaps-quota-v2"
       },
       {
         "pattern": "sastamilaga.com/shop/*",
@@ -814,10 +835,6 @@
       {
         "pattern": "sastamilaga.com/sitemap-cj-products.xml",
         "script": "sasta-cj-storefront-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/product/*",
-        "script": "sastamilaga-redirects"
       },
       {
         "pattern": "sastamilaga.com/category/*",
@@ -846,6 +863,14 @@
       {
         "pattern": "sastamilaga.com/p/*",
         "script": "sasta-static-html-normalizer-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/*",
+        "script": "sasta-canonical-sync-v11"
+      },
+      {
+        "pattern": "sastamilaga.com/product/*",
+        "script": "sasta-cj-storefront-v1"
       }
     ]
   },
@@ -870,7 +895,7 @@
         "name": "sastamilaga",
         "uuid": "ac28088f-6a54-4d29-8c64-821661efe88f",
         "created_at": "2026-11-07T16:43:12.023Z",
-        "file_size": 323821568,
+        "file_size": 330420224,
         "num_tables": 0
       },
       {
@@ -904,6 +929,7 @@
       "oembed/1.0",
       "sm-cj/v1",
       "sm-track/v1",
+      "sm/v1",
       "giw/v1",
       "smts/v1",
       "sastamilaga/v1",
