@@ -41,6 +41,8 @@ jobs:
         run: node --test tools/visa-last-section.test.mjs
       - name: Validate AI-readable canonical site references
         run: node tools/validate-ai-site-index.mjs
+      - name: Regenerate all country-order landing pages from the central WhatsApp setting
+        run: node tools/build-landing-pages.mjs
       - name: Verify destination-specific copy and catalog eligibility
         run: |
           npm install --prefix "$RUNNER_TEMP/sasta-dom" linkedom@0.18.15 --no-audit --no-fund
@@ -52,6 +54,8 @@ jobs:
         run: node tools/build-blog.mjs
       - name: Clean URLs (section pages, clean links, sitemap entries)
         run: node tools/build-sections.mjs
+      - name: Verify Clarity and worldwide WhatsApp order links on generated pages
+        run: node tools/verify-clarity-worldwide-orders.mjs
       - name: Verify Google tag deployment on generated pages
         run: node tools/verify-google-tag.mjs
       - name: Verify Meta domain ownership tag survives homepage generation
@@ -87,7 +91,7 @@ jobs:
           grep -q 'rel="canonical" href="https://sastamilaga.com/shop/"' shop/index.html
           grep -q 'noindex' search/index.html
           grep -q 'rel="canonical" href="https://sastamilaga.com/c/global/index.html"' global-shop/index.html
-          git add -f data/cj/lookup/ c/global/ partials/chrome-runtime.json shop/index.html search/index.html global-shop/index.html global/index.html global/all/index.html
+          git add -f data/cj/lookup/ c/global/ partials/chrome-runtime.json shop/index.html search/index.html global-shop/index.html global/index.html global/all/index.html pakistan/ ur/pakistan/ shipping-to/ data/landing/routes.json sitemap-landing.xml
           if git diff --cached --quiet; then
             echo "Verified global category SEO, public storefront shells and CJ lookup unchanged."
           else
