@@ -221,8 +221,32 @@
     (wpShip() ? bindShipWp : bindShip)(r, chosen);
     const rowFrom = f => { const v = chosen.v; return { id: r[0], cs, sku: r[1], name: r[2], img: (v && v.image) || r[5], unit: (v ? v.price : (r[3] || 0)) * MARGIN, qty: Math.max(1, Math.min(99, parseInt(f.qty.value, 10) || 1)), opt: (f.opt.value || '').trim(), ship: ((document.querySelector('.sm-ship-card [name=ship]:checked') || {}).value || ''), shipAmt: parseFloat(((document.querySelector('.sm-ship-card [name=ship]:checked') || {}).dataset || {}).amt) || 0, shipCur: ((document.querySelector('.sm-ship-card [name=ship]:checked') || {}).dataset || {}).cur || 'USD', vkey: v ? (v.sku || v.key || '') : '', vname: v ? (v.key || v.name || '') : '', url: ownUrl(cs, r) }; };
     const addRow = () => { const f = document.getElementById('greq'); const row = rowFrom(f); if (!row.unit) { toast('This item has no listed price yet. Order it on WhatsApp and we will quote it.'); return null; } gcAdd(row); return row; };
-    /* Window-capture handler: on the store's own domain a site-wide script swallows add-to-cart clicks at document level, so these two buttons are handled before it (window comes first in the event path). */
-    window.__gcAct = { add: () => { if (addRow()) toast('Added to cart'); }, buy: () => { if (addRow()) { A.go('checkout'); } } };
+    /* The real WooCommerce cart is the only transactional cart. A localStorage
+       draft is not an order and may never be presented as a successful add. */
+    const addToSecureCart = async buyNow => {
+      const form = document.getElementById('greq'), v = chosen.v;
+      if (!v || !v.sku) {
+        toast('Please choose a supplier option before ordering. You can request it on WhatsApp below.');
+        return;
+      }
+      if (!window.SMWoo?.active || typeof window.SMWoo.add !== 'function') {
+        toast('Secure checkout is unavailable. Use the WhatsApp form to confirm this option and its final price.');
+        return;
+      }
+      const qty = Math.max(1, Math.min(99, parseInt(form.elements.qty.value, 10) || 1));
+      toast('Verifying your item with secure checkout…');
+      const result = await window.SMWoo.add(String(v.sku), qty);
+      const decision = window.SMWoo.decide(result, buyNow, '');
+      if (decision.kind === 'go') { location.assign('/checkout/'); return; }
+      if (decision.kind === 'added') {
+        toast('Added to your secure WooCommerce cart. <a href="/cart/" style="color:#fff;text-decoration:underline">View cart</a>');
+        return;
+      }
+      toast((decision.message || 'This option cannot be added to the secure cart.') +
+        ' You can request it with the WhatsApp form below; no order or payment was created.');
+    };
+    /* Capture before document-level static-cart listeners, but never fake a cart. */
+    window.__gcAct = { add: () => { void addToSecureCart(false); }, buy: () => { void addToSecureCart(true); } };
     if (!window.__gcActBound) { window.__gcActBound = true; window.addEventListener('click', e => { const b = e.target && e.target.closest && e.target.closest('#gadd,#gbuy'); if (!b || !window.__gcAct) return; e.preventDefault(); e.stopImmediatePropagation(); window.__gcAct[b.id === 'gbuy' ? 'buy' : 'add'](); }, true); }
     document.getElementById('greq').addEventListener('submit', e => {
       e.preventDefault(); const f = e.target; const v = chosen.v;
