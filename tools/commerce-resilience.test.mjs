@@ -28,3 +28,22 @@ test('store API quota failures do not get mistaken for successful local orders',
   assert.match(pdp,/r\.status === 429/);
   assert.match(pdp,/No item was added/);
 });
+
+test('unverified CJ options disable purchase buttons and never display a payable total',()=>{
+  assert.match(global,/setVerifiedOrderState\(false\)/);
+  assert.match(global,/button\.disabled = !ready/);
+  assert.match(global,/Live price and shipping require a verified supplier option/);
+  assert.doesNotMatch(global,/Calculating for your country…/);
+  assert.match(global,/Final total pending shipping verification/);
+});
+test('local cart bridge requires WooCommerce JSON and does not call cart API for every empty visitor',()=>{
+  assert.match(woo,/Array\.isArray\(x\.j\.items\)/);
+  assert.match(woo,/cartCookiePresent\(\)/);
+  assert.match(woo,/!cartCookiePresent\(\) \|\| quotaActive\(\)/);
+  assert.match(woo,/quotaUntil = Date\.now\(\) \+ 120000/);
+});
+test('supplier API and shipping quote have bounded browser response times',()=>{
+  assert.match(global,/AbortSignal\.timeout\(9000\)/);
+  assert.match(global,/AbortSignal\.timeout\(10000\)/);
+  assert.match(global,/Shipping cannot be confirmed until a supplier variation is verified/);
+});
