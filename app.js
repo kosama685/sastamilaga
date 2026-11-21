@@ -213,7 +213,8 @@ function setSEO({ title, description, image, url, ldJson, robots }) {
   setMetaName('twitter:image',       image || `${SITE_URL}/assets/brand/og-default-1200x630.jpg`);
 
   const ldEl = $('#ld-dynamic');
-  if (ldEl && ldJson) ldEl.textContent = JSON.stringify(ldJson);
+  // Do not carry a previous Product JSON-LD graph into a route without its own schema.
+  if (ldEl) ldEl.textContent = ldJson ? JSON.stringify(ldJson) : '';
 }
 
 function setMetaName(name, content) {
@@ -1473,6 +1474,10 @@ function mediaElement(url, type, alt) {
 /* ============================================================
    PRODUCT CARD
    ============================================================ */
+/* Listing and homepage cards are navigation/merchandising, not Product rich-result targets.
+ * Google supports Product rich results on dedicated /p/ pages; declaring these
+ * 24 cards as standalone Product microdata caused 24 invalid homepage items.
+ * Preserve all visible prices, images, links, interactions and CSS classes. */
 function productCard(p) {
   if (!price(p)) {
     return `<article class="sm-card" data-local-videos="${esc(encodeURIComponent(JSON.stringify(p.vids || [])))}"><a class="sm-card__media" href="#/product/${p._slug}" tabindex="-1" aria-hidden="true"><img src="${esc(img(p))}" alt="${esc(p.n)}" width="480" height="480" loading="lazy" decoding="async" onerror="this.src=window.fallbackImg"></a>
@@ -1480,14 +1485,14 @@ function productCard(p) {
       <div class="smqb-actions"><a class="smqb-opt sm-btn--ghost" href="${esc(waLink(`Assalam o Alaikum! What is the price of ${p.n} (SKU ${p.sku || p.id})?`))}" target="_blank" rel="noopener"><span>Ask price on WhatsApp</span></a></div></div></article>`;
   }
   const out = !(p.in || num(p.stock) > 0);
-  return `<article class="sm-card${out ? ' is-out' : ''}" data-local-videos="${esc(encodeURIComponent(JSON.stringify(p.vids || [])))}" itemscope itemtype="https://schema.org/Product">
+  return `<article class="sm-card${out ? ' is-out' : ''}" data-local-videos="${esc(encodeURIComponent(JSON.stringify(p.vids || [])))}">
     <a class="sm-card__media" href="#/product/${p._slug}" tabindex="-1" aria-hidden="true">
-      <img src="${esc(img(p))}" alt="${esc((Array.isArray(p.alt) ? p.alt[0] : p.alt) || p.n)}" width="480" height="480" loading="lazy" decoding="async" onerror="this.src=window.fallbackImg" itemprop="image">
+      <img src="${esc(img(p))}" alt="${esc((Array.isArray(p.alt) ? p.alt[0] : p.alt) || p.n)}" width="480" height="480" loading="lazy" decoding="async" onerror="this.src=window.fallbackImg">
       ${(p.vids || []).length ? '<span class="sm-card__badge">Video</span>' : ''}
     </a>
     <div class="sm-card__body">
-      <h3 class="sm-card__title"><a href="#/product/${p._slug}" itemprop="name">${esc(p.n)}</a></h3>
-      <p class="sm-card__price" itemprop="offers" itemscope itemtype="https://schema.org/Offer"><span itemprop="price" content="${price(p)}">${PKR.format(price(p))}</span><meta itemprop="priceCurrency" content="PKR"></p>
+      <h3 class="sm-card__title"><a href="#/product/${p._slug}">${esc(p.n)}</a></h3>
+      <p class="sm-card__price">${PKR.format(price(p))}</p>
       <div class="smqb-actions">
         ${out ? `<a class="smqb-opt sm-btn--ghost" href="#/product/${p._slug}"><span>Check availability</span></a>`
               : `<button type="button" class="smqb-add" data-add-cart="${esc(p.id)}" aria-label="Add ${esc(p.n)} to cart"><span>Add to cart</span></button>`}
