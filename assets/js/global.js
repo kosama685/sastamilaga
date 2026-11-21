@@ -316,7 +316,15 @@
   let quoteTimer = null;
   function quoteSoon() { clearTimeout(quoteTimer); quoteTimer = setTimeout(() => { const go = document.getElementById('gship-go'); if (go && !go.disabled) go.click(); }, 250); }
   /* The supplier allows one request per second for the whole shop, so a busy moment answers 503 once and succeeds a few seconds later (successes are cached for an hour). Ask again quietly before telling the visitor anything. */
-  function fetchRetry(u, n = 4) { return fetch(u).then(x => { if (!x.ok) throw new Error(x.status); return x; }).catch(e => (n > 0 ? new Promise(res => setTimeout(res, 1800 + (4 - n) * 1200)).then(() => fetchRetry(u, n - 1)) : Promise.reject(e))); }
+  function fetchRetry(u, n = 2) {
+    return fetch(u).then(x => {
+      if (!x.ok) { const error = new Error('HTTP ' + x.status); error.status = x.status; throw error; }
+      return x;
+    }).catch(e => {
+      if ([400,401,403,404,429].includes(e.status) || n <= 0) return Promise.reject(e);
+      return new Promise(done => setTimeout(done, 1300)).then(() => fetchRetry(u, n - 1));
+    });
+  }
   function bindVariants(r, chosen) {
     const box = document.getElementById('gvar'); if (!box) return;
     const C = window.SM_CONFIG || {}, W = supplierWorker();
@@ -345,7 +353,38 @@
     /* Real options: the CJ Worker when configured, otherwise the WordPress store's live options (same CJ data, the store's own price). */
     const RATE = { USD: 1, SAR: 1 / 3.75, AED: 1 / 3.6725 };   // pegged currencies only; anything else keeps the catalogue price
     const fromWp = d => ({ variants: ((d && d.options) || []).map(o => { const m = /([A-Z]{3})\s*([\d.,]+)/.exec(o.price_label || ''); const usd = m && RATE[m[1]] ? parseFloat(m[2].replace(/,/g, '')) * RATE[m[1]] : (r[3] || 0) * MARGIN; return { vid: o.vid, name: o.name, key: o.name, sku: o.sku, image: o.image || '', price: usd / MARGIN, label: m ? o.price_label : '' }; }) });   /* a label without a price (feed down) is dropped: the tile shows the catalogue estimate, refined below from the supplier price */
-    (W ? fetchRetry(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`, 2).then(x => x.json()).then(d => { if (!d || !Array.isArray(d.variants)) throw new Error('Invalid supplier options'); return d; }) : (window.SMWoo && window.SMWoo.active ? window.SMWoo.sync() : Promise.resolve()).then(() => fetchRetry(`${(window.SMWoo && window.SMWoo.active ? (() => { try { return new URL(C.wpApi).pathname; } catch (e) { return C.wpApi; } })() : C.wpApi).replace(/\/$/, '')}/live/options/${encodeURIComponent(r[0])}`).then(x => { if (!x.ok) throw new Error(x.status); return x.json(); }).then(fromWp))).then(d => {
+    const pid = encodeURIComponent(r[0]);
+    const normalizedCJ = d => {
+      if (!d || !Array.isArray(d.variants)) throw new Error('Invalid supplier options');
+      const variants = d.variants.map(v => ({
+        ...v, key: v.key || v.name || v.sku || '',
+        price: Number(v.price) > 0 ? Number(v.price) :
+          Number(v.indicativeRetailUsd) > 0 ? Number(v.indicativeRetailUsd) / MARGIN : 0,
+        label: v.label || (Number(v.indicativeRetailUsd) > 0 ? 'est. ' + USD.format(Number(v.indicativeRetailUsd)) : '')
+      })).filter(v => v && v.vid && v.sku && Number(v.price) > 0);
+      if (!variants.length) throw new Error('No valid supplier options');
+      return { variants };
+    };
+    const readWp = () => (window.SMWoo && window.SMWoo.active ? window.SMWoo.sync() : Promise.resolve())
+      .then(() => {
+        const wp = window.SMWoo && window.SMWoo.active ?
+          (() => { try { return new URL(C.wpApi).pathname; } catch (e) { return C.wpApi; } })() : C.wpApi;
+        return fetchRetry(wp.replace(/\\/$/, '') + '/live/options/' + pid, 1);
+      }).then(x => x.json()).then(fromWp).then(normalizedCJ);
+    const supplierOptions = async () => {
+      // This route supports /variants, not /product. Its indicative retail price already includes markup.
+      try { return normalizedCJ(await (await fetchRetry('/api/cj/variants?pid=' + pid, 1)).json()); }
+      catch (e) {
+        if (e.status === 429) throw e; // Cloudflare Error 1027; no other Worker can help.
+      }
+      if (W) {
+        try { return normalizedCJ(await (await fetchRetry(W + '/api/cj/product?pid=' + pid, 1)).json()); }
+        catch (e) { if (e.status === 429) throw e; }
+      }
+      if (C.wpApi) return readWp();
+      throw new Error('Supplier options are unavailable');
+    };
+    supplierOptions().then(d => {
       const list = (d && d.variants) || [];
       /* Additive live-supplier transparency: never alters existing PDP sections or purchase flow. */
       if (list.length) {
@@ -368,7 +407,7 @@
       if (list.length === 1) {
         box.innerHTML = `<legend>Option</legend><p class="sm-var__one"><b>${esc(list[0].key || list[0].name)}</b> <small>SKU ${esc(maskSku(list[0].sku))}</small></p>`; pick(list[0]); return;
       }
-      box.innerHTML = `<legend>Choose an option <small>(${list.length})</small></legend><div class="sm-var__grid" role="radiogroup">${list.map((v, i) => `<label class="sm-var__opt"><input type="radio" name="variant" value="${esc(v.vid)}" required><span class="sm-var__img">${v.image ? `<img src="${esc(v.image)}" alt="" width="56" height="56" loading="lazy">` : ''}</span><span class="sm-var__t"><b>${esc(v.key || v.name)}</b><small>${v.label || USD.format(v.price * MARGIN)}</small></span></label>`).join('')}</div>`;
+      box.innerHTML = `<legend>Choose an option <small>(${list.length})</small></legend><div class="sm-var__grid" role="radiogroup">${list.map((v, i) => `<label class="sm-var__opt"><input type="radio" name="variant" value="${esc(v.vid)}" required><span class="sm-var__img">${v.image ? `<img src="${esc(v.image)}" alt="" width="56" height="56" loading="lazy">` : ''}</span><span class="sm-var__t"><b>${esc(v.key || v.name)}</b><small>${esc(v.label || USD.format(v.price * MARGIN))}</small></span></label>`).join('')}</div>`;
       box.addEventListener('change', e => { if (e.target.name === 'variant') pick(list.find(v => v.vid === e.target.value)); });
       { const f0 = box.querySelector('input[name=variant]'); if (f0) { f0.checked = true; pick(list[0]); } }   /* default option: the first one, so price and delivery show at once */
       // Variation photos arrive a moment later from the image Worker: fill the tiles and keep the main picture in step with the choice.
@@ -383,7 +422,17 @@
           const sel = box.querySelector('input[name=variant]:checked'); if (sel) { const v = list.find(x => x.vid === sel.value), g = document.querySelector('.gallery-main img'); if (v && v.image && g) { g.removeAttribute('srcset'); g.src = v.image; g.alt = r[2] + ' – ' + (v.key || v.name || 'selected option'); } else if (v && v.image) sel.dispatchEvent(new Event('change', { bubbles: true })); }
         }).catch(() => { });
       })();
-    }).catch(() => { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Options could not be loaded just now. <button type="button" class="sm-btn sm-btn--ghost" id="gvar-retry">Try again</button> Or tell us your size or colour in the notes and we will confirm it on WhatsApp.</p>'; const b = document.getElementById('gvar-retry'); if (b) b.addEventListener('click', () => { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Loading the supplier\'s options…</p>'; bindVariants(r, chosen); }); });
+    }).catch(error => {
+      chosen.v = null;
+      const limited = error && error.status === 429;
+      box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">' +
+        (limited ? 'Supplier options are temporarily unavailable because the live service reached its request limit. No order has been placed.' :
+          'Options could not be verified just now. No order has been placed.') +
+        ' Please tell us your size or colour and we will confirm it on WhatsApp.' +
+        (limited ? '' : ' <button type="button" class="sm-btn sm-btn--ghost" id="gvar-retry">Try again</button>') + '</p>';
+      const retry = document.getElementById('gvar-retry');
+      if (retry) retry.addEventListener('click', () => { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Loading supplier options…</p>'; bindVariants(r, chosen); });
+    });
   }
   function bindShip(r, chosen) {
     const go = document.getElementById('gship-go'); if (!go) return;
