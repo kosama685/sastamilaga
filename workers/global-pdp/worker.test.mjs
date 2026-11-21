@@ -67,3 +67,20 @@ test('only GET and HEAD are served', async () => {
   const r = await handle(new Request(`https://sastamilaga.com/global-shop/p/${CHAIR}/x/`, {method: 'POST'}), fetcher());
   assert.equal(r.status, 405);
 });
+
+
+test('CJ product HTML loads Clarity once and uses central worldwide WhatsApp', async () => {
+  const p = {id:'1988880782439141377',name:'Test Global Chair',sku:'CJ-TEST-CHAIR',category:'Furniture',categorySlug:'chairs',image:'https://example.com/chair.jpg'};
+  const fetcher = async (url) => {
+    if(String(url).includes('/global-pdp.html')) return new Response('<!doctype html><html><head><meta charset="utf-8"></head><body><!--GPDP:HEAD--><!--GPDP:MAIN--></body></html>');
+    return new Response(JSON.stringify({items:{[p.id]:[p.sku,p.name,p.category,p.categorySlug,p.image]}}),{headers:{'content-type':'application/json'}});
+  };
+  const {handle} = await import('./worker.js');
+  const response = await handle(new Request('https://sastamilaga.com/global-shop/p/'+p.id+'/test-global-chair/'),fetcher);
+  assert.equal(response.status,200);
+  const html=await response.text();
+  assert.equal((html.match(/zh6iif5boz/g)||[]).length,2,'Clarity project comment and invocation');
+  assert.ok(html.indexOf('zh6iif5boz') > html.indexOf('<head'), 'Clarity is inside HTML head');
+  assert.ok(html.includes('https://wa.me/923343582295'), 'The exact central order WhatsApp number is used');
+  assert.ok(!html.includes('https://wa.me/966510451995'), 'Old regional WhatsApp number is absent');
+});
