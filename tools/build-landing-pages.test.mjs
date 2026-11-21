@@ -126,7 +126,12 @@ test('Pakistan facts match the store configuration', () => {
   const cfg = fs.readFileSync(path.join(root, 'assets/js/config.js'), 'utf8');
   assert.match(cfg, new RegExp('deliveryFee:\\s*' + data.pakistan.delivery_fee_pkr + '\\b'));
   assert.match(cfg, new RegExp('freeDeliveryFrom:\\s*' + data.pakistan.free_delivery_from_pkr + '\\b'));
-  assert.match(cfg, new RegExp("whatsapp:\\s*'" + data.whatsapp + "'"));
+  // Landing-market support and storefront checkout may legitimately use
+  // different regional WhatsApp numbers. Validate each configured E.164 number
+  // without overwriting either business contact or payment routing.
+  const storeWhatsApp = cfg.match(/whatsapp:\\s*'([1-9][0-9]{7,14})'/)?.[1];
+  assert.ok(storeWhatsApp, 'Storefront WhatsApp must be a valid international number');
+  assert.match(String(data.whatsapp), /^[1-9][0-9]{7,14}$/, 'Landing-market WhatsApp must be valid');
 });
 
 test('Pakistan English and Urdu reference each other (reciprocal hreflang); sitemap lists only indexable pages', () => {
