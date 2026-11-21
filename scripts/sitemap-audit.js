@@ -80,7 +80,7 @@ async function visit(url,depth=0){
         sitemapUrls.add(u.href);
       }
       // Deterministic first, median and last; larger audits need sampling stratified by type.
-      const indices=[...new Set([0,Math.floor(x.locs.length/2),x.locs.length-1])].filter(i=>i>=0);
+      const indices=[...new Set([0,Math.floor(x.locs.length/2),x.locs.length-1])].filter(i=>i>=0&&i<x.locs.length);
       row.sample=indices.map(i=>x.locs[i]);
     }
   }catch(e){row.error=String(e.message||e);errors.push({url:absolute,error:row.error,status:row.status})}
@@ -100,7 +100,7 @@ async function verifyDestination(url){
 }
 await Promise.all(ROOTS.map(u=>visit(u)));
 const childRows=[...all.values()].filter(x=>x.root==='urlset');
-const targets=[...new Set(childRows.flatMap(x=>x.sample))];
+const targets=[...new Set(childRows.flatMap(x=>x.sample).filter(x=>typeof x==='string'&&x.length>0))];
 const destination=[];
 for(let i=0;i<targets.length;i+=5)destination.push(...await Promise.all(targets.slice(i,i+5).map(verifyDestination)));
 let robots;
