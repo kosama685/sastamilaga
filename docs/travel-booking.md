@@ -6,6 +6,12 @@ checklist below. Payments always use the shop's own WooCommerce PayPal Payments 
 
 ## 1. What the customer gets
 
+**Price comparison (since 21 Nov 2026, v1.1.0):** a flight search shows two sources side by side.
+- **Live fares (Duffel):** bookable with Sasta Milaga. The total covers all travellers, taxes and the markup, and is re-checked with the airline before payment.
+- **Recent market prices (Aviasales via the Travelpayouts Data API):** what travellers recently found, cached by Aviasales. They are economy, priced per adult, and may have changed. Each fare has a *See on Aviasales* partner link (commission through Travelpayouts) and *Book with our team* (request flow).
+
+The panel also shows a cheapest-day strip for the month and filter chips. When Duffel is off, the left tile offers "Get a confirmed fare" from the team.
+
 | Mode | When | Journey |
 |---|---|---|
 | **Request** (no API key) | Default, and whenever live search is off or fails | Search → "Get your best fare" sheet (name, WhatsApp, optional email, consent) → **request number** + confirmation email → the team quotes and sends a **payment link** (Travel Ops → request → *Payment link* box) → customer pays on the order-pay page with PayPal / card → request moves to *Paid* → team issues the ticket |
@@ -35,7 +41,8 @@ You are the merchant: the customer pays you; you pay Duffel from your prepaid Du
 | Payment links for quotes | `wordpress/mu-plugins/sm-travel-pay.php` | Staff create a USD order from any Travel Ops request |
 | Search adapter (existing) | plugin `sm-global-travel` → `class-sm-duffel-provider.php` | `duffel/flights`, `duffel/stays`, token storage page *Settings → Duffel Travel API* |
 | Search page script | `assets/js/travel.js` | Loads the sheets on first use, decides the mode at runtime from `booking/config` |
-| Sheets | `assets/js/travel-booking.js`, `assets/css/travel-booking.css` | Request sheet, booking sheet; no HTML change to the generated pages |
+| Sheets + compare panel | `assets/js/travel-booking.js`, `assets/css/travel-booking.css` | Request sheet, booking sheet, price comparison; no HTML change to the generated pages |
+| Same scripts on WordPress-served pages | `wp-content/plugins/sm-global-travel/assets/travel.js`, `travel-booking.js`, `travel-booking.css` | When `/travel/` is served by WordPress (not the static site), the plugin loads these copies; deploy the repo files there too (the loader finds the sheets next to `travel.js`) |
 | Tests | `tools/smfb-mock-e2e.php` (server, Duffel mocked), `tools/travel-booking.e2e.mjs` (browser, live page, routes mocked) | Both clean up after themselves; neither books nor charges |
 | GitHub → WordPress settings | `.github/workflows/travel-booking-settings.yml` | Sends switches and tokens; prints yes/no only |
 
@@ -43,7 +50,8 @@ You are the merchant: the customer pays you; you pay Duffel from your prepaid Du
 
 | Method + route | Who | Purpose |
 |---|---|---|
-| `GET booking/config` | public | `{mode: request\|duffel, search, booking, currencies[], hours}`; cached 60 s |
+| `GET booking/config` | public | `{mode: request\|duffel, search, booking, market, sources{duffel,travelpayouts}, currencies[], hours}`; cached 60 s |
+| `POST market-prices` | public, 30 per 10 min per visitor | `{origin, destination, departure, return?, currency, cabin}` → `{results[{price, currency, airline, airlineName, flightNumber, from, to, departureAt, returnAt, stops, durationTo, url}], days[{date, price}], exact, perAdult: true}`. Travelpayouts `aviasales/v3/prices_for_dates` (same month when the exact day has no cached price) + `grouped_prices`; cached 20 min / 6 h; economy only |
 | `POST request` | public, 6 per 15 min per visitor | Trip + `name`, `phone`, `email?`, `notes?`, `consent`, `key` (idempotency), `offer?` → `{request, ref, whatsapp, email}`. Creates a Travel Ops request, emails the team and (if given) the customer |
 | `GET booking/offer?id=off_…` | public, only when online booking is on | Fresh price (with markup), passenger slots, passport requirement, refund/change rules, hold availability |
 | `POST booking/start` | public, only when online booking is on; 4 per 15 min per visitor, 60 per day site-wide | `{offer_id, passengers[{id,title,given_name,family_name,born_on,passport?,passport_country?,passport_expiry?}], contact{email,phone}, key}` → `{order, pay_url, mode: hold\|instant, held_until, amount, currency}` |
@@ -66,11 +74,17 @@ Never put a supplier token in the repository, in `assets/`, or in page HTML: the
 | Duffel **live** token `duffel_live_…` | secret | WordPress: *Settings → Duffel Travel API* (encrypted), or GitHub secret `DUFFEL_LIVE_TOKEN` + the workflow | Live search, holds, payments |
 | Duffel **test** token `duffel_test_…` | secret | Same page, or GitHub secret `DUFFEL_TEST_TOKEN` | Sandbox self-test |
 | `WORDPRESS_URL`, `WORDPRESS_USERNAME`, `WORDPRESS_APP_PASSWORD` | GitHub secrets (already exist) | GitHub → Settings → Secrets and variables → Actions | Lets the workflow call `admin/settings`; the user must be an administrator |
-| `TRAVEL_MARKUP_PERCENT` | GitHub variable (optional) | … → Variables | Markup on the airline base fare |
+| `TRAVELPAYOUTS_API_TOKEN` | GitHub secret | … → Secrets | Market prices (falls back to the token the Travelpayouts plugin stored in WordPress) |
+| `TRAVELPAYOUTS_APP_ID` | GitHub secret | … → Secrets | Partner ID (marker) in the Aviasales links when numeric; otherwise the stored plugin marker is used |
+| `TRAVEL_MARKUP_PERCENT` | GitHub secret or variable (optional) | … → Secrets or Variables | Markup on the airline base fare |
 | PayPal client ID / secret | WooCommerce | *WooCommerce → Settings → Payments → PayPal* (already connected) | All payments, including travel. The old `PAYPAL_*` GitHub secrets belong to the retired `workers/paypal` sandbox Worker and are not used here |
 
-To use GitHub: add the secrets, open **Actions → Travel booking settings (WordPress) → Run workflow**, untick *status only*, choose the switches, run.
-The job summary lists the resulting flags. Run it once with *status only* ticked first to check the credentials.
+To use GitHub:
+1. Add the secrets.
+2. Open **Actions → Travel booking settings (WordPress) → Run workflow**, untick *status only*, choose the switches and run.
+3. Read the job summary. It lists the resulting flags and read-only checks (`duffel_live_check`, `duffel_test_check`, `travelpayouts_check`, `live_token_changed`).
+
+A push to a branch named `travel-sync/<anything>` that changes the workflow file syncs only the keys and the markup, leaving the switches untouched. If `live_token_changed` is `false`, the same previously shared token was sent again: rotate it in Duffel.
 
 ## 6. Go-live checklist (owner)
 
@@ -100,7 +114,7 @@ The job summary lists the resulting flags. Run it once with *status only* ticked
 | Kiwi.com Tequila | Booking/affiliate API | **Invite-only** since 2024 (public self-sign-up closed) |
 | TBO, Mystifly, Trawex | B2B wholesalers / aggregators (flights, hotels) | Agency onboarding and certification; TBO is strong in South Asia and the Gulf |
 | Hotelbeds, WebBeds, Expedia Rapid, Duffel Stays | Hotel booking APIs | Contracts or separate access; Duffel Stays plugs into the existing adapter |
-| Travelpayouts (Aviasales, Trip.com, Booking.com, Agoda, Klook) | Affiliate: partner takes the payment, you earn commission (paid to PayPal/bank) | Retired on this site 5 Nov 2026 (0 commission in 30 days, customers left the site). Optional as price insight only |
+| Travelpayouts (Aviasales, Trip.com, Booking.com, Agoda, Klook) | Affiliate: partner takes the payment, you earn commission (paid to PayPal/bank) | **Used for price comparison** (owner request, 21 Nov 2026): recent Aviasales prices with partner links next to the live Duffel fares. The old redirect-only search (retired 5 Nov) stays off. The real-time Flight Search API needs separate Travelpayouts approval |
 | Skyscanner, Kayak, Wego, Trip.com, Booking.com, Agoda, GetYourGuide, Viator, Airalo | Affiliate / partner programmes | Approval and terms per programme; no customer payment to you |
 
 ## 9. Developer prompt (to extend this feature)

@@ -192,6 +192,71 @@ try {
 	t( 503 === rest_do_request( $r3 )->get_status(), 'public booking/start stays closed while online booking is off' );
 	$r4 = new WP_REST_Request( 'GET', '/sm-travel/v1/admin/status' );
 	t( in_array( rest_do_request( $r4 )->get_status(), array( 401, 403 ), true ), 'admin/status refuses anonymous callers' );
+
+	// 7. Market prices (Travelpayouts Data API mocked): exact day empty → same month, partner links, airline names, day calendar
+	$tp_calls = array();
+	$tp_mock  = function ( $pre, $args, $url ) use ( &$tp_calls ) {
+		if ( 0 !== strpos( $url, 'https://api.travelpayouts.com/' ) ) {
+			return $pre;
+		}
+		$tp_calls[] = $url;
+		parse_str( (string) wp_parse_url( $url, PHP_URL_QUERY ), $q );
+		$dep  = gmdate( 'Y-m-d', time() + 25 * 86400 );
+		$body = array( 'success' => true, 'data' => array() );
+		if ( false !== strpos( $url, 'airlines.json' ) ) {
+			return array( 'headers' => array(), 'body' => wp_json_encode( array( array( 'code' => 'PK', 'name' => 'PIA', 'name_translations' => array( 'en' => 'Pakistan International Airlines' ) ) ) ), 'response' => array( 'code' => 200, 'message' => 'OK' ), 'cookies' => array(), 'filename' => null );
+		}
+		if ( false !== strpos( $url, 'prices_for_dates' ) && 10 === strlen( (string) ( $q['departure_at'] ?? '' ) ) ) {
+			$body['data'] = array();   // nothing cached for the exact day
+		} elseif ( false !== strpos( $url, 'prices_for_dates' ) ) {
+			$body['data'] = array(
+				array( 'origin' => 'KHI', 'destination' => 'JED', 'origin_airport' => 'KHI', 'destination_airport' => 'JED', 'price' => 61000, 'airline' => 'PK', 'flight_number' => '731', 'departure_at' => $dep . 'T03:10:00+05:00', 'transfers' => 0, 'duration_to' => 270, 'link' => '/search/KHI1712JED1?t=PK1&search_date=1' ),
+				array( 'origin' => 'KHI', 'destination' => 'JED', 'price' => 55000, 'airline' => 'XY', 'flight_number' => '318', 'departure_at' => $dep . 'T10:00:00+05:00', 'transfers' => 1, 'duration_to' => 400, 'link' => 'https://evil.example/x' ),
+				array( 'origin' => 'KHI', 'destination' => 'JED', 'price' => 1, 'airline' => 'ZZ', 'departure_at' => '2020-01-01T10:00:00+05:00', 'link' => '/search/old' ),
+			);
+		} elseif ( false !== strpos( $url, 'grouped_prices' ) ) {
+			$body['data'] = array( $dep => array( 'price' => 50000, 'transfers' => 1 ), gmdate( 'Y-m-d', time() + 26 * 86400 ) => array( 'price' => 48000, 'transfers' => 0 ), '2020-01-01' => array( 'price' => 1 ) );
+		}
+		return array( 'headers' => array(), 'body' => wp_json_encode( $body ), 'response' => array( 'code' => 200, 'message' => 'OK' ), 'cookies' => array(), 'filename' => null );
+	};
+	add_filter( 'pre_http_request', $tp_mock, 9, 3 );
+	delete_transient( 'smfb_airline_names' );
+	$mk = new WP_REST_Request( 'POST', '/sm-travel/v1/market-prices' );
+	$mk->set_header( 'Content-Type', 'application/json' );
+	$mk->set_body( wp_json_encode( array( 'origin' => 'ZZA', 'destination' => 'ZZB', 'departure' => gmdate( 'Y-m-d', time() + 24 * 86400 ), 'currency' => 'PKR', 'cabin' => 'economy', 'nonce' => wp_generate_password( 6, false ) ) ) );
+	$mr = rest_do_request( $mk );
+	$md = $mr->get_data();
+	$res = (array) ( $md['results'] ?? array() );
+	t( 200 === $mr->get_status() && false === $md['exact'] && 2 === count( $res ) && 55000.0 === $res[0]['price'], 'market prices: exact day empty → same month, sorted, past fares dropped (' . count( $res ) . ' fares)' );
+	t( 'Pakistan International Airlines' === ( $res[1]['airlineName'] ?? '' ) && 0 === strpos( (string) $res[1]['url'], 'https://tp.media/r?' ) && false !== strpos( rawurldecode( (string) $res[1]['url'] ), 'https://www.aviasales.com/search/KHI1712JED1' ), 'airline names resolved; partner link to the Aviasales search with the marker' );
+	t( '' === (string) ( $res[0]['url'] ?? 'x' ), 'a foreign link from the feed is never passed to the browser' );
+	t( 2 === count( (array) $md['days'] ) && $md['days'][0]['date'] < $md['days'][1]['date'], 'cheapest-day calendar: future days only, in date order' );
+	$mk2 = new WP_REST_Request( 'POST', '/sm-travel/v1/market-prices' );
+	$mk2->set_header( 'Content-Type', 'application/json' );
+	$mk2->set_body( wp_json_encode( array( 'origin' => 'ZZA', 'destination' => 'ZZB', 'departure' => gmdate( 'Y-m-d', time() + 24 * 86400 ), 'cabin' => 'business' ) ) );
+	t( array() === rest_do_request( $mk2 )->get_data()['results'] && 0 === count( array_filter( $tp_calls, function ( $u ) { return false !== strpos( $u, 'business' ); } ) ), 'business cabin: no economy market prices shown' );
+	remove_filter( 'pre_http_request', $tp_mock, 9 );
+	delete_transient( 'smfb_airline_names' );   // the mocked one-airline list must not stay cached for real visitors
+
+	// 8. The browser never sees the supplier cost of a live Duffel offer
+	$fake = new WP_REST_Response( array( 'results' => array( array( 'id' => 'off_x', 'price' => 230, 'supplierPrice' => 200 ) ) ) );
+	$freq = new WP_REST_Request( 'POST', '/sm-travel/v1/duffel/flights' );
+	$after = apply_filters( 'rest_post_dispatch', $fake, rest_get_server(), $freq )->get_data();
+	t( ! array_key_exists( 'supplierPrice', $after['results'][0] ) && 230 === $after['results'][0]['price'], 'supplierPrice stripped from public live-search results' );
+
+	// 9. Token rotation check: sending the same live token again is reported as "not changed"
+	$keep = get_option( 'sm_duffel_settings' );
+	$cur  = smfb_token( 'live' );
+	if ( '' !== $cur ) {
+		wp_set_current_user( (int) ( get_users( array( 'role' => 'administrator', 'number' => 1, 'fields' => 'ID' ) )[0] ?? 0 ) );
+		$sr = new WP_REST_Request( 'POST', '/sm-travel/v1/admin/settings' );
+		$sr->set_header( 'Content-Type', 'application/json' );
+		$sr->set_body( wp_json_encode( array( 'duffel_live_token' => $cur ) ) );
+		$sd = rest_do_request( $sr )->get_data();
+		update_option( 'sm_duffel_settings', $keep, false );   // leave the stored settings exactly as they were
+		wp_set_current_user( 0 );
+		t( false === ( $sd['live_token_changed'] ?? null ), 'admin/settings flags a live token that was not rotated (live_token_changed=false)' );
+	}
 } catch ( Throwable $e ) {
 	t( false, 'exception: ' . $e->getMessage() . ' @' . $e->getLine() );
 } finally {

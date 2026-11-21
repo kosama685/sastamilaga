@@ -247,5 +247,117 @@
         h('button', { type: 'button', class: 'smtb-btn smtb-btn--ghost', text: 'Search again', onclick: close }))));
   }
 
-  window.SMTB = { config, request, book, close };
+  /* ---------- 3) compare: live Duffel fares (bookable with us) next to recent Aviasales market prices ---------- */
+  // Flight times are airport-local: read them from the string instead of converting to the visitor's time zone.
+  const localDay = s => (s ? day(String(s).slice(0, 10)) : '');
+  const localTime = s => ((String(s || '').match(/T(\d{2}:\d{2})/) || [])[1] || '');
+  const mins = m => { m = Number(m) || 0; return m ? `${Math.floor(m / 60)}h${m % 60 ? ' ' + (m % 60) + 'm' : ''}` : ''; };
+  const stopsText = n => (Number(n) === 0 ? 'Non-stop' : `${n} stop${Number(n) === 1 ? '' : 's'}`);
+  const travellers = p => Number(p.adults || 1) + (p.ages || []).length;
+
+  function compare(section, payload, cfg, opts = {}) {
+    if (!section) return;
+    const list = section.querySelector('[data-flight-result-list]');
+    const head = section.querySelector('.sm-flight-results-heading');
+    const note = section.querySelector('[data-direct-search-note]');
+    section.querySelectorAll('[data-partner-fallback],[data-fare-calendar]').forEach(n => { n.hidden = true; });
+    if (head) {
+      const eb = head.querySelector('.sm-travel-eyebrow'), h3 = head.querySelector('h3'), pp = head.querySelector('p');
+      if (eb) eb.textContent = 'COMPARE FARES';
+      if (h3) h3.textContent = `${(payload.origin_label || payload.origin || '').split(/[–(,]/)[0].trim()} → ${(payload.destination_label || payload.destination || '').split(/[–(,]/)[0].trim()}`;
+      if (pp) pp.textContent = 'Live airline fares you can book with Sasta Milaga, next to recent prices travellers found on Aviasales.';
+    }
+    const n = travellers(payload);
+    const state = { live: null, market: null, liveErr: '', marketErr: '', meta: null, filter: 'all' };
+    const tile = (kind, title) => { const price = h('strong', { class: 'smc-tile__price', text: '…' }), sub = h('span', { class: 'smc-tile__sub', text: 'Checking…' }), extra = h('div', { class: 'smc-tile__extra' }); return { price, sub, extra, node: h('div', { class: `smc-tile smc-tile--${kind}` }, h('span', { class: 'smc-tile__k' }, h('i', { class: 'smc-dot', 'aria-hidden': 'true' }), title), price, sub, extra) }; };
+    const tLive = tile('live', cfg.search ? 'Live fare · book with Sasta Milaga' : 'Book with Sasta Milaga');
+    const tMarket = tile('market', 'Recent market price · Aviasales');
+    const chip = (key, label) => h('button', { type: 'button', class: 'smc-chip', 'aria-pressed': String(key === 'all'), 'data-k': key, onclick: () => { state.filter = key; chips.querySelectorAll('.smc-chip').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.k === key))); render(); } }, label);
+    const chips = h('div', { class: 'smc-chips', role: 'group', 'aria-label': 'Show fares' }, chip('all', 'All'), chip('live', 'Bookable now'), chip('market', 'Market prices'));
+    const strip = h('div', { class: 'smc-days', hidden: true });
+    const out = h('div', { class: 'smc-list', 'aria-live': 'polite' });
+    const foot = h('div', { class: 'smc-foot' }, h('div', {}, h('strong', { text: 'Prefer a person to book it?' }), h('p', { text: 'Our travel team checks every airline, confirms the price and sends you a secure payment link (PayPal or debit / credit card).' })), h('button', { type: 'button', class: 'smtb-btn smtb-btn--go', text: 'Send my trip to the team', onclick: () => request('flight', payload) }));
+    list.replaceChildren(h('div', { class: 'smc' }, h('div', { class: 'smc-tiles' }, tLive.node, tMarket.node), chips, strip, out, foot));
+    if (note) note.textContent = 'Market prices come from recent Aviasales searches (economy, per adult) and can change. Live fares are checked with the airline again before you pay.';
+    section.hidden = false; section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    if (!cfg.search) {
+      tLive.price.textContent = 'Confirmed fare';
+      tLive.sub.textContent = 'Our team books any airline for you and sends a secure payment link.';
+      tLive.extra.append(h('button', { type: 'button', class: 'smtb-btn smtb-btn--go smc-tile__btn', text: 'Get a confirmed fare', onclick: () => request('flight', payload) }));
+      state.live = [];
+    }
+    if (!cfg.market) { tMarket.price.textContent = '—'; tMarket.sub.textContent = 'Not available right now'; state.market = []; }
+
+    const skeleton = k => h('div', { class: 'smc-card smc-card--skel', 'aria-hidden': 'true' }, h('span'), h('span'), h('span'));
+    function group(title, items, kind) {
+      const box = h('section', { class: `smc-group smc-group--${kind}` }, h('h4', { class: 'smc-group__h', text: title }));
+      items.forEach(x => box.append(x));
+      return box;
+    }
+    function liveCard(o) {
+      const legs = (o.journeys || []).map((j, i) => { const a = j[0] || {}, z = j[j.length - 1] || {}; return h('div', { class: 'smc-leg' },
+        h('span', { class: 'smc-leg__t', text: i === 0 ? 'Out' : 'Back' }),
+        h('strong', { text: `${localTime(a.departingAt)} ${a.origin}` }), h('span', { class: 'smc-leg__line', 'aria-hidden': 'true' }), h('strong', { text: `${localTime(z.arrivingAt)} ${z.destination}` }),
+        h('small', { text: `${localDay(a.departingAt)} · ${stopsText(Math.max(0, j.length - 1))}` })); });
+      const summary = [(o.carriers || []).join(', '), (o.journeys || []).map(j => ((j || [])[0] || {}).origin + ' → ' + ((j || [])[(j || []).length - 1] || {}).destination).join(' / ')].filter(Boolean).join(' · ');
+      const actions = h('div', { class: 'smc-actions' });
+      if (cfg.booking && (cfg.currencies || []).includes(o.currency)) actions.append(h('button', { type: 'button', class: 'smtb-btn smtb-btn--go smc-btn', text: 'Book this fare', onclick: () => book(o, payload) }));
+      actions.append(h('button', { type: 'button', class: 'smtb-btn smtb-btn--ghost smc-btn', text: cfg.booking ? 'Ask our team' : 'Request this fare', onclick: () => request('flight', payload, { id: o.id, price: o.price, currency: o.currency, summary }) }));
+      return h('article', { class: 'smc-card smc-card--live' },
+        h('div', { class: 'smc-card__top' }, h('span', { class: 'smc-badge smc-badge--live', text: 'Live · airline price' }), h('span', { class: 'smc-card__air', text: (o.carriers || []).join(' · ') || 'Airline shown at booking' })),
+        h('div', { class: 'smc-legs' }, legs),
+        h('div', { class: 'smc-card__bottom' }, h('div', { class: 'smc-price' }, h('strong', { text: money(o.price, o.currency) }), h('small', { text: `total · ${n} traveller${n > 1 ? 's' : ''} · taxes incl.` })), actions));
+    }
+    function marketCard(r) {
+      const back = r.returnAt ? h('small', { text: `Return ${localDay(r.returnAt)} ${localTime(r.returnAt)} · ${stopsText(r.returnStops)}` }) : null;
+      const summary = `${r.airlineName}${r.flightNumber ? ' ' + r.airline + r.flightNumber : ''} · ${r.from} → ${r.to} · ${localDay(r.departureAt)}`;
+      const actions = h('div', { class: 'smc-actions' },
+        h('button', { type: 'button', class: 'smtb-btn smtb-btn--go smc-btn', text: 'Book with our team', onclick: () => request('flight', { ...payload, departure: String(r.departureAt || payload.departure).slice(0, 10) || payload.departure, return: r.returnAt ? String(r.returnAt).slice(0, 10) : payload.return }, { price: r.price, currency: r.currency, summary: summary + ' (seen on Aviasales)' }) }),
+        r.url ? h('a', { class: 'smc-link', href: r.url, target: '_blank', rel: 'nofollow sponsored noopener', text: 'See on Aviasales ↗' }) : null);
+      return h('article', { class: 'smc-card smc-card--market' },
+        h('div', { class: 'smc-card__top' }, h('span', { class: 'smc-badge smc-badge--market', text: 'Recently seen · Aviasales' }), h('span', { class: 'smc-card__air', text: `${r.airlineName}${r.flightNumber ? ' · ' + r.airline + r.flightNumber : ''}` })),
+        h('div', { class: 'smc-legs' }, h('div', { class: 'smc-leg' }, h('span', { class: 'smc-leg__t', text: 'Out' }), h('strong', { text: `${localTime(r.departureAt)} ${r.from}` }), h('span', { class: 'smc-leg__line', 'aria-hidden': 'true' }), h('strong', { text: r.to }), h('small', { text: `${localDay(r.departureAt)} · ${stopsText(r.stops)}${r.durationTo ? ' · ' + mins(r.durationTo) : ''}` })), back),
+        h('div', { class: 'smc-card__bottom' }, h('div', { class: 'smc-price' }, h('strong', { text: money(r.price, r.currency) }), h('small', { text: `${r.returnAt ? 'return trip, ' : ''}per adult · may have changed` })), actions));
+    }
+    function render() {
+      const parts = [];
+      const showLive = state.filter !== 'market', showMarket = state.filter !== 'live';
+      if (showLive && cfg.search) parts.push(state.live === null ? group('Bookable now', [skeleton(), skeleton()], 'live') : state.live.length ? group(`Bookable now · ${state.live.length} live fare${state.live.length > 1 ? 's' : ''}`, state.live.slice(0, 15).map(liveCard), 'live') : h('p', { class: 'smc-empty', text: state.liveErr || 'No live airline fares for these exact dates. Try nearby dates or send the trip to our team.' }));
+      if (showMarket && cfg.market) parts.push(state.market === null ? group('Recent market prices', [skeleton(), skeleton()], 'market') : state.market.length ? group(state.meta && state.meta.exact === false ? `Recent prices on nearby dates (${new Intl.DateTimeFormat(undefined, { month: 'long' }).format(new Date(payload.departure + 'T12:00:00'))})` : `Recent market prices · ${state.market.length}`, state.market.map(marketCard), 'market') : h('p', { class: 'smc-empty', text: state.marketErr || (state.meta && state.meta.note) || 'No recent Aviasales prices for this route.' }));
+      if (!parts.length) parts.push(h('p', { class: 'smc-empty', text: 'Nothing to show for this filter.' }));
+      out.replaceChildren(...parts);
+      chips.querySelector('[data-k="live"]').textContent = `Bookable now${state.live && state.live.length ? ` (${state.live.length})` : ''}`;
+      chips.querySelector('[data-k="market"]').textContent = `Market prices${state.market && state.market.length ? ` (${state.market.length})` : ''}`;
+      chips.hidden = !(cfg.search && cfg.market);
+    }
+    function days(meta) {
+      const d = (meta && meta.days) || [];
+      if (d.length < 2) return;
+      const low = Math.min(...d.map(x => x.price));
+      let fmt; try { fmt = new Intl.NumberFormat(undefined, { style: 'currency', currency: meta.currency, maximumFractionDigits: 0, notation: 'compact' }); } catch (_) { fmt = { format: v => String(Math.round(v)) }; }
+      const row = h('div', { class: 'smc-days__row', role: 'group', 'aria-label': 'Cheapest day' }, d.map(x => h('button', { type: 'button', class: 'smc-day' + (x.price === low ? ' is-low' : '') + (x.date === payload.departure ? ' is-on' : ''), 'aria-pressed': String(x.date === payload.departure), onclick: () => opts.pickDate && opts.pickDate(x.date) },
+        h('span', { text: new Intl.DateTimeFormat(undefined, { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date(x.date + 'T12:00:00')) }), h('b', { text: fmt.format(x.price) }), x.price === low ? h('small', { text: 'Lowest' }) : null)));
+      strip.replaceChildren(h('p', { class: 'smc-days__t', text: 'Cheapest one-way price by day on Aviasales. Tap a day to compare it.' }), row);
+      strip.hidden = false;
+      const on = row.querySelector('.is-on'); if (on) row.scrollLeft = on.offsetLeft - row.clientWidth / 2 + on.clientWidth / 2;
+    }
+    render();
+    if (cfg.search) call('duffel/flights', { method: 'POST', body: payload, timeout: 45000 }).then(r => {
+      const seen = new Map();
+      state.live = (r.results || []).filter(o => { const k = [(o.carriers || []).join(), o.price, ((o.journeys || [])[0] || []).map(s => s.origin + s.departingAt).join()].join('|'); if (seen.has(k)) return false; seen.set(k, 1); return true; }).sort((a, b) => a.price - b.price);
+      const lo = state.live[0];
+      tLive.price.textContent = lo ? money(lo.price, lo.currency) : 'No live fares';
+      tLive.sub.textContent = lo ? `total for ${n} traveller${n > 1 ? 's' : ''} · airline-confirmed before you pay` : 'Try nearby dates, or our team finds one for you.';
+    }).catch(e => { state.live = []; state.liveErr = e.status === 429 ? e.message : 'Live airline fares are unavailable right now.'; tLive.price.textContent = '—'; tLive.sub.textContent = state.liveErr; }).finally(render);
+    if (cfg.market) call('market-prices', { method: 'POST', body: payload, timeout: 25000 }).then(r => {
+      state.meta = r; state.market = r.results || [];
+      const lo = state.market[0];
+      tMarket.price.textContent = lo ? money(lo.price, lo.currency) : 'No recent prices';
+      tMarket.sub.textContent = lo ? `${lo.returnAt ? 'return trip, ' : ''}per adult · ${lo.airlineName}${r.exact === false ? ' · nearby date' : ''} · may have changed` : (r.note || 'No recent Aviasales prices for this route.');
+      days(r);
+    }).catch(e => { state.market = []; state.marketErr = e.status === 429 ? e.message : 'Market prices are unavailable right now.'; tMarket.price.textContent = '—'; tMarket.sub.textContent = state.marketErr; }).finally(render);
+  }
+
+  window.SMTB = { config, request, book, close, compare };
 })();

@@ -12,8 +12,11 @@
  *  pays Duffel from the agency balance and stores the airline booking reference; anything unexpected puts the order on hold
  *  for the team (never a silent failure, never a second charge).
  *
+ *  Price comparison: next to the live Duffel fares, POST market-prices shows recent prices seen on Aviasales (Travelpayouts
+ *  Data API, cached, economy, per adult) with the partner link, plus the cheapest day of the month.
+ *
  * Supplier tokens stay server-side, encrypted at rest in the option the existing Duffel settings page uses (sm-global-travel).
- * Routes (namespace sm-travel/v1): GET booking/config, GET booking/offer, POST booking/start, POST request,
+ * Routes (namespace sm-travel/v1): GET booking/config, GET booking/offer, POST booking/start, POST request, POST market-prices,
  * GET admin/status, POST admin/settings (the last two need an administrator, e.g. a GitHub Actions application password).
  * Source of truth: kosama685/sastamilaga wordpress/mu-plugins/sm-flight-booking.php · docs/travel-booking.md. Added 2026-11-21.
  * Undo: delete this file (orders, requests and settings stay; the search falls back to the old WhatsApp hand-off).
@@ -23,7 +26,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-const SMFB_VERSION  = '1.0.0';
+const SMFB_VERSION  = '1.1.0';
+const SMFB_TP_CURRENCIES = array( 'USD', 'EUR', 'GBP', 'SAR', 'PKR', 'AED', 'CAD', 'AUD', 'INR', 'TRY', 'JPY', 'SGD', 'CHF' );
 const SMFB_NS       = 'sm-travel/v1';
 const SMFB_OPTION   = 'smfb_settings';
 const SMFB_META     = '_smfb';
@@ -255,6 +259,92 @@ function smfb_trip_line( array $view ) {
 		$line .= ' · return ' . gmdate( 'D j M Y', strtotime( $view['slices'][1]['segments'][0]['dep'] ) );
 	}
 	return $line . ( $view['carriers'] ? ' · ' . implode( ', ', array_slice( $view['carriers'], 0, 2 ) ) : '' );
+}
+
+/* ====================================================================================================================
+ * Travelpayouts (Aviasales Data API): recent market prices shown next to the live Duffel fares
+ * Token: GitHub secret TRAVELPAYOUTS_API_TOKEN (synced, encrypted) → else the token the Travelpayouts plugin stored.
+ * Marker (partner ID) for the partner links: TRAVELPAYOUTS_APP_ID when numeric → else the stored plugin marker.
+ * ================================================================================================================== */
+
+function smfb_tp_token() {
+	$s = smfb_settings();
+	if ( ! empty( $s['tp_token'] ) ) {
+		$t = smfb_decrypt( (string) $s['tp_token'] );
+		if ( '' !== $t ) {
+			return $t;
+		}
+	}
+	$a = get_option( 'travelpayouts_admin_settings', array() );
+	return trim( (string) ( is_array( $a ) ? ( $a['account_api_token'] ?? '' ) : '' ) );
+}
+function smfb_tp_marker() {
+	$s = smfb_settings();
+	if ( ! empty( $s['tp_app_id'] ) && ctype_digit( (string) $s['tp_app_id'] ) ) {
+		return (string) $s['tp_app_id'];
+	}
+	$a = get_option( 'travelpayouts_admin_settings', array() );
+	$m = (string) ( is_array( $a ) ? ( $a['account_api_marker'] ?? '' ) : '' );
+	return ctype_digit( $m ) ? $m : '';
+}
+function smfb_market_on() {
+	$s = smfb_settings();
+	return '' !== smfb_tp_token() && ( ! array_key_exists( 'market_prices', $s ) || ! empty( $s['market_prices'] ) );
+}
+/** Cached GET to api.travelpayouts.com; returns the "data" member or WP_Error. $token overrides the stored one (checks). */
+function smfb_tp_get( $path, array $query, $ttl, $token = null ) {
+	$token = null === $token ? smfb_tp_token() : $token;
+	if ( '' === $token ) {
+		return smfb_error( 'smfb_tp', 'Market prices are not configured.', 503, array( 'supplier' => 'no_token' ) );
+	}
+	$key = 'smfb_tp_' . md5( $path . wp_json_encode( $query ) . substr( hash( 'sha256', $token ), 0, 8 ) );
+	if ( $ttl > 0 && is_array( $hit = get_transient( $key ) ) ) {
+		return $hit;
+	}
+	$res = wp_remote_get( 'https://api.travelpayouts.com/' . $path . '?' . http_build_query( $query ), array( 'timeout' => 12, 'redirection' => 1, 'headers' => array( 'Accept' => 'application/json', 'Accept-Encoding' => 'gzip, deflate', 'X-Access-Token' => $token, 'User-Agent' => 'SastaMilaga-Travel/1.3' ) ) );
+	if ( is_wp_error( $res ) ) {
+		return smfb_error( 'smfb_tp', 'Market prices are unavailable right now.', 503, array( 'supplier' => 'network' ) );
+	}
+	$http = (int) wp_remote_retrieve_response_code( $res );
+	$body = json_decode( (string) wp_remote_retrieve_body( $res ), true );
+	if ( 200 !== $http || ! is_array( $body ) || ( array_key_exists( 'success', $body ) && ! $body['success'] ) ) {
+		return smfb_error( 'smfb_tp', 'Market prices are unavailable right now.', 503, array( 'supplier' => 'http_' . $http ) );
+	}
+	$data = isset( $body['data'] ) && is_array( $body['data'] ) ? $body['data'] : array();
+	if ( $ttl > 0 ) {
+		set_transient( $key, $data, $ttl );
+	}
+	return $data;
+}
+/** IATA airline code → name (Travelpayouts public airline list, cached for a week). */
+function smfb_airline_names() {
+	$names = get_transient( 'smfb_airline_names' );
+	if ( is_array( $names ) ) {
+		return $names;
+	}
+	$names = array();
+	$res   = wp_remote_get( 'https://api.travelpayouts.com/data/en/airlines.json', array( 'timeout' => 10, 'headers' => array( 'Accept-Encoding' => 'gzip, deflate' ) ) );
+	if ( ! is_wp_error( $res ) && 200 === (int) wp_remote_retrieve_response_code( $res ) ) {
+		foreach ( (array) json_decode( (string) wp_remote_retrieve_body( $res ), true ) as $a ) {
+			$code = is_array( $a ) ? strtoupper( (string) ( $a['code'] ?? '' ) ) : '';
+			$name = is_array( $a ) ? (string) ( $a['name_translations']['en'] ?? ( $a['name'] ?? '' ) ) : '';
+			if ( preg_match( '/^[A-Z0-9]{2,3}$/', $code ) && '' !== $name ) {
+				$names[ $code ] = sanitize_text_field( $name );
+			}
+		}
+	}
+	set_transient( 'smfb_airline_names', $names, $names ? WEEK_IN_SECONDS : HOUR_IN_SECONDS );
+	return $names;
+}
+/** Partner link to the Aviasales search for a fare (the marker earns the commission). */
+function smfb_tp_link( $path, $sub = 'sm_compare' ) {
+	$path = html_entity_decode( (string) $path, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+	if ( '' === $path || 0 !== strpos( $path, '/search/' ) ) {
+		return '';
+	}
+	$target = 'https://www.aviasales.com' . $path;
+	$marker = smfb_tp_marker();
+	return $marker ? 'https://tp.media/r?' . http_build_query( array( 'p' => 4114, 'marker' => $marker . '.' . $sub, 'u' => $target ) ) : $target;
 }
 
 /* ====================================================================================================================
@@ -760,6 +850,7 @@ add_action( 'rest_api_init', function () {
 	register_rest_route( SMFB_NS, '/booking/offer', array( 'methods' => 'GET', 'permission_callback' => '__return_true', 'callback' => 'smfb_rest_offer' ) );
 	register_rest_route( SMFB_NS, '/booking/start', array( 'methods' => 'POST', 'permission_callback' => '__return_true', 'callback' => 'smfb_rest_start' ) );
 	register_rest_route( SMFB_NS, '/request', array( 'methods' => 'POST', 'permission_callback' => '__return_true', 'callback' => 'smfb_rest_request' ) );
+	register_rest_route( SMFB_NS, '/market-prices', array( 'methods' => 'POST', 'permission_callback' => '__return_true', 'callback' => 'smfb_rest_market' ) );
 	$admin = static function () {
 		return current_user_can( 'manage_options' );
 	};
@@ -772,12 +863,127 @@ function smfb_rest_config() {
 		'mode'       => smfb_search_on() ? 'duffel' : 'request',
 		'search'     => smfb_search_on(),
 		'booking'    => smfb_booking_on(),
+		'market'     => smfb_market_on(),
+		'sources'    => array( 'duffel' => smfb_search_on(), 'travelpayouts' => smfb_market_on() ),
 		'currencies' => SMFB_PAYPAL_CURRENCIES,
 		'hours'      => '9 AM to 9 PM Pakistan time, Monday to Saturday',
 		'version'    => SMFB_VERSION,
 	) );
 	$r->header( 'Cache-Control', 'public, max-age=60' );
 	return $r;
+}
+
+/* The search adapter (sm-global-travel) also returns the supplier cost of each offer; the browser must not see the margin. */
+add_filter( 'rest_post_dispatch', function ( $response, $server, $request ) {
+	if ( $response instanceof WP_REST_Response && '/' . SMFB_NS . '/duffel/flights' === $request->get_route() ) {
+		$data = $response->get_data();
+		if ( is_array( $data ) && isset( $data['results'] ) && is_array( $data['results'] ) ) {
+			foreach ( $data['results'] as &$row ) {
+				if ( is_array( $row ) ) {
+					unset( $row['supplierPrice'] );
+				}
+			}
+			unset( $row );
+			$data['bookingEnabled'] = smfb_booking_on();
+			$response->set_data( $data );
+		}
+	}
+	return $response;
+}, 10, 3 );
+
+/**
+ * Recent market prices for the searched route (Aviasales via the Travelpayouts Data API): what travellers recently found,
+ * cached by Aviasales, economy, price per adult, with the partner link. Shown next to live Duffel fares; never sold as ours.
+ * Falls back to the same month when the exact day has no cached price, and adds the cheapest price per day of the month.
+ */
+function smfb_rest_market( WP_REST_Request $req ) {
+	if ( ! smfb_market_on() ) {
+		return smfb_error( 'smfb_market_off', 'Market prices are not available.', 503 );
+	}
+	if ( smfb_limited( 'market', 30, 600 ) ) {
+		return smfb_error( 'smfb_rate', 'Please wait a moment before comparing again.', 429 );
+	}
+	$p   = (array) $req->get_json_params();
+	$o   = strtoupper( sanitize_text_field( (string) ( $p['origin'] ?? '' ) ) );
+	$d   = strtoupper( sanitize_text_field( (string) ( $p['destination'] ?? '' ) ) );
+	$dep = sanitize_text_field( (string) ( $p['departure'] ?? '' ) );
+	$ret = sanitize_text_field( (string) ( $p['return'] ?? '' ) );
+	$cur = strtoupper( sanitize_text_field( (string) ( $p['currency'] ?? 'USD' ) ) );
+	$cur = in_array( $cur, SMFB_TP_CURRENCIES, true ) ? $cur : 'USD';
+	if ( ! preg_match( '/^[A-Z0-9]{2,5}$/', $o ) || ! preg_match( '/^[A-Z0-9]{2,5}$/', $d ) || $o === $d ) {
+		return smfb_error( 'smfb_route', 'Choose two different cities.', 400 );
+	}
+	if ( ! smfb_valid_date( $dep ) || $dep < gmdate( 'Y-m-d', time() - DAY_IN_SECONDS ) || $dep > gmdate( 'Y-m-d', time() + 365 * DAY_IN_SECONDS ) ) {
+		return smfb_error( 'smfb_dates', 'Choose a departure date within the next year.', 400 );
+	}
+	if ( '' !== $ret && ( ! smfb_valid_date( $ret ) || $ret <= $dep ) ) {
+		$ret = '';
+	}
+	$out = array( 'source' => 'Aviasales (Travelpayouts Data API)', 'currency' => $cur, 'perAdult' => true, 'cabin' => 'economy', 'exact' => true, 'results' => array(), 'days' => array(), 'checkedAt' => gmdate( 'c' ) );
+	if ( ! in_array( sanitize_key( $p['cabin'] ?? 'economy' ), array( 'economy', '' ), true ) ) {
+		$out['note'] = 'Market prices are collected for economy only.';
+		return smfb_nocache( $out );
+	}
+	$q = array( 'origin' => $o, 'destination' => $d, 'departure_at' => $dep, 'one_way' => '' === $ret ? 'true' : 'false', 'sorting' => 'price', 'direct' => 'false', 'unique' => 'false', 'currency' => strtolower( $cur ), 'limit' => 30, 'page' => 1 );
+	if ( '' !== $ret ) {
+		$q['return_at'] = $ret;
+	}
+	$rows = smfb_tp_get( 'aviasales/v3/prices_for_dates', $q, 20 * MINUTE_IN_SECONDS );
+	if ( ! is_wp_error( $rows ) && ! $rows ) {   // nothing cached for that exact day: show the same month instead
+		$q['departure_at'] = substr( $dep, 0, 7 );
+		if ( '' !== $ret ) {
+			$q['return_at'] = substr( $ret, 0, 7 );
+		}
+		$rows         = smfb_tp_get( 'aviasales/v3/prices_for_dates', $q, 30 * MINUTE_IN_SECONDS );
+		$out['exact'] = false;
+	}
+	if ( is_wp_error( $rows ) ) {
+		return $rows;
+	}
+	$names = smfb_airline_names();
+	foreach ( $rows as $r ) {
+		if ( ! is_array( $r ) || ! is_numeric( $r['price'] ?? null ) || (float) $r['price'] <= 0 ) {
+			continue;
+		}
+		$at = (string) ( $r['departure_at'] ?? '' );
+		if ( ( ! empty( $r['expires_at'] ) && strtotime( (string) $r['expires_at'] ) <= time() ) || ( $at && strtotime( $at ) < time() ) ) {
+			continue;
+		}
+		$code             = strtoupper( sanitize_text_field( (string) ( $r['airline'] ?? '' ) ) );
+		$out['results'][] = array(
+			'price'        => (float) $r['price'],
+			'currency'     => $cur,
+			'airline'      => $code,
+			'airlineName'  => $names[ $code ] ?? $code,
+			'flightNumber' => sanitize_text_field( (string) ( $r['flight_number'] ?? '' ) ),
+			'from'         => strtoupper( sanitize_text_field( (string) ( $r['origin_airport'] ?? ( $r['origin'] ?? $o ) ) ) ),
+			'to'           => strtoupper( sanitize_text_field( (string) ( $r['destination_airport'] ?? ( $r['destination'] ?? $d ) ) ) ),
+			'departureAt'  => sanitize_text_field( $at ),
+			'returnAt'     => sanitize_text_field( (string) ( $r['return_at'] ?? '' ) ),
+			'stops'        => max( 0, min( 9, (int) ( $r['transfers'] ?? 0 ) ) ),
+			'returnStops'  => max( 0, min( 9, (int) ( $r['return_transfers'] ?? 0 ) ) ),
+			'durationTo'   => max( 0, (int) ( $r['duration_to'] ?? ( $r['duration'] ?? 0 ) ) ),
+			'durationBack' => max( 0, (int) ( $r['duration_back'] ?? 0 ) ),
+			'url'          => esc_url_raw( smfb_tp_link( (string) ( $r['link'] ?? '' ) ) ),
+		);
+	}
+	usort( $out['results'], static function ( $a, $b ) {
+		return $a['price'] <=> $b['price'];
+	} );
+	$out['results'] = array_slice( $out['results'], 0, 12 );
+	$cal            = smfb_tp_get( 'aviasales/v3/grouped_prices', array( 'origin' => $o, 'destination' => $d, 'currency' => strtolower( $cur ), 'departure_at' => substr( $dep, 0, 7 ), 'group_by' => 'departure_at' ), 6 * HOUR_IN_SECONDS );
+	if ( ! is_wp_error( $cal ) ) {
+		$today = gmdate( 'Y-m-d' );
+		foreach ( $cal as $date => $row ) {
+			if ( is_array( $row ) && preg_match( '/^\d{4}-\d{2}-\d{2}$/', (string) $date ) && $date >= $today && is_numeric( $row['price'] ?? null ) && (float) $row['price'] > 0 ) {
+				$out['days'][] = array( 'date' => (string) $date, 'price' => (float) $row['price'], 'stops' => max( 0, (int) ( $row['transfers'] ?? 0 ) ) );
+			}
+		}
+		usort( $out['days'], static function ( $a, $b ) {
+			return strcmp( $a['date'], $b['date'] );
+		} );
+	}
+	return smfb_nocache( $out );
 }
 
 function smfb_rest_offer( WP_REST_Request $req ) {
@@ -968,9 +1174,28 @@ function smfb_status() {
 		'ack_paypal'          => ! empty( $s['ack_paypal'] ),
 		'online_booking_on'   => smfb_booking_on(),
 		'markup_percent'      => (float) ( ( (array) get_option( 'sm_global_travel_settings', array() ) + array( 'markup_percent' => 20 ) )['markup_percent'] ),
+		'travelpayouts_token' => '' !== smfb_tp_token(),
+		'travelpayouts_token_from' => ! empty( $s['tp_token'] ) ? 'github-sync' : ( '' !== smfb_tp_token() ? 'travelpayouts-plugin' : 'none' ),
+		'travelpayouts_marker' => '' !== smfb_tp_marker(),
+		'market_prices_on'    => smfb_market_on(),
 		'last_test'           => $s['last_test'],
 		'version'             => SMFB_VERSION,
 	);
+}
+/** Lightweight, read-only token checks: ok | no_token | <supplier error code>. Never returns token material. */
+function smfb_checks() {
+	$out = array();
+	foreach ( array( 'live', 'test' ) as $env ) {
+		if ( '' === smfb_token( $env ) ) {
+			$out[ 'duffel_' . $env . '_check' ] = 'no_token';
+			continue;
+		}
+		$r                                  = smfb_duffel( 'GET', '/air/airlines?limit=1', null, $env );
+		$out[ 'duffel_' . $env . '_check' ] = is_wp_error( $r ) ? (string) ( $r->get_error_data()['supplier'] ?? 'error' ) : 'ok';
+	}
+	$tp                         = smfb_tp_get( 'aviasales/v3/grouped_prices', array( 'origin' => 'KHI', 'destination' => 'DXB', 'currency' => 'usd', 'departure_at' => gmdate( 'Y-m', time() + 30 * DAY_IN_SECONDS ), 'group_by' => 'departure_at' ), 0 );
+	$out['travelpayouts_check'] = is_wp_error( $tp ) ? (string) ( $tp->get_error_data()['supplier'] ?? 'error' ) : 'ok';
+	return $out;
 }
 function smfb_rest_status() {
 	return smfb_nocache( smfb_status() );
@@ -980,11 +1205,16 @@ function smfb_rest_settings( WP_REST_Request $req ) {
 	if ( ! is_array( $p ) ) {
 		return smfb_error( 'smfb_invalid', 'JSON body expected.', 400 );
 	}
-	$d = smfb_duffel_settings() + array( 'environment' => 'test', 'production_approved' => 0, 'flights_search_enabled' => 0, 'stays_search_enabled' => 0, 'test_token' => '', 'live_token' => '' );
+	$d     = smfb_duffel_settings() + array( 'environment' => 'test', 'production_approved' => 0, 'flights_search_enabled' => 0, 'stays_search_enabled' => 0, 'test_token' => '', 'live_token' => '' );
+	$extra = array();
 	foreach ( array( 'duffel_test_token' => 'test_token', 'duffel_live_token' => 'live_token' ) as $in => $slot ) {
 		$tok = trim( (string) ( $p[ $in ] ?? '' ) );
 		if ( '' === $tok ) {
 			continue;
+		}
+		if ( 'live_token' === $slot ) {
+			$old                         = smfb_token( 'live' );
+			$extra['live_token_changed'] = '' === $old || ! hash_equals( $old, $tok );   // false = the same (previously shared) token was sent again
 		}
 		$prefix = 'test_token' === $slot ? 'duffel_test_' : 'duffel_live_';
 		if ( strlen( $tok ) > 300 || 0 !== strpos( $tok, $prefix ) || ! preg_match( '/^duffel_(test|live)_[A-Za-z0-9_-]+$/', $tok ) ) {
@@ -1024,7 +1254,34 @@ function smfb_rest_settings( WP_REST_Request $req ) {
 		$g['markup_percent'] = max( 0, min( 100, round( (float) $p['markup_percent'], 2 ) ) );
 		update_option( 'sm_global_travel_settings', $g );
 	}
-	return smfb_nocache( smfb_status() );
+	$tp = array();
+	$tp_token = trim( (string) ( $p['travelpayouts_token'] ?? '' ) );
+	if ( '' !== $tp_token ) {
+		if ( ! preg_match( '/^[A-Za-z0-9]{16,64}$/', $tp_token ) ) {
+			return smfb_error( 'smfb_tp_token', 'travelpayouts_token must be the 32-character API token from Travelpayouts → Profile → API token.', 400 );
+		}
+		$a                                   = get_option( 'travelpayouts_admin_settings', array() );
+		$extra['travelpayouts_token_same_as_plugin'] = hash_equals( (string) ( is_array( $a ) ? ( $a['account_api_token'] ?? '' ) : '' ), $tp_token );
+		$tp['tp_token']                      = smfb_encrypt( $tp_token );
+	}
+	$app = trim( (string) ( $p['travelpayouts_app_id'] ?? '' ) );
+	if ( '' !== $app ) {
+		if ( ! preg_match( '/^[A-Za-z0-9_-]{1,40}$/', $app ) ) {
+			return smfb_error( 'smfb_tp_app', 'travelpayouts_app_id must be letters or digits.', 400 );
+		}
+		$a                                  = get_option( 'travelpayouts_admin_settings', array() );
+		$extra['travelpayouts_app_id_numeric'] = ctype_digit( $app );   // numeric = partner ID (marker), used in the partner links
+		$extra['travelpayouts_app_id_same_as_marker'] = (string) ( is_array( $a ) ? ( $a['account_api_marker'] ?? '' ) : '' ) === $app;
+		$tp['tp_app_id']                    = $app;
+	}
+	if ( isset( $p['market_prices'] ) ) {
+		$tp['market_prices'] = $p['market_prices'] ? 1 : 0;
+	}
+	if ( $tp ) {
+		smfb_save_settings( $tp );
+	}
+	$checks = ! empty( $p['check'] ) ? smfb_checks() : array();
+	return smfb_nocache( array_merge( smfb_status(), $extra, $checks ) );
 }
 
 /* ====================================================================================================================
@@ -1059,6 +1316,7 @@ function smfb_admin_page() {
 	echo '<tr><td>Live flight search shown to customers</td><td>' . $ok( $st['public_search_on'] ) . '</td><td>"Flights search enabled" on Settings → Duffel Travel API.</td></tr>';
 	echo '<tr><td>Online booking + payment</td><td>' . $ok( $st['online_booking_on'] ) . '</td><td>Switch below.</td></tr>';
 	echo '<tr><td>Markup on airline base fare</td><td>' . esc_html( $st['markup_percent'] ) . '%</td><td>Settings → Global Travel. Taxes are passed through.</td></tr>';
+	echo '<tr><td>Recent market prices (Travelpayouts / Aviasales)</td><td>' . $ok( $st['market_prices_on'] ) . '</td><td>Token from: ' . esc_html( $st['travelpayouts_token_from'] ) . '. Partner ID for links: ' . ( $st['travelpayouts_marker'] ? 'set' : 'missing' ) . '. Shown next to live fares, per adult, economy.</td></tr>';
 	echo '</tbody></table>';
 	echo '<h2>Online booking switch</h2><form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 	wp_nonce_field( 'smfb_save' );
@@ -1066,6 +1324,7 @@ function smfb_admin_page() {
 	echo '<p><label><input type="checkbox" name="ack_balance" value="1"' . checked( ! empty( $s['ack_balance'] ), true, false ) . '> The Duffel balance is funded (tickets are paid from it right after the customer pays; Duffel bills in the fare currency).</label></p>';
 	echo '<p><label><input type="checkbox" name="ack_paypal" value="1"' . checked( ! empty( $s['ack_paypal'] ), true, false ) . '> PayPal has approved this business account for selling airline tickets (PayPal lists airlines under activities that need pre-approval).</label></p>';
 	echo '<p><label><input type="checkbox" name="booking_enabled" value="1"' . checked( ! empty( $s['booking_enabled'] ), true, false ) . '> Let customers book and pay online for live fares.</label></p>';
+	echo '<p><label><input type="checkbox" name="market_prices" value="1"' . checked( ! array_key_exists( 'market_prices', $s ) || ! empty( $s['market_prices'] ), true, false ) . '> Show recent Aviasales market prices next to live fares (partner links earn Travelpayouts commission).</label></p>';
 	echo '<p><button class="button button-primary">Save</button></p></form>';
 	echo '<h2>Sandbox self-test</h2><p>Searches London → New York with the <strong>test</strong> token, books a Duffel Airways test fare through the same code customers use (WooCommerce order, simulated payment with emails off, ticketing), shows the booking reference and deletes the test order. No money moves.</p>';
 	echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
@@ -1089,7 +1348,7 @@ add_action( 'admin_post_smfb_save', function () {
 		$on   = 0;
 		$flag = 'acks';
 	}
-	smfb_save_settings( array( 'ack_balance' => $ack_b, 'ack_paypal' => $ack_p, 'booking_enabled' => $on ) );
+	smfb_save_settings( array( 'ack_balance' => $ack_b, 'ack_paypal' => $ack_p, 'booking_enabled' => $on, 'market_prices' => empty( $_POST['market_prices'] ) ? 0 : 1 ) );
 	wp_safe_redirect( admin_url( 'options-general.php?page=smfb&smfb=' . $flag ) );
 	exit;
 } );
