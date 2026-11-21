@@ -1,8 +1,8 @@
 name: Cloudflare Error 1027 public-route guard
 on:
-  # Restore changed public route fail modes without modifying DNS, scripts, or payment routes.
+  # Check public availability every 15 minutes; never modify DNS, payment, or order routes.
   schedule:
-    - cron: '11 */6 * * *'
+    - cron: '*/15 * * * *'
   workflow_dispatch:
   push:
     branches: [main]
@@ -58,7 +58,7 @@ jobs:
             f=$(mktemp)
             h=$(mktemp)
             status=$(curl -L --max-time 35 --connect-timeout 15 --retry 1 --retry-delay 2 -sS -D "$h" -o "$f" -w '%{http_code}' "$url") || status=000
-            if [ "$status" != 200 ] || grep -qi 'Error 1027' "$f"; then
+            if [ "$status" != 200 ] || grep -Eqi 'Error 1027|<title>Database Error</title>|HTTP ERROR 500|Service Unavailable' "$f" || ! grep -qi 'Sasta Milaga' "$f"; then
               echo "::error::Availability check failed: $url HTTP $status"
               grep -iE '^(HTTP/|server:|cf-ray:|cf-cache-status:|x-sasta-|retry-after:|content-type:)' "$h" | tail -18 || true
               # Only a short printable snippet from public error HTML, no request headers or secrets.
@@ -69,5 +69,25 @@ jobs:
               echo "PASS $url HTTP $status"
             fi
             rm -f "$h" "$f"
+          done
+          exit "$failed"
+      - name: Verify cart and checkout availability without placing orders
+        run: |
+          failed=0
+          for url in 'https://sastamilaga.com/cart/' 'https://sastamilaga.com/checkout/'; do
+            body=$(mktemp)
+            headers=$(mktemp)
+            result=$(curl -L --max-time 35 --connect-timeout 15 --retry 1 --retry-delay 2 -sS -D "$headers" -o "$body" -w '%{http_code} %{url_effective}' "$url") || result="000 $url"
+            status=${result%% *}
+            final_url=${result#* }
+            echo "Commerce GET $url: HTTP $status (final path: ${final_url#https://sastamilaga.com})"
+            if [ "$status" != "200" ] ||
+               grep -Eqi 'Error 1027|<title>Database Error</title>|HTTP ERROR 500|Service Unavailable|This static cart has not been synchronized' "$body" ||
+               [[ "$final_url" == *"github.io"* ]]; then
+              echo "::error::Commerce availability failed at $url; HTTP $status"
+              grep -iE '^(HTTP/|server:|cf-ray:|retry-after:|content-type:)' "$headers" | tail -12 || true
+              failed=1
+            fi
+            rm -f "$body" "$headers"
           done
           exit "$failed"
