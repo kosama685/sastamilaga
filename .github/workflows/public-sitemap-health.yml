@@ -7,11 +7,6 @@ on:
   workflow_run:
     workflows: ['Deploy static content to Pages']
     types: [completed]
-  push:
-    branches: [main]
-    paths:
-      - 'scripts/sitemap-audit.js'
-      - '.github/workflows/public-sitemap-health.yml'
 permissions:
   contents: read
   issues: write
