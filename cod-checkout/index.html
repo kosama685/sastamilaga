@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Pakistan Cash on Delivery Request | Sasta Milaga</title>
+<meta name="description" content="Send a Pakistan local product cash-on-delivery order request to Sasta Milaga. Stock and final total confirmed before acceptance.">
+<style>
+:root{color-scheme:light;--green:#0b6434;--dark:#092f1d;--orange:#f9910e;--ink:#203027;--border:#d8e6db;--soft:#f3faf5}
+*{box-sizing:border-box}body{margin:0;background:#f7faf7;color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+header{background:#fff;border-bottom:1px solid var(--border)}.shell{width:min(1060px,calc(100% - 36px));margin:auto}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0}.brand{font-size:1.35rem;font-weight:800;color:var(--dark);text-decoration:none}.top a:not(.brand){color:var(--green)}
+main{padding:32px 0 65px}h1{font-size:clamp(1.7rem,4vw,2.4rem);line-height:1.2;color:var(--dark);margin:0 0 12px}h2{color:var(--dark);font-size:1.23rem;margin:0 0 20px}p{margin:8px 0}
+.intro{max-width:800px;color:#496454;margin-bottom:24px}.columns{display:grid;grid-template-columns:1fr 1.2fr;gap:24px;align-items:start}
+.panel{background:white;border:1px solid var(--border);border-radius:17px;padding:25px;box-shadow:0 9px 30px -24px #092f1d60}
+.sm-cod-item{display:flex;gap:12px;justify-content:space-between;align-items:start;padding:15px 0;border-bottom:1px solid var(--border)}
+.sm-cod-item strong{display:block}.sm-cod-item small{display:block;color:#5a6e61}.sm-cod-item p{font-size:.93rem;color:#475e4f}
+.sm-cod-remove{border:1px solid #e3c7b0;background:#fff8f1;color:#8a4307;border-radius:8px;padding:8px 10px;cursor:pointer}
+.totals{margin:20px 0 0;padding:16px;background:var(--soft);border:1px solid var(--border);border-radius:10px;font-weight:600}
+form{display:grid;gap:15px}label{display:grid;gap:5px;font-weight:650;font-size:.92rem}
+input,textarea,select{width:100%;border:1px solid #c4d5c7;border-radius:9px;padding:13px;font:inherit;background:white;color:inherit}
+input:focus,textarea:focus,select:focus{outline:2px solid #70c08d;outline-offset:1px}
+textarea{min-height:94px;resize:vertical}.two{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+button[type=submit]{background:var(--green);color:white;border:0;padding:15px;font:750 16px system-ui;border-radius:10px;cursor:pointer}
+button[disabled]{opacity:.6;cursor:wait}.note{font-size:.87rem;color:#4c6253}
+.status{padding:14px;border:1px solid #d6b37f;border-radius:10px;background:#fff9ec;min-height:52px;white-space:pre-wrap}
+.checkbox{display:flex;gap:10px;align-items:flex-start;font-weight:500}.checkbox input{width:auto;margin-top:5px}
+.honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+footer{color:#5b6d60;text-align:center;padding:20px}
+@media(max-width:720px){.columns{grid-template-columns:1fr}.two{grid-template-columns:1fr}.panel{padding:18px}}
+</style>
+</head>
+<body>
+<header><div class="shell top"><a class="brand" href="/">Sasta Milaga</a><a href="/shop/">Continue shopping</a></div></header>
+<main class="shell" id="sm-cod-checkout">
+<h1>Pakistan cash on delivery</h1>
+<p class="intro">Send a COD order request for eligible local products. No online payment is required. We will confirm item availability, delivery address and the final price before accepting your order. This is a separate request cart and does not change your WooCommerce or PayPal checkout.</p>
+<div class="columns">
+<section class="panel" aria-labelledby="cart-title"><h2 id="cart-title">Your COD request items</h2>
+<div id="sm-cod-items"></div><div class="totals" id="sm-cod-totals" aria-live="polite"></div>
+<p class="note">Prices are sourced from published local product listings. Stock and the amount payable on delivery are subject to confirmation.</p></section>
+<section class="panel" aria-labelledby="detail-title"><h2 id="detail-title">Delivery and contact details</h2>
+<form id="sm-cod-order-form" hidden>
+<div class="two"><label>Full name <input name="full_name" autocomplete="name" required maxlength="150"></label><label>Phone / WhatsApp <input name="phone" type="tel" inputmode="tel" autocomplete="tel" required minlength="8" maxlength="25"></label></div>
+<label>Email (optional) <input type="email" name="email" autocomplete="email" maxlength="200"></label>
+<label>Complete address <textarea name="address" autocomplete="street-address" required maxlength="600"></textarea></label>
+<div class="two"><label>City <input name="city" required autocomplete="address-level2" maxlength="100"></label><label>Delivery country <select name="country" required><option value="PK">Pakistan</option></select></label></div>
+<label>Near place / landmark (optional) <input name="near_place" maxlength="180"></label>
+<label>Delivery instructions (optional) <textarea name="notes" maxlength="800"></textarea></label>
+<div class="honeypot" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+<label class="checkbox"><input type="checkbox" name="confirm_request" value="yes" required> I understand this is a cash-on-delivery order request, not an accepted or paid order. Sasta Milaga may contact me to confirm stock, delivery and total.</label>
+<button type="submit">Submit COD order request</button>
+<p class="note">Submitted directly to our Formspree order inbox. We do not collect your card details.</p>
+</form>
+<div class="status" id="sm-cod-status" role="status" aria-live="polite">Review the items and enter your Pakistan delivery details to submit the request.</div>
+</section>
+</div>
+</main><footer>© Sasta Milaga · Secure order requests · <a href="/">Home</a></footer>
+<script src="/assets/js/config.js" defer></script>
+<script src="/assets/js/cod-recovery.js?v=cod-20261121-1" defer></script>
+</body>
+</html>
