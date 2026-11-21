@@ -47,3 +47,11 @@ test('supplier API and shipping quote have bounded browser response times',()=>{
   assert.match(global,/AbortSignal\.timeout\(10000\)/);
   assert.match(global,/Shipping cannot be confirmed until a supplier variation is verified/);
 });
+
+test('CJ live freight uses the published same-origin GET query and a bounded legacy fallback',()=>{
+  assert.match(global,/fetch\('\/api\/cj\/shipping\?'\+p\.toString\(\),options\)/);
+  assert.match(global,/data\.rates\.map\(m=>/);
+  assert.match(global,/if\(live\.status===429\)/);
+  assert.match(global,/W\+'\/api\/cj\/shipping'/);
+  assert.match(global,/e\.quota\)/);
+});
