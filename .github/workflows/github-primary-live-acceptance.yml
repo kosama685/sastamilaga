@@ -1,0 +1,60 @@
+name: GitHub-primary live storefront acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [.github/workflows/github-primary-live-acceptance.yml]
+permissions:
+  contents: read
+jobs:
+  direct-domain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Verify production pages on canonical host without external redirect
+        shell: bash
+        run: |
+          set -euo pipefail
+          failed=0
+          for path in / /shop/ /robots.txt /assets/theme/static-bundle.css; do
+            body=$(mktemp); headers=$(mktemp)
+            result=$(curl -sS --max-time 24 --connect-timeout 10 --max-redirs 0 -D "$headers" -o "$body" -w '%{http_code} %{url_effective}' "https://sastamilaga.com$path") || result="000 https://sastamilaga.com$path"
+            code=${result%% *}; final=${result#* }
+            source=$(grep -i '^server:' "$headers" | tr -d '\r' | tail -1 || true)
+            redir=$(grep -i '^location:' "$headers" | tr -d '\r' | tail -1 || true)
+            echo "public $path: HTTP $code final=$final ${source:-no-server} ${redir:-no-redirect}"
+            ok=false
+            if [ "$path" = /robots.txt ]; then
+              grep -qi 'User-agent:' "$body" && ok=true || true
+            elif [ "$path" = /assets/theme/static-bundle.css ]; then
+              [ "$(wc -c < "$body")" -gt 2000 ] && ok=true || true
+            else
+              grep -qi 'Sasta Milaga' "$body" && ok=true || true
+            fi
+            if [ "$code" != 200 ] || [ "$ok" != true ] || [ -n "$redir" ]; then
+              failed=1
+              echo "::error::Public GitHub-primary check failed for $path"
+              head -c 120 "$body" | tr '\n' ' ' || true; echo
+            fi
+            rm -f "$body" "$headers"
+          done
+          exit "$failed"
+      - name: Check protected checkout remains fail-closed, not a static fake
+        shell: bash
+        run: |
+          for path in /cart/ /checkout/ /my-account/ /wp-json/; do
+            body=$(mktemp); headers=$(mktemp)
+            code=$(curl -sS --max-time 22 --connect-timeout 8 --max-redirs 0 -D "$headers" -o "$body" -w '%{http_code}' "https://sastamilaga.com$path") || code=000
+            marker=$(grep -i '^x-sasta-commerce-origin:' "$headers" | tr -d '\r' | tail -1 || true)
+            echo "private $path: HTTP $code ${marker:-worker-quota-or-origin-status}"
+            if [ "$code" = 200 ] && grep -qi 'This static cart has not been synchronized' "$body"; then
+              echo "::error::Static fake cart exposed at $path"
+              exit 1
+            fi
+            if [ "$code" = 200 ] && ! grep -qi 'x-sasta-commerce-origin: namecheap' "$headers"; then
+              echo "::error::WooCommerce HTTP 200 without verified Namecheap backend $path"
+              exit 1
+            fi
+            rm -f "$body" "$headers"
+          done
+          echo "IMPORTANT: These GET checks do not prove a paid WooCommerce transaction."
