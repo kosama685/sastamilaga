@@ -43,6 +43,20 @@ function validate(p){
  if(!validId.test(String(p.variant_id||'')))why.push('missing_exact_variant');
  if(!p.title||!p.description||String(p.title).length>150||String(p.description).length>5000)why.push('invalid_copy');
  if(!https(p.link,true)||!https(p.image_link,false))why.push('invalid_landing_or_image');
+ // URL syntax is not image-fetch proof. Source-specific evidence is required
+ // to prevent Meta crawler 403s, HTML login pages and undersized images.
+ const proof=p.image_verified||{};
+ if(!fresh(proof.checked_at,7)||proof.checked_url!==p.image_link)
+  why.push('missing_or_stale_image_fetch_evidence');
+ if(proof.http_status!==200||proof.crawler_accessible!==true||
+    !['image/jpeg','image/png'].includes(String(proof.content_type||'').toLowerCase())||
+    !Number.isInteger(proof.bytes)||proof.bytes<1||proof.bytes>8_000_000||
+    !Number.isInteger(proof.width)||proof.width<500||
+    !Number.isInteger(proof.height)||proof.height<500)
+  why.push('image_not_meta_ready');
+ // At least one genuine commerce identifier: never invent a barcode or brand.
+ if(!String(p.brand||'').trim()&&!String(p.gtin||'').trim()&&!String(p.mpn||'').trim())
+  why.push('missing_brand_or_product_identifier');
  if(p.country!==MARKET||p.currency!==CCY)why.push('wrong_market');
  if(typeof p.retail_price!=='number'||!Number.isFinite(p.retail_price)||p.retail_price<=0||Math.round(p.retail_price*100)/100!==p.retail_price)why.push('unverified_retail_price');
  if(!['new','used','refurbished'].includes(p.condition))why.push('invalid_condition');
@@ -72,7 +86,7 @@ function item(p){
 }
 async function main(){
  if(!/^[A-Z]{2}$/.test(MARKET)||!/^[A-Z]{3}$/.test(CCY))throw Error('Invalid explicit market/currency');
- const report={generated_at:new Date().toISOString(),market:MARKET,currency:CCY,sourceCatalogAtObservation:451812,supplierSnapshotDate:'2026-11-05',stockFlagsObservedOn:'2026-11-21',stockFlagsPopulatedAtObservation:0,currentStockFlagsNotRequeried:true,sourceFilePresent:fs.existsSync(INPUT),read:0,eligible:0,excluded:0,reasons:{},shards:[],liveFeedReady:false,stockMethod:'CJ API per-variant evidence <= 24h; verified final retail price, checkout and shipping',adsApproved:false,claim:'Neither Meta approval nor Google indexing is implied'};
+ const report={generated_at:new Date().toISOString(),market:MARKET,currency:CCY,sourceCatalogAtObservation:451812,supplierSnapshotDate:'2026-11-05',stockFlagsObservedOn:'2026-11-21',stockFlagsPopulatedAtObservation:0,currentStockFlagsNotRequeried:true,sourceFilePresent:fs.existsSync(INPUT),read:0,eligible:0,excluded:0,reasons:{},shards:[],liveFeedReady:false,imageMethod:'direct HTTP 200 JPEG/PNG + dimensions/size and crawler-access evidence <= 7d',stockMethod:'CJ API per-variant evidence <= 24h; verified final retail price, checkout and shipping',adsApproved:false,claim:'Neither Meta approval nor Google indexing is implied'};
  fs.mkdirSync(path.dirname(REPORT),{recursive:true});
  if(!report.sourceFilePresent){fs.writeFileSync(REPORT,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));if(process.argv.includes('--build'))throw Error('No independent CJ inventory/checkout evidence. Refusing to publish misleading feed.');return}
  const seen=new Set(),qualified=[];
