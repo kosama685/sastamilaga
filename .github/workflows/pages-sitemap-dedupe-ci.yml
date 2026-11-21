@@ -1,0 +1,20 @@
+name: Pages sitemap edge deduplication regression
+on:
+  pull_request:
+    paths: ['tools/sitemap-pages-dedupe-worker.mjs', 'tools/sitemap-pages-dedupe-worker.test.mjs', '.github/workflows/pages-sitemap-dedupe-ci.yml']
+  push:
+    branches: [main]
+    paths: ['tools/sitemap-pages-dedupe-worker.mjs', 'tools/sitemap-pages-dedupe-worker.test.mjs', '.github/workflows/pages-sitemap-dedupe-ci.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: {node-version: '22'}
+      - run: node --check tools/sitemap-pages-dedupe-worker.mjs
+      - run: node --test tools/sitemap-pages-dedupe-worker.test.mjs
