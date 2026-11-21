@@ -1,0 +1,58 @@
+name: Namecheap origin database outage diagnostics
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [.github/workflows/namecheap-origin-db-diagnostics.yml]
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - name: Determine configured origin privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN"
+          payload=$(curl --fail --silent --show-error --max-time 15 \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            'https://api.cloudflare.com/client/v4/zones?name=sastamilaga.com')
+          zone=$(jq -r '.result[0].id // empty' <<<"$payload")
+          test -n "$zone"
+          dns=$(curl --fail --silent --show-error --max-time 15 \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/zones/$zone/dns_records?type=A&name=sastamilaga.com")
+          ip=$(jq -r '.result[0].content // empty' <<<"$dns")
+          test -n "$ip"
+          # Mask origin and never echo or upload DNS records.
+          echo "::add-mask::$ip"
+          echo "SASTA_ORIGIN_IP=$ip" >> "$GITHUB_ENV"
+      - name: Differentiate public-origin database failures from static-serving failures
+        shell: bash
+        run: |
+          set -euo pipefail
+          for probe in 'homepage|/' 'wp-static|/wp-includes/js/wp-emoji-release.min.js' 'public-robots|/robots.txt'; do
+            name=${probe%%|*}
+            path=${probe#*|}
+            body=$(mktemp)
+            status=$(curl -ksS --max-time 15 --connect-timeout 7 \
+              --resolve "sastamilaga.com:443:$SASTA_ORIGIN_IP" \
+              -o "$body" -w '%{http_code}' "https://sastamilaga.com$path") || status=000
+            database_failure=false
+            if grep -qiE 'Error establishing a database connection|<title>Database Error</title>' "$body"; then
+              database_failure=true
+            fi
+            echo "Namecheap direct $name: HTTP $status; database-error-body=$database_failure"
+            rm -f "$body"
+          done
+      - name: Compare independent static availability
+        shell: bash
+        run: |
+          status=$(curl -L --silent --show-error --max-time 18 -o /dev/null \
+            -w '%{http_code}' https://kosama685.github.io/sastamilaga/) || status=000
+          echo "Independent GitHub Pages: HTTP $status"
+          [ "$status" = 200 ]
