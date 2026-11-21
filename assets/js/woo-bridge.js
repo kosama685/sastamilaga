@@ -24,7 +24,15 @@
   }
   function getNonce(force) {
     if (nonce && !force) return Promise.resolve(nonce);
-    return fetch(ROOT + 'wp-json/wc/store/v1/cart', { credentials: 'include' }).then(function (r) { nonce = r.headers.get('nonce') || ''; return nonce; });
+    return fetch(ROOT + 'wp-json/wc/store/v1/cart', { credentials: 'include' }).then(function (r) {
+      nonce = r.ok ? (r.headers.get('nonce') || '') : '';
+      if (!r.ok || !nonce) {
+        var err = new Error('Secure cart service unavailable');
+        err.code = r.status === 429 ? 'worker_limit' : 'service_unavailable';
+        throw err;
+      }
+      return nonce;
+    });
   }
   var REASONS = { woocommerce_rest_product_not_purchasable: 'not_purchasable', woocommerce_rest_missing_attributes: 'choose_option', woocommerce_rest_product_out_of_stock: 'out_of_stock', woocommerce_rest_cart_product_no_stock: 'out_of_stock' };
   function post(id, qty, retried, variation) {
@@ -32,10 +40,10 @@
     return getNonce(retried).then(function (n) {
       return json(ROOT + 'wp-json/wc/store/v1/cart/add-item', { method: 'POST', headers: { 'Content-Type': 'application/json', Nonce: n }, body: JSON.stringify(body) });
     }).then(function (x) {
-      if (x.r.status === 403 && !retried) return post(id, qty, true, variation);   // the nonce had expired
+      if (x.r.status === 403 && !retried && x.j && x.j.code === 'woocommerce_rest_invalid_nonce') return post(id, qty, true, variation);   // retry only an explicitly invalid nonce
       if (x.r.status === 201 || x.r.status === 200) return { ok: true, status: x.r.status, count: x.j && x.j.items_count };
       var code = (x.j && x.j.code) || 'error';
-      return { ok: false, status: x.r.status, code: code, message: plain(x.j && x.j.message) || 'The cart could not be updated.', reason: REASONS[code] || (x.r.status >= 500 ? 'network' : 'error') };
+      return { ok: false, status: x.r.status, code: code, message: plain(x.j && x.j.message) || 'The cart could not be updated.', reason: (x.r.status === 429 ? 'worker_limit' : (x.r.status >= 500 ? 'service_unavailable' : (REASONS[code] || 'error'))) };
     });
   }
   /* What the shopper sees after an add attempt. Pure: no DOM, no network (unit-tested in tools/woo-bridge-flow.test.mjs).
@@ -48,7 +56,9 @@
     if (r === 'choose_option') return { kind: 'refused', message: 'Please choose an option (size, colour or model) first.', link: null, alt: null };
     if (r === 'out_of_stock') return { kind: 'refused', message: 'This item is out of stock right now.', link: wa, alt: null };
     if (r === 'unmapped') return { kind: 'refused', message: 'This item is ordered on WhatsApp.', link: wa, alt: null };
-    if (r === 'network') return { kind: 'refused', message: 'The store could not be reached. Please try again.', link: wa, alt: null };
+    if (r === 'worker_limit') return { kind: 'refused', message: 'Secure checkout is temporarily at capacity. No item was added. Request this item on WhatsApp for confirmation.', link: wa, alt: null };
+    if (r === 'service_unavailable') return { kind: 'refused', message: 'Secure checkout is temporarily unavailable. No item was added. We can confirm availability on WhatsApp.', link: wa, alt: null };
+    if (r === 'network') return { kind: 'refused', message: 'The store could not be reached. No item was added. Please use WhatsApp for assistance.', link: wa, alt: null };
     return { kind: 'refused', message: (res && res.message) || 'The cart could not be updated.', link: wa, alt: null };
   };
   /* Read-only SKU availability for CJ option dialogs. Does not create or price products. */
@@ -63,13 +73,13 @@
     return loadIds().then(function (map) {
       var id = map[String(sku)]; if (!id) return { ok: false, reason: 'unmapped', message: 'This item is ordered on WhatsApp.' };
       return syncContext().then(function () { return post(id, qty, false, variation); });
-    }).catch(function () { return { ok: false, reason: 'network', message: 'The store could not be reached. Please try again.' }; }).then(function (res) { if (res.ok) W.badge(); return res; });
+    }).catch(function (e) { return { ok: false, reason: e && e.code === 'worker_limit' ? 'worker_limit' : e && e.code === 'service_unavailable' ? 'service_unavailable' : 'network', message: 'Secure checkout could not be reached.' }; }).then(function (res) { if (res.ok) W.badge(); return res; });
   };
-  W.count = function () { return fetch(ROOT + 'wp-json/wc/store/v1/cart', { credentials: 'include' }).then(function (r) { return r.json(); }).then(function (j) { return (j && j.items_count) || 0; }).catch(function () { return 0; }); };
+  W.count = function () { return fetch(ROOT + 'wp-json/wc/store/v1/cart', { credentials: 'include' }).then(function (r) { if (!r.ok) return null; return r.json().then(function (j) { return j && Number.isFinite(Number(j.items_count)) ? Number(j.items_count) : null; }); }).catch(function () { return null; }); };
   /* The header badge shows the WooCommerce cart count (the cart the shopper will actually pay for). */
   W.badge = function () {
     return W.count().then(function (n) {
-      document.querySelectorAll('.smh-cart__count').forEach(function (el) { el.textContent = n; el.setAttribute('data-n', n); });
+      if (n !== null) document.querySelectorAll('.smh-cart__count').forEach(function (el) { el.textContent = n; el.setAttribute('data-n', n); });
       return n;
     });
   };
