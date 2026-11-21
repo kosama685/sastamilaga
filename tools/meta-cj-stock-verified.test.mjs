@@ -9,7 +9,7 @@ const mk=()=>fs.mkdtempSync(path.join(os.tmpdir(),'meta-cj-stock-'));
 const run=(cwd,mode,extra={})=>spawnSync(process.execPath,[script,mode],{cwd,encoding:'utf8',env:{...process.env,META_CJ_COUNTRY:'PK',META_CJ_CURRENCY:'PKR',...extra}});
 const current=()=>new Date().toISOString();
 const fixture=(id,stock=2)=>({id,title:'Verified test fixture - do not advertise',description:'Unit test only, not a real supplier offer',link:'https://sastamilaga.com/global-shop/p/1234567890123456789/test/',
- image_link:'https://example.com/test.jpg',variant_id:'1650744900742291456',currency:'PKR',country:'PK',retail_price:1250,condition:'new',price_kind:'final_retail',
+ image_link:'https://example.com/test.jpg',image_verified:{checked_url:'https://example.com/test.jpg',checked_at:current(),http_status:200,crawler_accessible:true,content_type:'image/jpeg',bytes:125000,width:1000,height:1000},brand:'Fixture brand',variant_id:'1650744900742291456',currency:'PKR',country:'PK',retail_price:1250,condition:'new',price_kind:'final_retail',
  stock:{source:'cj_api',checked_at:current(),cj_warehouse_units:stock,factory_units:500},
  retail:{exact_variant_checkout:true,price_matches_checkout:true,page_matches_checkout:true,shipping_confirmed:true,merchant_policy_reviewed:true,
   price_checked_at:current(),checkout_checked_at:current(),shipping_checked_at:current(),factory_order_verified:true,reference:'checkout-fixture-do-not-publish'}});
@@ -48,5 +48,25 @@ test('verified positive supplier quantity without checkout is excluded',()=>{con
  fs.writeFileSync(file,JSON.stringify(x)+'\n');
  const r=run(dir,'--build',{META_CJ_VERIFIED_OFFERS_FILE:file});
  assert.notEqual(r.status,0);assert.match(r.stderr,/Zero verified orderable CJ offers/);
+ assert.equal(fs.existsSync(path.join(dir,'feeds/meta-verified/1.xml')),false);
+}finally{fs.rmSync(dir,{recursive:true,force:true})}});
+
+test('reject images that are blocked, too small, stale or unverified',()=>{const dir=mk();try{
+ const file=path.join(dir,'checked.ndjson');
+ const blocked=fixture('blocked-image-1'),tiny=fixture('tiny-image-1'),stale=fixture('old-image-1'),noProof=fixture('missing-image-evidence-1'),noBrand=fixture('unidentified-1');
+ blocked.image_verified.http_status=403;
+ tiny.image_verified.width=200;
+ stale.image_verified.checked_at='2025-01-01T00:00:00Z';
+ delete noProof.image_verified;
+ delete noBrand.brand;
+ fs.writeFileSync(file,[blocked,tiny,stale,noProof,noBrand].map(x=>JSON.stringify(x)).join('\n')+'\n');
+ const result=run(dir,'--audit',{META_CJ_VERIFIED_OFFERS_FILE:file});
+ assert.equal(result.status,0,result.stderr);
+ const report=JSON.parse(fs.readFileSync(path.join(dir,'artifacts/meta-cj-stock-readiness.json'),'utf8'));
+ assert.equal(report.read,5);
+ assert.equal(report.eligible,0);
+ assert.equal(report.reasons.image_not_meta_ready,3);
+ assert.equal(report.reasons.missing_or_stale_image_fetch_evidence,2);
+ assert.equal(report.reasons.missing_brand_or_product_identifier,1);
  assert.equal(fs.existsSync(path.join(dir,'feeds/meta-verified/1.xml')),false);
 }finally{fs.rmSync(dir,{recursive:true,force:true})}});
