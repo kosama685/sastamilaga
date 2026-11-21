@@ -52,6 +52,8 @@ jobs:
         run: node tools/build-blog.mjs
       - name: Clean URLs (section pages, clean links, sitemap entries)
         run: node tools/build-sections.mjs
+      - name: Verify Google tag deployment on generated pages
+        run: node tools/verify-google-tag.mjs
       - name: Verify Meta domain ownership tag survives homepage generation
         run: node tools/verify-meta-domain-tag.mjs
       - name: Build lightweight shared header and footer runtime payload
