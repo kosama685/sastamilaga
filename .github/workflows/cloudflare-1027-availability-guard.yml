@@ -57,9 +57,15 @@ jobs:
           for url in 'https://sastamilaga.com/shop/' 'https://sastamilaga.com/'; do
             f=$(mktemp)
             h=$(mktemp)
-            status=$(curl -L --max-time 35 --connect-timeout 15 --retry 1 --retry-delay 2 -sS -D "$h" -o "$f" -w '%{http_code}' "$url") || status=000
-            if [ "$status" != 200 ] || grep -Eqi 'Error 1027|<title>Database Error</title>|HTTP ERROR 500|Service Unavailable' "$f" || ! grep -qi 'Sasta Milaga' "$f"; then
-              echo "::error::Availability check failed: $url HTTP $status"
+            result=$(curl -L --max-redirs 3 --max-time 35 --connect-timeout 15 --retry 1 --retry-delay 2 -sS -D "$h" -o "$f" -w '%{http_code} %{url_effective}' "$url") || result="000 $url"
+            status=${result%% *}
+            final_url=${result#* }
+            if [ "$status" != 200 ] ||
+               [[ "$final_url" != "$url" ]] ||
+               grep -Eqi 'Error 1027|<title>Database Error</title>|HTTP ERROR 500|Service Unavailable' "$f" ||
+               ! grep -qi 'Sasta Milaga' "$f" ||
+               { [ "$url" = 'https://sastamilaga.com/' ] && ! grep -qi '^x-sasta-recovery: github-readonly' "$h"; }; then
+              echo "::error::Availability or same-domain check failed: $url HTTP $status (final: $final_url)"
               grep -iE '^(HTTP/|server:|cf-ray:|cf-cache-status:|x-sasta-|retry-after:|content-type:)' "$h" | tail -18 || true
               # Only a short printable snippet from public error HTML, no request headers or secrets.
               head -c 220 "$f" | tr '\n' ' ' || true
@@ -77,13 +83,13 @@ jobs:
           for url in 'https://sastamilaga.com/cart/' 'https://sastamilaga.com/checkout/'; do
             body=$(mktemp)
             headers=$(mktemp)
-            result=$(curl -L --max-time 35 --connect-timeout 15 --retry 1 --retry-delay 2 -sS -D "$headers" -o "$body" -w '%{http_code} %{url_effective}' "$url") || result="000 $url"
+            result=$(curl -L --max-redirs 3 --max-time 35 --connect-timeout 15 --retry 1 --retry-delay 2 -sS -D "$headers" -o "$body" -w '%{http_code} %{url_effective}' "$url") || result="000 $url"
             status=${result%% *}
             final_url=${result#* }
             echo "Commerce GET $url: HTTP $status (final path: ${final_url#https://sastamilaga.com})"
             if [ "$status" != "200" ] ||
                grep -Eqi 'Error 1027|<title>Database Error</title>|HTTP ERROR 500|Service Unavailable|This static cart has not been synchronized' "$body" ||
-               [[ "$final_url" == *"github.io"* ]]; then
+               [[ "$final_url" != https://sastamilaga.com/* ]]; then
               echo "::error::Commerce availability failed at $url; HTTP $status"
               grep -iE '^(HTTP/|server:|cf-ray:|retry-after:|content-type:)' "$headers" | tail -12 || true
               failed=1
