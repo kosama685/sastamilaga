@@ -369,7 +369,7 @@
       .then(() => {
         const wp = window.SMWoo && window.SMWoo.active ?
           (() => { try { return new URL(C.wpApi).pathname; } catch (e) { return C.wpApi; } })() : C.wpApi;
-        return fetchRetry(wp.replace(/\\/$/, '') + '/live/options/' + pid, 1);
+        return fetchRetry(wp.replace(/\/$/, '') + '/live/options/' + pid, 1);
       }).then(x => x.json()).then(fromWp).then(normalizedCJ);
     const supplierOptions = async () => {
       // This route supports /variants, not /product. Its indicative retail price already includes markup.
