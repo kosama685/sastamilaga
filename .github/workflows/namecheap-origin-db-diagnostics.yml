@@ -91,7 +91,16 @@ jobs:
             state=other
             if grep -qi 'Error establishing a database connection' "$b";then state=mysql_connection_error;fi
             if grep -qi 'database error' "$b";then state=db_error;fi
-            echo "direct_namecheap path=$path http=$status state=$state"
+            contenttype=$(grep -im1 '^content-type:' "$h" | tr -d '\r' | cut -c1-80 || true)
+            if [[ "$path" == /wp-json/wc/store/* ]] && jq -e '(.items | type == "array") and (.items_count | type == "number")' "$b" >/dev/null 2>&1; then
+              state=verified_woocommerce_cart_json
+              if grep -qi '^nonce:' "$h";then state=verified_woocommerce_cart_json_with_nonce;fi
+            fi
+            if [[ "$path" == /wp-json/gdcs/* ]] && jq -e '(.csrf | type == "string") and (.csrf | length > 0)' "$b" >/dev/null 2>&1; then
+              state=verified_gdcs_session_csrf
+            fi
+            if [[ "$path" == /cart/* ]] && grep -Eqi 'woocommerce|wc-block-cart|wp-block-woocommerce' "$b";then state=verified_wordpress_cart_html;fi
+            echo "direct_namecheap path=$path http=$status type=${contenttype:-unknown} state=$state"
             rm -f "$h" "$b"
           done
       - name: Compare independent static availability
