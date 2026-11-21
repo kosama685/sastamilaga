@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-21T15:43:49Z",
+  "checked_at": "2026-11-21T15:47:27Z",
   "token": {
     "success": true,
     "status": "active"
@@ -248,7 +248,7 @@
       },
       {
         "id": "sasta-global-pdp-v6",
-        "modified_on": "2026-11-21T09:38:46.917036Z",
+        "modified_on": "2026-11-21T15:45:49.712968Z",
         "created_on": "2026-11-21T07:57:46.631339Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-01"
@@ -444,10 +444,10 @@
       },
       {
         "id": "sasta-static-html-normalizer-v1",
-        "modified_on": "2026-11-15T09:59:48.850787Z",
+        "modified_on": "2026-11-21T15:43:34.407529Z",
         "created_on": "2026-11-15T09:59:48.850787Z",
         "usage_model": "standard",
-        "compatibility_date": null
+        "compatibility_date": "2026-11-09"
       },
       {
         "id": "sasta-static-readonly-recovery",
@@ -479,28 +479,28 @@
       },
       {
         "id": "sastamilaga-cj-shipping",
-        "modified_on": "2026-11-21T15:41:12.038545Z",
+        "modified_on": "2026-11-21T15:45:56.353481Z",
         "created_on": "2026-11-11T03:54:36.589467Z",
         "usage_model": "standard",
         "compatibility_date": "2025-07-18"
       },
       {
         "id": "sastamilaga-global-pages",
-        "modified_on": "2026-11-21T15:41:19.743679Z",
+        "modified_on": "2026-11-21T15:46:04.650128Z",
         "created_on": "2026-11-11T03:54:44.151298Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-paypal",
-        "modified_on": "2026-11-21T15:41:16.740884Z",
+        "modified_on": "2026-11-21T15:46:01.064236Z",
         "created_on": "2026-11-11T03:54:41.174076Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-redirects",
-        "modified_on": "2026-11-21T15:41:23.94712Z",
+        "modified_on": "2026-11-21T15:46:09.284157Z",
         "created_on": "2026-11-11T05:14:22.59741Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
