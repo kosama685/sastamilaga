@@ -21,8 +21,9 @@ if(workflows.length<21)throw new Error('Workflow inventory incomplete');
 const failures=[],counts={};
 for(const name of workflows){
  const data=fs.readFileSync(path.join(root,name),'utf8');
- let actionsFound=0;
+ let actionsFound=0, anyUses=0;
  for(const line of data.split(/\r?\n/)){
+  if(/^\s*(?:-\s*)?uses:\s*\S+/.test(line)) anyUses++;
   const m=line.match(/^\s*(?:-\s*)?uses:\s*(actions\/[A-Za-z0-9_-]+)@([^\s#]+)/);
   if(!m)continue;
   actionsFound++;
@@ -32,7 +33,9 @@ for(const name of workflows){
   if(!Number.isInteger(major)||major<(minMajor[action]??Infinity))
     failures.push(name+': unsupported or unverified runtime '+action+'@'+version);
  }
- if(actionsFound===0)failures.push(name+': no checked first-party action (confirm explicitly)');
+ // A shell-only health probe does not require a GitHub-owned JS Action.
+ // If a workflow uses actions, however, require at least one checked first-party action.
+ if(actionsFound===0 && anyUses>0)failures.push(name+': uses actions but no checked first-party action');
  if(name==='workers.yml'){
   if(data.includes('".github/workflows/workers.yml"]'))
     failures.push('workers.yml self-change would redeploy Cloudflare Workers');
