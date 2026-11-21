@@ -2,8 +2,11 @@
  * Sasta Milaga: quality-gated D1 global product sitemaps.
  *
  * Safe scope: GET/HEAD XML endpoints only; never writes D1, offers, products or orders.
- * Serves only product URLs whose underlying public PDP Worker allows indexing:
- * cj_product_enrichment.seo_approved=1 and description_text length >= 100.
+ * D1 editorial approval is not the same as public PDP indexability.
+ * The public /global-shop/p/ renderer currently emits noindex. Until that
+ * separate renderer is verified indexable, serve an EMPTY valid XML URL set.
+ * Once the PDP policy is deployed and independently verified, a deliberate
+ * QUALIFIED_PDP_INDEXABILITY binding can enable the normal D1 eligibility SQL.
  *
  * Routes (attach to this Worker, leaving every commerce route unchanged):
  *   /sitemap-global-qualified.xml
@@ -39,6 +42,19 @@ function response(body, status=200, method='GET', contentType='application/xml; 
       ...(status!==200?{'X-Robots-Tag':'noindex'}:{})
     }
   });
+}
+
+// Fail closed until real public product pages return index,follow with correct
+// self-canonical, unique content and verified retail eligibility.
+// No existing Cloudflare binding sets this approval marker in production.
+const PDP_INDEXABILITY_APPROVAL='approved-canonical-indexable-v1';
+function holdNoindexProducts(method,isIndex,match){
+  const page=match?Number(match[1]):0;
+  if(!isIndex&&page!==1)return response('Not found',404,method,'text/plain; charset=utf-8');
+  const r=response(XML_DECL+'<urlset xmlns="'+XML_NS+'"></urlset>',200,method);
+  r.headers.set('X-Sasta-Sitemap-Source','pdp-noindex-safe-hold');
+  r.headers.set('X-Sasta-Indexable-Product-Count','0');
+  return r;
 }
 
 /* Emergency D1 free-tier read-limit recovery: only two independently documented
@@ -82,6 +98,9 @@ export default {
     const isIndex=u.pathname===INDEX_PATH;
     const match=u.pathname.match(CHILD_PATH);
     if(!isIndex&&!match) return response('Not found',404,method,'text/plain; charset=utf-8');
+    // Editorial approval in D1 must not override noindex on the actual PDP.
+    if(env?.QUALIFIED_PDP_INDEXABILITY!==PDP_INDEXABILITY_APPROVAL)
+      return holdNoindexProducts(method,isIndex,match);
     if(!env.DB) return reviewedRecovery(method,isIndex,match);
     try {
       const n=await eligibleCount(env.DB);

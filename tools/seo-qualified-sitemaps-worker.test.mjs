@@ -16,7 +16,7 @@ function env(n=1,row={id,name}){
       }
     };
   }};
-  return {DB:db,calls};
+  return {DB:db,calls,QUALIFIED_PDP_INDEXABILITY:'approved-canonical-indexable-v1'};
 }
 const url='https://sastamilaga.com';
 test('sitemap index lists only actual reviewed page chunks',async()=>{
@@ -78,7 +78,7 @@ test('approved numeric CJ product IDs are eligible for sitemap XML when D1 gate 
 
 test('D1 quota fallback fails closed after its reviewed expiry',async()=>{
  const db={prepare(){throw new Error('Your account has exceeded D1 free tier daily row read limit')}};
- const e={DB:db};
+ const e={DB:db,QUALIFIED_PDP_INDEXABILITY:'approved-canonical-indexable-v1'};
  const expiry=Date.parse('2026-11-17T00:00:00Z');
  for(const path of ['/sitemap-global-qualified.xml','/sitemaps/global-qualified/1.xml']){
    const r=await worker.fetch(new Request(url+path),e);
@@ -95,7 +95,7 @@ test('D1 quota fallback fails closed after its reviewed expiry',async()=>{
  assert.equal(extra.status,Date.now()>=expiry?503:404);
 });
 test('missing DB never publishes unverified supplier pages',async()=>{
- const r=await worker.fetch(new Request(url+'/sitemap-global-qualified.xml'),{});
+ const r=await worker.fetch(new Request(url+'/sitemap-global-qualified.xml'),{QUALIFIED_PDP_INDEXABILITY:'approved-canonical-indexable-v1'});
  const expiry=Date.parse('2026-11-17T00:00:00Z');
  if(Date.now()>=expiry){
    assert.equal(r.status,503);
@@ -104,4 +104,24 @@ test('missing DB never publishes unverified supplier pages',async()=>{
    assert.equal(r.status,200);
    assert.match(await r.text(),/<sitemapindex/);
  }
+});
+
+test('production default refuses to advertise noindex product URLs even when D1 says approved',async()=>{
+ const e=env(2);
+ delete e.QUALIFIED_PDP_INDEXABILITY; // No approval binding exists on the production Worker.
+ e.DB.prepare=()=>{throw Error('D1 must not be queried during noindex hold')};
+ for(const path of ['/sitemap-global-qualified.xml','/sitemaps/global-qualified/1.xml']){
+   const r=await worker.fetch(new Request(url+path),e);
+   assert.equal(r.status,200);
+   assert.match(r.headers.get('content-type'),/application\/xml/);
+   assert.equal(r.headers.get('x-sasta-sitemap-source'),'pdp-noindex-safe-hold');
+   const xml=await r.text();
+   assert.match(xml,/<urlset/);
+   assert.doesNotMatch(xml,/<loc>/);
+ }
+ const bad=await worker.fetch(new Request(url+'/sitemaps/global-qualified/2.xml'),e);
+ assert.equal(bad.status,404);
+ const head=await worker.fetch(new Request(url+'/sitemap-global-qualified.xml',{method:'HEAD'}),e);
+ assert.equal(head.status,200);
+ assert.equal(await head.text(),'');
 });
