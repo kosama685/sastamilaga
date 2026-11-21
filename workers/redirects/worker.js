@@ -6,7 +6,7 @@
  *   /product/<slug>/ , /ur/product/<slug>/        -> /p/<page>.html           (11,201 products matched by SKU, name prefix or words)
  *   /product-category/<path>/[page/N/]            -> /c/<category>.html       (nearest category that has a page)
  *   /videos/<slug>/                               -> the product page, else /videos/
- *   /visa/<country>/ , /ur/visa/<country>/        -> /visa/
+ *   /visa/<country>/ , /ur/visa/<country>/        -> /visa/   (unless the static site has that visa guide page: then it is served)
  *   /privacy-policy/ , /returns-refunds/ …        -> /privacy/ , /returns/ …  (old page names)
  *   /product-tag/…, /store/…, …/feed/             -> 410 Gone (address types the new site does not have)
  *   a product that no longer exists               -> 410 Gone (was a 302 to a noindex search page = soft 404)
@@ -72,6 +72,15 @@ export default {
       }
       m = q.match(/^\/videos\/([^/]+)(?:\/\d+)?$/);
       if (m) { const file = (await data('products', env))[decodeURIComponent(m[1]).toLowerCase()]; return go(file ? `/p/${file}.html` : '/videos/'); }
+      // Visa guides (tools/build-visa-pages.mjs): /visa/<country>/, /visa/guides/ and /visa/guides/<type>/ are real pages on the static site.
+      // Serve them when the page exists; only addresses without a page (old WordPress visa URLs, Urdu copies) still go to /visa/.
+      if (!ur && /^\/visa\/[a-z0-9-]{2,80}(?:\/[a-z0-9-]{2,80})?$/.test(q)) {
+        const r = await fetch(`${env.SITE_ORIGIN}${q}/`, { cf: { cacheTtl: 300, cacheEverything: true } });
+        if (r.ok && (r.headers.get('content-type') || '').includes('text/html')) {
+          if (!url.pathname.endsWith('/')) return go(q + '/');   // one address per guide
+          return new Response(req.method === 'HEAD' ? null : r.body, { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'public, max-age=300, s-maxage=600', 'X-Redirects-Worker': 'visa-guide' } });
+        }
+      }
       if (/^\/visa\/[^/]+/.test(q)) return go('/visa/');
       return new Response('Not found', { status: 404, headers: { 'X-Robots-Tag': 'noindex' } });
     } catch (e) {
