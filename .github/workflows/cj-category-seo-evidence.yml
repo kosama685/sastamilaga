@@ -1,0 +1,48 @@
+name: Export every CJ SKU by category (private SEO evidence)
+on:
+  pull_request:
+    paths:
+      - 'tools/export-cj-product-evidence.mjs'
+      - 'tools/cj-category-product-evidence.test.mjs'
+      - '.github/workflows/cj-category-seo-evidence.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/export-cj-product-evidence.mjs'
+      - 'tools/cj-category-product-evidence.test.mjs'
+      - 'data/cj/lookup/**'
+      - '.github/workflows/cj-category-seo-evidence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Unit test folder/category handling and missing-data quarantine
+        run: node --test tools/cj-category-product-evidence.test.mjs
+      - name: Export all original CJ IDs into category folder paths inside an archive
+        run: node tools/export-cj-product-evidence.mjs
+      - name: Verify archive integrity and exact product count
+        run: |
+          set -eu
+          count=$(tar -tzf artifacts/cj-seo-evidence/category-product-files.tar.gz | wc -l)
+          expected=$(node -e "console.log(JSON.parse(require('fs').readFileSync('data/cj/lookup/manifest.json')).unique_ids)")
+          echo "Verified archive entries: $count of $expected"
+          test "$count" -eq "$expected"
+          node -e "const fs=require('fs');const a=JSON.parse(fs.readFileSync('artifacts/cj-seo-evidence/completeness.json')); if(a.perProductFilesInsideTar!==a.uniqueProductIds||a.duplicates!==0||a.indexEligibleFromSource!==0)process.exit(1)"
+      - name: Archive private product evidence, not live markup or sitemaps
+        uses: actions/upload-artifact@v7
+        with:
+          name: cj-all-products-category-wise-seo-evidence
+          path: |
+            artifacts/cj-seo-evidence/category-product-files.tar.gz
+            artifacts/cj-seo-evidence/all-products.jsonl.gz
+            artifacts/cj-seo-evidence/category-index.json
+            artifacts/cj-seo-evidence/completeness.json
+          retention-days: 30
