@@ -507,15 +507,22 @@
     window.addEventListener('sm:market', window.__shipMk);
     const out = document.getElementById('gship-out'), W = supplierWorker();
     go.addEventListener('click', async () => {
+      if (!chosen.v) { out.textContent = 'Choose a verified supplier option before requesting shipping.'; return; }
       const cc = document.getElementById('gship-cc').value, qty = Number(document.querySelector('#greq [name="qty"]').value) || 1;
-      go.disabled = true; out.textContent = 'Getting shipping options from the supplier…';
+      go.disabled = true; out.textContent = 'Checking carrier rates for the selected variation…';
       try {
-        const res = await fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ country: cc, items: [{ pid: r[0], sku: r[1], qty, ...(chosen && chosen.v ? { vid: chosen.v.vid } : {}) }] }) });
-        const d = await res.json();
-        if (!res.ok || !d.methods || !d.methods.length) { out.textContent = (d && d.error ? d.error + '. ' : '') + 'We will confirm shipping on WhatsApp.'; return; }
+        const res = await fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(10000) : undefined,
+          body: JSON.stringify({ country: cc, items: [{ pid: r[0], sku: chosen.v.sku || r[1], qty, vid: chosen.v.vid }] }) });
+        if (res.status === 429) { out.textContent = 'Live shipping is temporarily at capacity. Confirm the delivery charge on WhatsApp.'; return; }
+        const d = await res.json().catch(() => ({}));
+        if (!res.ok || !d.methods || !d.methods.length) {
+          out.textContent = 'No verified carrier rate is available for this variation. Please confirm shipping on WhatsApp.';
+          return;
+        }
         out.innerHTML = d.methods.slice(0, 6).map((m, i) => `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(`${m.name}: ${USD.format(m.price)}, ${m.days} days`)}" data-amt="${esc(String(m.price))}" data-cur="USD"${i ? '' : ' checked'}> <span>${esc(neutral(m.name))}</span> <b>${USD.format(m.price)}</b> <small>${esc(m.days)} days</small></label>`).join('') + '<p class="sm-ship__note">Supplier shipping price in US$ for this quantity, before any customs duties.</p>';
       } catch (e) { out.textContent = 'Shipping prices are not available right now. We will confirm shipping on WhatsApp.'; }
-      finally { go.disabled = false; }
+      finally { go.disabled = !chosen.v; }
     });
   }
   function searchBox(q) {
