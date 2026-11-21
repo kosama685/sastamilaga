@@ -30,6 +30,11 @@ jobs:
             origin=$(grep -i '^x-sasta-commerce-origin:' "$header" | tr -d '\r' | tail -1 || true)
             location=$(grep -i '^location:' "$header" | tr -d '\r' | tail -1 || true)
             echo "$path: HTTP $code ${origin:-no origin marker} ${location:-no redirect}"
+            if [ "$code" != 200 ] && [ "$code" != 503 ] && [ "$code" != 404 ]; then
+              grep -iE '^(server:|cf-ray:|content-type:|retry-after:)' "$header" | tr -d '\r' || true
+              head -c 350 "$body" | tr '\n' ' ' || true
+              echo
+            fi
             if [ "$path" = '/' ]; then
               test "$code" = 404
             else
