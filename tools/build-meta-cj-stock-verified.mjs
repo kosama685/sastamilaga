@@ -28,7 +28,7 @@ const MARKET=process.env.META_CJ_COUNTRY||'PK';
 const CCY=process.env.META_CJ_CURRENCY||'PKR';
 const DAY=86_400_000;
 const MAX_PER_FEED=5000;
-const ESC=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','"':'&quot;'}[c]));
+const ESC=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fresh=(value,days)=>{let t=Date.parse(value||'');return Number.isFinite(t)&&t<=Date.now()&&Date.now()-t<=days*DAY};
 const https=(value,local)=>{try{const u=new URL(value);return u.protocol==='https:'&&(!local||u.hostname==='sastamilaga.com')}catch{return false}};
 const tag=(key,value)=>'<g:'+key+'>'+ESC(value)+'</g:'+key+'>';
@@ -72,7 +72,7 @@ function item(p){
 }
 async function main(){
  if(!/^[A-Z]{2}$/.test(MARKET)||!/^[A-Z]{3}$/.test(CCY))throw Error('Invalid explicit market/currency');
- const report={generated_at:new Date().toISOString(),market:MARKET,currency:CCY,sourceCatalog:451812,rawCatalogStockFieldsPopulated:0,sourceFilePresent:fs.existsSync(INPUT),read:0,eligible:0,excluded:0,reasons:{},shards:[],liveFeedReady:false,stockMethod:'CJ API per-variant evidence <= 24h; verified final retail price, checkout and shipping',adsApproved:false,claim:'Neither Meta approval nor Google indexing is implied'};
+ const report={generated_at:new Date().toISOString(),market:MARKET,currency:CCY,sourceCatalogAtObservation:451812,supplierSnapshotDate:'2026-11-05',stockFlagsObservedOn:'2026-11-21',stockFlagsPopulatedAtObservation:0,currentStockFlagsNotRequeried:true,sourceFilePresent:fs.existsSync(INPUT),read:0,eligible:0,excluded:0,reasons:{},shards:[],liveFeedReady:false,stockMethod:'CJ API per-variant evidence <= 24h; verified final retail price, checkout and shipping',adsApproved:false,claim:'Neither Meta approval nor Google indexing is implied'};
  fs.mkdirSync(path.dirname(REPORT),{recursive:true});
  if(!report.sourceFilePresent){fs.writeFileSync(REPORT,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));if(process.argv.includes('--build'))throw Error('No independent CJ inventory/checkout evidence. Refusing to publish misleading feed.');return}
  const seen=new Set(),qualified=[];
