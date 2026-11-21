@@ -178,6 +178,7 @@
       }
       var msg = (r.j && r.j.message) ? String(r.j.message).replace(/<[^>]+>/g, '') : 'The cart could not be updated. Please try again.';
       if (r.status === 403) msg = 'Your session expired. Please try again.';
+      if (r.status === 429) msg = 'Secure checkout is temporarily at capacity. No item was added. Please confirm this option on WhatsApp.';
       say(msg, 'warn');
     }).catch(function () { say('The store could not be reached. Please try again, or order on WhatsApp.', 'warn'); })
       .then(function () { state.busy = false; els.add.removeAttribute('aria-busy'); els.buy.removeAttribute('aria-busy'); });
