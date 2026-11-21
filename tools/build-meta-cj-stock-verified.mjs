@@ -98,8 +98,19 @@ async function main(){
    }
    // Publishing requires a separate deliberate release: output remains in temp
    // unless the verified cohort is sound and no file is empty or oversized.
-   for(const entry of created)fs.renameSync(path.join(tempDir,entry.file),path.join(TARGET,entry.file));
-   fs.rmdirSync(tempDir);report.shards=created;report.liveFeedReady=true;
+   // Swap the entire verified-feed directory: never leave stale old shards
+   // visible if a smaller verified cohort is published later.
+   const backup=TARGET+'.backup.'+process.pid;
+   let oldMoved=false;
+   try{
+    if(fs.existsSync(TARGET)){fs.renameSync(TARGET,backup);oldMoved=true}
+    fs.renameSync(tempDir,TARGET);
+    if(oldMoved)fs.rmSync(backup,{recursive:true,force:true});
+   }catch(e){
+    if(oldMoved&&!fs.existsSync(TARGET))fs.renameSync(backup,TARGET);
+    throw e;
+   }
+   report.shards=created;report.liveFeedReady=true;
   }catch(e){fs.rmSync(tempDir,{recursive:true,force:true});throw e}
  }
  fs.writeFileSync(REPORT,JSON.stringify(report,null,2)+'\n');
