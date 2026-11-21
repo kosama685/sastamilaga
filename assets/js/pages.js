@@ -94,6 +94,9 @@
     const dests = all().map(x => ({ c: x.c, n: x.n })).concat([{ c: 'EU', n: 'Schengen (Europe)' }]).sort((a, b) => a.n.localeCompare(b.n));
     const st = { q: sp.get('q') || '', type: sp.get('type') || VISA_TYPES[0], from: (sp.get('from') || country()).toUpperCase(), shown: 48 };
     setSEO({ title: 'Visa destinations: check requirements with our team', description: `Choose a destination from ${dests.length} countries and regions. Our team checks the visa requirements for your passport with you; free first check of your documents.`, url: `${A.SITE_URL}/visa/` });
+    // Remove an earlier detached enquiry panel on repeated SPA visa navigation.
+    const staleVisa = document.getElementById('sm-visa-enquiry');
+    if (staleVisa && !document.getElementById('app').contains(staleVisa)) staleVisa.remove();
     renderApp(`<section class="sm-page sm-page--wide">${pageHead('Visa destinations', 'Search a destination, choose your visa type and send the request. Free first check of your documents. Visa decisions belong to the embassy; we never guarantee approval.')}
       <form class="sm-pg__bar sm-pg__bar--visa" id="visaForm" role="search" onsubmit="return false">
         <label class="sm-pg__sel sm-pg__sel--grow" for="vsq"><span>Search destination</span><input id="vsq" type="search" placeholder="e.g. Japan, Schengen, Türkiye" value="${esc(st.q)}" autocomplete="off"></label>
@@ -102,6 +105,51 @@
       </form>
       <p class="sm-pg__count" id="vcount" role="status" aria-live="polite"></p>
       <ul class="sm-visa" id="vgrid" role="list"></ul><div class="sm-pg__more"><button type="button" class="sm-btn sm-btn--ghost" id="vmore" hidden>Show more destinations</button></div></section>`);
+
+    // Keep the guide-by-type and official country directory first; the WhatsApp enquiry cards
+    // are a distinct closing section after the guide hub, not a wall of cards above it.
+    const visaApp = document.getElementById('app');
+    const visaPanel = visaApp && visaApp.querySelector('section.sm-page');
+    const visaHeading = visaPanel && visaPanel.querySelector('.sm-page-head');
+    const visaHub = document.querySelector('#main > .sv-hub');
+    if (visaPanel && visaHeading) {
+      const visaLead = document.createElement('section');
+      visaLead.className = 'sm-page sm-page--wide sm-visa-lead';
+      visaLead.id = 'sm-visa-lead';
+      visaLead.appendChild(visaHeading);
+      visaLead.insertAdjacentHTML('beforeend', '<button type="button" class="sm-visa-lead__jump" id="visa-jump">Find a destination for a visa enquiry <span aria-hidden="true">↓</span></button>');
+      visaPanel.id = 'sm-visa-enquiry';
+      visaPanel.classList.add('sm-visa-enquiry');
+      visaPanel.setAttribute('aria-labelledby', 'sm-visa-enquiry-heading');
+      visaPanel.insertAdjacentHTML('afterbegin',
+        '<div class="sm-visa-enquiry__header"><div class="sm-visa-enquiry__copy">' +
+        '<span class="sm-visa-enquiry__eyebrow">PERSONALIZED VISA ENQUIRIES</span>' +
+        '<h2 id="sm-visa-enquiry-heading">Your destination, your passport, a clearer next step.</h2>' +
+        '<p>Search a destination and select your visa category and passport country. Choose a card to ask our team about the documents and the official process for your journey.</p>' +
+        '</div><a class="sm-visa-enquiry__cta" href="' + esc(waLink('Assalam o Alaikum! I would like help checking visa requirements for my passport.')) +
+        '" target="_blank" rel="noopener">Ask our team <span aria-hidden="true">↗</span></a></div>');
+      visaPanel.insertAdjacentHTML('beforeend',
+        '<p class="sm-visa-enquiry__disclaimer">Information is for enquiries only. Visa requirements can change and depend on nationality, destination and travel purpose. Always confirm with the relevant embassy or official authority; approval is never guaranteed.</p>');
+      visaApp.insertBefore(visaLead, visaPanel);
+      if (visaHub && visaHub.parentElement === visaApp.parentElement) {
+        visaHub.insertAdjacentElement('afterend', visaPanel);
+      }
+      document.getElementById('visa-jump').addEventListener('click', () => {
+        visaPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      // Detached panel must not linger if another SPA route renders into #app.
+      if (!visaApp.__smVisaCleanup) {
+        const obs = new MutationObserver(() => {
+          if (!document.getElementById('sm-visa-lead')) {
+            const detached = document.getElementById('sm-visa-enquiry');
+            if (detached && !visaApp.contains(detached)) detached.remove();
+          }
+        });
+        obs.observe(visaApp, { childList: true });
+        visaApp.__smVisaCleanup = obs;
+      }
+    }
+
     const fold = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
     const msg = d => `Assalam o Alaikum! Please check visa requirements for me.\nDestination: ${d.n}\nVisa type: ${st.type}\nPassport: ${cname(st.from)}\n${A.SITE_URL}/visa/`;
     const draw = () => {

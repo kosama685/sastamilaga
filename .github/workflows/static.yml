@@ -37,6 +37,8 @@ jobs:
       - name: Syntax check of the site scripts (a broken script must never be deployed)
         run: |
           for f in app.js assets/js/*.js; do node --check "$f" || exit 1; done
+      - name: Verify the Visa hub closes with its interactive enquiry section
+        run: node --test tools/visa-last-section.test.mjs
       - name: Validate AI-readable canonical site references
         run: node tools/validate-ai-site-index.mjs
       - name: Verify destination-specific copy and catalog eligibility
