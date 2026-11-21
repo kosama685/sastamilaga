@@ -33,7 +33,7 @@ const SECTIONS = {
   'live-tv': ['Live TV – watch free-to-air channels online', 'Watch more than 2,000 free-to-air TV channels from around the world online: news, entertainment, sports, music and kids.'],
   about: ['About Sasta Milaga', 'Sasta Milaga is an online store and travel desk for Pakistan and Pakistanis abroad: affordable products, cash on delivery and travel services.'],
   faq: ['Frequently asked questions', 'Answers about ordering, cash on delivery, delivery charges, returns, global items and travel bookings at Sasta Milaga.'],
-  contact: ['Contact Sasta Milaga', 'Contact Sasta Milaga on WhatsApp +966510451995 for orders, delivery, returns and travel requests.'],
+  contact: ['Contact Sasta Milaga', 'Contact Sasta Milaga on WhatsApp +923343582295 for orders, delivery, returns and travel requests.'],
   'how-to-order': ['How to order', 'How to order at Sasta Milaga: add to cart, choose cash on delivery, bank transfer, EasyPaisa/JazzCash or PayPal, or order on WhatsApp.'],
   shipping: ['Shipping and delivery by country', 'Delivery in Pakistan is Rs 250, free above Rs 5,000. Global delivery depends on product and destination; verify freight and transit times before payment.'],
   returns: ['Returns and refunds by country', '7-day returns for Sasta Milaga Local products in Pakistan; return terms for global products depend on the supplier and your country.'],

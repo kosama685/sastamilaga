@@ -1,0 +1,53 @@
+name: Migrate public WhatsApp contact number once
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/whatsapp-contact-migration.yml
+permissions:
+  contents: write
+jobs:
+  replace-tracked-content:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 16
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Replace legacy Pakistan number in tracked text (not other regional contacts)
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const cp = require('node:child_process');
+          const old = '923432601806', replacement = '923343582295';
+          const oldText = '+92 343 2601806', newText = '+92 334 358 2295';
+          let paths;
+          try { paths = cp.execFileSync('git', ['grep', '-l', '-z', '-F', '-e', old, '-e', oldText, '--', '.'], { maxBuffer: 32 * 1024 * 1024 }).toString().split('\0').filter(Boolean); }
+          catch (e) { if (e.status === 1) process.exit(0); throw e; }
+          let edits = 0;
+          for (const path of paths) {
+            if (path.startsWith('docs/') || path.startsWith('.github/')) continue;
+            const before = fs.readFileSync(path, 'utf8');
+            const after = before.replaceAll(old, replacement).replaceAll(oldText, newText);
+            if (after !== before) { fs.writeFileSync(path, after); edits++; }
+          }
+          console.log('Updated tracked files:', edits);
+          NODE
+      - name: Commit the remaining static pages without force-pushing
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u
+          if git diff --cached --quiet; then echo "No remaining legacy number in tracked public files"; exit 0; fi
+          git commit -m "fix: replace legacy Pakistan WhatsApp number across static pages [skip ci]"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then exit 0; fi
+            git fetch origin main
+            if ! git rebase origin/main; then git rebase --abort; exit 1; fi
+          done
+          echo "::error::Could not push WhatsApp migration safely"
+          exit 1

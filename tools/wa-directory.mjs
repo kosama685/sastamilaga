@@ -12,7 +12,7 @@ export const REGIONS = [
   { k: 'cn',   name: 'China',                   flag: 'cn', n: '8619563055191', t: '+86 195 6305 5191' },
   { k: 'af',   name: 'Botswana / Africa',       flag: 'bw', n: '26772228229',   t: '+267 72 228 229' },
   { k: 'in',   name: 'India',                   flag: 'in', n: '918128425068',  t: '+91 81284 25068' },
-  { k: 'pk',   name: 'Pakistan',                flag: 'pk', n: '923432601806',  t: '+92 343 2601806' },
+  { k: 'pk',   name: 'Pakistan',                flag: 'pk', n: '923343582295',  t: '+92 334 358 2295' },
   { k: 'gulf', name: 'Gulf',                    flag: 'sa', n: '966510451995',  t: '+966 51 045 1995' },
   { k: 'eg',   name: 'Egypt',                   flag: 'eg', n: '201028377512',  t: '+20 10 28377512' },
 ];

@@ -25,7 +25,7 @@ window.SM_CONFIG = {
   sheetEndpoint: '',
   sheetToken: '',
   orderEndpoint: 'https://formspree.io/f/xwvzzjdl',
-  whatsapp: '966510451995',
+  whatsapp: '923343582295',
   deliveryFee: 250,
   freeDeliveryFrom: 5000,
   /* true = Live TV lists channels from data/livetv/channels.js (a full snapshot of the approved sltv list)
