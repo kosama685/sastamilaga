@@ -41,7 +41,16 @@
       return json(ROOT + 'wp-json/wc/store/v1/cart/add-item', { method: 'POST', headers: { 'Content-Type': 'application/json', Nonce: n }, body: JSON.stringify(body) });
     }).then(function (x) {
       if (x.r.status === 403 && !retried && x.j && x.j.code === 'woocommerce_rest_invalid_nonce') return post(id, qty, true, variation);   // retry only an explicitly invalid nonce
-      if (x.r.status === 201 || x.r.status === 200) return { ok: true, status: x.r.status, count: x.j && x.j.items_count };
+      // A GitHub Pages HTML fallback may return HTTP 200; a real WooCommerce Store
+      // API add must return a cart JSON structure, not merely a success status.
+      if ((x.r.status === 201 || x.r.status === 200) &&
+          x.j && Array.isArray(x.j.items) && Number.isFinite(Number(x.j.items_count))) {
+        return { ok:true, status:x.r.status, count:Number(x.j.items_count) };
+      }
+      if ((x.r.status === 201 || x.r.status === 200) && !x.j?.items) {
+        return {ok:false,status:x.r.status,reason:'service_unavailable',
+          message:'The secure cart returned an invalid response; no item was confirmed.'};
+      }
       var code = (x.j && x.j.code) || 'error';
       return { ok: false, status: x.r.status, code: code, message: plain(x.j && x.j.message) || 'The cart could not be updated.', reason: (x.r.status === 429 ? 'worker_limit' : (x.r.status >= 500 ? 'service_unavailable' : (REASONS[code] || 'error'))) };
     });
@@ -111,9 +120,26 @@
     var out = []; document.querySelectorAll('main select[name^="attribute_"]').forEach(function (s) { if (s.value) out.push({ attribute: s.name.replace(/^attribute_/, ''), value: s.value }); });
     return out;
   }
-  function show(d) {
+  function show(d, source) {
     if (d.kind === 'go') { toast('Opening secure checkout…'); location.href = d.href; return; }
-    toast(esc(d.message) + linkHtml(d.link) + linkHtml(d.alt));
+    if (d.kind === 'added') { toast(esc(d.message) + linkHtml(d.link)); return; }
+    // Put failures next to the product, not over the purchase buttons and images.
+    var container = source && source.closest ? source.closest('.buy-panel, .sm-cj-rail-card, .pdp, .sm-card') : null;
+    var parent = container && (container.querySelector('.buy-actions, .sm-cj-card-actions') || container);
+    if (parent) {
+      var alert = parent.querySelector('.sm-woo-inline-warning');
+      if (!alert) {
+        alert = document.createElement('div');
+        alert.className = 'sm-woo-inline-warning';
+        alert.setAttribute('role', 'status');
+        alert.setAttribute('aria-live','polite');
+        alert.style.cssText = 'margin-top:12px;padding:12px 14px;border:1px solid #decc9e;border-radius:10px;background:#fff8ea;color:#342b18;font:500 14px/1.5 system-ui,sans-serif';
+        parent.appendChild(alert);
+      }
+      alert.innerHTML = esc(d.message) + linkHtml(d.link) + linkHtml(d.alt);
+    } else {
+      toast(esc(d.message) + linkHtml(d.link) + linkHtml(d.alt));
+    }
   }
   function run(sku, qty, buyNow, el) {
     if (!sku || (el && el.getAttribute('aria-busy'))) return; if (el) el.setAttribute('aria-busy', 'true');
@@ -121,7 +147,7 @@
     toast('Adding to your cart…');
     return W.add(sku, qty, pageVariation()).then(function (res) {
       if (el) el.removeAttribute('aria-busy');
-      show(W.decide(res, buyNow, wa()));
+      show(W.decide(res, buyNow, wa()), el);
       return res;
     });
   }
@@ -151,7 +177,7 @@
       vb.removeAttribute('aria-busy');
       var d = W.decide(res, buy, vmWa());
       if (res.ok && dlg && typeof dlg.close === 'function') dlg.close();
-      show(d);
+      show(d, vb);
     });
   }, true);
   window.addEventListener('click', function (e) {
