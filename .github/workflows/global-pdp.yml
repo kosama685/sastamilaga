@@ -35,10 +35,11 @@ jobs:
       SCRIPT: sasta-global-pdp-v6
       PRODUCT_PATH: /global-shop/p/1988880782439141377/zero-gravity-chair-26-zero-gravity-recliner-lounge-chair-indoor-outdoor/
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '24'
+          package-manager-cache: false
 
       - name: Unit tests
         run: node --test workers/global-pdp/worker.test.mjs
