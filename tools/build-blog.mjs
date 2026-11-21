@@ -263,5 +263,7 @@ const INDEX_GLOBAL_PRODUCTS = false;
   if (INDEX_GLOBAL_PRODUCTS) { const mf = fs.readFileSync(path.join(ROOT, 'data/cj/manifest.js'), 'utf8'), M = JSON.parse(mf.slice(mf.indexOf('{'), mf.lastIndexOf('}') + 1));
     idx = idx.replace('</sitemapindex>', M.cats.map(c => `<sitemap><loc>${SITE}/sitemaps/global/${c.s}.xml</loc><lastmod>${today}</lastmod></sitemap>`).join('\n') + '\n</sitemapindex>'); } }
 fs.writeFileSync(idxPath, idx);
+// Keep the historical Search Console sitemap-index alias in parity with the canonical index.
+fs.writeFileSync(path.join(ROOT, 'sitemap_index.xml'), idx);
 const scheduled = (ctx.window.SM_BLOG || []).filter(p => p.publish > today).map(p => `${p.publish} ${p.slug}`);
 console.log(`published ${posts.length} posts (today ${today}); scheduled: ${scheduled.length ? scheduled.join(', ') : 'none'}`);

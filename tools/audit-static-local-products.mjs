@@ -18,7 +18,8 @@ if(files.length<19000)throw Error('Incomplete static product inventory; abort');
 const normalize=s=>String(s||'').trim().toLowerCase();
 const strip=s=>String(s||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
 const canonical='https://sastamilaga.com';
-const records=new Map(),dupes=[],missing=[],issues=[],indexable=0,withImages=0,withVideo=0,withFaq=0;
+const records=new Map(),dupes=[],missing=[],issues=[];
+let indexable=0,withImages=0,withVideo=0,withFaq=0;
 for(const file of files){
  const html=fs.readFileSync(path.join(P,file),'utf8');
  const sku=normalize(html.match(/"sku"\s*:\s*"([^"]+)"/i)?.[1] || html.match(/SKU:\s*<code>([^<]+)</i)?.[1] || '');

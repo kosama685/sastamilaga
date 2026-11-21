@@ -7,6 +7,9 @@ on:
     branches: [main]
     paths:
       - 'scripts/sitemap-audit.js'
+      - 'sitemap.xml'
+      - 'sitemap_index.xml'
+      - 'sitemap-cj-global-categories.xml'
       - '.github/workflows/public-sitemap-health.yml'
 permissions:
   contents: read
