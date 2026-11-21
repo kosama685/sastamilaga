@@ -3,7 +3,7 @@
 (function () {
   'use strict';
   if (window.__smWaCards) return; window.__smWaCards = true;
-  var NUMBER = (window.SM_CONFIG && window.SM_CONFIG.whatsapp) || '966510451995';
+  var NUMBER = (window.SM_CONFIG && window.SM_CONFIG.whatsapp) || '923343582295';
   var ICON = '<svg viewBox="0 0 32 32" width="18" height="18" aria-hidden="true" focusable="false"><path fill="currentColor" d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3zm0 23.6c-2 0-4-.5-5.7-1.6l-.4-.2-3.9 1 1-3.8-.3-.4A10.6 10.6 0 1 1 16 26.6zm5.8-7.9c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1a8.7 8.7 0 0 1-4.3-3.8c-.3-.6.3-.5 1-1.7.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.9s1.2 3.4 1.4 3.6c.2.2 2.4 3.7 5.9 5.2 2.2.9 3 1 4.1.8.7-.1 1.9-.8 2.2-1.5.3-.8.3-1.4.2-1.5 0-.2-.3-.3-.6-.4z"/></svg>';
 
   function abs(href) {
@@ -13,7 +13,7 @@
   function hrefOf(a) { return a ? a.getAttribute('href') : ''; }
   function text(el) { return el ? el.textContent.replace(/\s+/g, ' ').trim() : ''; }
   function link(name, price, url) {
-    var msg = 'Assalam o Alaikum! I want to order:\n' + name + (price ? '\nPrice: ' + price : '') + '\nQuantity: 1\n' + url;
+    var msg = 'Hello Sasta Milaga! I want to order:\n' + name + (price ? '\nListed price: ' + price : '') + '\nQuantity: 1\n' + url + '\nDelivery country: [please specify]\nPlease confirm availability, shipping, final total and payment options.';
     var a = document.createElement('a');
     a.className = 'sm-wa-card'; a.target = '_blank'; a.rel = 'noopener';
     a.href = 'https://wa.me/' + NUMBER + '?text=' + encodeURIComponent(msg);
