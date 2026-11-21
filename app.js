@@ -213,7 +213,8 @@ function setSEO({ title, description, image, url, ldJson, robots }) {
   setMetaName('twitter:image',       image || `${SITE_URL}/assets/brand/og-default-1200x630.jpg`);
 
   const ldEl = $('#ld-dynamic');
-  if (ldEl && ldJson) ldEl.textContent = JSON.stringify(ldJson);
+  // Do not carry a previous Product JSON-LD graph into a route without its own schema.
+  if (ldEl) ldEl.textContent = ldJson ? JSON.stringify(ldJson) : '';
 }
 
 function setMetaName(name, content) {
