@@ -129,7 +129,7 @@ test('Pakistan facts match the store configuration', () => {
   // Landing-market support and storefront checkout may legitimately use
   // different regional WhatsApp numbers. Validate each configured E.164 number
   // without overwriting either business contact or payment routing.
-  const storeWhatsApp = cfg.match(/whatsapp:\\s*'([1-9][0-9]{7,14})'/)?.[1];
+  const storeWhatsApp = cfg.match(/whatsapp:\s*'([1-9][0-9]{7,14})'/)?.[1];
   assert.ok(storeWhatsApp, 'Storefront WhatsApp must be a valid international number');
   assert.match(String(data.whatsapp), /^[1-9][0-9]{7,14}$/, 'Landing-market WhatsApp must be valid');
 });
