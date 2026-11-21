@@ -54,6 +54,46 @@ jobs:
             echo "Namecheap direct $name: HTTP $status; database-error-body=$database_failure"
             rm -f "$body"
           done
+      - name: Read-only diagnostic of WordPress cart and supplier APIs
+        shell: bash
+        run: |
+          set -uo pipefail
+          # No POST, no checkout submission, no customer cookies or secrets.
+          urls=(
+            'https://sastamilaga.com/api/cj/variants?pid=1988880782439141377'
+            'https://sastamilaga.com/api/cj/health'
+            'https://sastamilaga.com/wp-json/wc/store/v1/cart'
+            'https://sastamilaga.com/wp-json/gdcs/v1/context?light=1'
+            'https://sastamilaga.com/cart/'
+            'https://sasta-woo-namecheap-bridge-v1.usamaestonia.workers.dev/cart/'
+            'https://sastamilaga-cj-shipping.usamaestonia.workers.dev/api/cj/health'
+          )
+          for url in "${urls[@]}"; do
+            headers=$(mktemp); body=$(mktemp)
+            code=$(curl -sS --max-time 12 --connect-timeout 5 --max-redirs 0 -H 'Accept: application/json,text/html;q=0.8' -D "$headers" -o "$body" -w '%{http_code}' "$url") || code=000
+            kind=other
+            if grep -Eqi 'error code: 1027|Error 1027' "$body";then kind=worker_quota_1027
+            elif grep -qi 'Error establishing a database connection' "$body";then kind=mysql_connection_error
+            elif grep -qi 'Secure checkout is temporarily unavailable' "$body";then kind=safe_maintenance
+            elif grep -qi 'WooCommerce origin temporarily unavailable' "$body";then kind=unavailable_origin
+            elif grep -q '"variants"' "$body";then kind=supplier_json
+            elif grep -q '"items_count"' "$body";then kind=woo_cart_json
+            elif grep -q '"key"' "$body";then kind=health_json
+            fi
+            origin=$(grep -im1 '^x-sasta-commerce-origin:' "$headers" | tr -d '\r' || true)
+            echo "public_probe url=$url http=$code state=$kind ${origin:-no_bridge_marker}"
+            rm -f "$headers" "$body"
+          done
+          # Direct same-host TLS connection to retained Namecheap IP, bypassing Workers.
+          for path in /wp-json/wc/store/v1/cart /wp-json/gdcs/v1/context?light=1 /cart/; do
+            h=$(mktemp); b=$(mktemp)
+            status=$(curl -ksS --max-time 12 --connect-timeout 5 --resolve "sastamilaga.com:443:$SASTA_ORIGIN_IP" --max-redirs 0 -D "$h" -o "$b" -w '%{http_code}' "https://sastamilaga.com$path") || status=000
+            state=other
+            if grep -qi 'Error establishing a database connection' "$b";then state=mysql_connection_error;fi
+            if grep -qi 'database error' "$b";then state=db_error;fi
+            echo "direct_namecheap path=$path http=$status state=$state"
+            rm -f "$h" "$b"
+          done
       - name: Compare independent static availability
         shell: bash
         run: |
