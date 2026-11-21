@@ -163,7 +163,8 @@
     if (d.kind === 'added') { toast(esc(d.message) + linkHtml(d.link)); return; }
     // Put failures next to the product, not over the purchase buttons and images.
     var container = source && source.closest ? source.closest('.buy-panel, .sm-cj-rail-card, .pdp, .sm-card') : null;
-    var parent = container && (container.querySelector('.buy-actions, .sm-cj-card-actions') || container);
+    var actions = container && container.querySelector('.buy-actions, .sm-cj-card-actions');
+    var parent = actions && actions.parentNode ? actions.parentNode : container;
     if (parent) {
       var alert = parent.querySelector('.sm-woo-inline-warning');
       if (!alert) {
@@ -172,12 +173,27 @@
         alert.setAttribute('role', 'status');
         alert.setAttribute('aria-live','polite');
         alert.style.cssText = 'margin-top:12px;padding:12px 14px;border:1px solid #decc9e;border-radius:10px;background:#fff8ea;color:#342b18;font:500 14px/1.5 system-ui,sans-serif';
-        parent.appendChild(alert);
+        if (actions && actions.insertAdjacentElement) actions.insertAdjacentElement('afterend',alert);
+        else parent.appendChild(alert);
       }
       alert.innerHTML = esc(d.message) + linkHtml(d.link) + linkHtml(d.alt);
     } else {
       toast(esc(d.message) + linkHtml(d.link) + linkHtml(d.alt));
     }
+  }
+  /* Only a Pakistan COD *request* can bypass an unavailable WooCommerce API.
+     Never represent this separate quote cart as a successful Woo order. */
+  function codRecovery(res, sku, qty, buyNow, source) {
+    if (!res || res.ok || ['worker_limit','service_unavailable','network','unmapped'].indexOf(res.reason) < 0) return false;
+    if (!window.SMCOD || typeof window.SMCOD.add !== 'function') return false;
+    var cod = window.SMCOD.add(sku, qty);
+    if (!cod.ok) {
+      show({kind:'refused',message:cod.message || 'This item cannot be added to a COD request. Contact support.',link:null,alt:null},source);
+      return true;
+    }
+    if (buyNow) { location.href = '/cod-checkout/'; return true; }
+    show({kind:'refused',message:'Saved to your Pakistan COD request cart (separate from WooCommerce). We will confirm stock and final price before accepting the order.',link:{href:'/cod-checkout/',label:'Continue with cash on delivery'},alt:null},source);
+    return true;
   }
   function run(sku, qty, buyNow, el) {
     if (!sku || (el && el.getAttribute('aria-busy'))) return; if (el) el.setAttribute('aria-busy', 'true');
@@ -185,7 +201,7 @@
     toast('Adding to your cart…');
     return W.add(sku, qty, pageVariation()).then(function (res) {
       if (el) el.removeAttribute('aria-busy');
-      show(W.decide(res, buyNow, wa()), el);
+      if (!codRecovery(res,sku,qty,buyNow,el)) show(W.decide(res, buyNow, wa()), el);
       return res;
     });
   }
@@ -215,7 +231,7 @@
       vb.removeAttribute('aria-busy');
       var d = W.decide(res, buy, vmWa());
       if (res.ok && dlg && typeof dlg.close === 'function') dlg.close();
-      show(d, vb);
+      if (!codRecovery(res,sku,q,buy,vb)) show(d, vb);
     });
   }, true);
   window.addEventListener('click', function (e) {
@@ -232,7 +248,7 @@
     var q = new URLSearchParams(location.search), act = q.get('sm_do'), want = q.get('sku');
     if (act && want && /^[A-Za-z0-9_-]{3,40}$/.test(want)) {
       history.replaceState(null, '', location.pathname);
-      var start = function () { W.add(want, 1).then(function (res) { show(W.decide(res, act === 'buy', wa())); }); };
+      var start = function () { W.add(want, 1).then(function (res) { if (!codRecovery(res,want,1,act === 'buy',null)) show(W.decide(res, act === 'buy', wa())); }); };
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
     }
   }
