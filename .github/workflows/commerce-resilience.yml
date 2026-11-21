@@ -5,13 +5,17 @@ on:
     branches: [main]
     paths:
       - assets/js/woo-bridge.js
+      - assets/js/cod-recovery.js
+      - cod-checkout/index.html
+      - assets/js/chrome.js
+      - tools/cod-recovery.test.mjs
       - assets/js/global.js
       - assets/js/cj-home-rails.js
       - assets/js/global-pdp.js
       - tools/woo-bridge-flow.test.mjs
       - tools/cj-cart-handoff.test.mjs
       - tools/cj-sku-awareness.test.mjs
-      - tools/commerce-resilience.test.mjs
+      - tools/commerce-resilience.test.mjs tools/cod-recovery.test.mjs
       - .github/workflows/commerce-resilience.yml
 permissions: { contents: read }
 jobs:
@@ -25,6 +29,7 @@ jobs:
       - name: Validate all affected browser scripts
         run: |
           node --check assets/js/woo-bridge.js
+          node --check assets/js/cod-recovery.js
           node --check assets/js/global.js
           node --check assets/js/cj-home-rails.js
           node --check assets/js/global-pdp.js
