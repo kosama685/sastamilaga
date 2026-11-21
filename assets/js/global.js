@@ -224,26 +224,40 @@
     /* The real WooCommerce cart is the only transactional cart. A localStorage
        draft is not an order and may never be presented as a successful add. */
     const addToSecureCart = async buyNow => {
-      const form = document.getElementById('greq'), v = chosen.v;
-      if (!v || !v.sku) {
-        toast('Please choose a supplier option before ordering. You can request it on WhatsApp below.');
-        return;
-      }
-      if (!window.SMWoo?.active || typeof window.SMWoo.add !== 'function') {
-        toast('Secure checkout is unavailable. Use the WhatsApp form to confirm this option and its final price.');
+      const form = document.getElementById('greq'), variant = chosen.v;
+      if (!variant || !variant.vid) {
+        toast('Please select a verified supplier option first, or request it on WhatsApp below.');
         return;
       }
       const qty = Math.max(1, Math.min(99, parseInt(form.elements.qty.value, 10) || 1));
-      toast('Verifying your item with secure checkout…');
-      const result = await window.SMWoo.add(String(v.sku), qty);
-      const decision = window.SMWoo.decide(result, buyNow, '');
-      if (decision.kind === 'go') { location.assign('/checkout/'); return; }
-      if (decision.kind === 'added') {
-        toast('Added to your secure WooCommerce cart. <a href="/cart/" style="color:#fff;text-decoration:underline">View cart</a>');
-        return;
+      toast('Verifying your selection with secure WooCommerce checkout…');
+      try {
+        // Global CJ supplier items use GDCS VirtualCheckout, which validates the
+        // product+variation+destination and creates a real WooCommerce cart line.
+        // The static SKU map only covers imported local products: never use it
+        // to pretend a supplier-wide product is a synchronized local SKU.
+        if (window.SMWoo && typeof window.SMWoo.sync === 'function') await window.SMWoo.sync();
+        const ctx = await fetch('/wp-json/gdcs/v1/context?light=1', { credentials:'include', headers:{Accept:'application/json'} });
+        if (!ctx.ok) throw new Error(ctx.status === 429 ?
+          'Secure checkout has reached its temporary request limit.' :
+          'Secure checkout session is temporarily unavailable.');
+        const context = await ctx.json();
+        if (!context || !context.csrf) throw new Error('Secure checkout could not verify the session.');
+        const result = await fetch('/wp-json/gdcs/v1/live/cart', {
+          method:'POST',credentials:'include',
+          headers:{'Content-Type':'application/json','X-GDCS-CSRF':context.csrf,Accept:'application/json'},
+          body:JSON.stringify({pid:String(r[0]),vid:String(variant.vid),quantity:qty})
+        });
+        const data = await result.json().catch(() => ({}));
+        if (!result.ok || !data.added) throw new Error(result.status === 429 ?
+          'Secure checkout has reached its temporary request limit.' :
+          String(data.message || data.error || 'Secure cart could not verify this supplier option.').replace(/<[^>]+>/g,''));
+        if (buyNow) { location.assign('/checkout/'); return; }
+        toast('Added to your verified WooCommerce cart. <a href="/cart/" style="color:#fff;text-decoration:underline">View secure cart</a>');
+      } catch (e) {
+        toast(String(e.message || 'Secure checkout temporarily unavailable.').slice(0,200) +
+          ' No order or payment has been created. You can use the WhatsApp form below to confirm availability.');
       }
-      toast((decision.message || 'This option cannot be added to the secure cart.') +
-        ' You can request it with the WhatsApp form below; no order or payment was created.');
     };
     /* Capture before document-level static-cart listeners, but never fake a cart. */
     window.__gcAct = { add: () => { void addToSecureCart(false); }, buy: () => { void addToSecureCart(true); } };
