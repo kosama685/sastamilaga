@@ -1,0 +1,54 @@
+name: GitHub Pages direct-origin verification (no DNS changes)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [.github/workflows/github-direct-origin-probe.yml]
+permissions:
+  contents: read
+  pages: read
+jobs:
+  direct-gh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify GitHub's actual CDN origin behind the custom hostname
+        shell: bash
+        run: |
+          set -euo pipefail
+          failed=0
+          for ip in 185.199.108.153 185.199.109.153 185.199.110.153 185.199.111.153; do
+            for path in / /shop/ /robots.txt; do
+              body=$(mktemp)
+              headers=$(mktemp)
+              # -k is ONLY for origin availability diagnosis while certificate is pending.
+              # It must NEVER be used to approve production HTTPS.
+              r=$(curl -ksS --max-time 20 --connect-timeout 9 --max-redirs 0 --resolve "sastamilaga.com:443:$ip" -D "$headers" -o "$body" -w '%{http_code}' "https://sastamilaga.com$path") || r=000
+              is_static=false
+              if [ "$path" = '/robots.txt' ]; then
+                grep -qi 'User-agent:' "$body" && is_static=true || true
+              else
+                grep -qi 'Sasta Milaga' "$body" && is_static=true || true
+              fi
+              location=$(grep -i '^location:' "$headers" | tr -d '\r' | tail -1 || true)
+              echo "$ip $path: HTTP $r, static-match=$is_static, ${location:-no redirect}"
+              if [ "$r" != 200 ] || [ "$is_static" != true ] || [[ -n "$location" ]]; then failed=1; fi
+              rm -f "$body" "$headers"
+            done
+          done
+          if [ "$failed" -ne 0 ]; then
+            echo "::error::GitHub CDN direct-origin gate failed; do not switch apex DNS."
+            exit 1
+          fi
+          echo "All 12 direct GitHub CDN static probes passed (not HTTPS certificate validation)."
+      - name: Verify GitHub Pages binding and HTTPS certificate state
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          data=$(curl --fail --silent --show-error -H "Authorization: Bearer $GH_TOKEN" -H 'Accept: application/vnd.github+json' https://api.github.com/repos/kosama685/sastamilaga/pages)
+          echo "custom_domain=$(jq -r '.cname // "(none)"' <<<"$data")"
+          echo "certificate_state=$(jq -r '.https_certificate.state // "(unknown)"' <<<"$data")"
+          echo "https_enforced=$(jq -r '.https_enforced // false' <<<"$data")"
+          test "$(jq -r '.cname' <<<"$data")" = 'sastamilaga.com'
