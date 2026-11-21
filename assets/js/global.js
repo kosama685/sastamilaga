@@ -299,6 +299,32 @@
   const wpShip = () => { const C = window.SM_CONFIG || {}; return !supplierWorker() && C.wpApi && window.SMWoo && window.SMWoo.active && !/\.github\.io$/i.test(location.hostname); };
   /* Fallback quote: workers/cj-shipping (supplier carrier prices in US$) for the visitor's detected country. Returns true when quotes were shown. */
   let qSeq = 0;   /* only the newest quote request may write to the page (options can be clicked quickly) */
+  /* The published CJ Worker uses GET /api/cj/shipping with pid+vid+country+quantity;
+     the older provider Worker accepts POST with items[]. Never confuse the contracts. */
+  async function fetchCjShipping(r, chosen, qty, cc) {
+    const W = supplierWorker();
+    const p = new URLSearchParams({pid:String(r[0]),vid:String(chosen.v.vid),country:String(cc).toUpperCase(),quantity:String(qty)});
+    const options={signal:typeof AbortSignal !== 'undefined' && AbortSignal.timeout?AbortSignal.timeout(10000):undefined};
+    const live=await fetch('/api/cj/shipping?'+p.toString(),options);
+    if(live.status===429){const e=new Error('Cloudflare CJ request allowance reached');e.quota=true;throw e;}
+    if(live.ok){
+      const data=await live.json();
+      if(Array.isArray(data.rates)&&data.rates.length){
+        return {methods:data.rates.map(m=>({name:String(m.carrier||''),price:Number(m.amountUsd),days:String(m.eta||'Confirm ETA')}))
+          .filter(m=>m.name&&Number.isFinite(m.price)&&m.price>=0)};
+      }
+    }
+    if(!W)throw new Error('CJ shipping service unavailable');
+    const backup=await fetch(W+'/api/cj/shipping',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      signal:typeof AbortSignal!=='undefined'&&AbortSignal.timeout?AbortSignal.timeout(10000):undefined,
+      body:JSON.stringify({country:cc,items:[{pid:r[0],sku:chosen.v.sku||r[1],qty,vid:chosen.v.vid}]})
+    });
+    if(backup.status===429){const e=new Error('Cloudflare supplier request allowance reached');e.quota=true;throw e;}
+    const data=await backup.json().catch(()=>({}));
+    if(!backup.ok||!Array.isArray(data.methods))throw new Error('No verified carrier quote');
+    return {methods:data.methods.filter(m=>m&&m.name&&Number.isFinite(Number(m.price))&&Number(m.price)>=0)};
+  }
   async function workerQuote(r, chosen, qty, out, stale) {
     const C = window.SM_CONFIG || {}, W = (C.cjShippingWorker || C.cjImageWorker || '').replace(/\/$/, ''); if (!W) return false;
     let cc = 'PK'; try { cc = (window.SMMarket && window.SMMarket.state().country) || 'PK'; } catch (e) { }
@@ -306,14 +332,16 @@
     try { const c = JSON.parse(sessionStorage.getItem(ck) || 'null'); if (c && Date.now() - c.t < 30 * 60e3) d = c.d; } catch (e) { }   /* same country, option and quantity: no second call to the supplier (it allows one request per second) */
     try {
       if (!d) {
-        const res = await fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ country: cc, items: [{ pid: r[0], sku: r[1], qty, ...(chosen && chosen.v ? { vid: chosen.v.vid } : {}) }] }) });
-        d = await res.json(); if (!res.ok || !d.methods || !d.methods.length) { if (stale && stale()) return true; return false; }
+        d = await fetchCjShipping(r,chosen,qty,cc); if (!d.methods || !d.methods.length) { if (stale && stale()) return true; return false; }
         try { sessionStorage.setItem(ck, JSON.stringify({ t: Date.now(), d })); } catch (e) { }
       }
       if (stale && stale()) return true; if (!d.methods || !d.methods.length) return false;
       out.innerHTML = d.methods.slice(0, 6).map((m, i) => `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(`${neutral(m.name)}: ${USD.format(m.price)}, ${m.days} days`)}" data-amt="${esc(String(m.price))}" data-cur="USD"${i ? '' : ' checked'}> <span>${esc(neutral(m.name))}</span> <b>${USD.format(m.price)}</b> <small>${esc(m.days)} days</small></label>`).join('') + `<p class="sm-ship__note">Carrier price in US$ for ${qty} item${qty > 1 ? 's' : ''} to ${esc((window.SMMarket && window.SMMarket.countryName(cc)) || cc)}, before any customs duties. The final total is confirmed before you pay.</p>`;
       return true;
-    } catch (e) { return false; }
+    } catch (e) {
+      if (e.quota) { out.textContent='Supplier shipping is temporarily at capacity. No final shipping quote is available. Please confirm on WhatsApp.';return true; }
+      return false;
+    }
   }
   function shipBoxWp() {
     const mk = window.SMMarket; let nm = ''; try { nm = mk ? mk.countryName(mk.state().country) : ''; } catch (e) { }
@@ -511,17 +539,13 @@
       const cc = document.getElementById('gship-cc').value, qty = Number(document.querySelector('#greq [name="qty"]').value) || 1;
       go.disabled = true; out.textContent = 'Checking carrier rates for the selected variation…';
       try {
-        const res = await fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-          signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(10000) : undefined,
-          body: JSON.stringify({ country: cc, items: [{ pid: r[0], sku: chosen.v.sku || r[1], qty, vid: chosen.v.vid }] }) });
-        if (res.status === 429) { out.textContent = 'Live shipping is temporarily at capacity. Confirm the delivery charge on WhatsApp.'; return; }
-        const d = await res.json().catch(() => ({}));
-        if (!res.ok || !d.methods || !d.methods.length) {
+        const d = await fetchCjShipping(r,chosen,qty,cc);
+        if (!d.methods || !d.methods.length) {
           out.textContent = 'No verified carrier rate is available for this variation. Please confirm shipping on WhatsApp.';
           return;
         }
         out.innerHTML = d.methods.slice(0, 6).map((m, i) => `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(`${m.name}: ${USD.format(m.price)}, ${m.days} days`)}" data-amt="${esc(String(m.price))}" data-cur="USD"${i ? '' : ' checked'}> <span>${esc(neutral(m.name))}</span> <b>${USD.format(m.price)}</b> <small>${esc(m.days)} days</small></label>`).join('') + '<p class="sm-ship__note">Supplier shipping price in US$ for this quantity, before any customs duties.</p>';
-      } catch (e) { out.textContent = 'Shipping prices are not available right now. We will confirm shipping on WhatsApp.'; }
+      } catch (e) { out.textContent = e.quota?'Supplier shipping is temporarily at capacity. Confirm the delivery charge on WhatsApp.':'Shipping prices are not available right now. We will confirm shipping on WhatsApp.'; }
       finally { go.disabled = !chosen.v; }
     });
   }
