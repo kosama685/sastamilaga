@@ -104,26 +104,38 @@
     full.href=url;
     if(!dialog.open)dialog.showModal();
     const endpoint=String((window.SM_CONFIG||{}).cjShippingWorker||(window.SM_CONFIG||{}).cjImageWorker||'').replace(/\/$/,'');
-    if(!endpoint){status.textContent='Live product options are not configured. Open the product page to continue.';return;}
     try{
-      // CJ rate limits are intermittent. Retry only transient responses; never invent options.
+      const pid=encodeURIComponent(r[0]);
+      // The same-origin endpoint is /api/cj/variants; /api/cj/product exists
+      // only on the legacy supplier Worker. Never infer options from a product title.
+      const sources=['/api/cj/variants?pid='+pid];
+      if(endpoint)sources.push(endpoint+'/api/cj/product?pid='+pid);
       let result=null,lastError=null;
-      for(let attempt=0;attempt<3;attempt++){
-        if(attempt)await new Promise(resolve=>setTimeout(resolve,1600*(attempt+1)));
+      for(const source of sources){
         if(id!==activeRequest||!dialog.open)return;
         try{
-          const response=await Promise.race([fetch(endpoint+'/api/cj/product?pid='+encodeURIComponent(r[0]),{headers:{Accept:'application/json'},cache:'no-store'}),timeout(10000)]);
-          if(response.status===429||response.status>=500){lastError=new Error('Supplier temporarily busy: '+response.status);continue;}
-          if(!response.ok)throw new Error('Supplier returned HTTP '+response.status);
+          const response=await Promise.race([
+            fetch(source,{headers:{Accept:'application/json'},cache:'no-store'}),
+            timeout(10000)
+          ]);
+          if(response.status===429){
+            const err=new Error('Cloudflare Workers request limit reached');err.quota=true;throw err;
+          }
+          if(!response.ok)throw new Error('Supplier HTTP '+response.status);
           const data=await response.json();
-          if(!Array.isArray(data?.variants)||!data.variants.length)throw new Error('No verified supplier options available');
-          result=data;break;
-        }catch(e){lastError=e;if(!/timeout|network|fetch|busy|5\d\d/i.test(String(e?.message||e)))break;}
+          if(!Array.isArray(data?.variants))throw new Error('Invalid supplier options response');
+          const verified=data.variants.map(v=>({
+            ...v,
+            price:Number(v.price)>0?Number(v.price):
+              Number(v.indicativeRetailUsd)>0?Number(v.indicativeRetailUsd)/1.2:0
+          })).filter(v=>v&&v.vid&&v.sku&&v.price>0);
+          if(!verified.length)throw new Error('No verified supplier options available');
+          result={variants:verified};break;
+        }catch(e){lastError=e;if(e.quota)break;}
       }
       if(id!==activeRequest||!dialog.open)return;
       if(!result)throw (lastError||new Error('Supplier options unavailable'));
-      const variants=result.variants.filter(v=>v&&v.vid&&v.sku&&Number(v.price)>0);
-      if(!variants.length)throw new Error('No purchasable supplier option is currently available');
+      const variants=result.variants;
       selector.innerHTML='';
       variants.forEach((v,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=String(v.key||v.name||v.sku);selector.add(o);});
       qty.value='1';controls.hidden=false;status.textContent='Choose the exact supplier option before ordering.';
@@ -198,7 +210,17 @@
           console.warn('WooCommerce add-item failed',String(err?.message||err));
         }finally{confirm.disabled=false;confirm.removeAttribute('aria-busy');}
       };
-    }catch(e){if(id!==activeRequest)return;status.textContent='Live supplier options are unavailable right now. Open the product page or ask on WhatsApp. We will not add an unverified option to the cart.';controls.hidden=true;console.warn('CJ card option verification failed',String(e.message||e));}
+    }catch(e){
+      if(id!==activeRequest)return;
+      controls.hidden=true;
+      status.textContent=e.quota
+        ? 'Secure supplier options are temporarily at capacity. No order has been created. '
+        : 'Supplier options cannot be verified right now. No order has been created. ';
+      const help=document.createElement('a');
+      help.href=waHref(r[2],url);help.textContent='Confirm this item on WhatsApp';
+      help.target='_blank';help.rel='noopener noreferrer';status.appendChild(help);
+      console.warn('CJ card option verification failed',String(e.message||e));
+    }
   }
   // Capture above document-level recovery listeners that can swallow commerce clicks.
   window.addEventListener('click',e=>{
