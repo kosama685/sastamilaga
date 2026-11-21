@@ -6,6 +6,8 @@ on:
         description: "Write verified related image URLs into all static local product pages (manual only)"
         type: boolean
         default: false
+  schedule:
+    - cron: '11 2 * * *' # Daily 05:11 Asia/Riyadh, local static pages read-only
   push:
     paths:
       - 'tools/enrich-static-related-images.mjs'
