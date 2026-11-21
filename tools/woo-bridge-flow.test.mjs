@@ -70,3 +70,21 @@ test('guard-safe: no shopper-facing label the edge guard would swallow, and neve
   assert.doesNotMatch(src, /location\.href\s*=\s*'\/#\/checkout'/);
   assert.doesNotMatch(src.replace(/W\.localAdd = function[\s\S]*?\n  \};/, ''), /W\.localAdd\(/, 'buttons no longer use the browser-only cart');
 });
+
+test('Cloudflare Worker quota denial is not mistaken for a cart update', async () => {
+  const {W, calls} = load((url, opts, res) => res(429, null));
+  const result = await W.add('hhc-1', 1);
+  assert.equal(result.ok, false);
+  assert.equal(result.reason, 'worker_limit');
+  assert.equal(calls.filter(x => x.url.includes('cart/add-item')).length, 1);
+  const decision = W.decide(result, false, 'https://wa.me/923343582295?text=item');
+  assert.equal(decision.kind, 'refused');
+  assert.match(decision.message, /No item was added/);
+  assert.match(decision.link.href, /^https:\/\/wa.me\//);
+});
+test('non-nonce 403 is not blindly retried, avoiding repeated disallowed cart writes', async () => {
+  const {W, calls} = load((url, opts, res) => res(403, {code:'forbidden',message:'Access refused'}));
+  const result = await W.add('hhc-1', 1);
+  assert.equal(result.ok, false);
+  assert.equal(calls.filter(x => x.url.includes('cart/add-item')).length, 1);
+});
