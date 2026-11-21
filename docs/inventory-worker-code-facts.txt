@@ -81,20 +81,20 @@
 250:   const d=await bridge(env,'feed',{},request),ttl=Math.min(60,...d.items.map(x=>Math.max(0,300-Math.ceil((Date.now()-Date.parse(x.checked_at))/1000)))),items=d.items.map(x=>({id:x.id,item_group_id:x.pid,title:x.titl
 255:  if(/^\/sitemap-cj(?:-(?:products|categories|guides|images))?\.xml$/.test(path)||['/llms.txt','/llms-full.txt'].includes(path))try{return await discovery(env,request,path);}catch(e){return new Response('Live discove
 ## sasta-cj-storefront-v1  bytes=114639
-40: return `<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><meta name="description" content="${esc(desc
-79: if(request?.headers.get('X-Sasta-Healthcheck')==='1')headers.set('X-Sasta-Healthcheck','1');
-83: const length=Number(r.headers.get('content-length')||0);if(length>3_000_000)throw Object.assign(Error('Supplier response exceeds the rendering budget.'),{status:502,code:'oversize_response'});
-89:function pageResponse(html,{status=200,privatePage=false}={}){return new Response(html,{status,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':privatePage?'private,no-store':status===200?'public,max
-135: const productSchema={'@context':'https://schema.org','@type':'Product','@id':SITE+canonicalPath+'#product',name,description:description.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').slice(0,4000),image:imgs,sku:p.prod
-180: if(request.headers.get('X-CJ-Fragment')==='1')return Response.json({body:page.body,title:page.title,description:page.description,canonical:page.canonical,robots:page.robots},{headers:{'Cache-Control':'no-store','X-S
-185: if(/^\/sitemap-cj(?:-(?:products|categories|guides|images))?\.xml$/.test(path)){
-189:  return new Response(xml,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=60,s-maxage=180','X-Sasta-Renderer':'cj-ssr-v1','X-Content-Type-Options':'nosniff'}});
-193: return new Response(text,{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=60,s-maxage=180','X-Sasta-Renderer':'cj-ssr-v1','X-Content-Type-Options':'nosniff'}});
-231: const response=new Response(body,{headers:{'Content-Type':upstream.headers.get('content-type'),'Content-Length':String(size),'Cache-Control':'public,max-age=86400,s-maxage=604800','X-Content-Type-Options':'nosniff',
-247:  if(path==='/sitemap-global-qualified.xml'||path.startsWith('/sitemaps/global-qualified/'))return Response.redirect(SITE+'/sitemap-cj-products.xml',301);
-249:  if(['/feed-cj.json','/feed-cj.xml'].includes(path))try{
-250:   const d=await bridge(env,'feed',{},request),ttl=Math.min(60,...d.items.map(x=>Math.max(0,300-Math.ceil((Date.now()-Date.parse(x.checked_at))/1000)))),items=d.items.map(x=>({id:x.id,item_group_id:x.pid,title:x.titl
-255:  if(/^\/sitemap-cj(?:-(?:products|categories|guides|images))?\.xml$/.test(path)||['/llms.txt','/llms-full.txt'].includes(path))try{return await discovery(env,request,path);}catch(e){return new Response('Live discove
+21: if(request?.headers.get('X-Sasta-Healthcheck')==='1')headers.set('X-Sasta-Healthcheck','1');
+25: const length=Number(r.headers.get('content-length')||0);if(length>3_000_000)throw Object.assign(Error('Supplier response exceeds the rendering budget.'),{status:502,code:'oversize_response'});
+31:function pageResponse(html,{status=200,privatePage=false}={}){return new Response(html,{status,headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':privatePage?'private,no-store':status===200?'public,max
+77: const productSchema={'@context':'https://schema.org','@type':'Product','@id':SITE+canonicalPath+'#product',name,description:description.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').slice(0,4000),image:imgs,sku:p.produ
+122: if(request.headers.get('X-CJ-Fragment')==='1')return Response.json({body:page.body,title:page.title,description:page.description,canonical:page.canonical,robots:page.robots},{headers:{'Cache-Control':'no-store','X-S
+127: if(/^\/sitemap-cj(?:-(?:products|categories|guides|images))?\.xml$/.test(path)){
+131:  return new Response(xml,{headers:{'Content-Type':'application/xml; charset=utf-8','Cache-Control':'public,max-age=60,s-maxage=180','X-Sasta-Renderer':'cj-ssr-v1','X-Content-Type-Options':'nosniff'}});
+135: return new Response(text,{headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'public,max-age=60,s-maxage=180','X-Sasta-Renderer':'cj-ssr-v1','X-Content-Type-Options':'nosniff'}});
+173: const response=new Response(body,{headers:{'Content-Type':upstream.headers.get('content-type'),'Content-Length':String(size),'Cache-Control':'public,max-age=86400,s-maxage=604800','X-Content-Type-Options':'nosniff',
+189:  if(path==='/sitemap-global-qualified.xml'||path.startsWith('/sitemaps/global-qualified/'))return Response.redirect(SITE+'/sitemap-cj-products.xml',301);
+191:  if(['/feed-cj.json','/feed-cj.xml'].includes(path))try{
+192:   const d=await bridge(env,'feed',{},request),ttl=Math.min(60,...d.items.map(x=>Math.max(0,300-Math.ceil((Date.now()-Date.parse(x.checked_at))/1000)))),items=d.items.map(x=>({id:x.id,item_group_id:x.pid,title:x.titl
+197:  if(/^\/sitemap-cj(?:-(?:products|categories|guides|images))?\.xml$/.test(path)||['/llms.txt','/llms-full.txt'].includes(path))try{return await discovery(env,request,path);}catch(e){return new Response('Live discove
+257: return `<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><meta name="description" content="${esc(des
 ## sasta-cj-variants-shipping  bytes=12730
 15:  if(Number(r.headers.get('content-length')||0)>MAX_JSON_BYTES)throw new Error('provider_payload_too_large');
 33:const CORS_ORIGINS=new Set(['https://sastamilaga.com','https://www.sastamilaga.com','https://kosama685.github.io']);
@@ -180,10 +180,16 @@
 51:  headers.delete('content-length');headers.delete('etag');
 52:  headers.set('x-sasta-semantic-seo','verified-category-v1');
 ## sasta-global-legacy-canonical-v1  bytes=2514
-## sasta-global-legacy-resilient-v2  bytes=3696
+## sasta-global-legacy-resilient-v2  bytes=3724
 17: const url='https://kosama685.github.io/sastamilaga/data/cj/lookup/'+bucket(id).toString(16).padStart(3,'0')+'.json';
 18: const r=await fetch(url,{headers:{accept:'application/json'},signal:AbortSignal.timeout(8000),cf:{cacheEverything:true,cacheTtl:300}});
 19: if(!r.ok||Number(r.headers.get('content-length')||0)>350000)throw Error('snapshot_read_unavailable');
+## sasta-global-pdp-v6  bytes=11251
+8:var PAGES = "https://kosama685.github.io/sastamilaga";
+22:  const r = await fetcher(url, { cf: { cacheTtl: ttl, cacheEverything: true } });
+29:  const r = await fetcher(url, { cf: { cacheTtl: ttl, cacheEverything: true } });
+110:  return new Response(template.replace("<!--GPDP:HEAD-->", head).replace("<!--GPDP:MAIN-->", main), { status: 404, headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=60", "X-Sast
+142:    "X-Sasta-Renderer": "global-pdp-v6",
 ## sasta-global-product-design-preview-v6  bytes=28994
 19:const SNAPSHOT_ORIGIN='https://kosama685.github.io/sastamilaga';
 25: const r=await fetch(url,{headers:{'accept':'application/json'},signal:AbortSignal.timeout(8000),cf:{cacheEverything:true,cacheTtl:300}});
@@ -258,19 +264,31 @@
 19: const html='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Sasta Milaga — Temporary storefront backup</title><style>body{margin:0
 21: const headers={"content-type":"text/html; charset=utf-8","cache-control":"no-store","x-robots-tag":"noindex, nofollow","retry-after":"60","x-sasta-failover":"github-readonly","x-sasta-country":country};
 34:  if(safe){const h=new Headers(response.headers);h.set("x-sasta-country",country);return new Response(response.body,{status:response.status,statusText:response.statusText,headers:h});}
+## sasta-pages-sitemap-dedupe-v1  bytes=2857
+5: * One-path crawl hygiene for /sitemap-pages.xml.
+10:const PATH='/sitemap-pages.xml';
+11:const MAX_BYTES=300000;
+14: if(typeof xml!=='string'||xml.length<60||xml.length>MAX_BYTES||
+43:   const len=Number(upstream.headers.get('content-length')||0);
+44:   if(len>MAX_BYTES)return reply('Sitemap too large',503,method);
+46:   return reply(result.clean,200,method,{'X-Sasta-Sitemap-Source':'canonical-sync-dedup-v1',
+47:     'X-Sasta-Pages-Listed':String(result.urls),
+48:     '***':String(result.removed)});
 ## sasta-public-github-recovery-v1  bytes=1414
 16:        headers.set('X-Sasta-Recovery',shop?'github-global-categories':'github-home');
 ## sasta-publisher-media  bytes=26759
 141:    headers.set('accept-ranges','bytes');headers.set('content-length',String(ranged?object.range.length:object.size));
 147:   if(Number(request.headers.get('content-length')||0)>max)return new Response('Too large',{status:413});
-## sasta-qualified-sitemaps-quota-v2  bytes=6359
-12: *   /sitemap-global-qualified.xml
-19:const INDEX_PATH = '/sitemap-global-qualified.xml';
-20:const CHILD_PATH = /^\/sitemaps\/global-qualified\/([1-9][0-9]{0,3})\.xml$/;
-64:  XML_DECL+'<sitemapindex xmlns="'+XML_NS+'"><sitemap><loc>'+ORIGIN+'/sitemaps/global-qualified/1.xml</loc></sitemap></sitemapindex>':
-68: r.headers.set('X-Sasta-Sitemap-Source','last-reviewed-2026-11-14');
-69: r.headers.set('X-Sasta-Review-At',LAST_REVIEWED_UTC);
-96:          parts.push('<sitemap><loc>'+ORIGIN+'/sitemaps/global-qualified/'+i+'.xml</loc></sitemap>');
+## sasta-qualified-sitemaps-quota-v2  bytes=7473
+15: *   /sitemap-global-qualified.xml
+22:const INDEX_PATH = '/sitemap-global-qualified.xml';
+23:const CHILD_PATH = /^\/sitemaps\/global-qualified\/([1-9][0-9]{0,3})\.xml$/;
+58:  r.headers.set('X-Sasta-Sitemap-Source','pdp-noindex-safe-hold');
+59:  r.headers.set('X-Sasta-Indexable-Product-Count','0');
+80:  XML_DECL+'<sitemapindex xmlns="'+XML_NS+'"><sitemap><loc>'+ORIGIN+'/sitemaps/global-qualified/1.xml</loc></sitemap></sitemapindex>':
+84: r.headers.set('X-Sasta-Sitemap-Source','last-reviewed-2026-11-14');
+85: r.headers.set('X-Sasta-Review-At',LAST_REVIEWED_UTC);
+115:          parts.push('<sitemap><loc>'+ORIGIN+'/sitemaps/global-qualified/'+i+'.xml</loc></sitemap>');
 ## sasta-robots-policy-v1  bytes=1701
 5:var POLICY = "# Sasta Milaga \u2014 canonical crawl policy\n# The GitHub Pages mirror uses https://sastamilaga.com as canonical.\n# robots.txt controls crawling, NOT security, login, or guaranteed indexing.\nUser-agent
 16:      "X-Sasta-Robots-Source": "github-main"
@@ -353,11 +371,12 @@
 19:    const allowed = (env.ALLOWED_ORIGINS || "https://kosama685.github.io").split(",").map((s) => s.trim());
 70:  const r = await fetch(`${env.SITE_ORIGIN}/data/prices.json`, { cf: { cacheTtl: 600 } });
 81:  const r = await fetch("https://open.er-api.com/v6/latest/PKR", { cf: { cacheTtl: 3600 } });
-## sastamilaga-redirects  bytes=5401
+## sastamilaga-redirects  bytes=5997
 12:  const r = await fetch(`${env.SITE_ORIGIN}/data/redirects/${name}.json`, { cf: { cacheTtl: 3600, cacheEverything: true } });
 43:      const r = await fetch(`${env.SITE_ORIGIN}${q}/`, { cf: { cacheTtl: 300, cacheEverything: true } });
 54:      if (q === "/blog/sitemap.xml")
 55:        return go("/sitemap-blog.xml");
+108:        const r = await fetch(`${env.SITE_ORIGIN}${q}/`, { cf: { cacheTtl: 300, cacheEverything: true } });
 ## sastamilaga-redirects-seo-preview  bytes=10376
 10: const missing=(code,msg)=>new Response('<!doctype html><html><head><meta name="robots" content="noindex"><title>'+esc(msg)+'</title></head><body><h1>'+esc(msg)+'</h1><a href="/">Home</a></body></html>',{status:code,h
 13:  const r=await fetch(url,{redirect:'manual',headers:{Accept:'application/json'},signal:AbortSignal.timeout(7500),cf:{cacheEverything:true,cacheTtl:90}});
