@@ -1,0 +1,50 @@
+name: Cloudflare Error 1027 public-route guard
+on:
+  # Restore changed public route fail modes without modifying DNS, scripts, or payment routes.
+  schedule:
+    - cron: '11 */6 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/repair-cloudflare-public-routes.mjs'
+      - 'tools/repair-cloudflare-public-routes.test.mjs'
+      - '.github/workflows/cloudflare-1027-availability-guard.yml'
+permissions:
+  contents: read
+concurrency:
+  group: cloudflare-1027-public-route-guard
+  cancel-in-progress: false
+jobs:
+  public-route-availability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Verify protected routes are never bypassed
+        run: node --test tools/repair-cloudflare-public-routes.test.mjs
+      - name: Identify verified zone without leaking credentials
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Missing Cloudflare token"; exit 1; }
+          ZONE=$(curl -fsS --max-time 20 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" 'https://api.cloudflare.com/client/v4/zones?name=sastamilaga.com' | jq -r '.result[0].id // empty')
+          test -n "$ZONE" || { echo "::error::Zone not accessible"; exit 1; }
+          echo "CLOUDFLARE_ZONE_ID=$ZONE" >> "$GITHUB_ENV"
+      - name: Repair public Worker route mode while protecting account and API routes
+        run: node tools/repair-cloudflare-public-routes.mjs --fix
+      - name: Confirm public shop and homepage are not returning Error 1027
+        run: |
+          for url in 'https://sastamilaga.com/' 'https://sastamilaga.com/shop/'; do
+            f=$(mktemp)
+            status=$(curl -L --max-time 35 --connect-timeout 15 --retry 2 --retry-delay 2 -sS -o "$f" -w '%{http_code}' "$url") || status=000
+            if [ "$status" != 200 ] || grep -qi 'Error 1027' "$f"; then
+              echo "::error::Availability check failed: $url HTTP $status"; rm -f "$f"; exit 1
+            fi
+            echo "PASS $url HTTP $status"
+            rm -f "$f"
+          done
