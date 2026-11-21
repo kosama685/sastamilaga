@@ -1,0 +1,135 @@
+# Global product pages (/global-shop/p/*) in the same design as the local product pages, with the real cart.
+# deploy: unit tests -> wait for GitHub Pages to serve the template/JS/CSS -> deploy Worker -> smoke test on workers.dev
+#         -> point the sastamilaga.com/global-shop/p/* route at it (previous script recorded) -> live smoke test -> automatic revert on failure.
+# rollback: point the route back at `previous_script` (default: the emergency inquiry-only Worker of 2026-11-14).
+name: Global product page Worker
+
+on:
+  push:
+    branches: [main]
+    paths: ["workers/global-pdp/**", ".github/workflows/global-pdp.yml"]
+  workflow_dispatch:
+    inputs:
+      action:
+        type: choice
+        options: [deploy, rollback]
+        default: deploy
+      previous_script:
+        description: Worker to restore on rollback
+        default: sasta-global-product-quota-resilient-v5
+
+concurrency:
+  group: global-pdp-route
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      SCRIPT: sasta-global-pdp-v6
+      PRODUCT_PATH: /global-shop/p/1988880782439141377/zero-gravity-chair-26-zero-gravity-recliner-lounge-chair-indoor-outdoor/
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Unit tests
+        run: node --test workers/global-pdp/worker.test.mjs
+
+      - name: Check Cloudflare secrets
+        id: chk
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then echo "::error::Cloudflare secrets are missing"; exit 1; fi
+          ZID=$(curl -sS -m 60 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/zones?name=sastamilaga.com" | jq -r '.result[0].id // empty')
+          [ -n "$ZID" ] || { echo "::error::zone sastamilaga.com not visible to this token"; exit 1; }
+          echo "zid=$ZID" >> "$GITHUB_OUTPUT"
+
+      - name: Rollback route
+        if: github.event_name == 'workflow_dispatch' && inputs.action == 'rollback'
+        env:
+          ZID: ${{ steps.chk.outputs.zid }}
+          PREV: ${{ inputs.previous_script }}
+        run: |
+          ROUTES=$(curl -sS -m 60 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/zones/$ZID/workers/routes")
+          echo "$ROUTES" | jq -r '.result[] | select(.pattern | test("global-shop/p/")) | "\(.id) \(.pattern) -> \(.script)"'
+          for RID in $(echo "$ROUTES" | jq -r '.result[] | select(.pattern | test("global-shop/p/")) | .id'); do
+            PAT=$(echo "$ROUTES" | jq -r --arg id "$RID" '.result[] | select(.id==$id) | .pattern')
+            curl -sS -m 60 -X PUT -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json" \
+              --data "$(jq -n --arg p "$PAT" --arg s "$PREV" '{pattern:$p,script:$s}')" "https://api.cloudflare.com/client/v4/zones/$ZID/workers/routes/$RID" | jq -r '"rollback \(.success) \(.errors|tostring)"'
+          done
+
+      - name: Wait for GitHub Pages to serve the template, script and stylesheet
+        if: github.event_name == 'push' || inputs.action == 'deploy'
+        run: |
+          for i in $(seq 1 40); do
+            T=$(curl -sS -m 30 "https://kosama685.github.io/sastamilaga/assets/templates/global-pdp.html?cb=$RANDOM" || true)
+            J=$(curl -sS -m 30 -o /dev/null -w "%{http_code}" "https://kosama685.github.io/sastamilaga/assets/js/global-pdp.js?cb=$RANDOM" || true)
+            C=$(curl -sS -m 30 -o /dev/null -w "%{http_code}" "https://kosama685.github.io/sastamilaga/assets/css/global-pdp.css?cb=$RANDOM" || true)
+            if echo "$T" | grep -q "GPDP:MAIN" && [ "$J" = "200" ] && [ "$C" = "200" ]; then echo "GitHub Pages is serving the new files"; exit 0; fi
+            echo "waiting for GitHub Pages ($i/40) template=$(echo "$T" | grep -c GPDP:MAIN) js=$J css=$C"; sleep 15
+          done
+          echo "::error::GitHub Pages did not publish the template/JS/CSS in time"; exit 1
+
+      - name: Deploy Worker (not routed yet)
+        if: github.event_name == 'push' || inputs.action == 'deploy'
+        working-directory: workers/global-pdp
+        run: npx --yes wrangler@3 deploy
+
+      - name: Smoke test on workers.dev
+        if: github.event_name == 'push' || inputs.action == 'deploy'
+        run: |
+          SUB=$(curl -sS -m 60 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain" | jq -r '.result.subdomain // empty')
+          if [ -z "$SUB" ]; then echo "::warning::workers.dev subdomain not available; relying on the live smoke test with automatic revert"; exit 0; fi
+          U="https://$SCRIPT.$SUB.workers.dev$PRODUCT_PATH"
+          for i in $(seq 1 12); do
+            CODE=$(curl -sS -m 60 -o page.html -w "%{http_code}" "$U?cb=$RANDOM" || true)
+            if [ "$CODE" = "200" ] && grep -q 'data-gpdp-add' page.html && grep -q 'id="sm-chrome-header"' page.html && ! grep -q 'GPDP:MAIN' page.html; then echo "workers.dev OK"; break; fi
+            echo "workers.dev attempt $i: HTTP $CODE"; sleep 10; [ "$i" = "12" ] && { echo "::error::workers.dev smoke test failed"; exit 1; }
+          done
+          NF=$(curl -sS -m 60 -o /dev/null -w "%{http_code}" "https://$SCRIPT.$SUB.workers.dev/global-shop/p/0000000000000000001/x/")
+          [ "$NF" = "404" ] || { echo "::error::unknown product returned $NF, expected 404"; exit 1; }
+
+      - name: Point sastamilaga.com/global-shop/p/* at the new Worker, live check, revert on failure
+        if: github.event_name == 'push' || inputs.action == 'deploy'
+        env:
+          ZID: ${{ steps.chk.outputs.zid }}
+        run: |
+          API="https://api.cloudflare.com/client/v4/zones/$ZID/workers/routes"
+          ROUTES=$(curl -sS -m 60 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$API")
+          echo "Routes touching /global-shop/ before the switch:"; echo "$ROUTES" | jq -r '.result[] | select(.pattern | test("global-shop")) | "  \(.pattern) -> \(.script)"'
+          IDS=$(echo "$ROUTES" | jq -r '.result[] | select(.pattern | test("global-shop/p/")) | .id')
+          [ -n "$IDS" ] || { echo "::error::no route for /global-shop/p/* found; nothing switched"; exit 1; }
+          : > previous.txt
+          for RID in $IDS; do
+            PAT=$(echo "$ROUTES" | jq -r --arg id "$RID" '.result[] | select(.id==$id) | .pattern'); OLD=$(echo "$ROUTES" | jq -r --arg id "$RID" '.result[] | select(.id==$id) | .script')
+            echo "$RID|$PAT|$OLD" >> previous.txt
+            [ "$OLD" = "$SCRIPT" ] && { echo "$PAT already on $SCRIPT"; continue; }
+            curl -sS -m 60 -X PUT -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json" \
+              --data "$(jq -n --arg p "$PAT" --arg s "$SCRIPT" '{pattern:$p,script:$s}')" "$API/$RID" | jq -r '"switch '"$PAT"': \(.success) \(.errors|tostring)"'
+          done
+          echo "Previous scripts (for rollback):"; cat previous.txt
+          ok=0
+          for i in $(seq 1 12); do
+            sleep 10
+            CODE=$(curl -sS -m 60 -D headers.txt -o live.html -w "%{http_code}" "https://sastamilaga.com$PRODUCT_PATH?cb=$RANDOM" || true)
+            if [ "$CODE" = "200" ] && grep -qi '^x-sasta-renderer: global-pdp-v6' headers.txt && grep -q 'data-gpdp-add' live.html; then ok=1; break; fi
+            echo "live attempt $i: HTTP $CODE renderer=$(grep -i '^x-sasta-renderer' headers.txt | tr -d '\r')"
+          done
+          if [ "$ok" = "1" ]; then
+            NF=$(curl -sS -m 60 -o /dev/null -w "%{http_code}" "https://sastamilaga.com/global-shop/p/0000000000000000001/x/?cb=$RANDOM")
+            [ "$NF" = "404" ] || { echo "::warning::unknown product returned $NF on the live site"; }
+            echo "LIVE: /global-shop/p/* is served by $SCRIPT"; exit 0
+          fi
+          echo "::error::live check failed; reverting the route"
+          while IFS='|' read -r RID PAT OLD; do
+            curl -sS -m 60 -X PUT -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json" \
+              --data "$(jq -n --arg p "$PAT" --arg s "$OLD" '{pattern:$p,script:$s}')" "$API/$RID" | jq -r '"revert '"$PAT"' -> '"$OLD"': \(.success)"'
+          done < previous.txt
+          exit 1

@@ -1,0 +1,6 @@
+name = "sasta-global-pdp-v6"
+main = "worker.js"
+compatibility_date = "2026-11-01"
+# No routes here: .github/workflows/global-pdp.yml smoke-tests the workers.dev copy first, then points the existing
+# sastamilaga.com/global-shop/p/* route at this script, and switches it back automatically if the live check fails.
+workers_dev = true
