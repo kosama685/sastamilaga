@@ -13,8 +13,14 @@ on:
       - 'data/cj/lookup/**'
       - '.github/workflows/cj-category-seo-evidence.yml'
   workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * 0' # Weekly Sunday 06:17 Asia/Riyadh; GitHub Actions uses UTC
 permissions:
   contents: read
+  issues: write
+concurrency:
+  group: cj-complete-category-export
+  cancel-in-progress: false
 jobs:
   export:
     runs-on: ubuntu-latest
@@ -26,6 +32,23 @@ jobs:
           node-version: '24'
       - name: Unit test folder/category handling and missing-data quarantine
         run: node --test tools/cj-category-product-evidence.test.mjs
+      - name: Verify complete Git category index and source totals
+        run: |
+          node --input-type=module - <<'NODE'
+          import fs from 'node:fs';
+          const raw=fs.readFileSync('data/cj/manifest.js','utf8');
+          const m=JSON.parse(raw.slice(raw.indexOf('{'),raw.lastIndexOf('}')+1));
+          const meta=JSON.parse(fs.readFileSync('data/cj/lookup/manifest.json','utf8'));
+          const paths=fs.readdirSync('data/cj/c').filter(f=>f.endsWith('.js'));
+          const declared=new Set(m.cats.map(c=>c.s+'.js'));
+          const doc=fs.readFileSync('docs/CJ_COMPLETE_PRODUCT_DIRECTORY.md','utf8');
+          const unique=new Set(m.cats.map(c=>c.s));
+          const total=m.cats.reduce((sum,c)=>sum+c.c,0);
+          if(m.cats.length!==572||paths.length!==572||unique.size!==572||total!==meta.unique_ids||m.total!==meta.unique_ids||meta.shards!==1024||meta.duplicates!==0||meta.allow_indexing!==false)throw Error('Category/source count mismatch');
+          for(const f of paths)if(!declared.has(f)||!doc.includes('../data/cj/c/'+f))throw Error('Unlisted or undocumented category: '+f);
+          for(const f of declared)if(!paths.includes(f))throw Error('Missing category file: '+f);
+          console.log('Validated all '+paths.length+' Git category files and '+total+' supplier IDs');
+          NODE
       - name: Export all original CJ IDs into category folder paths inside an archive
         run: node tools/export-cj-product-evidence.mjs
       - name: Verify archive integrity and exact product count
@@ -35,7 +58,7 @@ jobs:
           expected=$(node -e "console.log(JSON.parse(require('fs').readFileSync('data/cj/lookup/manifest.json')).unique_ids)")
           echo "Verified archive entries: $count of $expected"
           test "$count" -eq "$expected"
-          node -e "const fs=require('fs');const a=JSON.parse(fs.readFileSync('artifacts/cj-seo-evidence/completeness.json')); if(a.perProductFilesInsideTar!==a.uniqueProductIds||a.duplicates!==0||a.indexEligibleFromSource!==0)process.exit(1)"
+          node -e "const fs=require('fs');const a=JSON.parse(fs.readFileSync('artifacts/cj-seo-evidence/completeness.json')); if(a.perProductFilesInsideTar!==a.uniqueProductIds||a.sourceRecords!==451812||a.categoryDirectories!==572||a.duplicates!==0||a.indexEligibleFromSource!==0)process.exit(1)"
       - name: Archive private product evidence, not live markup or sitemaps
         uses: actions/upload-artifact@v7
         with:
@@ -46,3 +69,14 @@ jobs:
             artifacts/cj-seo-evidence/category-index.json
             artifacts/cj-seo-evidence/completeness.json
           retention-days: 30
+      - name: Open or update catalog completeness alert on failure
+        if: failure() && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="CJ all-products category export failed"
+          existing=$(gh issue list --state open --limit 100 --json title,number --jq '.[] | select(.title=="CJ all-products category export failed") | .number' | head -1)
+          body="Source coverage, folder listing or 451,812-file archive failed verification. Review GitHub Actions logs: $RUN_URL. This check does not assert Google indexing or real stock."
+          if [ -n "$existing" ]; then gh issue comment "$existing" --body "$body"; else gh issue create --title "$title" --body "$body"; fi
