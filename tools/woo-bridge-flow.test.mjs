@@ -26,7 +26,7 @@ function load(handler) {
 }
 
 test('a Pakistan-session add goes to the real WooCommerce cart and sends the chosen variation', async () => {
-  const {W, calls} = load((url, o, res) => res(201, {items_count: 1}));
+  const {W, calls} = load((url, o, res) => res(201, {items_count: 1, items: []}));
   const r = await W.add('hhc-var', 2, [{attribute: 'pa_color', value: 'black'}]);
   assert.equal(r.ok, true);
   const add = calls.find(c => c.url.endsWith('cart/add-item'));
@@ -35,7 +35,7 @@ test('a Pakistan-session add goes to the real WooCommerce cart and sends the cho
 });
 test('an expired nonce is refreshed once and the add is retried', async () => {
   let n = 0;
-  const {W, calls} = load((url, o, res) => (++n === 1 ? res(403, {code: 'woocommerce_rest_invalid_nonce'}) : res(201, {items_count: 1})));
+  const {W, calls} = load((url, o, res) => (++n === 1 ? res(403, {code: 'woocommerce_rest_invalid_nonce'}) : res(201, {items_count: 1, items: []})));
   assert.equal((await W.add('hhc-1', 1)).ok, true);
   assert.equal(calls.filter(c => c.url.endsWith('cart/add-item')).length, 2);
 });
@@ -87,4 +87,11 @@ test('non-nonce 403 is not blindly retried, avoiding repeated disallowed cart wr
   const result = await W.add('hhc-1', 1);
   assert.equal(result.ok, false);
   assert.equal(calls.filter(x => x.url.includes('cart/add-item')).length, 1);
+});
+
+test('an HTML fallback returning HTTP 200 is never counted as a WooCommerce cart update', async () => {
+  const {W} = load((url, opts, res) => res(200, null));
+  const result = await W.add('hhc-1', 1);
+  assert.equal(result.ok, false);
+  assert.equal(result.reason, 'service_unavailable');
 });
