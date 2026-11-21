@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-21T10:47:22Z",
+  "checked_at": "2026-11-21T15:43:49Z",
   "token": {
     "success": true,
     "status": "active"
@@ -115,7 +115,7 @@
       },
       {
         "id": "sasta-canonical-sync-v11",
-        "modified_on": "2026-11-14T22:00:27.145236Z",
+        "modified_on": "2026-11-21T15:39:50.312719Z",
         "created_on": "2026-11-10T03:24:18.728466Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-09"
@@ -479,28 +479,28 @@
       },
       {
         "id": "sastamilaga-cj-shipping",
-        "modified_on": "2026-11-21T10:46:16.238488Z",
+        "modified_on": "2026-11-21T15:41:12.038545Z",
         "created_on": "2026-11-11T03:54:36.589467Z",
         "usage_model": "standard",
         "compatibility_date": "2025-07-18"
       },
       {
         "id": "sastamilaga-global-pages",
-        "modified_on": "2026-11-21T10:46:22.668236Z",
+        "modified_on": "2026-11-21T15:41:19.743679Z",
         "created_on": "2026-11-11T03:54:44.151298Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-paypal",
-        "modified_on": "2026-11-21T10:46:20.140786Z",
+        "modified_on": "2026-11-21T15:41:16.740884Z",
         "created_on": "2026-11-11T03:54:41.174076Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-redirects",
-        "modified_on": "2026-11-21T10:46:26.648659Z",
+        "modified_on": "2026-11-21T15:41:23.94712Z",
         "created_on": "2026-11-11T05:14:22.59741Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
@@ -947,6 +947,7 @@
       "oembed/1.0",
       "sm-cj/v1",
       "sm-track/v1",
+      "sm-travel/v1",
       "sm/v1",
       "giw/v1",
       "smts/v1",
@@ -954,7 +955,6 @@
       "rankmath/v1",
       "rankmath/v1/setupWizard",
       "rankmath/v1/an",
-      "sm-travel/v1",
       "smg/v1",
       "sm-publisher/v1",
       "sm-wa/v1",
