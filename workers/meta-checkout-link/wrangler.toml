@@ -1,0 +1,11 @@
+# REVIEW ONLY — not deployed and no routes attached until the owner approves.
+# After approval, deploy this service and attach the more-specific route
+# sastamilaga.com/checkout-link* to bypass the existing static fallback.
+name = "sasta-meta-checkout-link"
+main = "worker.mjs"
+compatibility_date = "2026-11-20"
+workers_dev = false
+
+[[services]]
+binding = "PRIMARY"
+service = "sasta-wp-cron-autopilot"
