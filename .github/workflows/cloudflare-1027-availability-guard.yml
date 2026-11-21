@@ -39,12 +39,21 @@ jobs:
         run: node tools/repair-cloudflare-public-routes.mjs --fix
       - name: Confirm public shop and homepage are not returning Error 1027
         run: |
-          for url in 'https://sastamilaga.com/' 'https://sastamilaga.com/shop/'; do
+          failed=0
+          for url in 'https://sastamilaga.com/shop/' 'https://sastamilaga.com/'; do
             f=$(mktemp)
-            status=$(curl -L --max-time 35 --connect-timeout 15 --retry 2 --retry-delay 2 -sS -o "$f" -w '%{http_code}' "$url") || status=000
+            h=$(mktemp)
+            status=$(curl -L --max-time 35 --connect-timeout 15 --retry 1 --retry-delay 2 -sS -D "$h" -o "$f" -w '%{http_code}' "$url") || status=000
             if [ "$status" != 200 ] || grep -qi 'Error 1027' "$f"; then
-              echo "::error::Availability check failed: $url HTTP $status"; rm -f "$f"; exit 1
+              echo "::error::Availability check failed: $url HTTP $status"
+              grep -iE '^(HTTP/|server:|cf-ray:|cf-cache-status:|x-sasta-|retry-after:|content-type:)' "$h" | tail -18 || true
+              # Only a short printable snippet from public error HTML, no request headers or secrets.
+              head -c 220 "$f" | tr '\n' ' ' || true
+              echo
+              failed=1
+            else
+              echo "PASS $url HTTP $status"
             fi
-            echo "PASS $url HTTP $status"
-            rm -f "$f"
+            rm -f "$h" "$f"
           done
+          exit "$failed"
