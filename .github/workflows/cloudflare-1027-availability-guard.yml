@@ -37,6 +37,20 @@ jobs:
           echo "CLOUDFLARE_ZONE_ID=$ZONE" >> "$GITHUB_ENV"
       - name: Repair public Worker route mode while protecting account and API routes
         run: node tools/repair-cloudflare-public-routes.mjs --fix
+      - name: Verify independent GitHub Pages storefront mirror
+        run: |
+          for url in 'https://kosama685.github.io/sastamilaga/' 'https://kosama685.github.io/sastamilaga/shop/'; do
+            body=$(mktemp)
+            status=$(curl -LsS --max-time 35 -o "$body" -w '%{http_code}' "$url") || status=000
+            echo "Mirror $url HTTP $status; body bytes $(wc -c < "$body")"
+            if [ "$status" = 200 ] && grep -qi 'Sasta Milaga' "$body"; then
+              echo "PASS: independent public mirror contains Sasta Milaga branding"
+            else
+              echo "::warning::Mirror unavailable or does not match Sasta Milaga"
+              grep -io -m 1 '<title>[^<]*</title>' "$body" || true
+            fi
+            rm -f "$body"
+          done
       - name: Confirm public shop and homepage are not returning Error 1027
         run: |
           failed=0
