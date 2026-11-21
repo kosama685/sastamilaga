@@ -1,99 +1,75 @@
-name: Cloudflare Error 1027 public-route guard
+name: GitHub-primary storefront and WooCommerce health guard
 on:
-  # Check public availability every 15 minutes; never modify DNS, payment, or order routes.
   schedule:
     - cron: '*/15 * * * *'
   workflow_dispatch:
   push:
     branches: [main]
     paths:
-      - 'tools/repair-cloudflare-public-routes.mjs'
-      - 'tools/repair-cloudflare-public-routes.test.mjs'
-      - '.github/workflows/cloudflare-1027-availability-guard.yml'
+      - tools/github-primary-route-audit.mjs
+      - .github/workflows/cloudflare-1027-availability-guard.yml
 permissions:
   contents: read
 concurrency:
-  group: cloudflare-1027-public-route-guard
+  group: sasta-github-primary-availability
   cancel-in-progress: false
 jobs:
-  public-route-availability:
+  public-storefront:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 6
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
-        with:
-          node-version: '24'
-          package-manager-cache: false
-      - name: Verify protected routes are never bypassed
-        run: node --test tools/repair-cloudflare-public-routes.test.mjs
-      - name: Identify verified zone without leaking credentials
+        with: {node-version: '24'}
+      - name: Check DNS, GitHub primary and isolated Namecheap commerce routes
         run: |
-          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Missing Cloudflare token"; exit 1; }
-          ZONE=$(curl -fsS --max-time 20 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" 'https://api.cloudflare.com/client/v4/zones?name=sastamilaga.com' | jq -r '.result[0].id // empty')
-          test -n "$ZONE" || { echo "::error::Zone not accessible"; exit 1; }
-          echo "CLOUDFLARE_ZONE_ID=$ZONE" >> "$GITHUB_ENV"
-      - name: Repair public Worker route mode while protecting account and API routes
-        run: node tools/repair-cloudflare-public-routes.mjs --fix
-      - name: Verify independent GitHub Pages storefront mirror
+          node --check tools/github-primary-route-audit.mjs
+          node tools/github-primary-route-audit.mjs
+      - name: Probe live storefront on canonical HTTPS domain
+        shell: bash
         run: |
-          for url in 'https://kosama685.github.io/sastamilaga/' 'https://kosama685.github.io/sastamilaga/shop/'; do
-            body=$(mktemp)
-            status=$(curl -LsS --max-time 35 -o "$body" -w '%{http_code}' "$url") || status=000
-            echo "Mirror $url HTTP $status; body bytes $(wc -c < "$body")"
-            if [ "$status" = 200 ] && grep -qi 'Sasta Milaga' "$body"; then
-              echo "PASS: independent public mirror contains Sasta Milaga branding"
-            else
-              echo "::warning::Mirror unavailable or does not match Sasta Milaga"
-              grep -io -m 1 '<title>[^<]*</title>' "$body" || true
+          set -euo pipefail
+          for path in / /shop/ /robots.txt /sitemap.xml /assets/theme/static-bundle.css; do
+            h=$(mktemp); b=$(mktemp)
+            code=$(curl -sS --max-time 27 --connect-timeout 10 --max-redirs 0 -D "$h" -o "$b" -w '%{http_code}' "https://sastamilaga.com$path") || code=000
+            echo "$path HTTP $code"
+            if [ "$code" != 200 ] || grep -qi '^location:' "$h"; then
+              echo "::error::Public Github-primary page unavailable: $path HTTP $code"
+              exit 1
             fi
-            rm -f "$body"
+            case "$path" in
+              /|/shop/) grep -qi 'Sasta Milaga' "$b" ;;
+              /robots.txt) grep -qi 'User-agent:' "$b" ;;
+              /sitemap.xml) grep -q '<sitemapindex\|<urlset' "$b" ;;
+              /assets/theme/static-bundle.css) test "$(wc -c < "$b")" -gt 2000 ;;
+            esac || { echo "::error::Invalid static response for $path"; exit 1; }
+            rm -f "$h" "$b"
           done
-      - name: Confirm public shop and homepage are not returning Error 1027
+  private-commerce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout and WooCommerce must be real, never a static imitation
+        shell: bash
         run: |
           failed=0
-          for url in 'https://sastamilaga.com/shop/' 'https://sastamilaga.com/'; do
-            f=$(mktemp)
-            h=$(mktemp)
-            result=$(curl -L --max-redirs 3 --max-time 35 --connect-timeout 15 --retry 1 --retry-delay 2 -sS -D "$h" -o "$f" -w '%{http_code} %{url_effective}' "$url") || result="000 $url"
-            status=${result%% *}
-            final_url=${result#* }
-            if [ "$status" != 200 ] ||
-               [[ "$final_url" != "$url" ]] ||
-               grep -Eqi 'Error 1027|<title>Database Error</title>|HTTP ERROR 500|Service Unavailable' "$f" ||
-               ! grep -qi 'Sasta Milaga' "$f" ||
-               { [ "$url" = 'https://sastamilaga.com/' ] && ! grep -qi '^x-sasta-recovery: github-readonly' "$h"; }; then
-              echo "::error::Availability or same-domain check failed: $url HTTP $status (final: $final_url)"
-              grep -iE '^(HTTP/|server:|cf-ray:|cf-cache-status:|x-sasta-|retry-after:|content-type:)' "$h" | tail -18 || true
-              # Only a short printable snippet from public error HTML, no request headers or secrets.
-              head -c 220 "$f" | tr '\n' ' ' || true
-              echo
-              failed=1
+          for path in /cart/ /checkout/ /my-account/ /wp-json/; do
+            b=$(mktemp); h=$(mktemp)
+            code=$(curl -sS --max-time 22 --connect-timeout 8 --max-redirs 0 -D "$h" -o "$b" -w '%{http_code}' "https://sastamilaga.com$path") || code=000
+            marker=$(grep -i '^x-sasta-commerce-origin:' "$h" | tr -d '\r' | tail -1 || true)
+            echo "$path HTTP $code ${marker:-no backend marker}"
+            if [ "$code" = 200 ] && grep -qi 'x-sasta-commerce-origin: namecheap' "$h"; then
+              echo "PASS: Namecheap origin served $path"
+            elif [ "$code" = 301 ] || [ "$code" = 302 ] || [ "$code" = 303 ]; then
+              location=$(grep -i '^location:' "$h" | tr -d '\r' | tail -1 || true)
+              if [[ "$location" != *'sastamilaga.com/'* ]]; then echo "::error::Unexpected external redirect"; failed=1; fi
             else
-              echo "PASS $url HTTP $status"
-            fi
-            rm -f "$h" "$f"
-          done
-          exit "$failed"
-      - name: Verify cart and checkout availability without placing orders
-        run: |
-          failed=0
-          for url in 'https://sastamilaga.com/cart/' 'https://sastamilaga.com/checkout/'; do
-            body=$(mktemp)
-            headers=$(mktemp)
-            result=$(curl -L --max-redirs 3 --max-time 35 --connect-timeout 15 --retry 1 --retry-delay 2 -sS -D "$headers" -o "$body" -w '%{http_code} %{url_effective}' "$url") || result="000 $url"
-            status=${result%% *}
-            final_url=${result#* }
-            echo "Commerce GET $url: HTTP $status (final path: ${final_url#https://sastamilaga.com})"
-            if [ "$status" != "200" ] ||
-               grep -Eqi 'Error 1027|<title>Database Error</title>|HTTP ERROR 500|Service Unavailable|This static cart has not been synchronized' "$body" ||
-               [[ "$final_url" != https://sastamilaga.com/* ]]; then
-              echo "::error::Commerce availability failed at $url; HTTP $status"
-              grep -iE '^(HTTP/|server:|cf-ray:|retry-after:|content-type:)' "$headers" | tail -12 || true
+              echo "::error::Commerce service unavailable or unverified at $path HTTP $code"
               failed=1
             fi
-            rm -f "$body" "$headers"
+            rm -f "$b" "$h"
           done
+          # This is a GET-only health check. It never places an order or asserts payment success.
           exit "$failed"
