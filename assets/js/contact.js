@@ -19,7 +19,7 @@
     in:   { n: '918128425068',  t: '+91 81284 25068' },
     eg:   { n: '201028377512',  t: '+20 10 28377512' }
   };
-  var OLD = ['923000000000', '923432601806'];   // placeholder numbers that must never be shown
+  var OLD = ['923000000000', '923343582295'];   // placeholder numbers that must never be shown
   function set(k, list) { list.split(' ').forEach(function (c) { MAP[c] = k; }); }
   var MAP = {};
   set('pk', 'PK'); set('gulf', 'SA AE QA KW BH OM'); set('au', 'AU NZ'); set('us', 'US CA'); set('uk', 'GB'); set('hr', 'HR'); set('it', 'IT');
@@ -41,12 +41,12 @@
     var out = String(s), i, o;
     for (i = 0; i < ALLK.length; i++) { o = ALLK[i]; if (o === k) continue; out = out.split(LINES[o].n).join(LINES[k].n).split(LINES[o].t).join(LINES[k].t); }
     OLD.forEach(function (x) { out = out.split(x).join(LINES[k].n); });
-    out = out.split('+92 343 2601806').join(LINES[k].t);
+    out = out.split('+92 334 358 2295').join(LINES[k].t);
     return out;
   }
-  function hasNumber(s) { for (var i = 0; i < ALLK.length; i++) if (s.indexOf(LINES[ALLK[i]].t) >= 0) return true; return s.indexOf('+92 343 2601806') >= 0; }
+  function hasNumber(s) { for (var i = 0; i < ALLK.length; i++) if (s.indexOf(LINES[ALLK[i]].t) >= 0) return true; return s.indexOf('+92 334 358 2295') >= 0; }
   function fix(root) {
-    var k = key(), i, el, n, tel = new RegExp('^tel:\\+?(' + ALLK.map(function (x) { return LINES[x].n; }).join('|') + '|923432601806)');
+    var k = key(), i, el, n, tel = new RegExp('^tel:\\+?(' + ALLK.map(function (x) { return LINES[x].n; }).join('|') + '|923343582295)');
     var links = root.querySelectorAll('a[href*="wa.me/"],a[href*="api.whatsapp.com"],a[href^="tel:"]');
     for (i = 0; i < links.length; i++) {
       el = links[i]; if (el.closest('[data-no-swap]')) continue;   // the regional directory lists every team: never rewrite it
