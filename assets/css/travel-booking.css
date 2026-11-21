@@ -85,7 +85,8 @@ html.smtb-lock{overflow:hidden}
 .sm-fare-actions .sm-fare-book{font-size:12px}
 /* compare panel (live Duffel fares + recent Aviasales prices), rendered inside the page's results section */
 .smc{--g:#0F7A3B;--deep:#0B5E2E;--forest:#0B3B20;--orange:#FF8A00;--mint:#EAF6EE;--soft:#F4FBF6;--ink:#1E1E1E;--muted:#55605B;--line:#E2E8E4;--ease:cubic-bezier(.2,.9,.25,1.15);
-  display:grid;gap:16px;color:var(--ink);line-height:1.5}
+  display:grid;gap:16px;color:var(--ink);line-height:1.5;grid-column:1/-1;width:100%;min-width:0}   /* the results list is a card grid: span it */
+.sm-flight-results:has(.smc) .sm-travel-eyebrow{color:#0B5E2E;opacity:1}
 .smc-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
 .smc-tile{position:relative;display:grid;gap:4px;padding:16px 18px;border-radius:16px;border:1px solid var(--line);background:#fff;overflow:hidden;
   box-shadow:0 1px 2px rgba(11,59,32,.05),0 10px 26px rgba(11,59,32,.07)}
@@ -98,6 +99,7 @@ html.smtb-lock{overflow:hidden}
 .smc-tile__sub{color:var(--muted);font-size:.88rem}
 .smc-tile__btn{justify-self:start;margin-top:6px;min-height:42px;font-size:.92rem}
 .smc-chips{display:flex;flex-wrap:wrap;gap:8px}
+.smc-chips[hidden],.smc [hidden]{display:none!important}
 .smc-chip{min-height:38px;padding:0 16px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--forest);font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:transform .18s var(--ease)}
 .smc-chip:hover{transform:translateY(-1px)}
 .smc-chip:active{transform:scale(.97)}

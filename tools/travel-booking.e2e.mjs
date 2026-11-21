@@ -20,6 +20,7 @@ const VIEW = { id: OFFER.id, price: 231.5, currency: 'USD', expiresAt: OFFER.exp
   slices: [{ from: 'KHI', to: 'DXB', fromName: 'Karachi', toName: 'Dubai', duration: 'PT2H15M', segments: [{ carrier: 'Duffel Airways', flight: 'ZZ101', from: 'KHI', to: 'DXB', dep: dep + 'T09:00:00', arr: dep + 'T10:15:00' }] }],
   refund: { allowed: true, penalty: 40, currency: 'USD' }, change: { allowed: false, penalty: null, currency: '' } };
 const PAY = 'https://sastamilaga.com/checkout/order-pay/99999/?pay_for_order=true&key=wc_order_TEST';
+const PLACES = { karachi: { code: 'KHI', label: 'Karachi – Jinnah (KHI), Pakistan', name: 'Karachi' }, dubai: { code: 'DXB', label: 'Dubai – Dubai (DXB), United Arab Emirates', name: 'Dubai' }, lahore: { code: 'LHE', label: 'Lahore – Allama Iqbal (LHE), Pakistan', name: 'Lahore' }, jeddah: { code: 'JED', label: 'Jeddah – King Abdulaziz (JED), Saudi Arabia', name: 'Jeddah' }, islamabad: { code: 'ISB', label: 'Islamabad (ISB), Pakistan', name: 'Islamabad' } };
 const CFG = { none: { mode: 'request', search: false, booking: false, market: false, currencies: [] }, market: { mode: 'request', search: false, booking: false, market: true, currencies: ['USD'] }, all: { mode: 'duffel', search: true, booking: true, market: true, currencies: ['USD', 'EUR', 'GBP'] } };
 
 const b = await puppeteer.launch({ executablePath: process.env.CHROME || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', headless: 'new' });
@@ -44,7 +45,11 @@ async function open(mode, width = 1280) {
       if (api === 'booking/offer') { seen.offer++; return json(VIEW); }
       if (api === 'booking/start') { seen.start = JSON.parse(r.postData() || '{}'); return json({ order: 99999, pay_url: PAY, mode: 'hold', held_until: OFFER.expiresAt, amount: 231.5, currency: 'USD' }); }
       if (api === 'market-prices') seen.market++;
-      return r.continue();   // suggest + market-prices: the live site (real data)
+      if (api === 'suggest' && mode !== 'none') {   // scenario A uses the live suggestions; the rest use the same answers locally (the live route allows 30 calls a minute)
+        const q = (u.searchParams.get('q') || '').toLowerCase(), hit = Object.entries(PLACES).find(([k]) => k.startsWith(q.slice(0, 4)));
+        return json(hit ? [hit[1]] : []);
+      }
+      return r.continue();   // live: suggest (scenario A) and market-prices (real Aviasales data)
     }
     // Stand-in for the WooCommerce order-pay page; opts into cross-document view transitions like the site does.
     if (u.pathname.startsWith('/checkout/order-pay/')) return r.respond({ status: 200, contentType: 'text/html', body: '<!doctype html><title>order pay</title><style>@view-transition{navigation:auto}</style><h1 id="paypage">Order pay page (test)</h1>' });
@@ -59,7 +64,8 @@ async function open(mode, width = 1280) {
 async function pick(p, name, q, code) {
   const input = `#sm-flight-form input[name="${name}"]`;
   await p.click(input, { clickCount: 3 }); await p.type(input, q, { delay: 60 });
-  await p.waitForFunction((n, c) => [...(document.querySelector(`#sm-flight-form input[name="${n}"]`)?.closest('.sm-field')?.querySelectorAll('.sm-suggestions button') || [])].some(b => b.textContent.includes(`(${c})`)), { timeout: 45000 }, name, code);
+  await p.waitForFunction((n, c) => [...(document.querySelector(`#sm-flight-form input[name="${n}"]`)?.closest('.sm-field')?.querySelectorAll('.sm-suggestions button') || [])].some(b => b.textContent.includes(`(${c})`)), { timeout: 45000 }, name, code)
+    .catch(async e => { const s = await p.evaluate(n => { const f = document.querySelector(`#sm-flight-form input[name="${n}"]`); const box = f && f.closest('.sm-field') && f.closest('.sm-field').querySelector('.sm-suggestions'); return { value: f && f.value, box: box ? box.className + ' | ' + box.innerText.slice(0, 100) : 'no box', smtravel: !!window.SMTravel, smtb: !!window.SMTB }; }, name); throw new Error(`no "${code}" suggestion for "${q}": ${JSON.stringify(s)}`); });
   await p.evaluate((n, c) => [...document.querySelector(`#sm-flight-form input[name="${n}"]`).closest('.sm-field').querySelectorAll('.sm-suggestions button')].find(b => b.textContent.includes(`(${c})`)).click(), name, code);
 }
 const guardHits = p => p.evaluate(src => { const g = new RegExp(src, 'i'); return [...document.querySelectorAll('dialog.smtb a, dialog.smtb button, .smc a, .smc button')].filter(n => { const href = n.getAttribute('href') || ''; if (/^(https:\/\/sastamilaga\.com)?\/(cart|checkout|my-account)\//.test(href)) return false; return g.test([n.textContent, n.getAttribute('aria-label') || '', n.id, href].join(' ')); }).map(n => n.textContent.trim()); }, GUARD.source);
@@ -91,10 +97,10 @@ const pause = ms => new Promise(r => setTimeout(r, ms));
   await p.waitForSelector('.smc .smc-tile--market', { visible: true, timeout: 30000 });
   await p.waitForFunction(() => !document.querySelector('.smc-card--skel'), { timeout: 45000 });
   const c = await p.evaluate(() => ({ eyebrow: document.querySelector('[data-flight-results] .sm-travel-eyebrow')?.textContent, live: document.querySelector('.smc-tile--live')?.innerText || '', market: document.querySelector('.smc-tile--market')?.innerText || '',
-    cards: document.querySelectorAll('.smc-card--market').length, links: [...document.querySelectorAll('.smc-card--market .smc-link')].map(a => a.href), rels: [...document.querySelectorAll('.smc-link')].map(a => a.rel), days: document.querySelectorAll('.smc-day').length, chipsHidden: document.querySelector('.smc-chips')?.hidden }));
+    cards: document.querySelectorAll('.smc-card--market').length, links: [...document.querySelectorAll('.smc-card--market .smc-link')].map(a => a.href), rels: [...document.querySelectorAll('.smc-link')].map(a => a.rel), days: document.querySelectorAll('.smc-day').length, chipsHidden: getComputedStyle(document.querySelector('.smc-chips')).display === 'none' }));
   ok(seen.market === 1 && seen.flights === 0, 'market prices fetched once from the live site; no live Duffel call while Duffel is off');
   ok(c.eyebrow === 'COMPARE FARES' && /Book with Sasta Milaga/i.test(c.live) && /Get a confirmed fare/.test(c.live), 'compare panel: the "Book with Sasta Milaga" tile offers a confirmed fare from the team');
-  ok(c.cards > 0 && /per adult/.test(c.market) && /Aviasales/.test(c.market), `real Aviasales prices shown: ${c.cards} fares, tile "${c.market.replace(/\s+/g, ' ').slice(0, 90)}"`);
+  ok(c.cards > 0 && /per adult/i.test(c.market) && /Aviasales/i.test(c.market), `real Aviasales prices shown: ${c.cards} fares, tile "${c.market.replace(/\s+/g, ' ').slice(0, 90)}"`);
   ok(c.links.length > 0 && c.links.every(h => h.startsWith('https://tp.media/r?') || h.startsWith('https://www.aviasales.com/search/')) && c.rels.every(r => /sponsored/.test(r) && /nofollow/.test(r)), 'each market fare links to Aviasales through the partner link (rel="nofollow sponsored")');
   ok(c.days >= 2, `cheapest-day strip shown (${c.days} days)`);
   ok(c.chipsHidden === true, 'filter chips hidden while only one source has fares');
@@ -132,7 +138,7 @@ const pause = ms => new Promise(r => setTimeout(r, ms));
   await p.click('#sm-flight-form .sm-submit');
   await p.waitForSelector('.smc-card--live .smtb-btn--go', { visible: true, timeout: 30000 });
   await p.waitForFunction(() => !document.querySelector('.smc-card--skel'), { timeout: 45000 });
-  const v1 = await p.evaluate(() => ({ live: document.querySelector('.smc-tile--live')?.innerText || '', chips: !document.querySelector('.smc-chips').hidden, groups: [...document.querySelectorAll('.smc-group__h')].map(n => n.textContent), btns: [...document.querySelectorAll('.smc-card--live button')].map(b => b.textContent) }));
+  const v1 = await p.evaluate(() => ({ live: document.querySelector('.smc-tile--live')?.innerText || '', chips: getComputedStyle(document.querySelector('.smc-chips')).display !== 'none', groups: [...document.querySelectorAll('.smc-group__h')].map(n => n.textContent), btns: [...document.querySelectorAll('.smc-card--live button')].map(b => b.textContent) }));
   ok(seen.flights === 1 && seen.market === 1, 'both sources queried in parallel: live Duffel + Aviasales');
   ok(/\$230/.test(v1.live) && /2 travellers/.test(v1.live), 'live tile: lowest bookable total for all travellers');
   ok(v1.chips && v1.groups.some(g => /Bookable now/.test(g)), 'both groups shown with filter chips: ' + v1.groups.join(' | '));

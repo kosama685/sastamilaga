@@ -318,7 +318,7 @@
       return h('article', { class: 'smc-card smc-card--market' },
         h('div', { class: 'smc-card__top' }, h('span', { class: 'smc-badge smc-badge--market', text: 'Recently seen · Aviasales' }), h('span', { class: 'smc-card__air', text: `${r.airlineName}${r.flightNumber ? ' · ' + r.airline + r.flightNumber : ''}` })),
         h('div', { class: 'smc-legs' }, h('div', { class: 'smc-leg' }, h('span', { class: 'smc-leg__t', text: 'Out' }), h('strong', { text: `${localTime(r.departureAt)} ${r.from}` }), h('span', { class: 'smc-leg__line', 'aria-hidden': 'true' }), h('strong', { text: r.to }), h('small', { text: `${localDay(r.departureAt)} · ${stopsText(r.stops)}${r.durationTo ? ' · ' + mins(r.durationTo) : ''}` })), back),
-        h('div', { class: 'smc-card__bottom' }, h('div', { class: 'smc-price' }, h('strong', { text: money(r.price, r.currency) }), h('small', { text: 'per adult · may have changed' })), actions));
+        h('div', { class: 'smc-card__bottom' }, h('div', { class: 'smc-price' }, h('strong', { text: money(r.price, r.currency) }), h('small', { text: `${r.returnAt ? 'return trip, ' : ''}per adult · may have changed` })), actions));
     }
     function render() {
       const parts = [];
@@ -354,7 +354,7 @@
       state.meta = r; state.market = r.results || [];
       const lo = state.market[0];
       tMarket.price.textContent = lo ? money(lo.price, lo.currency) : 'No recent prices';
-      tMarket.sub.textContent = lo ? `per adult · ${lo.airlineName}${r.exact === false ? ' · nearby date' : ''} · may have changed` : (r.note || 'No recent Aviasales prices for this route.');
+      tMarket.sub.textContent = lo ? `${lo.returnAt ? 'return trip, ' : ''}per adult · ${lo.airlineName}${r.exact === false ? ' · nearby date' : ''} · may have changed` : (r.note || 'No recent Aviasales prices for this route.');
       days(r);
     }).catch(e => { state.market = []; state.marketErr = e.status === 429 ? e.message : 'Market prices are unavailable right now.'; tMarket.price.textContent = '—'; tMarket.sub.textContent = state.marketErr; }).finally(render);
   }
