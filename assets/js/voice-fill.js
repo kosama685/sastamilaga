@@ -123,6 +123,16 @@
     if (fields.length < 3) return; form.__smvfb = true;
     var b = document.createElement('button'); b.type = 'button'; b.className = 'sm-vf-fill'; b.innerHTML = MIC + '<span>Fill this form by voice</span>';
     b.addEventListener('click', function () { guided(form); });
+    /* Never make the button a layout cell. The WooCommerce checkout form is a two-column grid (main | order summary): a button inserted
+       as its first child took the first cell and pushed billing to the right and "Your order" to the bottom left (2026-11-21). */
+    var wcFields = form.querySelector('.woocommerce-billing-fields__field-wrapper');
+    if (wcFields) { b.classList.add('sm-vf-fill--inline'); wcFields.parentNode.insertBefore(b, wcFields); return; }
+    var display = ''; try { display = getComputedStyle(form).display; } catch (e) {}
+    if (/grid|flex/.test(display)) {
+      var top = fields[0]; while (top && top.parentNode !== form) top = top.parentNode;
+      if (top && top !== fields[0]) { b.classList.add('sm-vf-fill--inline'); top.insertBefore(b, top.firstChild); return; }
+      if (/grid/.test(display)) b.style.gridColumn = '1 / -1';   // a field that is itself a grid cell: span the full row instead of taking one
+    }
     form.insertBefore(b, form.firstChild);
   }
 

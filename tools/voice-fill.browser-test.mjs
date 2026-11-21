@@ -11,6 +11,12 @@ ok(r.chat===1,'chat: exactly one mic, on the message field ('+r.chat+')');
 ok(!r.honeypot,'chat honeypot field gets no mic');
 ok(r.contact===2,'ordinary form: name and email still get a mic ('+r.contact+')');
 ok(!r.card,'card field still never voice-filled');
+const g=await p.evaluate(()=>{const co=document.getElementById('co'),fill=co.querySelector('.sm-vf-fill'),main=co.querySelector('.gdcs-checkout-main'),aside=co.querySelector('.gdcs-checkout-aside'),gp=document.getElementById('gridplain');
+  return {coFirst:co.firstElementChild.className, fillParent:fill&&fill.parentNode.className, fillBeforeFields:!!fill&&fill.nextElementSibling&&fill.nextElementSibling.className, sameRow:Math.abs(main.getBoundingClientRect().top-aside.getBoundingClientRect().top)<2&&aside.getBoundingClientRect().left>main.getBoundingClientRect().left,
+    gpFirst:gp.firstElementChild.className, gpFillIn:!!gp.querySelector('.sec > .sm-vf-fill')};});
+ok(g.coFirst==='gdcs-checkout-main'&&g.sameRow,'checkout grid: main column stays first and "Your order" stays beside it ('+g.coFirst+')');
+ok(g.fillParent==='woocommerce-billing-fields'&&g.fillBeforeFields==='woocommerce-billing-fields__field-wrapper','checkout: voice button sits inside the billing card, above the fields');
+ok(g.gpFirst==='sec'&&g.gpFillIn,'any grid form: the voice button goes inside the first section, never a grid cell');
 await p.click('.smwa-web__composer .sm-vf__mic'); ok(await p.evaluate(()=>window.__started>=1),'chat mic starts speech recognition');
 await p.close();
 console.log(pass + ' passed, ' + fail + ' failed'); await b.close(); process.exit(fail ? 1 : 0);
