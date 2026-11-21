@@ -25,9 +25,14 @@ jobs:
           test -n "$zone"
           dns=$(curl --fail --silent --show-error --max-time 15 \
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-            "https://api.cloudflare.com/client/v4/zones/$zone/dns_records?type=A&name=sastamilaga.com")
+            "https://api.cloudflare.com/client/v4/zones/$zone/dns_records?type=A&name=origin.sastamilaga.com")
           ip=$(jq -r '.result[0].content // empty' <<<"$dns")
           test -n "$ip"
+          # Never accept a GitHub Pages CDN IP as proof the Namecheap database is healthy.
+          case "$ip" in 185.199.108.153|185.199.109.153|185.199.110.153|185.199.111.153)
+            echo "::error::Resolved GitHub Pages, not Namecheap; abort incorrect origin diagnosis."
+            exit 1 ;;
+          esac
           # Mask origin and never echo or upload DNS records.
           echo "::add-mask::$ip"
           echo "SASTA_ORIGIN_IP=$ip" >> "$GITHUB_ENV"
