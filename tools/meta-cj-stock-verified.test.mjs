@@ -16,7 +16,7 @@ const fixture=(id,stock=2)=>({id,title:'Verified test fixture - do not advertise
 test('audit with no inventory file reports missing evidence and produces no feed',()=>{const dir=mk();try{
  const r=run(dir,'--audit');assert.equal(r.status,0,r.stderr);
  const report=JSON.parse(fs.readFileSync(path.join(dir,'artifacts/meta-cj-stock-readiness.json')));
- assert.equal(report.sourceCatalog,451812);assert.equal(report.rawCatalogStockFieldsPopulated,0);assert.equal(report.eligible,0);assert.equal(report.liveFeedReady,false);
+ assert.equal(report.sourceCatalogAtObservation,451812);assert.equal(report.stockFlagsPopulatedAtObservation,0);assert.equal(report.currentStockFlagsNotRequeried,true);assert.equal(report.eligible,0);assert.equal(report.liveFeedReady,false);
  assert.equal(fs.existsSync(path.join(dir,'feeds/meta-verified')),false);
 }finally{fs.rmSync(dir,{recursive:true,force:true})}});
 test('building with no independently verified data fails closed',()=>{const dir=mk();try{
