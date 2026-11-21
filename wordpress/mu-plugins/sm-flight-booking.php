@@ -125,7 +125,7 @@ function smfb_iso( $t ) {
 }
 function smfb_whatsapp( $text ) {
 	$url = function_exists( 'sm_whatsapp_url' ) ? (string) sm_whatsapp_url( $text ) : '';
-	return $url ? $url : 'https://wa.me/923432601806?text=' . rawurlencode( $text );
+	return $url ? $url : 'https://wa.me/923343582295?text=' . rawurlencode( $text );
 }
 function smfb_staff_mail( $subject, array $lines, $order_or_post_url = '' ) {
 	$to = (string) apply_filters( 'smfb_staff_email', get_option( 'admin_email' ) );

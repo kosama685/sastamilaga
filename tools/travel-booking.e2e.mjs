@@ -37,7 +37,7 @@ async function open(mode, width = 1280) {
     const json = (data, status = 200) => r.respond({ status, contentType: 'application/json', body: JSON.stringify(data) });
     if (u.pathname.startsWith('/wp-json/sm-travel/v1/')) {
       if (api === 'booking/config') { seen.config++; return json(mode === 'booking' ? { mode: 'duffel', search: true, booking: true, currencies: ['USD', 'EUR', 'GBP'] } : { mode: 'request', search: false, booking: false, currencies: [] }); }
-      if (api === 'request') { seen.request = JSON.parse(r.postData() || '{}'); return json({ request: 70999, ref: '#70999', whatsapp: 'https://wa.me/923432601806?text=' + encodeURIComponent('Hello Sasta Milaga, about my travel request #70999'), email: true }); }
+      if (api === 'request') { seen.request = JSON.parse(r.postData() || '{}'); return json({ request: 70999, ref: '#70999', whatsapp: 'https://wa.me/923343582295?text=' + encodeURIComponent('Hello Sasta Milaga, about my travel request #70999'), email: true }); }
       if (api === 'duffel/flights') { seen.flights++; return json({ results: [OFFER], source: 'Duffel live search', bookingEnabled: false }); }
       if (api === 'booking/offer') { seen.offer++; return json(VIEW); }
       if (api === 'booking/start') { seen.start = JSON.parse(r.postData() || '{}'); return json({ order: 99999, pay_url: PAY, mode: 'hold', held_until: OFFER.expiresAt, amount: 231.5, currency: 'USD' }); }
