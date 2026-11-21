@@ -17,8 +17,9 @@ test('quota exhausted never causes repeated CJ attempts or a claimed purchase',(
   assert.match(rails,/No order has been created/);
 });
 test('legacy global product actions require a real WooCommerce cart acknowledgement',()=>{
-  assert.match(global,/await window\.SMWoo\.add\(String\(v\.sku\), qty\)/);
-  assert.match(global,/if \(decision\.kind === 'added'\)/);
+  assert.match(global,/fetch\('\/wp-json\/gdcs\/v1\/live\/cart'/);
+  assert.match(global,/if \(!result\.ok \|\| !data\.added\)/);
+  assert.match(global,/String\(variant\.vid\)/);
   assert.doesNotMatch(global,/window\.__gcAct = \{ add: \(\) => \{ if \(addRow\(\)\)/);
 });
 test('store API quota failures do not get mistaken for successful local orders',()=>{
