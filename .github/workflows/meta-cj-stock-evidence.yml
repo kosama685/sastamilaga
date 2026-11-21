@@ -1,0 +1,44 @@
+name: Meta CJ stock evidence — fail-closed audit
+on:
+  pull_request:
+    paths:
+      - 'tools/build-meta-cj-stock-verified.mjs'
+      - 'tools/meta-cj-stock-verified.test.mjs'
+      - 'docs/meta-cj-stock-recovery.md'
+      - '.github/workflows/meta-cj-stock-evidence.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/build-meta-cj-stock-verified.mjs'
+      - 'tools/meta-cj-stock-verified.test.mjs'
+      - 'docs/meta-cj-stock-recovery.md'
+      - '.github/workflows/meta-cj-stock-evidence.yml'
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: meta-cj-stock-evidence
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Test CJ availability, stale evidence, prices and unknown-stock safeguards
+        run: node --test tools/meta-cj-stock-verified.test.mjs
+      - name: Audit supplier feed readiness (do not upload supplier snapshot)
+        run: node tools/build-meta-cj-stock-verified.mjs --audit
+      - name: Archive evidence, not a Commerce Manager source
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: meta-cj-stock-evidence
+          path: artifacts/meta-cj-stock-readiness.json
+          if-no-files-found: warn
+          retention-days: 30
