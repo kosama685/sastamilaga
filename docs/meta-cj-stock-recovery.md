@@ -19,6 +19,8 @@ Every offer must include:
 - Verified fixed final retail price, currency, and destination market — not an estimated supplier cost.
 - CJ API evidence with warehouse and factory quantities, timestamp checked within 24 hours.
 - Successful exact-variant checkout, confirmed current product page price, country shipping and policy approval, backed by reference.
+- Independent proof for the same direct image URL within seven days: HTTP 200, crawler-accessible JPEG/PNG, at least 500×500 pixels and at most 8 MB. A URL string alone is not enough.
+- Genuine brand, manufacturer part number or GTIN; never invent these identifiers.
 - Recent price (24h), checkout (7d) and shipping (7d) evidence.
 
 A CJ-owned warehouse unit count above zero permits Meta-native 'in stock'; positive factory-only quantity permits 'available for order' ONLY with factory-order checkout proof. Unverified, stale or zero stock is omitted. No eligible items means feed publication fails closed. Output shards contain <=5,000 items and are written to feeds/meta-verified/*.xml when approved source input exists.
