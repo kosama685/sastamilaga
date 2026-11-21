@@ -5,6 +5,14 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
+    # Operational checks must not trigger a second full static deployment.
+    # A content commit containing other paths still deploys normally.
+    paths-ignore:
+      - '.github/workflows/**'
+      - 'tools/static-primary-preflight.mjs'
+      - 'tools/repair-cloudflare-public-routes.mjs'
+      - 'tools/repair-cloudflare-public-routes.test.mjs'
+      - 'README.md'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
