@@ -53,12 +53,23 @@
         });
     });
   }
+  function safeCheckoutUrl(input) {
+    ensureReady();
+    var u;
+    try { u = new URL(String(input || '')); } catch (e) { throw new Error('Managed checkout returned an invalid URL'); }
+    // Checkout URLs must originate from the merchant's approved Shopify store.
+    if (u.protocol !== 'https:' || u.username || u.password || u.port || u.hash ||
+        !(u.hostname === config.shopDomain || u.hostname === 'checkout.shopify.com'))
+      throw new Error('Checkout destination did not match the managed-commerce platform');
+    return u.href;
+  }
   function accepted(p) {
     var errors = (p && p.userErrors) || [];
     if (errors.length) throw new Error(errors.map(function(x){return x.message;}).join('; '));
     if (!p || !p.cart || !p.cart.id || !p.cart.checkoutUrl) throw new Error('Commerce backend did not confirm cart update');
+    var verifiedUrl = safeCheckoutUrl(p.cart.checkoutUrl);
     remember(p.cart.id);
-    return { ok: true, id: p.cart.id, checkoutUrl: p.cart.checkoutUrl, quantity: p.cart.totalQuantity };
+    return { ok: true, id: p.cart.id, checkoutUrl: verifiedUrl, quantity: p.cart.totalQuantity };
   }
   function locked(fn) {
     if (busy) return Promise.reject(new Error('Your previous cart action is still processing'));
@@ -71,6 +82,7 @@
     if (!id) return Promise.resolve({ cart:null, empty:true });
     return request(CART_QUERY, { id: id }).then(function(data){
       if (!data || !data.cart) { remember(null); return { cart:null, empty:true }; }
+      if (data.cart.checkoutUrl) safeCheckoutUrl(data.cart.checkoutUrl);
       return { cart: data.cart, empty: !data.cart.totalQuantity };
     });
   }
@@ -95,10 +107,7 @@
       var cart = r.cart;
       if (!cart || !cart.totalQuantity || !cart.checkoutUrl) throw new Error('No commerce-validated items in cart');
       // Only an official Shopify hosted checkout URL, never an arbitrary redirect.
-      var url = new URL(cart.checkoutUrl);
-      if (url.protocol !== 'https:' || !(url.hostname === config.shopDomain || url.hostname === 'checkout.shopify.com'))
-        throw new Error('Checkout destination did not match the managed-commerce platform');
-      return url.href;
+      return safeCheckoutUrl(cart.checkoutUrl);
     });
   }
   function status() { return { configured: !!config, busy:busy, hasSavedCart:!!stored(), previewOnly:true }; }
