@@ -1573,7 +1573,7 @@ End of comment */
 .gallery-thumbs img, .gallery-thumbs video { width: 100%; height: 100%; object-fit: cover; }
 .detail-panel { padding: clamp(18px, 2.5vw, 28px); margin-top: var(--sm-gap); }
 .detail-panel p { color: var(--sm-muted) !important; }
-.buy-panel { padding: clamp(18px, 2.5vw, 28px); position: sticky; top: 140px; }
+.buy-panel { padding: clamp(18px, 2.5vw, 28px); position: sticky; top: 0px; }
 .buy-panel h1 { font-size: clamp(1.35rem, 2.4vw, 1.9rem) !important; }
 .product-meta { color: var(--sm-muted); font-size: .9rem; }
 .big-price { font: 800 clamp(1.6rem, 3vw, 2.1rem)/1 var(--sm-display); color: var(--sm-green-ink); letter-spacing: -.02em; }

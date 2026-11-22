@@ -162,6 +162,7 @@
   }
   function choose(o) {
     state.option = o;
+    setOrderable(true);   // an exact option is chosen: the unpaid request can be saved now; the delivery check below only updates its message
     [].forEach.call(els.opts.querySelectorAll('[data-vid]'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-vid') === o.vid ? 'true' : 'false'); });
     els.price.textContent = o.usd ? money(o.usd) : 'Price confirmed at checkout';
     if (o.image) { var n = state.images.indexOf(o.image); if (n < 0) { state.images.push(o.image); buildGallery(state.images); n = state.images.indexOf(o.image); } showImage(n); }
@@ -265,13 +266,39 @@
   window.addEventListener('sm:market', function () { context().then(load); });
 
   /* ---- load ---- */
+  /* Supplier options straight from the CJ Worker (the same live variant list the global shop uses). Shown when WordPress is slow (over
+     6 s) or unavailable, so Add to cart / Buy now never stay disabled behind a slow store server. Estimated price = supplier price + 20%
+     (MARGIN in global.js); the request cart treats every CJ price as a quote that staff confirm before payment. */
+  function supplierOptions() {
+    var C = window.SM_CONFIG || {}, W = String(C.cjShippingWorker || C.cjImageWorker || 'https://sastamilaga-cj-shipping.usamaestonia.workers.dev').replace(/\/$/, '');
+    return fetch(W + '/api/cj/product?pid=' + encodeURIComponent(P.pid)).then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); }).then(function (d) {
+      return (d && Array.isArray(d.variants) ? d.variants : []).filter(function (v) { return v && v.vid; }).map(function (v) {
+        var supplier = Number(v.price), usd = supplier > 0 ? Math.round(supplier * 1.2 * 100) / 100 : 0;
+        return { vid: String(v.vid), sku: String(v.sku || ''), name: String(v.key || v.name || v.sku || 'Option'), image: /^https:\/\//i.test(v.image || '') ? v.image : '', usd: usd, estimate: true };
+      });
+    });
+  }
+  var supplierShown = false;
+  function useSupplier(reason) {
+    if (supplierShown || state.data) return;
+    supplierShown = true;
+    supplierOptions().then(function (list) {
+      if (state.data) return;   // WordPress answered in the meantime: its options are already shown
+      if (!list.length) { requestFallback(reason); return; }
+      renderOptions(list); els.qtyWrap.hidden = false;
+      choose(state.option && list.filter(function (o) { return o.vid === state.option.vid; })[0] || list[0]);
+      say('Showing the supplier\'s live options with estimated prices. Staff confirm the final price and shipping before you pay.', 'info');
+    }).catch(function () { if (!state.data) requestFallback(reason); });
+  }
   function load() {
+    var slow = setTimeout(function () { useSupplier('Live supplier options are slow to load right now.'); }, 6000);
     return api('/wp-json/sm/v1/gpdp/' + encodeURIComponent(P.pid)).then(function (r) {
+      clearTimeout(slow);
       if (!r.ok) {
         renderDescription('');
-        els.price.textContent = r.status === 404 ? 'Not available' : 'Price confirmed on WhatsApp';
-        if (r.status === 404) say('Supplier availability is unconfirmed; contact support for a quote.', 'warn');
-        else requestFallback('Live supplier options are unavailable right now.');
+        if (r.status === 404) { els.price.textContent = 'Not available'; say('Supplier availability is unconfirmed; contact support for a quote.', 'warn'); return; }
+        if (!state.option) els.price.textContent = 'Price confirmed on WhatsApp';
+        useSupplier('Live supplier options are unavailable right now.');
         return;
       }
       var d = r.j; state.data = d; state.country = (d.country || state.country || '').toUpperCase();
@@ -284,7 +311,11 @@
       var keep = state.option && priced.filter(function (o) { return o.vid === state.option.vid; })[0];
       choose(keep || priced[0]);
       if (!d.ordering_enabled) { setOrderable(false); say('Supplier order verification is paused. Add your exact option to the combined cart as an unpaid request.', 'warn'); }
-    }).catch(function () { requestFallback('Live supplier details are unavailable right now.'); });
+    }).catch(function () { clearTimeout(slow); useSupplier('Live supplier details are unavailable right now.'); });
   }
-  context().then(load);
+  /* Options do not depend on the visitor context, so load them at once (they used to wait for the context call: two slow WordPress calls
+     in a row, 15 s and more before Add to cart enabled). The delivery check re-runs when the context (country) has been settled. */
+  var ctxReady = context();
+  load();
+  ctxReady.then(function () { if (state.option) checkDelivery(); }, function () {});
 })();
