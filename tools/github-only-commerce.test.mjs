@@ -51,3 +51,14 @@ test('unverified freight cannot enable paid checkout',()=>{
   assert.match(s,/requestFallback\('Shipping verification is unavailable\.'\)/);
   assert.match(s,/gpdp-request-fallback/);
 });
+
+test('stored legacy variation rows normalize attributes safely on reload',()=>{
+  const {cart,state}=fixture();
+  state.set('sm_order_cart_v1',JSON.stringify([{type:'cj',id:'p100',sku:'CJ-100',vkey:'VID-1',vname:'Violet',unit:null,priceStatus:'pending',currency:'USD',qty:1,attributes:[null,{attribute:'Size',value:'M'},{attribute:'Colour',value:'Violet'}]}]));
+  const rows=cart.get();
+  assert.equal(rows.length,1);
+  assert.equal(rows[0].attributes.length,2);
+  assert.equal(rows[0].attributes[0].attribute,'Colour');
+  assert.match(cart.message(),/Colour=Violet/);
+  assert.equal(cart.totals().cj.finalTotal,null);
+});
