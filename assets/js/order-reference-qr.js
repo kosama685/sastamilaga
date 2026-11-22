@@ -63,7 +63,7 @@
     try {
       await loadQr();
       image.replaceChildren();
-      new QRCode(image, { text: url(), width: 180, height: 180, colorDark: '#0b3b20', colorLight: '#ffffff', correctLevel: window.QRCode.CorrectLevel.M });
+      new window.QRCode(image, { text: url(), width: 180, height: 180, colorDark: '#0b3b20', colorLight: '#ffffff', correctLevel: window.QRCode.CorrectLevel.M });
       refLabel.textContent = 'Reference: ' + active;
       output.hidden = false;
     } catch (_) {
