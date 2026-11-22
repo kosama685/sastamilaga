@@ -96,6 +96,6 @@ test('checkout auto-prefills chosen shipping destination and remains unpaid',()=
   assert.match(s,/order_items_json/);
 });
 test('production page loads cache-busted global product handler',()=>{
-  const s=read('index.html');
-  assert.match(s,/assets\/js\/global\.js\?v=purchase-checkout-20261122-2/);
+ const s=read('index.html');
+ assert.match(s,/assets\/js\/global\.js\?v=store-20261122/);
 });

@@ -13,16 +13,8 @@
   var els = { main: $('[data-gpdp-main]'), thumbs: $('[data-gpdp-thumbs]'), desc: document.querySelector('[data-gpdp-desc]'), price: $('[data-gpdp-price]'),
     dest: $('[data-gpdp-dest]'), opts: $('[data-gpdp-options]'), qtyWrap: $('[data-gpdp-qty-wrap]'), qty: $('[data-gpdp-qty]'), delivery: $('[data-gpdp-delivery]'),
     add: $('[data-gpdp-add]'), buy: $('[data-gpdp-buy]'), status: $('[data-gpdp-status]'), wa: $('[data-gpdp-wa]') };
-  var state = { data: null, option: null, images: [], index: 0, busy: false, country: '', csrf: '' };
-  // The edge product page may load a header from chrome.js after DOMContentLoaded.
-  // Route any legacy cart/checkout anchor to the same unpaid combined request flow.
-  // This does not change DNS, payment state, or order acceptance.
-  window.addEventListener('click', function (e) {
-    var link=e.target&&e.target.closest?e.target.closest('a[href="/cart/"],a[href="/checkout/"]'):null;
-    if(!link)return;
-    if(link.getAttribute('href')==='/cart/')link.href='/request-cart/';
-    else if(link.getAttribute('href')==='/checkout/')link.href='/order/';
-  },true);
+  var state = { data: null, option: null, images: [], index: 0, busy: false, country: '', csrf: '', ship: null };
+  // Header links to /cart/ and /checkout/ (WordPress paths on sastamilaga.com) are sent to the static cart by assets/js/woo-bridge.js.
   var COUNTRY_NAMES = {}; try { COUNTRY_NAMES = new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) { COUNTRY_NAMES = null; }
   function countryName(cc) { try { return (COUNTRY_NAMES && COUNTRY_NAMES.of(cc)) || cc; } catch (e) { return cc; } }
   function money(usd) { return 'US$' + Number(usd).toFixed(2); }
@@ -36,26 +28,10 @@
     return fetch(path, opts).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, status: r.status, j: j || {} }; }); });
   }
 
-  /* A request-only alternative for exhausted supplier / Woo quotas.
-   * It must never claim a Woo cart or confirmed order and never auto-publish a price.
-   * The buyer supplies an option description if the live variant API is unavailable. */
-  var requestCartLoading = null;
-  function requestCartReady() {
-    if (window.SMOrderCart) return Promise.resolve(window.SMOrderCart);
-    if (requestCartLoading) return requestCartLoading;
-    requestCartLoading = new Promise(function (resolve, reject) {
-      var script = document.createElement('script');
-      script.src = '/assets/js/order-cart.js?v=20261122-1';
-      script.async = true;
-      script.onload = function () { window.SMOrderCart ? resolve(window.SMOrderCart) : reject(new Error('Request cart unavailable')); };
-      script.onerror = function () { reject(new Error('Request cart could not be loaded')); };
-      document.head.appendChild(script);
-    }).catch(function (e) { requestCartLoading = null; throw e; });
-    return requestCartLoading;
-  }
+  /* When neither option source answers, the shopper describes the option and asks for a quote on WhatsApp (no price = no paid cart line). */
   function requestFallback(message) {
     if (els.status.querySelector('.gpdp-request-fallback')) return;
-    say(message + ' You can save the selected item in your combined cart for a staff quotation without payment.', 'warn');
+    say(message + ' Tell us the option you need and we quote it on WhatsApp.', 'warn');
     var wrap = document.createElement('div');
     wrap.className = 'gpdp-request-fallback';
     wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:12px;';
@@ -69,22 +45,15 @@
     detail.setAttribute('aria-label', 'Describe the supplier option to confirm');
     label.appendChild(detail);
     var button = document.createElement('button'); button.type = 'button';
-    button.textContent = 'Save quotation request';
+    button.textContent = 'Ask for this option on WhatsApp';
     button.addEventListener('click', function () {
       var requested = detail.value.trim();
       if (!requested) { detail.focus(); detail.setCustomValidity('Describe the size or colour you need.'); detail.reportValidity(); return; }
-      detail.setCustomValidity(''); button.disabled = true;
-      requestCartReady().then(function (cart) {
-        // No unit price is passed: live pricing, stock, freight and PayPal/COD
-        // cannot be promised while the supplier service is unavailable.
-        var answer = cart.add({type:'cj',id:P.pid,sku:state.option && state.option.sku || P.pid,
-          name:P.name || 'Global supplier product',vkey:state.option && state.option.vid || '',
-          vname:requested,unit:null,qty:qty(),url:location.href});
-        if (!answer.ok) throw new Error(answer.message || 'Could not save the quotation request');
-        say('Saved in your combined cart. No payment was collected and the request remains unconfirmed.', 'ok');
-        var link = document.createElement('a'); link.href = '/request-cart/';
-        link.textContent = 'Review cart and continue to checkout'; els.status.appendChild(document.createTextNode(' '));els.status.appendChild(link);
-      }).catch(function (e) { button.disabled = false; say(String(e.message||e)+' Please use WhatsApp instead.', 'warn'); });
+      detail.setCustomValidity('');
+      // No live price is known while both option sources are down, so the item cannot go into the paid cart: ask for a quote instead.
+      var wa = (P.wa || (window.SM_CONFIG || {}).whatsapp || '923343582295');
+      var msg = 'Assalam o Alaikum! Please quote this global item:\n' + (P.name || '') + '\nOption: ' + requested + '\nQuantity: ' + qty() + '\n' + (P.url || location.href.split('#')[0]);
+      window.open('https://wa.me/' + String(wa).replace(/\D/g, '') + '?text=' + encodeURIComponent(msg), '_blank', 'noopener');
     });
     wrap.appendChild(label);wrap.appendChild(button);els.status.appendChild(wrap);
   }
@@ -192,22 +161,28 @@
   }
   function checkDelivery() {
     clearTimeout(dTimer);
+    state.ship = null;   // a new option or quantity needs a new carrier quote
     dTimer = setTimeout(function () {
       var o = state.option, seq = ++dSeq;
       if (!o) return;
       els.delivery.hidden = false; els.delivery.className = 'gpdp-delivery is-loading'; els.delivery.textContent = 'Checking delivery to your destination…';
+      var slowShip = setTimeout(function () { if (seq === dSeq && !state.ship) workerShip(o, seq); }, 7000);   // store freight slow: supplier quote
       context().then(function () {
         var cc = state.country;
         return api('/wp-json/gdcs/v1/live/freight', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-GDCS-CSRF': state.csrf },
           body: JSON.stringify({ pid: P.pid, vid: o.vid, quantity: qty() }) }).then(function (r) { return { r: r, cc: cc }; });
       }).then(function (x) {
+        clearTimeout(slowShip);
         if (seq !== dSeq) return;
         var r = x.r, cc = x.cc, where = cc ? countryName(cc) : 'your destination';
         if (!r.ok) {
-          els.delivery.className = 'gpdp-delivery is-warn';
-          els.delivery.textContent = (r.j && r.j.message ? String(r.j.message).replace(/<[^>]+>/g, '') : 'Delivery could not be checked right now.') + ' You can still ask us on WhatsApp.';
-          setOrderable(false); // unpaid requests remain possible; do not offer a payable total
-          say('Shipping is not verified. Add this option to your cart to request the final price and delivery.', 'warn');
+          workerShip(o, seq).then(function (shown) {
+            if (shown || seq !== dSeq) return;
+            els.delivery.className = 'gpdp-delivery is-warn';
+            els.delivery.textContent = (r.j && r.j.message ? String(r.j.message).replace(/<[^>]+>/g, '') : 'Delivery could not be checked right now.') + ' You can still ask us on WhatsApp.';
+            setOrderable(false);
+            say('Shipping is not verified yet: it is confirmed with you after you order, before the parcel ships.', 'warn');
+          });
           return;
         }
         var q = (r.j.quotes || []).filter(function (z) { return z && z.service; });
@@ -218,41 +193,82 @@
         }
         q.sort(function (a, b) { return (a.cost - b.cost) || (parseInt(a.estimate, 10) - parseInt(b.estimate, 10)); });
         var best = q[0], cur = r.j.currency || 'USD', fmt = function (v) { return cur === 'USD' ? money(v) : (cur + ' ' + Number(v).toFixed(r.j.digits == null ? 2 : r.j.digits)); };
+        state.ship = { label: String(best.service || best.name || best.method || 'Cheapest carrier') + ' ' + fmt(best.cost) + (best.estimate ? ' (' + best.estimate + ' days)' : ''), amt: Number(best.cost) || 0, cur: cur };   // carried into the cart line
         var from = r.j.origin && r.j.origins ? (r.j.origins.filter(function (z) { return z.code === r.j.origin; })[0] || {}).name : '';
         els.delivery.className = 'gpdp-delivery is-ok';
         els.delivery.textContent = 'Delivers to ' + where + (from ? ' from the supplier\'s ' + from.replace(/\s*\([A-Z]{2}\)$/, '') + ' warehouse' : '') + ': ' + q.length + ' method' + (q.length > 1 ? 's' : '') +
           ', shipping from ' + fmt(best.cost) + (best.estimate ? ' (' + best.estimate + ' days, carrier estimate)' : '') + '. The exact shipping charge is shown at checkout before you pay.';
         setOrderable(true);
-      }).catch(function () { if (seq === dSeq) { els.delivery.className = 'gpdp-delivery is-warn'; els.delivery.textContent = 'No verified carrier rate is available. Request a supplier quote before payment.'; setOrderable(false); say('Shipping verification is unavailable. Add to Cart to request a quote, without payment.', 'warn'); } });
+      }).catch(function () {
+        clearTimeout(slowShip);
+        if (seq !== dSeq) return;
+        workerShip(o, seq).then(function (shown) {
+          if (shown || seq !== dSeq) return;
+          els.delivery.className = 'gpdp-delivery is-warn'; els.delivery.textContent = 'No carrier rate is available right now. Shipping is confirmed with you after you order, before the parcel ships.';
+          setOrderable(false);
+        });
+      });
     }, 250);
+  }
+  /* Supplier carrier quote straight from the CJ Worker (US$, the same service the global shop uses), when the store's freight check is
+     slow (7 s) or fails. Returns true when a quote was shown. The store's own answer, if it arrives later, replaces it. */
+  function workerShip(o, seq) {
+    var C = window.SM_CONFIG || {}, W = String(C.cjShippingWorker || C.cjImageWorker || 'https://sastamilaga-cj-shipping.usamaestonia.workers.dev').replace(/\/$/, '');
+    var cc = state.country || wanted() || 'PK';
+    return fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ country: cc, items: [{ pid: P.pid, sku: o.sku || P.sku, qty: qty(), vid: o.vid }] }) })
+      .then(function (r) { return r.json().then(function (j) { return r.ok ? j : null; }); })
+      .then(function (d) {
+        if (seq !== dSeq || state.ship) return !!state.ship;
+        var m = ((d && d.methods) || []).filter(function (x) { return x && Number(x.price) > 0; }).sort(function (a, b) { return a.price - b.price; });
+        if (!m.length) return false;
+        var best = m[0];
+        state.ship = { label: String(best.name || 'Cheapest carrier') + ' ' + money(best.price) + (best.days ? ' (' + best.days + ' days)' : ''), amt: Number(best.price), cur: 'USD' };
+        els.delivery.className = 'gpdp-delivery is-ok';
+        els.delivery.textContent = 'Delivers to ' + countryName(cc) + ': ' + m.length + ' method' + (m.length > 1 ? 's' : '') + ', shipping from ' + money(best.price) + (best.days ? ' (' + best.days + ' days, carrier estimate)' : '') + '. The shipping charge is added at checkout.';
+        setOrderable(true);
+        return true;
+      }).catch(function () { return false; });
   }
 
   /* ---- the real cart ---- */
   function badge(n) { if (n == null) return; document.querySelectorAll('.smh-cart__count').forEach(function (el) { el.textContent = n; el.setAttribute('data-n', n); }); }
+  /* The site's own cart (assets/js/woo-bridge.js = SMStore): chrome.js loads it on every page; load it here if it is not there yet. */
+  var storeLoading = null;
+  function storeReady() {
+    if (window.SMStore) return Promise.resolve(window.SMStore);
+    if (storeLoading) return storeLoading;
+    storeLoading = new Promise(function (resolve, reject) {
+      var s = document.createElement('script'); s.src = '/assets/js/woo-bridge.js?v=store-20261122b'; s.async = true;
+      s.onload = function () { window.SMStore ? resolve(window.SMStore) : reject(new Error('The cart did not start.')); };
+      s.onerror = function () { reject(new Error('The cart could not be loaded.')); };
+      document.head.appendChild(s);
+    }).catch(function (e) { storeLoading = null; throw e; });
+    return storeLoading;
+  }
+  /* Add to cart / Buy now (restored 2026-11-22, owner request): the exact supplier option, quantity, price and the cheapest carrier go into
+     the site's global cart (sm_gcart); Buy now opens the shared checkout (PayPal or card through a PayPal payment link, cash on delivery for
+     Pakistan where offered; every order is recorded in Formspree first). */
   function toCart(buyNow) {
     if (state.busy || !state.option) return;
     state.busy = true; els.add.setAttribute('aria-busy', 'true'); els.buy.setAttribute('aria-busy', 'true');
-    say('Saving your exact supplier variation to the combined cart…', 'info');
-    requestCartReady().then(function (cart) {
-      var o=state.option,unit=Number(o.usd);
-      var answer=cart.add({
-        type:'cj',id:String(P.pid),sku:String(o.sku||P.sku||P.pid),
-        name:String(P.name||'Global supplier product'),
-        vkey:String(o.vid||''),vname:String(o.name||o.sku||''),
-        attributes:[{attribute:'Supplier option',value:String(o.name||o.vid)}],
-        unit:Number.isFinite(unit)&&unit>0?unit:null,
-        qty:qty(),url:location.href
+    storeReady().then(function (store) {
+      var o = state.option;
+      var res = store.addCj({
+        id: String(P.pid), sku: String(o.sku || P.sku || P.pid), name: String(P.name || 'Global supplier product'), img: o.image || P.image || '',
+        vkey: String(o.vid || ''), vname: String(o.name || o.sku || ''), unit: Number(o.usd), qty: qty(),
+        ship: state.ship ? state.ship.label : '', shipAmt: state.ship ? state.ship.amt : 0, shipCur: state.ship ? state.ship.cur : 'USD',
+        url: location.href.split('#')[0]
       });
-      if (!answer.ok) throw new Error(answer.message||'Could not save the selected variation');
-      badge(cart.count());
-      if (buyNow) { location.href='/order/?country='+encodeURIComponent(state.country||wanted()||'SA'); return; }
-      els.status.className='gpdp-status is-ok';
-      els.status.textContent='Added to your combined cart. Final shipping and price require confirmation. ';
-      var link=document.createElement('a');link.href='/request-cart/';link.textContent='View cart';els.status.appendChild(link);
+      if (!res.ok) throw new Error(res.message);
+      badge(res.count);
+      if (buyNow) { location.assign(store.checkoutUrl()); return; }
+      els.status.className = 'gpdp-status is-ok';
+      els.status.textContent = 'Added to cart. ';
+      [['View cart', store.cartUrl()], ['Checkout', store.checkoutUrl()]].forEach(function (l) { var a = document.createElement('a'); a.href = l[1]; a.textContent = l[0]; els.status.appendChild(a); });
     }).catch(function (err) {
-      say(String(err.message||'Cart could not be updated.')+' No order was placed.', 'warn');
+      say(String((err && err.message) || 'The cart could not be updated.') + ' You can also order on WhatsApp.', 'warn');
     }).then(function () {
-      state.busy=false;els.add.removeAttribute('aria-busy');els.buy.removeAttribute('aria-busy');
+      state.busy = false; els.add.removeAttribute('aria-busy'); els.buy.removeAttribute('aria-busy');
     });
   }
   /* Window capture: runs before any page-level click guard, so these two buttons always reach the real cart. */

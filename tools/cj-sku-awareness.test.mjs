@@ -9,11 +9,10 @@ test('optional WordPress handoff checks the existing SKU map without creating pr
  assert.match(woo,/!map\[row\.sku\]&&!map\[row\.id\]/);
  assert.doesNotMatch(woo,/\/wc\/v3\/products/);
 });
-
-test('CJ quick buy keeps exact supplier options without requiring a Woo SKU mapping',()=>{
- assert.match(rails,/adapter\.save\(/);
- assert.match(rails,/if\(!saved\?\.ok\)/);
- assert.match(rails,/adapter\.orderUrl/);
- assert.match(rails,/confirm\.textContent=action==='buy'\?'Buy now':'Add to cart'/);
- assert.doesNotMatch(rails,/woo\.hasSKU|woo\.add/);
+test('homepage CJ option dialog adds the exact supplier option to the site cart; Buy now opens the static checkout',()=>{
+ assert.match(rails,/store\.addCj\(\{/);
+ assert.match(rails,/vkey:String\(v\.sku\|\|v\.vid\)/);
+ assert.match(rails,/if\(!v\?\.sku\|\|!v\?\.vid\)/);   // never an unidentified option
+ assert.match(rails,/location\.assign\(store\.checkoutUrl\(\)\)/);
+ assert.doesNotMatch(rails,/woo\.add|SMWoo/);   // no WooCommerce dependency
 });

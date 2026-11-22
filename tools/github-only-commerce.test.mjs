@@ -43,16 +43,16 @@ test('checkout preserves order reference on ambiguous retries and marks unpaid',
   assert.match(s,/cart\.clear\(\)/);
   assert.doesNotMatch(s,/paypal\.Buttons|payment_status','PAID'/);
 });
-test('unverified freight cannot enable paid checkout',()=>{
-  const s=read('assets/js/global-pdp.js');
-  assert.match(s,/No verified carrier quote/);
-  assert.match(s,/function setOrderable\(yes\)/);
-  assert.match(s,/var can=!!\(state\.option&&state\.option\.vid\)/);
-  assert.match(s,/function requestFallback/);
-  assert.match(s,/Add to Cart to request a quote/);
-  assert.match(s,/requestCartReady\(\)\.then/);
-  assert.doesNotMatch(s,/api\('\/wp-json\/gdcs\/v1\/live\/cart'/);
-  assert.match(s,/gpdp-request-fallback/);
+test('global product page: no WooCommerce cart call, buttons gated on an exact option, no-price fallback is a WhatsApp quote',()=>{
+ const s=read('assets/js/global-pdp.js');
+ assert.match(s,/No verified carrier quote/);
+ assert.match(s,/function setOrderable\(yes\)/);
+ assert.match(s,/var can=!!\(state\.option&&state\.option\.vid\)/);
+ assert.match(s,/function requestFallback/);
+ assert.match(s,/Ask for this option on WhatsApp/);
+ assert.match(s,/store\.addCj\(\{/);
+ assert.doesNotMatch(s,/api\('\/wp-json\/gdcs\/v1\/live\/cart'/);
+ assert.match(s,/gpdp-request-fallback/);
 });
 
 test('stored legacy variation rows normalize attributes safely on reload',()=>{

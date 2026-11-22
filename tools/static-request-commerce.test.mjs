@@ -48,14 +48,14 @@ test('Formspree intake acknowledges but does not mark a paid/accepted order and 
  assert.match(code,/Items have been preserved/);
  assert.doesNotMatch(code,/payment_status','PAID'/);
 });
-test('request click bridge has no WordPress, WooCommerce or Cloudflare API dependency',()=>{
+test('click bridge has no WordPress, WooCommerce or Cloudflare API dependency',()=>{
  const code=read('assets/js/woo-bridge.js');
  assert.doesNotMatch(code,/fetch\(['"`]\/wp-json|fetch\(['"`]https?:\/\/[^'"`]*workers\.dev|paypal\.Buttons/i);
- assert.match(code,/SMRequestBridge/);
- assert.match(code,/\/order\/\?country=PK/);
- assert.match(code,/\/request-cart\//);
- assert.match(code,/busy=true/);
- assert.match(code,/options\(\)/);
+ assert.match(code,/g\.SMStore = \{/);
+ assert.match(code,/sm_cart/);
+ assert.match(code,/sm_gcart/);
+ assert.match(code,/busy = true/);   // one click, one add
+ assert.match(code,/pageQty\(\)/);
 });
 
 test('unpriced Pakistan quote does not crash Formspree payload and copyable reference is available',()=>{
@@ -100,20 +100,23 @@ test('request checkout collects PayPal/card preference but never claims paid for
  assert.doesNotMatch(js,/payment_status','PAID'/);
 });
 
-test('global product PDP sends chosen CJ SKU and quantity to same request cart',()=>{
+test('global product page sends the chosen CJ option, quantity and shipping to the site cart',()=>{
  const code=read('assets/js/global-pdp.js');
- assert.match(code,/requestCartReady\(\)\.then\(function \(cart\)/);
- assert.match(code,/sku:String\(o\.sku\|\|P\.sku\|\|P\.pid\)/);
- assert.match(code,/vkey:String\(o\.vid\|\|''\)/);
- assert.match(code,/qty:qty\(\),url:location\.href/);
- assert.match(code,/location\.href='\/order\/\?country='/);
+ assert.match(code,/store\.addCj\(\{/);
+ assert.match(code,/sku: String\(o\.sku \|\| P\.sku \|\| P\.pid\)/);
+ assert.match(code,/vkey: String\(o\.vid \|\| ''\)/);
+ assert.match(code,/qty: qty\(\)/);
+ assert.match(code,/ship: state\.ship \? state\.ship\.label/);
+ assert.match(code,/location\.assign\(store\.checkoutUrl\(\)\)/);
  assert.doesNotMatch(code,/api\('\/wp-json\/gdcs\/v1\/live\/cart'/);
  assert.match(code,/var can=!!\(state\.option&&state\.option\.vid\)/);
 });
 
-test('late-loaded edge global product header cart and checkout links route to same request basket',()=>{
- const code=read('assets/js/global-pdp.js');
- assert.match(code,/a\[href="\/cart\/"\],a\[href="\/checkout\/"\]/);
- assert.match(code,/link\.href='\/request-cart\/'/);
- assert.match(code,/link\.href='\/order\/'/);
+test('header cart / checkout links (WordPress paths on the live domain) open the static cart and checkout',()=>{
+ const code=read('assets/js/woo-bridge.js');
+ assert.match(code,/p === '\/cart\/'/);
+ assert.match(code,/p === '\/checkout\/'/);
+ assert.match(code,/p === '\/request-cart\/'/);
+ assert.match(code,/location\.assign\(url\(/);
+ assert.match(code,/!u\.search && !u\.hash/);   // never rewrites order-pay or other endpoint links
 });
