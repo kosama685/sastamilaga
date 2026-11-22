@@ -10,6 +10,11 @@ var selectedCountry=new URLSearchParams(location.search).get('country');
 if(/^[A-Za-z]{2}$/.test(selectedCountry||'')&&!form.elements.country.value)
   form.elements.country.value=selectedCountry.toUpperCase();
 var submitting=false,confirmed=false,ref=null,REF_KEY='sm_order_request_ref_v2',RECEIPT_KEY='sm_order_request_receipts_v1';
+var copyRef=document.getElementById('sm-copy-reference'),helpRef=document.getElementById('sm-help-reference');
+function referenceHelp(id){
+ if(copyRef){copyRef.hidden=false;copyRef.onclick=function(){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(id).then(function(){copyRef.textContent='Reference copied'}).catch(function(){copyRef.textContent='Reference: '+id})}else copyRef.textContent='Reference: '+id;};}
+ if(helpRef){var number=String((window.SM_CONFIG||{}).whatsapp||'').replace(/\D/g,'');if(/^\d{8,15}$/.test(number)){helpRef.hidden=false;helpRef.href='https://wa.me/'+number+'?text='+encodeURIComponent('Please check my unpaid Sasta Milaga request '+id+'. Confirm whether staff received it.');}}
+}
 // Receipt records contain no customer contact details. A Formspree 2xx is an intake acknowledgment, not staff acceptance.
 function money(n,c){return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'code'}).format(n)}
 function reference(){if(ref)return ref;try{var saved=sessionStorage.getItem(REF_KEY);if(/^SM-REQ-[A-F0-9]{20}$/.test(saved||'')){ref=saved;return ref}}catch(e){}var a=new Uint8Array(10);crypto.getRandomValues(a);ref='SM-REQ-'+Array.from(a).map(function(x){return x.toString(16).padStart(2,'0')}).join('').toUpperCase();try{sessionStorage.setItem(REF_KEY,ref)}catch(e){}return ref}
@@ -49,7 +54,7 @@ form.addEventListener('submit',async function(e){
  if(referral&&/^[A-Za-z0-9_-]{4,64}$/.test(referral))values.set('referral_code_unverified',referral);
  values.set('source','Sasta Milaga opt-in static request page');values.set('order_items',cart.message());
  values.set('order_local_subtotal_pkr',totals.local.subtotal.toFixed(2));
- values.set('order_local_delivery_estimate_pkr',totals.local.shippingEstimate.toFixed(2));
+ values.set('order_local_delivery_estimate_pkr',totals.local.shippingEstimate===null?'UNVERIFIED':totals.local.shippingEstimate.toFixed(2));
  values.set('order_global_product_estimate_usd',totals.cj.productSubtotalEstimate.toFixed(2));
  values.set('order_global_unpriced_option_count',String(totals.cj.unpricedOptionCount||0));
  values.set('payment_status','NOT_PAID');
@@ -68,8 +73,9 @@ form.addEventListener('submit',async function(e){
   }catch(storageError){}
   if(receiptSaved)cart.clear();
   render();status.textContent='Formspree acknowledged request '+id+'. NOT paid, accepted or confirmed received by staff. '+(receiptSaved?'A reference was saved on this device.':'Local receipt could not be saved, so your cart was preserved.')+' Contact support with this reference for staff verification.';
+  referenceHelp(id);
   if(receiptSaved){try{sessionStorage.removeItem(REF_KEY)}catch(e){}}
- }catch(error){status.textContent='Request NOT confirmed ('+id+'). Do not submit again blindly; contact support with the same reference. Items have been preserved. '+String(error.message||'Network issue')}
+ }catch(error){status.textContent='Request NOT confirmed ('+id+'). Do not submit again blindly; contact support with the same reference. Items have been preserved. '+String(error.message||'Network issue');referenceHelp(id)}
  finally{submitting=false;submit.disabled=confirmed}
 });
 document.addEventListener('sm:order-cart-changed',render);
