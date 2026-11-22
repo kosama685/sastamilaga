@@ -335,9 +335,9 @@
       dash = null,
       youtube = null;
     const valid = () => !ended;
-    const fail = (reason) => {
+    const fail = (reason, httpCode = 0) => {
       if (!valid()) return;
-      const classified = core.diagnose(reason);
+      const classified = core.diagnose(reason, httpCode);
       lastPlaybackProblem = { code: classified.code, summary: classified.summary, next: classified.next, engine: item.engine };
       event("source_failed", { code: classified.code, reason: classified.summary });
       callbacks.failed();
@@ -354,7 +354,11 @@
     };
     let timer = setTimeout(() => fail("No playback within 25 seconds"), 25000);
     const failed = () => {
-      if (!hls) fail("This source could not be decoded");
+      if (hls) return;
+      const code = video.error?.code;
+      fail(code === 2 ? "Native media network failure" :
+           code === 3 ? "Media decoding failed" :
+           code === 4 ? "Unsupported media format" : "Native media playback failed");
     };
     const stalled = () => {
       if (valid()) {
@@ -476,8 +480,10 @@
       });
       hls.on(window.Hls.Events.ERROR, (_, data) => {
         if (!valid() || !data.fatal) return;
+        const httpCode = Number(data.response?.code || data.response?.status || 0);
         if (
           data.type === window.Hls.ErrorTypes.NETWORK_ERROR &&
+          ![401,403,404,410].includes(httpCode) &&
           networkRetries++ < 2
         ) {
           hls.startLoad();
@@ -490,10 +496,7 @@
           hls.recoverMediaError();
           return;
         }
-        const httpCode = Number(data.response?.code || data.response?.status || 0);
-        const failedReason = data.details || data.type || "HLS source unavailable";
-        const classified = core.diagnose(failedReason, httpCode);
-        fail(classified.code === "ACCESS_DENIED" || classified.code === "SOURCE_MISSING" || classified.code === "UPSTREAM_ERROR" ? classified.summary : failedReason);
+        fail(data.details || data.type || "HLS source unavailable", httpCode);
       });
       hls.loadSource(item.url);
       hls.attachMedia(video);
