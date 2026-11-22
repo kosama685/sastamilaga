@@ -46,9 +46,12 @@ test('checkout preserves order reference on ambiguous retries and marks unpaid',
 test('unverified freight cannot enable paid checkout',()=>{
   const s=read('assets/js/global-pdp.js');
   assert.match(s,/No verified carrier quote/);
-  assert.match(s,/setOrderable\(false\); \/\/ no unverified shipping/);
+  assert.match(s,/function setOrderable\(yes\)/);
+  assert.match(s,/var can=!!\(state\.option&&state\.option\.vid\)/);
   assert.match(s,/function requestFallback/);
-  assert.match(s,/requestFallback\('Shipping verification is unavailable\.'\)/);
+  assert.match(s,/Add to Cart to request a quote/);
+  assert.match(s,/requestCartReady\(\)\.then/);
+  assert.doesNotMatch(s,/api\('\/wp-json\/gdcs\/v1\/live\/cart'/);
   assert.match(s,/gpdp-request-fallback/);
 });
 
