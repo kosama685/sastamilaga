@@ -110,3 +110,10 @@ test('global product PDP sends chosen CJ SKU and quantity to same request cart',
  assert.doesNotMatch(code,/api\('\/wp-json\/gdcs\/v1\/live\/cart'/);
  assert.match(code,/var can=!!\(state\.option&&state\.option\.vid\)/);
 });
+
+test('late-loaded edge global product header cart and checkout links route to same request basket',()=>{
+ const code=read('assets/js/global-pdp.js');
+ assert.match(code,/a\[href="\/cart\/"\],a\[href="\/checkout\/"\]/);
+ assert.match(code,/link\.href='\/request-cart\/'/);
+ assert.match(code,/link\.href='\/order\/'/);
+});
