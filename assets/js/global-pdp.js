@@ -44,6 +44,7 @@
     return requestCartLoading;
   }
   function requestFallback(message) {
+    if (els.status.querySelector('.gpdp-request-fallback')) return;
     say(message + ' You can save a separate quotation request without payment or contacting the checkout API.', 'warn');
     var wrap = document.createElement('div');
     wrap.className = 'gpdp-request-fallback';
