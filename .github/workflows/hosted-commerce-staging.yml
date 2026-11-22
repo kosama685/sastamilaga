@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - feature/hosted-commerce-staging
+      - main
+      - fix/managed-commerce-staging-guards-20261122
     paths:
       - 'staging/hosted-commerce/**'
       - 'tools/hosted-commerce-staging.test.mjs'
