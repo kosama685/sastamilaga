@@ -9,6 +9,8 @@ on:
       - 'order/index.html'
       - 'request-cart/index.html'
       - 'tools/static-request-commerce.test.mjs'
+      - 'tools/static-commerce-v2.test.mjs'
+      - 'staging/static-commerce-v2/**'
       - '.github/workflows/static-request-commerce.yml'
   push:
     branches: [main, feature/git-only-formspree-request-commerce-20261122]
@@ -18,6 +20,8 @@ on:
       - 'assets/js/order-page.js'
       - 'assets/js/request-cart-page.js'
       - 'tools/static-request-commerce.test.mjs'
+      - 'tools/static-commerce-v2.test.mjs'
+      - 'staging/static-commerce-v2/**'
   workflow_dispatch:
 permissions:
   contents: read
@@ -41,3 +45,4 @@ jobs:
           node --test tools/static-request-commerce.test.mjs
           node --test tools/github-only-commerce.test.mjs
           node --test tools/unified-order-request.test.mjs
+          node --test tools/static-commerce-v2.test.mjs
