@@ -1,0 +1,33 @@
+name: Git-only order request reliability checks
+on:
+  push:
+    branches: [fix/github-only-commerce-20261122]
+  pull_request:
+    paths:
+      - 'assets/js/order-cart.js'
+      - 'assets/js/request-cart-page.js'
+      - 'assets/js/order-page.js'
+      - 'assets/js/global-pdp.js'
+      - 'tools/github-only-commerce.test.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check assets/js/order-cart.js
+          node --check assets/js/request-cart-page.js
+          node --check assets/js/order-page.js
+          node --check assets/js/global-pdp.js
+      - name: Existing commerce regression suite
+        run: node --test tools/unified-order-request.test.mjs
+      - name: Git-only checkout regression suite
+        run: node --test tools/github-only-commerce.test.mjs
