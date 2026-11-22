@@ -4,11 +4,15 @@ on:
     workflows: ['Deploy static content to Pages']
     types: [completed]
   workflow_dispatch:
+  pull_request:
+    paths:
+      - tools/global-quote-live-smoke.mjs
+      - .github/workflows/global-quote-live-smoke.yml
 permissions:
   contents: read
 jobs:
   verify-live:
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 7
     steps:
