@@ -42,6 +42,9 @@ function qty(){
  var n=e?Number(e.value||e.textContent):1;
  return Number.isInteger(n)&&n>=1&&n<=MAX_QTY?n:1;
 }
+function updateBadge(count){
+ document.querySelectorAll('.smh-cart__count').forEach(function(el){el.textContent=String(count);el.setAttribute('data-n',String(count))});
+}
 function notice(message,link){
  var t=document.getElementById('sm-request-feedback');
  if(!t){t=document.createElement('div');t.id='sm-request-feedback';t.setAttribute('role','status');t.setAttribute('aria-live','polite');t.style.cssText='position:fixed;bottom:15px;left:12px;right:12px;max-width:620px;margin:auto;z-index:2147483000;background:#123f2a;color:white;padding:16px;border-radius:12px;box-shadow:0 10px 30px #0004;font:600 15px/1.5 system-ui';document.body.appendChild(t)}
@@ -81,6 +84,7 @@ function add(sku,amount,variation,buyNow,source){
  return getCart().then(function(cart){
    var r=cart.add(row);
    if(!r.ok)throw new Error(r.message||'Cannot save the request');
+   updateBadge(cart.count());
    if(buyNow){location.assign('/order/?country=PK');}
    else notice('Saved in your request cart. Final price, stock and delivery are confirmed by staff; no payment taken.','/request-cart/');
    return {ok:true,requestOnly:true,count:cart.count(),row:row};
@@ -119,5 +123,7 @@ function onClick(e){
  add(sku,q,selected,quick,target);
 }
 g.addEventListener('click',onClick,true);
+ document.addEventListener('sm:order-cart-changed',function(e){updateBadge(e.detail&&e.detail.count||0)});
+ getCart().then(function(c){updateBadge(c.count())}).catch(function(){});
 g.SMRequestBridge={add:add,requestOnly:true,status:function(){return {busy:busy,receiver:'Formspree via /order/',payment:'NOT_PAID'}}};
 })(window);
