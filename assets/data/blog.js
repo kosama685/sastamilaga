@@ -1,5 +1,5 @@
 /* Sasta Milaga blog posts.
-   Each post appears on the site from its `publish` date (YYYY-MM-DD, Pakistan time).
+   Each post appears on the site from its `publish` date (YYYY-MM-DD, Asia/Riyadh time).
    To schedule a post: add it here with a future date and push. The daily GitHub Action
    (.github/workflows/blog-schedule.yml) builds its static page and sitemap entry when it is due.
    Fields: slug, title, description (≤160 chars), publish, updated, author, category, tags, image,
