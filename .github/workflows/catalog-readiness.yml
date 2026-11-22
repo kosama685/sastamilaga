@@ -4,6 +4,8 @@ name: D1 catalogue merchant readiness (read only)
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '13 4 * * *' # Daily 07:13 Asia/Riyadh; read-only eligibility and quota check
   push:
     branches: [main]
     paths:
@@ -28,6 +30,31 @@ jobs:
           node-version: '20'
       - name: Validate audit script
         run: node --check tools/catalog-readiness-d1.mjs
+      - name: Verify repository page counts without generating duplicate HTML
+        shell: bash
+        run: |
+          node --input-type=module - <<'NODE'
+          import fs from 'node:fs';
+          const manifest = JSON.parse(fs.readFileSync('data/cj/lookup/manifest.json','utf8'));
+          const categories = fs.readdirSync('c/global').filter(f => f.endsWith('.html')).length;
+          const localPages = fs.readdirSync('p').filter(f => f.endsWith('.html')).length;
+          const globalStatic = fs.existsSync('global-shop/p') ? fs.readdirSync('global-shop/p').filter(f => f.endsWith('.html')).length : 0;
+          const total = manifest.unique_ids;
+          if (manifest.allow_indexing !== false || total !== 451812 || categories !== 573) throw Error('Source or category count changed; review before any publishing');
+          const report = { cjSupplierIDs:total, cjCategoryPages:categories-1, cjStaticHtmlPages:globalStatic, separateLocalStaticHtmlPages:localPages, newCjPagesPublished:0 };
+          console.log(JSON.stringify(report));
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'## CJ GitHub static page inventory\n\n' +
+            Object.entries(report).map(([k,v])=>'- '+k+': **'+v.toLocaleString('en-US')+'**').join('\n') +
+            '\n\nSupplier URLs can be routed dynamically; do not imply all are indexed.\n');
+          NODE
+      - name: Report the runner's GitHub API remaining quota
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          echo '## GitHub Actions REST API quota' >> "$GITHUB_STEP_SUMMARY"
+          gh api rate_limit --jq '.resources.core | "- Remaining on this job token: \(.remaining) / \(.limit) (reset Unix time: \(.reset))"' >> "$GITHUB_STEP_SUMMARY" ||
+            echo '- Quota temporarily unavailable (no publishing attempted).' >> "$GITHUB_STEP_SUMMARY"
       - name: Query catalogue aggregates (read-only)
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
