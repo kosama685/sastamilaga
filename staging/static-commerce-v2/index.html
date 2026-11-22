@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Sasta Milaga | Commerce Test Desk</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#163a2b;background:#f5f8f5}
+*{box-sizing:border-box}body{margin:0}header{background:#123f2b;color:#fff;padding:18px 4vw}
+header strong{font-size:1.2rem}header small{display:block;opacity:.85;margin-top:5px}
+main{max-width:1120px;padding:24px 16px 70px;margin:auto}h1{font-size:clamp(1.5rem,4vw,2.4rem)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.panel{background:#fff;border:1px solid #d8e7db;border-radius:14px;padding:20px;min-width:0}
+label{display:block;font-weight:600;margin:12px 0 4px}input,select,textarea{display:block;width:100%;font:inherit;border:1px solid #9bb6a6;border-radius:9px;padding:11px;color:inherit;background:#fff}
+textarea{min-height:75px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button{border:0;border-radius:9px;background:#176b43;color:#fff;font:inherit;font-weight:700;padding:12px 17px;cursor:pointer;min-height:44px}
+button.secondary{border:1px solid #176b43;color:#176b43;background:white}button:disabled{opacity:.45;cursor:wait}
+.small{font-size:.9rem;color:#52685c;line-height:1.5}.notice{background:#fff7e5;padding:12px;border-left:3px solid #c88d21;margin:16px 0}
+.status{padding:12px;background:#e8f3eb;border-radius:9px;white-space:pre-wrap;overflow-wrap:anywhere}
+.item{padding:14px 0;border-bottom:1px solid #e2ebe4;overflow-wrap:anywhere}
+.item .tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}.tools input{width:82px}
+a{color:#176b43}footer{text-align:center;padding:25px;color:#566b5d}
+@media(max-width:760px){.grid,.two{grid-template-columns:1fr}.panel{padding:16px}button{width:100%}.item .tools button{width:auto}main{padding:16px 12px 55px}}
+</style></head><body>
+<header><strong>Sasta Milaga — Commerce Test Desk</strong><small>Unpaid request intake · Staging preview · No PayPal payments or order acceptance</small></header>
+<main><h1>Test the new request experience</h1>
+<p class="notice">Only use reviewed product/variation identifiers and safe test details. Prices are non-binding estimates. Shipping, inventory, COD acceptance, and payments require independent confirmation. This preview is not the live storefront.</p>
+<div class="grid">
+<section class="panel"><h2>Add a reviewed product</h2>
+<form id="product-form">
+<label for="type">Source</label><select id="type" name="type"><option value="local">Pakistan local</option><option value="cj">CJ global</option></select>
+<div class="two"><div><label for="pid">Product ID</label><input id="pid" name="pid" required maxlength="128"></div><div><label for="sku">Exact SKU</label><input id="sku" name="sku" required maxlength="128"></div></div>
+<label for="pname">Product name</label><input id="pname" name="pname" required maxlength="240">
+<div class="two"><div><label for="variant">Variant ID (when applicable)</label><input id="variant" name="variant" maxlength="128"></div>
+<div><label for="variantname">Colour / size</label><input id="variantname" name="variantname" maxlength="120"></div></div>
+<div class="two"><div><label for="qty">Quantity</label><input id="qty" name="qty" type="number" min="1" max="99" step="1" value="1" required></div>
+<div><label for="estimate">Indicative unit price (optional)</label><input id="estimate" name="estimate" inputmode="decimal" type="number" min="0.01" step="0.01" placeholder="Unpriced quote"></div></div>
+<p class="small">Without a verified supplier rate, no freight or payable total is calculated.</p>
+<button type="submit">Add to request cart</button>
+</form><p id="add-status" class="status" role="status">Enter the real product details for an internal test.</p>
+</section>
+<section class="panel"><h2>Request cart <span id="count">0</span></h2><div id="cart"></div>
+<p id="totals" class="small"></p></section>
+</div>
+<section class="panel" style="margin-top:18px"><h2>Send an unpaid request</h2>
+<form id="checkout-form"><div class="two">
+<div><label for="full_name">Full name</label><input id="full_name" name="full_name" required autocomplete="name" maxlength="150"></div>
+<div><label for="phone">Phone / WhatsApp</label><input id="phone" name="phone" type="tel" required minlength="8" maxlength="25"></div>
+<div><label for="email">Email (optional)</label><input id="email" name="email" type="email" maxlength="200"></div>
+<div><label for="country">Destination</label><select id="country" name="country"><option value="PK">Pakistan</option><option value="SA">Saudi Arabia</option><option value="AE">United Arab Emirates</option></select></div>
+<div><label for="city">City</label><input id="city" name="city" required maxlength="100"></div>
+<div><label for="address">Delivery address</label><input id="address" name="address" required maxlength="600"></div>
+</div><label for="payment">Request type</label>
+<select id="payment" name="payment"><option value="cod">Pakistan COD request — unpaid</option><option value="quote">Shipping and total quotation — unpaid</option></select>
+<label for="notes">Notes</label><textarea id="notes" name="notes" maxlength="800"></textarea>
+<p class="small">Submission requires a valid configured Formspree receiver. A 2xx response acknowledges intake only; staff must separately verify delivery and acceptance.</p>
+<button type="submit" id="send">Send unpaid request</button></form>
+<p id="request-status" class="status" role="status" aria-live="polite">No request submitted.</p></section>
+</main><footer>Static staging · No personal accounts, rewards, referral payouts, or payment capture</footer>
+<script src="store.js"></script><script src="products.js"></script><script src="checkout.js"></script>
+<script src="paypal.js"></script><script src="utils.js"></script><script src="app.js"></script>
+</body></html>
