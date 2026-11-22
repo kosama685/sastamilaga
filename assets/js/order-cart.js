@@ -13,7 +13,7 @@
       if(!Array.isArray(value))return[];
       return value.filter(function(r){return r&&['local','cj'].includes(r.type)&&r.id&&
         (Number.isFinite(r.unit)&&r.unit>0||(r.type==='cj'&&r.unit===null&&r.priceStatus==='pending'))&&Number.isInteger(r.qty)&&r.qty>0&&r.qty<=MAX_QTY&&
-        r.currency===(r.type==='cj'?'USD':'PKR');}).slice(0,MAX_ROWS);
+        r.currency===(r.type==='cj'?'USD':'PKR');}).slice(0,MAX_ROWS).map(normalize).filter(Boolean);
     }catch(e){return[]}
   }
   function persist(rows){
