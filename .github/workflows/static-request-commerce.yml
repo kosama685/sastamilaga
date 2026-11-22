@@ -6,6 +6,11 @@ on:
       - 'assets/js/global-pdp.js'
       - 'assets/js/paypal-payment-link.js'
       - 'assets/js/order-cart.js'
+      - 'assets/js/wordpress-checkout.js'
+      - 'tools/wordpress-checkout.test.mjs'
+      - 'integrations/sasta-paypal-link/**'
+      - 'assets/js/checkout-pricing.js'
+      - 'tools/checkout-pricing.test.mjs'
       - 'assets/js/order-page.js'
       - 'assets/js/request-cart-page.js'
       - 'order/index.html'
@@ -19,6 +24,11 @@ on:
     paths:
       - 'assets/js/woo-bridge.js'
       - 'assets/js/order-cart.js'
+      - 'assets/js/wordpress-checkout.js'
+      - 'tools/wordpress-checkout.test.mjs'
+      - 'integrations/sasta-paypal-link/**'
+      - 'assets/js/checkout-pricing.js'
+      - 'tools/checkout-pricing.test.mjs'
       - 'assets/js/order-page.js'
       - 'assets/js/request-cart-page.js'
       - 'tools/static-request-commerce.test.mjs'
@@ -40,6 +50,8 @@ jobs:
         run: |
           node --check assets/js/woo-bridge.js
           node --check assets/js/order-cart.js
+          node --check assets/js/wordpress-checkout.js
+          node --check assets/js/checkout-pricing.js
           node --check assets/js/order-page.js
           node --check assets/js/global-pdp.js
           node --check assets/js/paypal-payment-link.js
@@ -47,7 +59,14 @@ jobs:
           for file in staging/static-commerce-v2/*.js; do node --check "$file"; done
       - name: Request-only commerce tests
         run: |
+          node --test tools/wordpress-checkout.test.mjs
+          node --test tools/checkout-pricing.test.mjs
+          node --test tools/global-quote-flow.test.mjs
           node --test tools/static-request-commerce.test.mjs
           node --test tools/github-only-commerce.test.mjs
           node --test tools/unified-order-request.test.mjs
           node --test tools/static-commerce-v2.test.mjs
+      - name: Test optional native WooCommerce PayPal-link gateway
+        run: |
+          php -l integrations/sasta-paypal-link/sasta-paypal-link.php
+          php integrations/sasta-paypal-link/test.php
