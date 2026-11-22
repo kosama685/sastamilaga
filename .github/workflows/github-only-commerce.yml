@@ -1,7 +1,7 @@
 name: Git-only order request reliability checks
 on:
   push:
-    branches: [fix/github-only-commerce-20261122]
+    branches: [main, fix/github-only-commerce-20261122]
   pull_request:
     paths:
       - 'assets/js/order-cart.js'
