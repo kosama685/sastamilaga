@@ -1,8 +1,9 @@
 /* Global product page (edge-rendered by workers/global-pdp; same layout as the local product pages).
  * Adds, in the browser: the full photo gallery with zoom, the supplier description, options with the price for the shopper's destination,
- * a delivery check, and the REAL cart: POST /wp-json/gdcs/v1/live/cart (GDCS VirtualCheckout) puts the item in the WooCommerce cart at a
- * server-verified price; "Buy now" then opens the WooCommerce checkout. Nothing is priced, stored or ordered in the browser.
- * Data: GET /wp-json/sm/v1/gpdp/<pid> (wordpress/mu-plugins/sm-global-pdp-api.php), GET /api/cj/shipping (indicative carrier quotes). */
+ * a delivery check, and the same browser-persisted UNPAID request cart used by Pakistan products.
+ * Buy Now opens a request form; never treats a supplier estimate as a payable total.
+ * Data: GET /wp-json/sm/v1/gpdp/<pid> for read-only options, plus a read-only freight lookup.
+ * These upstream data sources are legacy dependencies until an approved supplier snapshot replaces them. */
 (function () {
   'use strict';
   var root = document.querySelector('[data-gpdp]'), dataEl = document.getElementById('gpdp-data');
