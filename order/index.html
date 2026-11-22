@@ -24,11 +24,11 @@ button:disabled{opacity:.55;cursor:wait}.row-controls{display:flex;align-items:c
 <body><header><a href="/">Sasta Milaga</a> · <a href="/shop/">Continue shopping</a></header>
 <main class="shell">
 <h1>Order request — no payment is collected</h1>
-<p class="note">This optional request form is separate from the existing WooCommerce cart and PayPal checkout. Prices, inventory, delivery, taxes and final charges are subject to supplier confirmation. Pakistan local items are only available for Pakistan delivery. Global products may be subject to additional shipping restrictions.</p>
+<p class="note">This form submits a non-binding request to staff through Formspree. It is not a payment checkout. Prices, inventory, delivery, taxes and final charges are subject to supplier confirmation. Pakistan local items are only available for Pakistan delivery. Global products may be subject to additional shipping restrictions.</p>
 <div class="columns"><section class="panel" aria-labelledby="items-title">
 <h2 id="items-title">Your request items</h2><div id="sm-request-rows"></div>
 <p id="sm-request-totals" class="note" aria-live="polite"></p>
-<p class="note">Existing COD and WooCommerce carts are preserved. Items in them are not automatically duplicated here.</p>
+<p class="note">Only the items shown in this request cart will be submitted. All prices remain estimates until confirmed by staff.</p>
 </section>
 <section class="panel" aria-labelledby="form-title"><h2 id="form-title">Contact and delivery enquiry</h2>
 <form id="sm-request-form" hidden>
@@ -46,7 +46,7 @@ button:disabled{opacity:.55;cursor:wait}.row-controls{display:flex;align-items:c
 <p class="note">No card details are collected. Form entries are transmitted to the configured order-request receiver.</p>
 </form><div id="sm-request-status" class="status" role="status" aria-live="polite">Loading request items…</div>
 </section></div></main>
-<footer>© Sasta Milaga · Request-only preview · <a href="/">Home</a></footer>
+<footer>© Sasta Milaga · Unpaid request intake · <a href="/">Home</a></footer>
 <script src="/assets/js/config.js" defer></script>
 <script src="/assets/js/order-cart.js" defer></script>
 <script src="/assets/js/order-page.js" defer></script>
