@@ -1,6 +1,14 @@
 name: Local and CJ commerce resilience checks
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/commerce-resilience.yml
+      - assets/js/global-pdp.js
+      - assets/js/woo-bridge.js
+      - tools/static-request-commerce.test.mjs
+      - tools/github-only-commerce.test.mjs
+      - tools/unified-order-request.test.mjs
   push:
     branches: [main]
     paths:
