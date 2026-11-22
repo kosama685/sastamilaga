@@ -196,15 +196,15 @@
         if (!r.ok) {
           els.delivery.className = 'gpdp-delivery is-warn';
           els.delivery.textContent = (r.j && r.j.message ? String(r.j.message).replace(/<[^>]+>/g, '') : 'Delivery could not be checked right now.') + ' You can still ask us on WhatsApp.';
-          setOrderable(false); // no unverified shipping or checkout when the carrier service is unavailable
-          requestFallback('Shipping is not verified for this option.');
+          setOrderable(false); // unpaid requests remain possible; do not offer a payable total
+          say('Shipping is not verified. Add this option to your cart to request the final price and delivery.', 'warn');
           return;
         }
         var q = (r.j.quotes || []).filter(function (z) { return z && z.service; });
         if (!q.length) {
           els.delivery.className = 'gpdp-delivery is-warn';
           els.delivery.textContent = 'This option cannot be delivered to ' + where + ' from the supplier\'s warehouses right now. Choose another option, change your destination at the top of the page, or ask us on WhatsApp.';
-          setOrderable(false); requestFallback('No verified carrier quote is available for this variation and destination.'); return;
+          setOrderable(false); say('No verified carrier quote for this variation and destination. Add to Cart to request a final quote.', 'warn'); return;
         }
         q.sort(function (a, b) { return (a.cost - b.cost) || (parseInt(a.estimate, 10) - parseInt(b.estimate, 10)); });
         var best = q[0], cur = r.j.currency || 'USD', fmt = function (v) { return cur === 'USD' ? money(v) : (cur + ' ' + Number(v).toFixed(r.j.digits == null ? 2 : r.j.digits)); };
@@ -213,7 +213,7 @@
         els.delivery.textContent = 'Delivers to ' + where + (from ? ' from the supplier\'s ' + from.replace(/\s*\([A-Z]{2}\)$/, '') + ' warehouse' : '') + ': ' + q.length + ' method' + (q.length > 1 ? 's' : '') +
           ', shipping from ' + fmt(best.cost) + (best.estimate ? ' (' + best.estimate + ' days, carrier estimate)' : '') + '. The exact shipping charge is shown at checkout before you pay.';
         setOrderable(true);
-      }).catch(function () { if (seq === dSeq) { els.delivery.className = 'gpdp-delivery is-warn'; els.delivery.textContent = 'No verified carrier rate is available. Request a supplier quote before payment.'; setOrderable(false); requestFallback('Shipping verification is unavailable.'); } });
+      }).catch(function () { if (seq === dSeq) { els.delivery.className = 'gpdp-delivery is-warn'; els.delivery.textContent = 'No verified carrier rate is available. Request a supplier quote before payment.'; setOrderable(false); say('Shipping verification is unavailable. Add to Cart to request a quote, without payment.', 'warn'); } });
     }, 250);
   }
 
@@ -274,7 +274,7 @@
       renderOptions(priced); els.qtyWrap.hidden = false;
       var keep = state.option && priced.filter(function (o) { return o.vid === state.option.vid; })[0];
       choose(keep || priced[0]);
-      if (!d.ordering_enabled) { setOrderable(false); requestFallback('Live supplier order verification is paused. Save your exact variation in the combined cart for quotation.'); }
+      if (!d.ordering_enabled) { setOrderable(false); say('Supplier order verification is paused. Add your exact option to the combined cart as an unpaid request.', 'warn'); }
     }).catch(function () { requestFallback('Live supplier details are unavailable right now.'); });
   }
   context().then(load);
