@@ -20,6 +20,7 @@ on:
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: write
+  actions: read
   pages: write
   id-token: write
 
@@ -139,6 +140,25 @@ jobs:
         with:
           # Upload entire repository
           path: '.'
+      # GitHub's artifact metadata list can lag immediately after a large
+      # Pages upload. Verify registration before deploy-pages tries to read it.
+      - name: Wait for Pages artifact registration
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 18); do
+            found=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?per_page=100" --jq '[.artifacts[] | select(.name == "github-pages" and .expired == false)] | length')
+            if [ "$found" -ge 1 ]; then
+              echo "Pages artifact metadata registered (attempt $attempt)"
+              exit 0
+            fi
+            echo "Pages artifact metadata is not visible yet ($attempt/18)"
+            sleep 5
+          done
+          echo "::error::The uploaded Pages artifact was not registered in time"
+          exit 1
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
