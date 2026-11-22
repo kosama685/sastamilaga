@@ -1,6 +1,14 @@
 name: Local and CJ commerce resilience checks
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/commerce-resilience.yml
+      - assets/js/global-pdp.js
+      - assets/js/woo-bridge.js
+      - tools/static-request-commerce.test.mjs
+      - tools/github-only-commerce.test.mjs
+      - tools/unified-order-request.test.mjs
   push:
     branches: [main]
     paths:
@@ -12,10 +20,15 @@ on:
       - assets/js/global.js
       - assets/js/cj-home-rails.js
       - assets/js/global-pdp.js
-      - tools/woo-bridge-flow.test.mjs
-      - tools/cj-cart-handoff.test.mjs
-      - tools/cj-sku-awareness.test.mjs
-      - tools/commerce-resilience.test.mjs tools/cod-recovery.test.mjs
+      - assets/js/order-cart.js
+      - assets/js/order-page.js
+      - assets/js/global-quote-flow.js
+      - assets/js/paypal-payment-link.js
+      - tools/static-request-commerce.test.mjs
+      - tools/github-only-commerce.test.mjs
+      - tools/unified-order-request.test.mjs
+      - tools/static-commerce-v2.test.mjs
+      - tools/cod-recovery.test.mjs
       - .github/workflows/commerce-resilience.yml
 permissions: { contents: read }
 jobs:
@@ -33,5 +46,17 @@ jobs:
           node --check assets/js/global.js
           node --check assets/js/cj-home-rails.js
           node --check assets/js/global-pdp.js
-      - name: Run no-purchase cart and CJ behavioral regression tests
-        run: node --test tools/woo-bridge-flow.test.mjs tools/cj-cart-handoff.test.mjs tools/cj-sku-awareness.test.mjs tools/commerce-resilience.test.mjs
+          node --check assets/js/paypal-payment-link.js
+          node --check assets/js/order-cart.js
+          node --check assets/js/order-page.js
+      # Legacy Woo nonce/Store API tests are retained in the repository, but they describe
+      # the retired checkout and are not a production gate for request-only cart.
+      # The replacement suite checks exact variants, no fake paid orders, Formspree
+      # ambiguity, mixed local/CJ cart and missing shipping quotes.
+      - name: Run unified unpaid request commerce regression tests
+        run: |
+          node --test tools/static-request-commerce.test.mjs
+          node --test tools/github-only-commerce.test.mjs
+          node --test tools/unified-order-request.test.mjs
+          node --test tools/static-commerce-v2.test.mjs
+          node --test tools/cod-recovery.test.mjs
