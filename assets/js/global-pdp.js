@@ -26,6 +26,57 @@
     return fetch(path, opts).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, status: r.status, j: j || {} }; }); });
   }
 
+  /* A request-only alternative for exhausted supplier / Woo quotas.
+   * It must never claim a Woo cart or confirmed order and never auto-publish a price.
+   * The buyer supplies an option description if the live variant API is unavailable. */
+  var requestCartLoading = null;
+  function requestCartReady() {
+    if (window.SMOrderCart) return Promise.resolve(window.SMOrderCart);
+    if (requestCartLoading) return requestCartLoading;
+    requestCartLoading = new Promise(function (resolve, reject) {
+      var script = document.createElement('script');
+      script.src = '/assets/js/order-cart.js?v=20261122-1';
+      script.async = true;
+      script.onload = function () { window.SMOrderCart ? resolve(window.SMOrderCart) : reject(new Error('Request cart unavailable')); };
+      script.onerror = function () { reject(new Error('Request cart could not be loaded')); };
+      document.head.appendChild(script);
+    }).catch(function (e) { requestCartLoading = null; throw e; });
+    return requestCartLoading;
+  }
+  function requestFallback(message) {
+    say(message + ' You can save a separate quotation request without payment or contacting the checkout API.', 'warn');
+    var wrap = document.createElement('div');
+    wrap.className = 'gpdp-request-fallback';
+    wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:12px;';
+    var label = document.createElement('label');
+    label.textContent = 'Size / colour / option (required for quotation): ';
+    label.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;align-items:center;';
+    var detail = document.createElement('input'); detail.type = 'text'; detail.maxLength = 160;
+    detail.required = true;
+    detail.placeholder = 'For example: black, size M';
+    detail.value = state.option && state.option.name ? String(state.option.name).slice(0,160) : '';
+    detail.setAttribute('aria-label', 'Describe the supplier option to confirm');
+    label.appendChild(detail);
+    var button = document.createElement('button'); button.type = 'button';
+    button.textContent = 'Save quotation request';
+    button.addEventListener('click', function () {
+      var requested = detail.value.trim();
+      if (!requested) { detail.focus(); detail.setCustomValidity('Describe the size or colour you need.'); detail.reportValidity(); return; }
+      detail.setCustomValidity(''); button.disabled = true;
+      requestCartReady().then(function (cart) {
+        // No unit price is passed: live pricing, stock, freight and PayPal/COD
+        // cannot be promised while the supplier service is unavailable.
+        var answer = cart.add({type:'cj',id:P.pid,sku:state.option && state.option.sku || P.pid,
+          name:P.name || 'Global supplier product',vkey:state.option && state.option.vid || '',
+          vname:requested,unit:null,qty:qty(),url:location.href});
+        if (!answer.ok) throw new Error(answer.message || 'Could not save the quotation request');
+        say('Your supplier quotation request is saved. No item was added to WooCommerce and no order was placed.', 'ok');
+        var link = document.createElement('a'); link.href = '/request-cart/';
+        link.textContent = 'Review request cart and send details'; els.status.appendChild(document.createTextNode(' '));els.status.appendChild(link);
+      }).catch(function (e) { button.disabled = false; say(String(e.message||e)+' Please use WhatsApp instead.', 'warn'); });
+    });
+    wrap.appendChild(label);wrap.appendChild(button);els.status.appendChild(wrap);
+  }
   /* ---- destination: the store session follows the destination chosen in the site's country window ---- */
   function context() {
     return api('/wp-json/gdcs/v1/context?light=1').then(function (c) {
@@ -178,9 +229,9 @@
       }
       var msg = (r.j && r.j.message) ? String(r.j.message).replace(/<[^>]+>/g, '') : 'The cart could not be updated. Please try again.';
       if (r.status === 403) msg = 'Your session expired. Please try again.';
-      if (r.status === 429) msg = 'Secure checkout is temporarily at capacity. No item was added. Please confirm this option on WhatsApp.';
+      if (r.status === 429 || r.status >= 500) { requestFallback('Secure checkout is temporarily unavailable. No item was added.'); return; }
       say(msg, 'warn');
-    }).catch(function () { say('The store could not be reached. Please try again, or order on WhatsApp.', 'warn'); })
+    }).catch(function () { requestFallback('The store could not be reached. No order was placed.'); })
       .then(function () { state.busy = false; els.add.removeAttribute('aria-busy'); els.buy.removeAttribute('aria-busy'); });
   }
   /* Window capture: runs before any page-level click guard, so these two buttons always reach the real cart. */
@@ -199,7 +250,8 @@
       if (!r.ok) {
         renderDescription('');
         els.price.textContent = r.status === 404 ? 'Not available' : 'Price confirmed on WhatsApp';
-        say(r.status === 404 ? 'This product is not available from the supplier right now.' : 'Live details are unavailable right now. You can still order on WhatsApp.', 'warn');
+        if (r.status === 404) say('This product is not available from the supplier right now.', 'warn');
+        else requestFallback('Live supplier options are unavailable right now.');
         return;
       }
       var d = r.j; state.data = d; state.country = (d.country || state.country || '').toUpperCase();
@@ -207,12 +259,12 @@
       renderDescription(d.description);
       els.dest.textContent = 'Global supplier item · prepaid' + (state.country ? ' · delivering to ' + countryName(state.country) : '');
       var priced = (d.options || []).filter(function (o) { return o && o.vid; });
-      if (!priced.length) { els.price.textContent = 'Price confirmed on WhatsApp'; say('This item has no option available to order online right now. Ask us on WhatsApp.', 'warn'); return; }
+      if (!priced.length) { els.price.textContent = 'Price pending supplier verification'; requestFallback('Choose the option you need and send a quotation request.'); return; }
       renderOptions(priced); els.qtyWrap.hidden = false;
       var keep = state.option && priced.filter(function (o) { return o.vid === state.option.vid; })[0];
       choose(keep || priced[0]);
       if (!d.ordering_enabled) { setOrderable(false); say('Online ordering is paused right now. Order on WhatsApp and we will confirm the total.', 'warn'); }
-    }).catch(function () { say('Live details are unavailable right now. You can still order on WhatsApp.', 'warn'); });
+    }).catch(function () { requestFallback('Live supplier details are unavailable right now.'); });
   }
   context().then(load);
 })();
