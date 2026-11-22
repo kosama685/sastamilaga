@@ -12,7 +12,7 @@
       var value=JSON.parse(g.localStorage.getItem(KEY)||'[]');
       if(!Array.isArray(value))return[];
       return value.filter(function(r){return r&&['local','cj'].includes(r.type)&&r.id&&
-        (Number.isFinite(r.unit)&&r.unit>0||(r.type==='cj'&&r.unit===null&&r.priceStatus==='pending'))&&Number.isInteger(r.qty)&&r.qty>0&&r.qty<=MAX_QTY&&
+        (Number.isFinite(r.unit)&&r.unit>0||(r.unit===null&&r.priceStatus==='pending'))&&Number.isInteger(r.qty)&&r.qty>0&&r.qty<=MAX_QTY&&
         r.currency===(r.type==='cj'?'USD':'PKR');}).slice(0,MAX_ROWS).map(normalize).filter(Boolean);
     }catch(e){return[]}
   }
@@ -24,7 +24,7 @@
   function normalize(r){
     if(!r||!['local','cj'].includes(r.type))return null;
     var unit=Number(r.unit),qty=Number(r.qty==null?1:r.qty);
-    var quotePending=r.type==='cj'&&(r.unit===null||r.unit===undefined||r.unit==='');
+    var quotePending=(r.unit===null||r.unit===undefined||r.unit==='');
     if(!clean(r.id,128)||(!quotePending&&(!Number.isFinite(unit)||unit<=0))||!Number.isInteger(qty)||qty<1||qty>MAX_QTY)return null;
     var attrs=Array.isArray(r.attributes)?r.attributes.slice(0,12).map(function(a){
       return {attribute:clean(a&&a.attribute,60),value:clean(a&&a.value,120)};
@@ -55,13 +55,13 @@
   function clear(){return persist([]);}
   function count(){return read().reduce(function(a,r){return a+r.qty},0);}
   function totals(){
-    var rows=read(),local=0,global=0;
-    rows.forEach(function(r){if(r.type==='cj'){if(Number.isFinite(r.unit))global+=r.unit*r.qty;}else local+=r.unit*r.qty});
+    var rows=read(),local=0,global=0,localUnpriced=0;
+    rows.forEach(function(r){if(r.type==='cj'){if(Number.isFinite(r.unit))global+=r.unit*r.qty;}else if(r.unit===null)localUnpriced++;else local+=r.unit*r.qty});
     var cfg=g.SM_CONFIG||{},fee=Number(cfg.deliveryFee),threshold=Number(cfg.freeDeliveryFrom);
     if(!Number.isFinite(fee)||fee<0)fee=250;
     if(!Number.isFinite(threshold)||threshold<0)threshold=5000;
     var localShipping=local>0&&local<threshold?fee:0;
-    return {local:{subtotal:local,shippingEstimate:localShipping,totalEstimate:local+localShipping,currency:'PKR'},
+    return {local:{subtotal:local,unpricedOptionCount:localUnpriced,shippingEstimate:localUnpriced?null:localShipping,totalEstimate:localUnpriced?null:local+localShipping,currency:'PKR'},
       cj:{productSubtotalEstimate:global,currency:'USD',unpricedOptionCount:rows.filter(function(r){return r.type==='cj'&&r.unit===null}).length,shippingEstimate:null,finalTotal:null},
       requestOnly:true};
   }
@@ -71,7 +71,7 @@
       (r.vname?' | Variant: '+r.vname:'')+(r.attributes.length?' | Options: '+r.attributes.map(function(a){return a.attribute+'='+a.value;}).join(', '):'')+' | '+r.qty+' × '+(r.unit===null?'price/stock/shipping pending':r.currency+' '+r.unit.toFixed(2))+
       (r.url?' | '+r.url:'');});
     return lines.join('\n')+'\nLocal PKR subtotal: '+t.local.subtotal.toFixed(2)+
-      '\nLocal delivery indication (Pakistan only): '+t.local.shippingEstimate.toFixed(2)+
+      '\nUnpriced local options: '+t.local.unpricedOptionCount+'\nLocal delivery indication (Pakistan only): '+(t.local.shippingEstimate===null?'NOT VERIFIED':t.local.shippingEstimate.toFixed(2))+
       '\nCJ USD product estimate: '+t.cj.productSubtotalEstimate.toFixed(2)+
       '\nUnpriced CJ options: '+t.cj.unpricedOptionCount+'\nCJ freight, tax, duties, inventory and final price: NOT CONFIRMED. No payment collected.';
   }
