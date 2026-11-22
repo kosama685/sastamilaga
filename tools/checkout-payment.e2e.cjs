@@ -10,6 +10,8 @@ const puppeteer=require(process.env.SM_PUPPETEER_MODULE||'puppeteer-core');
  await page.setRequestInterception(true);
  page.on('request',async r=>{
   const u=r.url();
+  if(u.includes('/data/cj/c/qa.js'))return r.respond({status:200,contentType:'application/javascript',body:'SM_CJ_SHARD("qa",[["product-123","CJ123","CJ test product",10,10,"https://image.test/cover.jpg",""]]);'});
+  if(u.includes('/api/cj/variants?'))return r.respond({status:200,contentType:'application/json',body:JSON.stringify({variants:[{vid:'variant-red',sku:'RED',key:'Red M',price:10},{vid:'variant-blue',sku:'BLUE',key:'Blue L',price:11}]})});
   if(u.startsWith('http://localhost:8797'))return r.continue();
   if(u.includes('open.er-api.com'))return r.respond({headers:{'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'Content-Type','Access-Control-Allow-Methods':'GET,POST,OPTIONS'},status:200,contentType:'application/json',body:JSON.stringify({result:'success',rates:{USD:.004},time_last_update_unix:Math.floor(Date.now()/1000)})});
   if(u.includes('/api/cj/product'))return r.respond({headers:{'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'Content-Type','Access-Control-Allow-Methods':'GET,POST,OPTIONS'},status:200,contentType:'application/json',body:JSON.stringify({variants:[{vid:'variant-red',sku:'RED',price:10}]})});
@@ -27,6 +29,17 @@ const puppeteer=require(process.env.SM_PUPPETEER_MODULE||'puppeteer-core');
  assert.equal(await page.evaluate(()=>SMOrderCart.get()[0].name),'Local shirt');
  await page.click('[aria-label="Buy now"]');await page.waitForFunction(()=>location.pathname==='/order/');
  assert.equal(await page.evaluate(()=>SMOrderCart.count()),6);
+ await page.evaluate(()=>{sessionStorage.clear();SMOrderCart.clear()});
+ await page.setContent('<base href="http://localhost:8797/"><main><div id="sm-cj-rails"></div></main>');
+ await page.evaluate(()=>{window.SM_CJ={groups:[{n:'QA',s:'qa'}],cats:[{s:'qa',n:'QA',g:'QA',c:1}]}});
+ await page.addScriptTag({url:'http://localhost:8797/assets/js/cj-home-rails.js'});
+ await page.waitForSelector('[data-cj-order="buy"]');await page.click('[data-cj-order="buy"]');
+ await page.waitForSelector('#sm-cj-order-variant option:nth-child(2)');
+ await page.select('#sm-cj-order-variant','1');await page.$eval('#sm-cj-order-qty',e=>{e.value='4';e.dispatchEvent(new Event('input'))});
+ await page.click('#sm-cj-order-confirm');await page.waitForFunction(()=>location.pathname==='/order/'&&window.SMOrderCart?.get()[0]?.sku==='BLUE');
+ assert.equal(await page.evaluate(()=>SMOrderCart.get()[0].sku),'BLUE');
+ assert.equal(await page.evaluate(()=>SMOrderCart.get()[0].vkey),'variant-blue');
+ assert.equal(await page.evaluate(()=>SMOrderCart.get()[0].qty),4);
  const local={type:'local',id:'local',sku:'LOCAL',name:'Local test product',unit:1000,qty:2};
  const cj={type:'cj',id:'product-123',sku:'RED',vkey:'variant-red',vname:'Red M',name:'CJ test product',unit:12,qty:2};
  async function seed(rows){await page.goto('http://localhost:8797/order/');await page.evaluate(rows=>{sessionStorage.clear();SMOrderCart.clear();rows.forEach(r=>SMOrderCart.add(r));},rows);await page.reload();}

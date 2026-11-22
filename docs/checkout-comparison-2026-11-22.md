@@ -20,9 +20,9 @@ An optional installable, email-only gateway is supplied in `integrations/sasta-p
 
 ## Verification and remaining live checks
 
-- 59 Node tests pass across pricing, WordPress handoff, mixed carts, variations, persistence, quote failures and payment-link composition.
+- 74 Node tests pass across pricing, WordPress handoff, mixed carts, variations, persistence, quote failures and payment-link composition.
 - 9 offline PHP gateway checks pass for authoritative native totals, conversion, invoice reuse, pending state, stale FX, unsupported currency and sandbox routing.
-- Chrome at 390px passes static product Add/Buy quantity and price, mixed checkout, exact USD/card redirect, cancellation, draft restoration, invoice reuse, missing shipping, failed Formspree intake, stable-reference retry and empty cart. External requests were mocked: no real customer order or payment was created.
+- Chrome at 390px passes static product Add/Buy quantity and price, CJ card quick-buy exact option/quantity, mixed checkout, exact USD/card redirect, cancellation, draft restoration, invoice reuse, missing shipping, failed Formspree intake, stable-reference retry and empty cart. External requests were mocked: no real customer order or payment was created.
 - Public supplier `/api/cj/health` returned HTTP 200 with a configured key and allowed store origins. This is not proof that every product can ship.
 - Read-only WordPress CLI diagnosis confirmed WooCommerce 11.1.2, published native cart/checkout pages, enabled COD and modern PayPal gateway, and disabled legacy PayPal gateway. The optional email-only gateway is not installed; no production settings were changed.
 - Public Woo Store API `/wp-json/wc/store/v1/cart` returned HTTP 200 and a cart JSON object. `/cart/` and `/checkout/` exceeded the 12-second probe timeout; full live native checkout remains unverified.
@@ -31,3 +31,5 @@ An optional installable, email-only gateway is supplied in `integrations/sasta-p
 Before choosing a path, test representative simple/variable local and CJ products against the actual origin, verify Formspree staff receipt, and complete a sandbox payment on the selected flow. PayPal decides guest-card eligibility. No real payment was attempted here.
 
 Run the browser check after starting `node tools/serve-pages-like.mjs . 8797`. Install `puppeteer-core` in a QA directory, set `SM_PUPPETEER_MODULE` to its resolved module path and `CHROME` to a Chrome executable, then run `node tools/checkout-payment.e2e.cjs`. The browser test intercepts every external order/payment request. Its screenshot is written to the OS temp directory or `SM_QA_OUTPUT`.
+
+The quotation workflow now gates the current static cart and optional WordPress adapter tests instead of the retired implicit Woo bridge. Historical legacy tests remain in the repository. Pre-deployment smoke tests serve candidate files locally; public-domain version checks run after deployment, so an unmerged candidate is not compared with the old production release.

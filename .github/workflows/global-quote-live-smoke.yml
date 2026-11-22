@@ -20,7 +20,13 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
+      - name: Verify candidate files before deployment
+        if: github.event_name == 'pull_request'
+        run: |
+          node tools/serve-pages-like.mjs . 8797 > /tmp/sasta-smoke-server.log 2>&1 &
+          SM_SMOKE_BASE=http://127.0.0.1:8797 node tools/global-quote-live-smoke.mjs
       - name: Verify real public product JavaScript and request pages
+        if: github.event_name != 'pull_request'
         run: node tools/global-quote-live-smoke.mjs
       - name: Preserve evidence
         if: always()

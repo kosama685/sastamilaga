@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-const base='https://sastamilaga.com';
+const base=process.env.SM_SMOKE_BASE||'https://sastamilaga.com';
 const checks=[
   {path:'/',test:html=>html.includes('assets/js/global.js?v=purchase-checkout-20261122-2'),name:'home references the current global script'},
   {path:'/assets/js/global.js?v=purchase-checkout-20261122-2',test:js=>js.includes('id="gbuy">Buy now')&&/window\.__gcAct\s*=/.test(js)&&!js.includes('Verifying your selection with secure WooCommerce checkout'),name:'global purchase buttons use request checkout, not legacy Woo'},

@@ -68,12 +68,14 @@ async function handoff(rows,country){
 }
 g.SMWordPressCheckout=Object.freeze({handoff});
 const button=g.document?.getElementById('sm-wordpress-test'),status=g.document?.getElementById('sm-wordpress-status');
-if(button&&status)button.addEventListener('click',async()=>{
+if(button&&status)g.addEventListener('click',async(event)=>{
+ const clicked=event.target?.closest?.('#sm-wordpress-test');if(clicked!==button||button.disabled)return;
+ event.preventDefault();event.stopImmediatePropagation();
  const form=g.document.getElementById('sm-request-form'),country=String(form?.elements.country.value||'').toUpperCase();
  if(!/^[A-Z]{2}$/.test(country)){status.textContent='Enter your delivery country in the form first.';return}
  button.disabled=true;status.textContent='Checking the WordPress session and transferring selected items…';
  try{const result=await handoff(g.SMOrderCart.get(),country);status.textContent='WordPress cart verified. Opening its checkout; no order has been submitted.';g.location.assign(result.checkout)}
  catch(e){status.textContent=String(e.message||e)+' Use the WordPress cart link to inspect its state. Your static cart is preserved.'}
  finally{button.disabled=false}
-});
+},true);
 })(window);
