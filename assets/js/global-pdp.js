@@ -14,6 +14,15 @@
     dest: $('[data-gpdp-dest]'), opts: $('[data-gpdp-options]'), qtyWrap: $('[data-gpdp-qty-wrap]'), qty: $('[data-gpdp-qty]'), delivery: $('[data-gpdp-delivery]'),
     add: $('[data-gpdp-add]'), buy: $('[data-gpdp-buy]'), status: $('[data-gpdp-status]'), wa: $('[data-gpdp-wa]') };
   var state = { data: null, option: null, images: [], index: 0, busy: false, country: '', csrf: '' };
+  // The edge product page may load a header from chrome.js after DOMContentLoaded.
+  // Route any legacy cart/checkout anchor to the same unpaid combined request flow.
+  // This does not change DNS, payment state, or order acceptance.
+  window.addEventListener('click', function (e) {
+    var link=e.target&&e.target.closest?e.target.closest('a[href="/cart/"],a[href="/checkout/"]'):null;
+    if(!link)return;
+    if(link.getAttribute('href')==='/cart/')link.href='/request-cart/';
+    else if(link.getAttribute('href')==='/checkout/')link.href='/order/';
+  },true);
   var COUNTRY_NAMES = {}; try { COUNTRY_NAMES = new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) { COUNTRY_NAMES = null; }
   function countryName(cc) { try { return (COUNTRY_NAMES && COUNTRY_NAMES.of(cc)) || cc; } catch (e) { return cc; } }
   function money(usd) { return 'US$' + Number(usd).toFixed(2); }
