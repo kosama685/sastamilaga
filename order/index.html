@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Request an order — Sasta Milaga</title>
+<title>Checkout - Sasta Milaga</title>
 <meta name="robots" content="noindex,nofollow">
 <style>
 :root{font-family:system-ui,-apple-system,sans-serif;color:#17392a;background:#f4f8f5}
@@ -23,14 +23,21 @@ button:disabled{opacity:.55;cursor:wait}.row-controls{display:flex;align-items:c
 </style></head>
 <body><header><a href="/">Sasta Milaga</a> · <a href="/shop/">Continue shopping</a></header>
 <main class="shell">
-<h1>Order request — no payment is collected</h1>
-<p class="note">This form submits a non-binding request to staff through Formspree. It is not a payment checkout. Prices, inventory, delivery, taxes and final charges are subject to supplier confirmation. Submit local and CJ items together. If a shipment is unavailable to your destination, staff will suggest an alternative before any payment. PayPal/card links are provided only after the full amount is verified.</p>
-<div class="columns"><section class="panel" aria-labelledby="items-title">
-<h2 id="items-title">Your request items</h2><div id="sm-request-rows"></div>
-<p id="sm-request-totals" class="note" aria-live="polite"></p>
-<p class="note">Only the items shown in this request cart will be submitted. All prices remain estimates until confirmed by staff.</p>
+<h1>Checkout</h1>
+<p class="note">Review local and global items together. Choose PayPal, debit/credit card, Cash on Delivery, or a shipping quotation. Card details are entered only on PayPal. Stock and payment receipt are confirmed before dispatch; customs duties may be charged separately by your destination.</p>
+<section class="panel" aria-labelledby="checkout-options" style="margin-bottom:20px">
+<h2 id="checkout-options">Compare both checkout options</h2>
+<p>Use the form below for static checkout with PayPal/card, local COD, or a quotation. To test WordPress, enter your destination country below, then transfer the same selected items to its separate cart. WordPress calculates its own shipping, taxes and available payment methods.</p>
+<button id="sm-wordpress-test" type="button">Test WordPress / WooCommerce checkout</button>
+<p><a href="/cart/" target="_blank" rel="noopener">Review WordPress cart</a> &middot; <a href="/checkout/" target="_blank" rel="noopener">Open existing WordPress checkout</a></p>
+<p id="sm-wordpress-status" class="note" role="status" aria-live="polite">Your static cart stays saved while you compare both paths. Check each cart before placing a test order.</p>
 </section>
-<section class="panel" aria-labelledby="form-title"><h2 id="form-title">Contact and delivery enquiry</h2>
+<div class="columns"><section class="panel" aria-labelledby="items-title">
+<h2 id="items-title">Your items</h2><div id="sm-request-rows"></div>
+<p id="sm-request-totals" class="note" aria-live="polite"></p>
+<p class="note">Only the items shown here will be submitted. Calculate shipping and the USD total to review your payment amount.</p>
+</section>
+<section class="panel" aria-labelledby="form-title"><h2 id="form-title">Contact and delivery</h2>
 <form id="sm-request-form" hidden>
 <div class="two"><label>Full name <input name="full_name" autocomplete="name" maxlength="150" required></label>
 <label>Phone / WhatsApp <input name="phone" type="tel" autocomplete="tel" maxlength="25" minlength="8" required></label></div>
@@ -38,17 +45,24 @@ button:disabled{opacity:.55;cursor:wait}.row-controls{display:flex;align-items:c
 <label>Delivery address <textarea name="address" autocomplete="street-address" maxlength="600" required></textarea></label>
 <div class="two"><label>City <input name="city" maxlength="100" required></label>
 <label>Country code (ISO two letters) <input name="country" pattern="[A-Za-z]{2}" maxlength="2" placeholder="PK" required></label></div>
+<label>Postal code (required for accurate international shipping) <input name="postal_code" autocomplete="postal-code" maxlength="20"></label>
 <label>Nearby landmark (optional) <input name="near_place" maxlength="180"></label>
 <label>Notes (optional) <textarea name="notes" maxlength="800"></textarea></label>
 <div class="honeypot" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
-<label>Preferred payment method <select name="payment_preference" required><option value="quote">Request final total before payment</option><option value="paypal">PayPal or debit/credit card (verified payment link after quotation)</option><option value="cod">Cash on Delivery — if eligible and accepted in Pakistan</option></select></label>
-<label class="checkbox"><input type="checkbox" name="confirm_request" value="yes" required> I understand this is a non-binding enquiry, not a paid or accepted order. Product availability and shipping must be confirmed separately.</label>
+<label>Preferred payment method <select name="payment_preference" required><option value="quote">Request final total before payment</option><option value="paypal">PayPal ? pay in USD</option><option value="card">Debit / credit card via PayPal</option><option value="cod">Cash on Delivery — if eligible and accepted in Pakistan</option></select></label>
+<label class="checkbox"><input type="checkbox" name="confirm_request" value="yes" required> I have checked my delivery details. Availability is confirmed before dispatch. PayPal/card payments remain pending until receipt is verified.</label>
+<button id="sm-check-total" type="button" hidden>Calculate shipping and USD total</button>
+<p id="sm-payment-total" class="note" role="status" aria-live="polite"></p>
+<a id="sm-resume-payment" hidden rel="nofollow">Continue to PayPal</a>
 <button id="sm-request-submit" type="submit">Send order request</button>
-<p class="note">No card details are collected. Staff will confirm stock, shipping, and the total before sending an eligible PayPal-hosted payment link. Submissions remain unpaid.</p>
-</form><div id="sm-request-status" class="status" role="status" aria-live="polite">Loading request items…</div><div class="row-controls" style="margin-top:12px;flex-wrap:wrap"><button type="button" id="sm-copy-reference" hidden>Copy request reference</button><a id="sm-help-reference" hidden target="_blank" rel="noopener noreferrer" href="#" style="padding:11px 15px">Ask staff to check reference</a></div>
+<p class="note">Payment opens only after your order details have been saved. If a supplier rate is unavailable, choose a quotation. PayPal decides whether guest card payment is available to you.</p>
+</form><div id="sm-request-status" class="status" role="status" aria-live="polite">Loading your items…</div><div class="row-controls" style="margin-top:12px;flex-wrap:wrap"><button type="button" id="sm-copy-reference" hidden>Copy request reference</button><a id="sm-help-reference" hidden target="_blank" rel="noopener noreferrer" href="#" style="padding:11px 15px">Ask staff to check reference</a></div>
 </section></div></main>
-<footer>© Sasta Milaga · Unpaid request intake · <a href="/">Home</a></footer>
+<footer>© Sasta Milaga · Local &amp; global checkout · <a href="/">Home</a></footer>
 <script src="/assets/js/config.js" defer></script>
 <script src="/assets/js/order-cart.js" defer></script>
-<script src="/assets/js/order-page.js" defer></script>
+<script src="/assets/js/paypal-payment-link.js?v=purchase-20261122" defer></script>
+<script src="/assets/js/checkout-pricing.js?v=purchase-20261122" defer></script>
+<script src="/assets/js/order-page.js?v=purchase-20261122" defer></script>
+<script src="/assets/js/wordpress-checkout.js?v=compare-20261122" defer></script>
 </body></html>

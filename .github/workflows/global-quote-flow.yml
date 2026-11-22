@@ -33,7 +33,7 @@ jobs:
           node --check tools/global-quote-flow.test.mjs
       - name: Real quotation cart module and regression suite
         run: node --test tools/global-quote-flow.test.mjs tools/unified-order-request.test.mjs tools/github-only-commerce.test.mjs
-      - name: Full legacy + upgraded global commerce resilience
-        run: node --test tools/commerce-resilience.test.mjs tools/woo-bridge-flow.test.mjs tools/cj-cart-handoff.test.mjs tools/cj-sku-awareness.test.mjs
+      - name: Current static and optional WordPress commerce regression
+        run: node --test tools/checkout-pricing.test.mjs tools/wordpress-checkout.test.mjs tools/static-request-commerce.test.mjs tools/cj-cart-handoff.test.mjs tools/cj-sku-awareness.test.mjs
       - name: GitHub Actions runtime compliance
         run: node tools/check-github-actions-runtime.mjs

@@ -43,7 +43,7 @@ test('Formspree intake acknowledges but does not mark a paid/accepted order and 
  assert.match(code,/result\.ok/);
  assert.match(code,/RECEIPT_KEY/);
  assert.match(code,/INTAKE_ACKNOWLEDGED_UNPAID/);
- assert.match(code,/if\(receiptSaved\)cart\.clear\(\)/);
+ assert.match(code,/if\(receiptSaved&&JSON\.stringify\(cart\.get\(\)\)===submittedCart\)cart\.clear\(\)/);
  assert.match(code,/Request NOT confirmed/);
  assert.match(code,/Items have been preserved/);
  assert.doesNotMatch(code,/payment_status','PAID'/);
