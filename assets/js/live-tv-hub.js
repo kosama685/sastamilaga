@@ -49,6 +49,7 @@
     tab = "all",
     runner,
     activeEngine = null,
+    lastPlaybackProblem = null,
     activeCleanup = () => {},
     blobs = [],
     renderedStart = -1,
@@ -336,7 +337,9 @@
     const valid = () => !ended;
     const fail = (reason) => {
       if (!valid()) return;
-      event("source_failed", { reason });
+      const classified = core.diagnose(reason);
+      lastPlaybackProblem = { code: classified.code, summary: classified.summary, next: classified.next, engine: item.engine };
+      event("source_failed", { code: classified.code, reason: classified.summary });
       callbacks.failed();
     };
     const played = () => {
@@ -487,7 +490,10 @@
           hls.recoverMediaError();
           return;
         }
-        fail("HLS source unavailable");
+        const httpCode = Number(data.response?.code || data.response?.status || 0);
+        const failedReason = data.details || data.type || "HLS source unavailable";
+        const classified = core.diagnose(failedReason, httpCode);
+        fail(classified.code === "ACCESS_DENIED" || classified.code === "SOURCE_MISSING" || classified.code === "UPSTREAM_ERROR" ? classified.summary : failedReason);
       });
       hls.loadSource(item.url);
       hls.attachMedia(video);
@@ -522,6 +528,7 @@
   }
   function startCurrent() {
     if (!current) return;
+    lastPlaybackProblem = null;
     root.querySelector(".sltv-welcome").hidden = true;
     runner.stop();
     clearMedia();
@@ -1070,10 +1077,27 @@
           player.dataset.state = "external";
           message.textContent = "This channel is not playing in the browser.";
           status.textContent =
-            "All browser mirrors tried · choose another player";
+            "All browser mirrors tried · " + (lastPlaybackProblem?.code || "PLAYER_FAILURE");
           setExternal(
-            "All browser-compatible mirrors were tried. This channel remains listed. Try VLC, MX Player or an IPTV app below.",
+            (lastPlaybackProblem ? lastPlaybackProblem.summary + " " + lastPlaybackProblem.next + " " : "") +
+            "This channel remains listed. Try the broadcaster's official player or another supported source.",
           );
+          const actions = ext.querySelector(".sltv-external-actions");
+          if (actions) {
+            const help = node("a", "sltv-btn sltv-btn--ghost", "Playback troubleshooting");
+            help.href = asset("live-tv/troubleshooting/");
+            actions.appendChild(help);
+            const copyIssue = node("button", "sltv-btn sltv-btn--ghost", "Copy diagnostic code");
+            copyIssue.type = "button";
+            copyIssue.onclick = () => copy([
+              "World TV browser diagnostic",
+              "Channel reference: " + String(current?.id || ""),
+              "Engine: " + String(lastPlaybackProblem?.engine || activeEngine || "unknown"),
+              "Reason: " + String(lastPlaybackProblem?.code || "PLAYER_FAILURE"),
+              "No source URL or private token included."
+            ].join("\\n"));
+            actions.appendChild(copyIssue);
+          }
           event("failed");
         },
         onState: (item, n, total, outcome) => {
