@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><title>Sasta Milaga | Offline Request Cart Lab</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#193b2b;background:#f3f7f4}*{box-sizing:border-box}
+body{margin:0}header{background:#103c2a;color:#fff;padding:18px clamp(16px,4vw,60px)}
+header a{color:#fff}.shell{max-width:1080px;margin:auto;padding:28px 18px}
+h1{font-size:clamp(1.55rem,3vw,2.2rem)}.lead{line-height:1.6}
+.notice{border:1px solid #e3d09c;background:#fffaea;color:#654700;padding:14px 18px;border-radius:12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:20px}
+.card{background:#fff;border:1px solid #dae6df;border-radius:16px;padding:23px;box-shadow:0 5px 18px #163c2710}
+.kicker{color:#276943;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+label{display:block;font-weight:600;margin:13px 0 4px}
+input,select{width:100%;min-height:44px;border:1px solid #a6c2b1;border-radius:8px;padding:10px;background:#fff;color:#1c3a2c;font:inherit}
+button,.action{font:inherit;border:0;border-radius:9px;padding:12px 15px;background:#127543;color:#fff;cursor:pointer;text-decoration:none;display:inline-block}
+button:focus-visible,.action:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e8a72a;outline-offset:2px}
+.secondary{background:#fff;color:#155b38;border:1px solid #6ca98b}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:17px}
+small{display:block;color:#607067;line-height:1.5}.summary{border-top:1px solid #e0e8e1;margin-top:14px;padding-top:14px}
+.status{padding:15px;border-radius:11px;background:#e2f2e9;margin-top:15px;min-height:50px;white-space:pre-wrap}
+.row{padding:12px 0;border-bottom:1px solid #dbe6de}.row b{display:block}.row p{margin:5px 0;color:#485e50}
+.badge{display:inline-block;border-radius:99px;background:#edf7ee;padding:5px 9px;font-size:.73rem;font-weight:700}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.card{padding:18px}}
+</style></head><body>
+<header><strong>Sasta Milaga</strong> · Staff testing only · <a href="/">Existing store</a></header>
+<main class="shell">
+<h1>Static shopping request — safe prototype</h1>
+<p class="lead">Two sample products demonstrate variation validation, Add to Request Cart, and Quick Request. The basket is saved locally and does not call WordPress, WooCommerce, PayPal, or Cloudflare Workers.</p>
+<p class="notice"><strong>No payment is collected.</strong> These are fictitious demonstration products and not live inventory. They cannot be used for actual orders. There is no customer login or rewards balance on this page.</p>
+<div class="grid">
+<section class="card" data-request-product="local" aria-labelledby="local-heading">
+<span class="kicker">Pakistan · Sample local SKU</span><h2 id="local-heading">Demo cotton shirt</h2>
+<p>PKR 1,200 <span class="badge">Illustrative price only</span></p>
+<label for="local-color">Colour</label><select id="local-color" data-option="colour" required><option value="">Choose colour</option><option>Black</option><option>White</option></select>
+<label for="local-size">Size</label><select id="local-size" data-option="size" required><option value="">Choose size</option><option>M</option><option>L</option></select>
+<label for="local-qty">Quantity</label><input id="local-qty" type="number" data-qty min="1" max="99" step="1" value="1">
+<div class="actions"><button type="button" data-action="add">Add to request cart</button><button type="button" class="secondary" data-action="quick">Quick request</button></div>
+</section>
+<section class="card" data-request-product="cj" aria-labelledby="cj-heading">
+<span class="kicker">CJ global · Example only</span><h2 id="cj-heading">Demo global gadget</h2>
+<p>Price and carrier quote pending supplier verification.</p>
+<label for="cj-model">Model / option</label><select id="cj-model" data-option="model" required><option value="">Choose model</option><option>Basic</option><option>Pro</option></select>
+<label for="cj-qty">Quantity</label><input id="cj-qty" type="number" data-qty min="1" max="99" step="1" value="1">
+<div class="actions"><button type="button" data-action="add">Save quotation item</button><button type="button" class="secondary" data-action="quick">Quick request</button></div>
+</section>
+<section class="card" aria-labelledby="cart-heading">
+<h2 id="cart-heading">Separate request basket</h2><p><strong id="cart-count">0</strong> item(s)</p>
+<div id="request-lines" aria-live="polite"></div><p id="request-totals" class="summary"></p>
+<div class="actions"><a href="/request-cart/" class="action">Review request cart</a><button type="button" class="secondary" id="refresh-request">Refresh</button></div>
+<small>This does not migrate or clear `sm_cart`, `sm_gcart`, or WooCommerce session cookies.</small>
+</section>
+<section class="card"><h2>Checkout and account policy</h2><p>After review, buyers may submit a Formspree <em>order enquiry</em>. A successful form response means received, not paid, accepted, stocked, or booked.</p>
+<p>Real login, supplier access, commissions and rewards require a secure server-side provider. Browser-local user/password/rewards implementations are deliberately excluded.</p>
+<a href="/order/" class="action">Open request-only form</a>
+<small>This demonstration does not transmit information until a person deliberately submits that form. Do not submit fictitious items as real orders.</small>
+</section></div>
+<div class="status" id="request-status" role="status" aria-live="polite">Ready. Live shopping and payment systems are unchanged.</div>
+</main>
+<script src="/assets/js/order-cart.js" defer></script>
+<script src="/staging/static-request/preview.js" defer></script>
+</body></html>
