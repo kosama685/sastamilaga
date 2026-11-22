@@ -59,7 +59,7 @@ test("encrypted HLS is not marked playable and never probes media keys", async (
     fetcher: async (url) => {
       urls.push(url);
       return response(
-        '#EXTM3U\\n#EXT-X-KEY:METHOD=AES-128,URI="https://public.example/secret.key"\\n#EXTINF:2,\\nsegment.ts',
+        '#EXTM3U\n#EXT-X-KEY:METHOD=AES-128,URI="https://public.example/secret.key"\n#EXTINF:2,\nsegment.ts',
         url,
       );
     },
