@@ -189,7 +189,7 @@
         <div style="margin:12px 0"><span class="big-price">${est(r)}</span> <small class="sm-est">estimated</small></div>
         <form class="sm-greq" id="greq">${varBox()}<label><span>Quantity</span><input type="number" name="qty" min="1" max="99" value="1"></label><label><span>${(window.SM_CONFIG || {}).cjShippingWorker || (window.SM_CONFIG || {}).wpApi ? 'Notes (optional)' : 'Size, colour or option (optional)'}</span><input name="opt" maxlength="120" placeholder="${(window.SM_CONFIG || {}).cjShippingWorker || (window.SM_CONFIG || {}).wpApi ? 'Anything we should know' : 'e.g. Blue, size M'}"></label><label><span>Deliver to (country and city)</span><input name="to" required maxlength="120" value="${esc(gcTo())}" placeholder="e.g. Pakistan, Karachi"></label>
           <div class="sm-total" id="gtotal" role="status" aria-live="polite"></div>
-          <div class="sm-gactions"><button type="button" class="primary-btn" id="gadd">Add to cart</button><button type="button" class="primary-btn sm-buynow" id="gbuy">Buy now</button></div>
+          <div class="sm-gactions"><button type="button" class="primary-btn" id="gadd">Add to request cart</button><button type="button" class="primary-btn sm-buynow" id="gbuy">Request shipping &amp; total</button></div>
           <button type="submit" class="sm-wa-btn">Order on WhatsApp</button></form>
         <ul class="sm-trust" role="list"><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.4 3.1 8.2 7.5 9.5 4.4-1.3 7.5-5.1 7.5-9.5V6z"/><path d="m9 12 2 2 4-4"/></svg><span>Stock confirmed before you pay</span></li><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19"/></svg><span>Card or PayPal</span></li><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg><span>Destination-dependent shipping</span></li><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.6-4.3a8.5 8.5 0 1 1 15.4-4.6Z"/></svg><span>WhatsApp support</span></li></ul>
         <p class="product-meta">More like this: <a href="#/global/c/${cs}">${esc(c.n)}</a>${g ? ` · <a href="#/global/g/${g.s}">${esc(g.n)}</a>` : ''}</p></aside>
@@ -220,10 +220,51 @@
     bindVariants(r, chosen);
     (wpShip() ? bindShipWp : bindShip)(r, chosen);
     const rowFrom = f => { const v = chosen.v; return { id: r[0], cs, sku: r[1], name: r[2], img: (v && v.image) || r[5], unit: (v ? v.price : (r[3] || 0)) * MARGIN, qty: Math.max(1, Math.min(99, parseInt(f.qty.value, 10) || 1)), opt: (f.opt.value || '').trim(), ship: ((document.querySelector('.sm-ship-card [name=ship]:checked') || {}).value || ''), shipAmt: parseFloat(((document.querySelector('.sm-ship-card [name=ship]:checked') || {}).dataset || {}).amt) || 0, shipCur: ((document.querySelector('.sm-ship-card [name=ship]:checked') || {}).dataset || {}).cur || 'USD', vkey: v ? (v.sku || v.key || '') : '', vname: v ? (v.key || v.name || '') : '', url: ownUrl(cs, r) }; };
-    const addRow = () => { const f = document.getElementById('greq'); const row = rowFrom(f); if (!row.unit) { toast('This item has no listed price yet. Order it on WhatsApp and we will quote it.'); return null; } gcAdd(row); return row; };
-    /* Window-capture handler: on the store's own domain a site-wide script swallows add-to-cart clicks at document level, so these two buttons are handled before it (window comes first in the event path). */
-    window.__gcAct = { add: () => { if (addRow()) toast('Added to cart'); }, buy: () => { if (addRow()) { A.go('checkout'); } } };
-    if (!window.__gcActBound) { window.__gcActBound = true; window.addEventListener('click', e => { const b = e.target && e.target.closest && e.target.closest('#gadd,#gbuy'); if (!b || !window.__gcAct) return; e.preventDefault(); e.stopImmediatePropagation(); window.__gcAct[b.id === 'gbuy' ? 'buy' : 'add'](); }, true); }
+    /* Browser-only Formspree quotation intake. Never create a paid checkout or assert stock.
+     * Existing supplier read endpoints may still inform the option selector; a missing
+     * quote is not replaced with a made-up shipping or product amount. */
+    let requestLoader = null,requestBusy=false;
+    function quoteAdapter(){
+      if(window.SMGlobalQuote)return Promise.resolve(window.SMGlobalQuote);
+      if(requestLoader)return requestLoader;
+      requestLoader=new Promise((resolve,reject)=>{
+        const el=document.createElement('script');
+        el.src='/assets/js/global-quote-flow.js?v=git-formspree-20261122';
+        el.async=true;el.onload=()=>window.SMGlobalQuote?resolve(window.SMGlobalQuote):reject(new Error('Quote cart unavailable'));
+        el.onerror=()=>reject(new Error('Quote cart could not load'));
+        document.head.appendChild(el);
+      }).catch(e=>{requestLoader=null;throw e;});
+      return requestLoader;
+    }
+    async function requestSelected(quick){
+      if(requestBusy)return;
+      const f=document.getElementById('greq');if(!f)return;
+      const q=Number(f.qty.value),notes=String(f.opt.value||'').trim();
+      if(!Number.isInteger(q)||q<1||q>99){toast('Enter a quantity between 1 and 99.');return}
+      if(!chosen.v&&!notes){toast('Describe the size, colour or model needed for a supplier quotation.');f.opt.focus();return}
+      requestBusy=true;
+      const buttons=[document.getElementById('gadd'),document.getElementById('gbuy')].filter(Boolean);
+      buttons.forEach(b=>b.disabled=true);
+      try{
+        const api=await quoteAdapter();
+        const result=await api.save({id:r[0],sku:r[1],name:r[2]},chosen.v,q,notes,ownUrl(cs,r));
+        if(!result.ok)throw new Error(result.message||'Could not save request');
+        if(quick){
+          const country=(document.getElementById('gship-cc')||{}).value||
+            (window.SMMarket&&window.SMMarket.state&&window.SMMarket.state().country)||'';
+          location.assign(api.orderUrl(country));return;
+        }
+        toast('Added to request cart. Shipping and final amount require staff confirmation; no payment taken.');
+      }catch(e){toast('Request was not saved: '+String(e.message||e).slice(0,170));}
+      finally{requestBusy=false;buttons.forEach(b=>b.disabled=false)}
+    }
+    window.__gcAct={add:()=>{void requestSelected(false)},buy:()=>{void requestSelected(true)}};
+    if(!window.__gcActBound){window.__gcActBound=true;window.addEventListener('click',e=>{
+      const b=e.target&&e.target.closest&&e.target.closest('#gadd,#gbuy');
+      if(!b||!window.__gcAct)return;
+      e.preventDefault();e.stopImmediatePropagation();
+      window.__gcAct[b.id==='gbuy'?'buy':'add']();
+    },true)}
     document.getElementById('greq').addEventListener('submit', e => {
       e.preventDefault(); const f = e.target; const v = chosen.v;
       const shipEl = document.querySelector('.sm-ship-card [name=ship]:checked'), ship = shipEl && shipEl.value ? `Shipping chosen: ${shipEl.value}\n` : '';
