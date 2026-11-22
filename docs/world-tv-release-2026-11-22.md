@@ -1,6 +1,6 @@
 # World TV: implementation, coverage and verification
 
-This release upgrades the existing static Sasta Milaga Live TV service. It uses the site's shared header, navigation, fonts and footer, with a dedicated midnight-blue broadcast surface and emerald accents. Both `/live-tv/` and `#/live-tv` mount the same player and directory. The checkout comparison draft is separate and is not part of this deployment.
+This release upgrades the existing static Sasta Milaga Live TV service. It uses the site's shared header, navigation, fonts and footer, with a dedicated midnight-blue broadcast surface and emerald accents. Both `/live-tv/` and `#/live-tv` mount the same player and directory. The independently merged checkout comparison remains available; this release preserves those changes.
 
 ## What visitors can do
 
