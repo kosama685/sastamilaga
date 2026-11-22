@@ -214,7 +214,7 @@
       const s = document.querySelector('.sm-ship-card [name=ship]:checked'), amt = s ? parseFloat(s.dataset.amt) : NaN, cur = s ? (s.dataset.cur || 'USD') : 'USD';
       const money = (n, c) => { try { return new Intl.NumberFormat('en', { style: 'currency', currency: c }).format(n); } catch (e) { return `${c} ${n.toFixed(2)}`; } };
       const shippingText = String((document.getElementById('gship-out') || {}).textContent || '');
-      const failed = /not available|unavailable|could not|cannot|temporarily|request limit|confirm shipping/i.test(shippingText);
+      const failed = /not available|unavailable|could not|cannot|temporarily|request limit|confirm shipping|no verified carrier rate|no carrier|no verified shipping|shipping quote required|supplier shipping is/i.test(shippingText);
       const ship = isNaN(amt) ? (failed ? '<dd>Confirm with support</dd>' : '<dd>Checking live rates…</dd>') : `<dd>${money(amt, cur)}</dd>`;
       const total = isNaN(amt) ? 'Request a final shipping quote' : (cur === 'USD' ? USD.format(items + amt) : `${USD.format(items)} + ${money(amt, cur)}`);
       el.innerHTML = `<dl><div><dt>${USD.format(unit)} × ${q}${chosen.v && (chosen.v.key || chosen.v.name) ? ' · ' + esc(chosen.v.key || chosen.v.name) : ''}</dt><dd>${USD.format(items)}</dd></div><div><dt>Delivery to ${esc((document.getElementById('gship-to') || {}).textContent || (f.to.value || 'your country'))}</dt>${ship}</div><div class="sm-total__sum"><dt>${isNaN(amt) ? 'Next step' : 'Indicative total (before duties)'}</dt><dd>${total}</dd></div></dl><small>Price and shipping are estimates, not an amount due. Submit a request for the confirmed total. No payment is collected.</small>`;
