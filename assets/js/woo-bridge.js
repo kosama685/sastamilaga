@@ -1,166 +1,138 @@
-/* WooCommerce bridge. On sastamilaga.com WooCommerce owns the cart, checkout, orders and payments.
- * "Add to cart" and "Buy now" on the static pages add the product to the REAL WooCommerce cart (Store API, same-origin cookies),
- * so /cart/ and /checkout/ show what the customer chose. Nothing is stored or priced in the browser: WordPress prices the cart.
- *   SMWoo.add(sku, qty)  -> Promise<{ok, status, message, reason}>      SMWoo.count() -> Promise<number>
- * The SKU -> WordPress product id map is data/wp/product-ids.json (read-only export of the store). Products with no id there
- * (not in WordPress, or global items) are ordered on WhatsApp instead. */
-(function () {
-  'use strict';
-  var host = location.hostname, ROOT = '/';
-  var W = window.SMWoo = { active: /(^|\.)sastamilaga\.com$/.test(host) || !!window.SM_FORCE_WOO };
-  var ids = null, nonce = '', synced = false;
-  function json(u, o) { o = o || {}; o.credentials = 'include'; return fetch(u, o).then(function (r) { return r.json().catch(function () { return null; }).then(function (j) { return { r: r, j: j }; }); }); }
-  function plain(s) { var d = document.createElement('div'); d.innerHTML = String(s || ''); return d.textContent || ''; }
-  function loadIds() { if (ids) return Promise.resolve(ids); return fetch(ROOT + 'data/wp/product-ids.json').then(function (r) { return r.json(); }).then(function (j) { ids = j; return j; }); }
-  // WordPress decides who may buy Pakistan-only products from the shopper's country: follow the country chosen in the site's country window.
-  function syncContext() {
-    if (synced) return Promise.resolve(); synced = true;
-    var want = {}; try { want = JSON.parse(localStorage.getItem('sm_market') || '{}'); } catch (e) {}
-    if (!want.country) return Promise.resolve();
-    return json(ROOT + 'wp-json/gdcs/v1/context').then(function (c) {
-      if (!c.j || c.j.country === want.country) return;
-      return json(ROOT + 'wp-json/gdcs/v1/context', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-GDCS-CSRF': c.j.csrf }, body: JSON.stringify({ country: want.country, currency: want.currency || c.j.currency, language: want.lang || c.j.language || 'en', csrf: c.j.csrf }) });
-    }).catch(function () {});
-  }
-  function getNonce(force) {
-    if (nonce && !force) return Promise.resolve(nonce);
-    return fetch(ROOT + 'wp-json/wc/store/v1/cart', { credentials: 'include' }).then(function (r) { nonce = r.headers.get('nonce') || ''; return nonce; });
-  }
-  var REASONS = { woocommerce_rest_product_not_purchasable: 'not_purchasable', woocommerce_rest_missing_attributes: 'choose_option', woocommerce_rest_product_out_of_stock: 'out_of_stock', woocommerce_rest_cart_product_no_stock: 'out_of_stock' };
-  function post(id, qty, retried, variation) {
-    var body = { id: id, quantity: qty }; if (variation && variation.length) body.variation = variation;
-    return getNonce(retried).then(function (n) {
-      return json(ROOT + 'wp-json/wc/store/v1/cart/add-item', { method: 'POST', headers: { 'Content-Type': 'application/json', Nonce: n }, body: JSON.stringify(body) });
-    }).then(function (x) {
-      if (x.r.status === 403 && !retried) return post(id, qty, true, variation);   // the nonce had expired
-      if (x.r.status === 201 || x.r.status === 200) return { ok: true, status: x.r.status, count: x.j && x.j.items_count };
-      var code = (x.j && x.j.code) || 'error';
-      return { ok: false, status: x.r.status, code: code, message: plain(x.j && x.j.message) || 'The cart could not be updated.', reason: REASONS[code] || (x.r.status >= 500 ? 'network' : 'error') };
-    });
-  }
-  /* What the shopper sees after an add attempt. Pure: no DOM, no network (unit-tested in tools/woo-bridge-flow.test.mjs).
-     WooCommerce is the only cart: success goes to /cart/ or /checkout/, never to the old static checkout (/#/checkout). */
-  W.decide = function (res, buyNow, waHref) {
-    var wa = waHref ? { href: waHref, label: 'Ask about this item on WhatsApp' } : null;
-    if (res && res.ok) return buyNow ? { kind: 'go', href: '/checkout/' } : { kind: 'added', message: 'Added to your cart.', link: { href: '/cart/', label: 'View cart' } };
-    var r = (res && res.reason) || 'error';
-    if (r === 'not_purchasable') return { kind: 'refused', message: 'This item is delivered in Pakistan only.', link: { href: '/global-shop/', label: 'See items that ship to you' }, alt: wa };
-    if (r === 'choose_option') return { kind: 'refused', message: 'Please choose an option (size, colour or model) first.', link: null, alt: null };
-    if (r === 'out_of_stock') return { kind: 'refused', message: 'This item is out of stock right now.', link: wa, alt: null };
-    if (r === 'unmapped') return { kind: 'refused', message: 'This item is ordered on WhatsApp.', link: wa, alt: null };
-    if (r === 'network') return { kind: 'refused', message: 'The store could not be reached. Please try again.', link: wa, alt: null };
-    return { kind: 'refused', message: (res && res.message) || 'The cart could not be updated.', link: wa, alt: null };
-  };
-  /* Read-only SKU availability for CJ option dialogs. Does not create or price products. */
-  W.hasSKU = function (sku) {
-    return loadIds().then(function (map) { return Boolean(map && map[String(sku)]); }).catch(function () { return null; });
-  };
-  W.sync = syncContext;
-  // The store answers in 2-10 seconds, so everything a click needs is prepared in the background first (in this order: the country decides the session).
-  W.warm = function () { return loadIds().then(function () { return syncContext(); }).then(function () { return getNonce(false); }).catch(function () {}); };
-  W.add = function (sku, qty, variation) {
-    qty = Math.max(1, Math.min(99, parseInt(qty, 10) || 1));
-    return loadIds().then(function (map) {
-      var id = map[String(sku)]; if (!id) return { ok: false, reason: 'unmapped', message: 'This item is ordered on WhatsApp.' };
-      return syncContext().then(function () { return post(id, qty, false, variation); });
-    }).catch(function () { return { ok: false, reason: 'network', message: 'The store could not be reached. Please try again.' }; }).then(function (res) { if (res.ok) W.badge(); return res; });
-  };
-  W.count = function () { return fetch(ROOT + 'wp-json/wc/store/v1/cart', { credentials: 'include' }).then(function (r) { return r.json(); }).then(function (j) { return (j && j.items_count) || 0; }).catch(function () { return 0; }); };
-  /* The header badge shows the WooCommerce cart count (the cart the shopper will actually pay for). */
-  W.badge = function () {
-    return W.count().then(function (n) {
-      document.querySelectorAll('.smh-cart__count').forEach(function (el) { el.textContent = n; el.setAttribute('data-n', n); });
-      return n;
-    });
-  };
-  /* LEGACY browser-only cart (localStorage sm_cart). No longer used by this file's buttons: the static checkout it fed is switched off
-     at the edge, so items put here could never be paid for. Re-tested 2026-11-20 (tools/probe-woo-purchasable.mjs): in a Pakistan
-     session WooCommerce accepted 20 of 20 mapped products (variable ones once the variation is sent); outside Pakistan local products
-     are refused by the store's Pakistan-only policy, which W.decide() explains to the shopper. Kept only for other legacy callers. */
-  W.localAdd = function (sku, qty) {
-    qty = Math.max(1, Math.min(99, parseInt(qty, 10) || 1)); var cart = []; try { cart = JSON.parse(localStorage.getItem('sm_cart') || '[]'); } catch (e) {}
-    var row = cart.filter(function (x) { return String(x.id).toLowerCase() === String(sku).toLowerCase(); })[0]; if (row) row.qty = Math.min(99, (row.qty || 0) + qty); else cart.push({ id: sku, qty: qty });
-    try { localStorage.setItem('sm_cart', JSON.stringify(cart)); } catch (e) { return false; } W.badge(); return true;
-  };
-  /* Click handling. The domain's recovery layer listens for clicks on the document in the capture phase and swallows anything that looks
-     like a static checkout. The window sits above the document in the event path, so this capture listener runs first. */
-  function toast(html) {
-    var t = document.getElementById('sm-static-toast');
-    if (!t) { t = document.createElement('div'); t.id = 'sm-static-toast'; t.setAttribute('role', 'status'); t.setAttribute('aria-live', 'polite'); t.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:2147483600;background:#0B3B20;color:#fff;padding:12px 20px;border-radius:12px;font:600 15px/1.3 system-ui,sans-serif;box-shadow:0 14px 30px -12px rgba(0,0,0,.5);opacity:0;transition:opacity .25s;max-width:92vw'; document.body.appendChild(t); }
-    t.innerHTML = html; t.style.opacity = '1'; clearTimeout(t.__h); t.__h = setTimeout(function () { t.style.opacity = '0'; }, 4200);
-  }
-  function pageSku() {
-    var out = ''; document.querySelectorAll('script[type="application/ld+json"]').forEach(function (s) { try { var j = JSON.parse(s.textContent); (Array.isArray(j) ? j : j['@graph'] || [j]).forEach(function (x) { if (x['@type'] === 'Product' && x.sku) out = String(x.sku); }); } catch (e) {} });
-    return out;
-  }
-  function wa() { var a = document.querySelector('main a.sm-wa-btn'); return a ? a.href : ''; }
-  function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function linkHtml(l) { if (!l) return ''; var ext = /^https?:/.test(l.href) && l.href.indexOf(location.origin) !== 0; return ' <a href="' + esc(l.href) + '"' + (ext ? ' target="_blank" rel="noopener"' : '') + ' style="color:#FFB347;margin-left:8px">' + esc(l.label) + '</a>'; }
-  /* Chosen options on the page (WooCommerce attribute selects), sent so variable products can be added. */
-  function pageVariation() {
-    var out = []; document.querySelectorAll('main select[name^="attribute_"]').forEach(function (s) { if (s.value) out.push({ attribute: s.name.replace(/^attribute_/, ''), value: s.value }); });
-    return out;
-  }
-  function show(d) {
-    if (d.kind === 'go') { toast('Opening secure checkout…'); location.href = d.href; return; }
-    toast(esc(d.message) + linkHtml(d.link) + linkHtml(d.alt));
-  }
-  function run(sku, qty, buyNow, el) {
-    if (!sku || (el && el.getAttribute('aria-busy'))) return; if (el) el.setAttribute('aria-busy', 'true');
-    qty = Math.max(1, parseInt((document.getElementById('pdpQty') || {}).textContent, 10) || qty || 1);
-    toast('Adding to your cart…');
-    return W.add(sku, qty, pageVariation()).then(function (res) {
-      if (el) el.removeAttribute('aria-busy');
-      show(W.decide(res, buyNow, wa()));
-      return res;
-    });
-  }
-  var remote = /\.github\.io$/.test(host);   // the GitHub copy cannot share a WooCommerce session with the store: it hands the shopper over to the store with the item
-  function go(sku, buyNow) { location.href = 'https://sastamilaga.com/?sm_do=' + (buyNow ? 'buy' : 'add') + '&sku=' + encodeURIComponent(sku); }
-  /* Product-video quick-buy dialog (#smvm, inline on static pages). Its own buttons still call the legacy static cart, which the edge
-     guard blocks, so this listener remembers which video card opened the dialog and sends its two buttons to the real cart instead. */
-  var vmCard = null;
-  function vmSku() {
-    if (!vmCard) return '';
-    var opts = []; try { opts = JSON.parse(vmCard.getAttribute('data-vm-opts') || '[]'); } catch (err) { opts = []; }
-    var sel = document.getElementById('smvm-opt');
-    if (opts.length && sel && opts[sel.selectedIndex] && opts[sel.selectedIndex].q) return String(opts[sel.selectedIndex].q);
-    return vmCard.getAttribute('data-vm-q') || '';
-  }
-  function vmWa() { var a = document.getElementById('smvm-wa'); return a && /^https:\/\/wa\.me\//.test(a.href) ? a.href : ''; }
-  window.addEventListener('click', function (e) {
-    var t = e.target; if (!t || !t.closest) return;
-    var opener = t.closest('[data-vm-src]'); if (opener) { vmCard = opener; return; }
-    var vb = t.closest('#smvm-buy, #smvm-cart'); if (!vb || (!W.active && !remote)) return;
-    var sku = vmSku(); if (!sku) return;
-    e.preventDefault(); e.stopImmediatePropagation();
-    var buy = vb.id === 'smvm-buy', q = parseInt((document.getElementById('smvm-qty') || {}).value, 10) || 1, dlg = document.getElementById('smvm');
-    if (remote) { go(sku, buy); return; }
-    vb.setAttribute('aria-busy', 'true'); toast('Adding to your cart…');
-    W.add(sku, q).then(function (res) {
-      vb.removeAttribute('aria-busy');
-      var d = W.decide(res, buy, vmWa());
-      if (res.ok && dlg && typeof dlg.close === 'function') dlg.close();
-      show(d);
-    });
-  }, true);
-  window.addEventListener('click', function (e) {
-    if (!W.active && !remote) return; var t = e.target; if (!t || !t.closest) return;
-    var card = t.closest('[data-add-cart]');   // product cards (home, shop, search, categories)
-    if (card) { e.preventDefault(); e.stopImmediatePropagation(); if (remote) go(card.getAttribute('data-add-cart'), false); else run(card.getAttribute('data-add-cart'), 1, false, card); return; }
-    var a = t.closest('main a[href*="#/product/"]'); if (!a) return;   // static product page buttons
-    var label = (a.textContent || '').trim().toLowerCase(), add = /^add to cart/.test(label), buy = /^buy now/.test(label); if (!add && !buy) return;
-    var sku = pageSku(); if (!sku) return;
-    e.preventDefault(); e.stopImmediatePropagation(); if (remote) go(sku, buy); else run(sku, 1, buy, a);
-  }, true);
-  // Arriving from the GitHub copy (or a shared link) with an item to add: do it, then clean the address.
-  if (W.active) {
-    var q = new URLSearchParams(location.search), act = q.get('sm_do'), want = q.get('sku');
-    if (act && want && /^[A-Za-z0-9_-]{3,40}$/.test(want)) {
-      history.replaceState(null, '', location.pathname);
-      var start = function () { W.add(want, 1).then(function (res) { show(W.decide(res, act === 'buy', wa())); }); };
-      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
-    }
-  }
-  if (W.active) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', W.badge); else setTimeout(W.badge, 600); }
-})();
+/* Sasta Milaga static request-commerce bridge.
+ * No WooCommerce, WordPress, Cloudflare, payment capture or server-side order creation.
+ * On every listing the result is an unpaid REQUEST until staff verify it in Formspree.
+ * This file replaces the historical woo-bridge.js while preserving old HTML script references.
+ */
+(function(g){
+'use strict';
+if(g.SMRequestBridge)return;
+var loading=null,busy=false,vmCard=null,MAX_QTY=99;
+function clean(s,n){return String(s==null?'':s).trim().slice(0,n)}
+function getCart(){
+ if(g.SMOrderCart)return Promise.resolve(g.SMOrderCart);
+ if(loading)return loading;
+ loading=new Promise(function(resolve,reject){
+   var script=document.createElement('script');script.src='/assets/js/order-cart.js?v=request-commerce-20261122';
+   script.async=true;script.onload=function(){g.SMOrderCart?resolve(g.SMOrderCart):reject(new Error('Request cart did not initialize'))};
+   script.onerror=function(){reject(new Error('Request cart could not be loaded'))};
+   document.head.appendChild(script);
+ }).catch(function(e){loading=null;throw e});
+ return loading;
+}
+function product(sku){
+ var A=g.SMApp||{},list=Array.isArray(A.products)?A.products:[];
+ var p=list.find(function(x){return x&&[x.id,x.sku,x.code].some(function(y){return String(y||'').toLowerCase()===String(sku).toLowerCase()})});
+ return p||null;
+}
+function options(){
+ var attrs=[],incomplete=false;
+ document.querySelectorAll('main select[name^="attribute_"],main input[type="radio"][name^="attribute_"]:checked').forEach(function(x){
+   if(x.tagName==='SELECT'&&x.required&&!x.value)incomplete=true;
+   if(x.value)attrs.push({attribute:clean(x.name.replace(/^attribute_/,''),60),value:clean(x.value,120)});
+ });
+ return {attrs:attrs,incomplete:incomplete};
+}
+function money(p,A){
+ if(!p)return null;
+ var value=typeof A.price==='function'?Number(A.price(p)):Number(p.price);
+ return Number.isFinite(value)&&value>0?value:null;
+}
+function qty(){
+ var e=document.getElementById('pdpQty')||document.querySelector('main input[name="quantity"]');
+ var n=e?Number(e.value||e.textContent):1;
+ return Number.isInteger(n)&&n>=1&&n<=MAX_QTY?n:1;
+}
+function updateBadge(count){
+ document.querySelectorAll('.smh-cart__count').forEach(function(el){el.textContent=String(count);el.setAttribute('data-n',String(count))});
+}
+function notice(message,link){
+ var t=document.getElementById('sm-request-feedback');
+ if(!t){t=document.createElement('div');t.id='sm-request-feedback';t.setAttribute('role','status');t.setAttribute('aria-live','polite');t.style.cssText='position:fixed;bottom:15px;left:12px;right:12px;max-width:620px;margin:auto;z-index:2147483000;background:#123f2a;color:white;padding:16px;border-radius:12px;box-shadow:0 10px 30px #0004;font:600 15px/1.5 system-ui';document.body.appendChild(t)}
+ t.replaceChildren(document.createTextNode(message));
+ if(link){var a=document.createElement('a');a.href=link;a.style.cssText='color:#fff;text-decoration:underline;margin-left:10px';a.textContent='Review request';t.appendChild(a)}
+}
+function schemaProduct(){
+ var sku='',name='';
+ document.querySelectorAll('script[type="application/ld+json"]').forEach(function(el){
+  try{var j=JSON.parse(el.textContent||'{}'),nodes=Array.isArray(j)?j:(j['@graph']||[j]);
+   nodes.forEach(function(x){if(x&&x['@type']==='Product'){sku=sku||clean(x.sku,100);name=name||clean(x.name,240)}})
+  }catch(e){}
+ });
+ return {sku:sku,name:name};
+}
+function details(sku,attrs,source){
+ var A=g.SMApp||{},p=product(sku),schema=schemaProduct();
+ var el=source&&source.closest?source.closest('article,[data-product],.pdp,.product-card'):null;
+ var heading=el&&el.querySelector('h2,h3,.product-title');
+ var name=clean((p&&p.name)||schema.name||(heading&&heading.textContent)||sku,240);
+ var variation=attrs.map(function(x){return x.attribute+': '+x.value}).join(', ');
+ return {type:'local',id:clean((p&&(p.id||p.sku))||sku,128),
+  sku:clean(sku,128),name:name,qty:qty(),unit:money(p,A),
+  vkey:variation,vname:variation,attributes:attrs,url:location.href};
+}
+function add(sku,amount,variation,buyNow,source){
+ if(busy)return Promise.resolve({ok:false,message:'The previous request-cart action is still processing.'});
+ sku=clean(sku,128);if(!sku)return Promise.resolve({ok:false,message:'Product SKU is missing.'});
+ var selected=variation||options();
+ if(selected.incomplete){notice('Please select the required size or colour before continuing.');return Promise.resolve({ok:false,message:'Choose a required option.'})}
+ if(amount!=null&&(!Number.isInteger(Number(amount))||Number(amount)<1||Number(amount)>MAX_QTY))
+   return Promise.resolve({ok:false,message:'Invalid quantity.'});
+ busy=true;
+ var row=details(sku,selected.attrs,source);
+ row.qty=amount==null?row.qty:Number(amount);
+ notice('Saving your selection as an unpaid request…');
+ return getCart().then(function(cart){
+   var r=cart.add(row);
+   if(!r.ok)throw new Error(r.message||'Cannot save the request');
+   updateBadge(cart.count());
+   if(buyNow){location.assign('/order/?country=PK');}
+   else notice('Saved in your request cart. Final price, stock and delivery are confirmed by staff; no payment taken.','/request-cart/');
+   return {ok:true,requestOnly:true,count:cart.count(),row:row};
+ }).catch(function(e){notice('Could not save selection: '+clean(e.message||e,200)+'. No order was placed.');return {ok:false,message:String(e.message||e)}})
+ .finally(function(){busy=false});
+}
+function productSku(){
+ return schemaProduct().sku || clean((document.querySelector('main [data-sku]')||{}).dataset?.sku,128);
+}
+function onClick(e){
+ var opener=e.target&&e.target.closest?e.target.closest('[data-vm-src]'):null;
+ if(opener){vmCard=opener;return}
+ var target=e.target&&e.target.closest?e.target.closest('[data-add-cart],#smvm-cart,#smvm-buy,main a[href*="#/product/"]'):null;
+ if(!target)return;
+ var quick=target.id==='smvm-buy',local=false,sku='',q=null,selected;
+ if(target.hasAttribute('data-add-cart')){local=true;sku=target.getAttribute('data-add-cart');}
+ else if(target.id==='smvm-cart'||target.id==='smvm-buy'){
+   local=true;var sel=document.getElementById('smvm-opt');
+   var opts=[];try{opts=JSON.parse(vmCard&&vmCard.getAttribute('data-vm-opts')||'[]')}catch(e){}
+   var selectedOption=sel&&sel.selectedIndex>=0?opts[sel.selectedIndex]:null;
+   sku=(selectedOption&&selectedOption.q)||(vmCard&&vmCard.getAttribute('data-vm-q'))||'';
+   q=Number((document.getElementById('smvm-qty')||{}).value)||1;
+ }else{
+   var label=clean(target.textContent,80).toLowerCase();
+   if(!/^add to cart|^buy now/.test(label))return;
+   quick=/^buy now/.test(label);local=true;sku=productSku();
+ }
+ if(!local||!sku)return;
+ e.preventDefault();e.stopImmediatePropagation();
+ if(busy){notice('Your earlier click is still processing.');return}
+ selected=options();
+ if(target.id==='smvm-cart'||target.id==='smvm-buy'){
+  var sel=document.getElementById('smvm-opt');
+  if(sel&&sel.value)selected.attrs.push({attribute:'Selected option',value:clean(sel.options[sel.selectedIndex]?.text||sel.value,120)});
+ }
+ add(sku,q,selected,quick,target);
+}
+g.addEventListener('click',onClick,true);
+ // Preserve the existing HTML links while routing to the unified request cart.
+ // This modifies only in-page links, not server DNS or payment/checkout routes.
+ function updateCartLinks(){
+   document.querySelectorAll('a.smh-cart,a.smh-cart__link,a[href="/cart/"]').forEach(function(a){
+     a.href='/request-cart/';a.setAttribute('aria-label','Review one combined local and CJ request cart');
+   });
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',updateCartLinks);
+ else updateCartLinks();
+ document.addEventListener('sm:order-cart-changed',function(e){updateBadge(e.detail&&e.detail.count||0)});
+ getCart().then(function(c){updateBadge(c.count())}).catch(function(){});
+g.SMRequestBridge={add:add,requestOnly:true,status:function(){return {busy:busy,receiver:'Formspree via /order/',payment:'NOT_PAID'}}};
+})(window);

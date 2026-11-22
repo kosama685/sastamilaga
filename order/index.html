@@ -24,11 +24,11 @@ button:disabled{opacity:.55;cursor:wait}.row-controls{display:flex;align-items:c
 <body><header><a href="/">Sasta Milaga</a> · <a href="/shop/">Continue shopping</a></header>
 <main class="shell">
 <h1>Order request — no payment is collected</h1>
-<p class="note">This optional request form is separate from the existing WooCommerce cart and PayPal checkout. Prices, inventory, delivery, taxes and final charges are subject to supplier confirmation. Pakistan local items are only available for Pakistan delivery. Global products may be subject to additional shipping restrictions.</p>
+<p class="note">This form submits a non-binding request to staff through Formspree. It is not a payment checkout. Prices, inventory, delivery, taxes and final charges are subject to supplier confirmation. Submit local and CJ items together. If a shipment is unavailable to your destination, staff will suggest an alternative before any payment. PayPal/card links are provided only after the full amount is verified.</p>
 <div class="columns"><section class="panel" aria-labelledby="items-title">
 <h2 id="items-title">Your request items</h2><div id="sm-request-rows"></div>
 <p id="sm-request-totals" class="note" aria-live="polite"></p>
-<p class="note">Existing COD and WooCommerce carts are preserved. Items in them are not automatically duplicated here.</p>
+<p class="note">Only the items shown in this request cart will be submitted. All prices remain estimates until confirmed by staff.</p>
 </section>
 <section class="panel" aria-labelledby="form-title"><h2 id="form-title">Contact and delivery enquiry</h2>
 <form id="sm-request-form" hidden>
@@ -41,12 +41,13 @@ button:disabled{opacity:.55;cursor:wait}.row-controls{display:flex;align-items:c
 <label>Nearby landmark (optional) <input name="near_place" maxlength="180"></label>
 <label>Notes (optional) <textarea name="notes" maxlength="800"></textarea></label>
 <div class="honeypot" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+<label>Preferred payment method <select name="payment_preference" required><option value="quote">Request final total before payment</option><option value="paypal">PayPal or debit/credit card (verified payment link after quotation)</option><option value="cod">Cash on Delivery — if eligible and accepted in Pakistan</option></select></label>
 <label class="checkbox"><input type="checkbox" name="confirm_request" value="yes" required> I understand this is a non-binding enquiry, not a paid or accepted order. Product availability and shipping must be confirmed separately.</label>
 <button id="sm-request-submit" type="submit">Send order request</button>
-<p class="note">No card details are collected. Form entries are transmitted to the configured order-request receiver.</p>
-</form><div id="sm-request-status" class="status" role="status" aria-live="polite">Loading request items…</div>
+<p class="note">No card details are collected. Staff will confirm stock, shipping, and the total before sending an eligible PayPal-hosted payment link. Submissions remain unpaid.</p>
+</form><div id="sm-request-status" class="status" role="status" aria-live="polite">Loading request items…</div><div class="row-controls" style="margin-top:12px;flex-wrap:wrap"><button type="button" id="sm-copy-reference" hidden>Copy request reference</button><a id="sm-help-reference" hidden target="_blank" rel="noopener noreferrer" href="#" style="padding:11px 15px">Ask staff to check reference</a></div>
 </section></div></main>
-<footer>© Sasta Milaga · Request-only preview · <a href="/">Home</a></footer>
+<footer>© Sasta Milaga · Unpaid request intake · <a href="/">Home</a></footer>
 <script src="/assets/js/config.js" defer></script>
 <script src="/assets/js/order-cart.js" defer></script>
 <script src="/assets/js/order-page.js" defer></script>
