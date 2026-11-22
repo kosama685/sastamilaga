@@ -44,7 +44,7 @@ function rewriteHLS(text, parent, origin) {
     if (/^\s*#/.test(line)) {
       // Rewrite same-origin HLS URI attributes (KEY, MAP, MEDIA, I-FRAME-STREAM-INF).
       return line.replace(/URI="([^"]+)"/g, (_all, src) => 'URI="' +
-        playlistURL(src, parent, origin).replace(/&/g, '&amp;') + '"');
+        playlistURL(src, parent, origin) + '"');
     }
     if (!line.trim()) return line;
     return playlistURL(line.trim(), parent, origin);
