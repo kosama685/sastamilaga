@@ -35,11 +35,11 @@ function render(){
  if(!rows.length&&!confirmed)status.textContent='Your request cart is empty. No payment is taken.';
 }
 function hasCJ(){return cart.get().some(function(r){return r.type==='cj'})}
-function validCountry(){var country=String(form.elements.country.value||'').toUpperCase();if(!/^[A-Z]{2}$/.test(country))return false;return !cart.get().some(function(r){return r.type==='local'})||country==='PK'}
+function validCountry(){return /^[A-Z]{2}$/.test(String(form.elements.country.value||'').toUpperCase())}
 form.addEventListener('submit',async function(e){
  e.preventDefault();if(submitting||confirmed||!form.reportValidity())return;
  if(!cart.count()){status.textContent='Your request cart is empty.';return}
- if(!validCountry()){status.textContent='Pakistan retail items can only be requested for Pakistan delivery. Remove local items for another destination.';return}
+ if(!validCountry()){status.textContent='Enter a valid two-letter destination country code.';return}
  if(form.elements.website.value){status.textContent='Your request was not sent.';return}
  var endpoint=(window.SM_CONFIG||{}).orderEndpoint;
  if(!/^https:\/\/formspree\.io\/f\/[a-z0-9]+$/i.test(endpoint||'')){status.textContent='Secure order receiver unavailable. No request was sent.';return}
@@ -49,6 +49,11 @@ form.addEventListener('submit',async function(e){
  // Customer-submitted values are evidence for staff review, never authoritative prices or stock.
  values.set('order_items_json',JSON.stringify(cart.get().map(function(r){return {id:r.id,sku:r.sku,name:r.name,type:r.type,variant_id:r.vkey,variant_name:r.vname,attributes:r.attributes,quantity:r.qty,unit_estimate:r.unit,currency:r.currency,price_status:r.priceStatus,url:r.url};})));
  values.set('shipping_quote_status',hasCJ()?'SUPPLIER_QUOTE_REQUIRED':'LOCAL_RATE_INDICATIVE_STAFF_VERIFICATION_REQUIRED');
+ var destination=String(form.elements.country.value||'').toUpperCase();
+ var incompatibleLocal=cart.get().some(function(r){return r.type==='local'})&&destination!=='PK';
+ values.set('destination_eligibility',incompatibleLocal?'LOCAL_ITEMS_OUTSIDE_PAKISTAN_REQUIRE_MANUAL_AVAILABILITY_CHECK':'DELIVERY_PENDING_STAFF_CONFIRMATION');
+ values.set('customer_requested_payment',String(form.elements.payment_preference&&form.elements.payment_preference.value||'quote'));
+ values.set('payment_method_eligibility',incompatibleLocal?'COD_NOT_AVAILABLE_FOR_LOCAL_ITEMS_OUTSIDE_PAKISTAN':'STAFF_TO_CONFIRM');
  values.set('requested_delivery_country',String(form.elements.country.value||'').toUpperCase());
  var referral=new URLSearchParams(location.search).get('ref');
  if(referral&&/^[A-Za-z0-9_-]{4,64}$/.test(referral))values.set('referral_code_unverified',referral);
@@ -59,7 +64,7 @@ form.addEventListener('submit',async function(e){
  values.set('order_global_unpriced_option_count',String(totals.cj.unpricedOptionCount||0));
  values.set('payment_status','NOT_PAID');
  values.set('fulfilment_status','UNCONFIRMED');
- values.set('request_type',hasCJ()?'CJ and/or Pakistan local enquiry; full final quote required':'Pakistan COD request pending manual acceptance');
+ values.set('request_type',hasCJ()?'Mixed local/CJ enquiry: verify each shipment before quote or payment':'Pakistan local enquiry: COD only if staff accepts');
  submitting=true;submit.disabled=true;status.textContent='Sending request securely…';
  try{
   var result=await fetch(endpoint,{method:'POST',body:values,headers:{Accept:'application/json'},signal:typeof AbortSignal.timeout==='function'?AbortSignal.timeout(18000):undefined});
