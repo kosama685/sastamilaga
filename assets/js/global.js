@@ -99,7 +99,7 @@
   };
   gcBind();
   // global.js loads after the first route has rendered: refresh the header count, and the cart page if it is the page being shown
-  if (gcCount()) { try { A.setCart(A.getCart()); } catch (e) { } if (/(^|\/)(cart|checkout)\/?$/.test(location.pathname) || /^#\/(cart|checkout)/.test(location.hash)) setTimeout(() => A.route(), 0); }
+  if (gcCount()) { try { A.setCart(A.getCart()); } catch (e) { } if (/(^|\/)(cart|checkout)\/?$/.test(location.pathname) || /^#\/(cart|checkout)/.test(location.hash)) setTimeout(() => { const f0 = document.getElementById('checkoutForm'), typed = {}; if (f0) f0.querySelectorAll('input:not([type=hidden]),textarea').forEach(x => { if (x.name && x.value) typed[x.name] = x.value; }); A.route(); const f1 = document.getElementById('checkoutForm'); if (f1) Object.keys(typed).forEach(k => { const x = f1.elements[k]; if (x && x.type !== 'hidden' && !x.value) x.value = typed[k]; }); }, 0); }
   const est = r => r[3] ? (r[4] > r[3] ? `${USD.format(r[3] * MARGIN)} – ${USD.format(r[4] * MARGIN)}` : USD.format(r[3] * MARGIN)) : 'Price on request';
   const liveUrl = r => `${A.LIVE_URL}/global-shop/p/${encodeURIComponent(r[0])}/${slug(r[2]).slice(0, 80)}/`;
   const detailHash = (cat, r) => `#/global/p/${cat}/${encodeURIComponent(r[0])}`;
@@ -220,51 +220,21 @@
     bindVariants(r, chosen);
     (wpShip() ? bindShipWp : bindShip)(r, chosen);
     const rowFrom = f => { const v = chosen.v; return { id: r[0], cs, sku: r[1], name: r[2], img: (v && v.image) || r[5], unit: (v ? v.price : (r[3] || 0)) * MARGIN, qty: Math.max(1, Math.min(99, parseInt(f.qty.value, 10) || 1)), opt: (f.opt.value || '').trim(), ship: ((document.querySelector('.sm-ship-card [name=ship]:checked') || {}).value || ''), shipAmt: parseFloat(((document.querySelector('.sm-ship-card [name=ship]:checked') || {}).dataset || {}).amt) || 0, shipCur: ((document.querySelector('.sm-ship-card [name=ship]:checked') || {}).dataset || {}).cur || 'USD', vkey: v ? (v.sku || v.key || '') : '', vname: v ? (v.key || v.name || '') : '', url: ownUrl(cs, r) }; };
-    /* Browser-only Formspree quotation intake. Never create a paid checkout or assert stock.
-     * Existing supplier read endpoints may still inform the option selector; a missing
-     * quote is not replaced with a made-up shipping or product amount. */
-    let requestLoader = null,requestBusy=false;
-    function quoteAdapter(){
-      if(window.SMGlobalQuote)return Promise.resolve(window.SMGlobalQuote);
-      if(requestLoader)return requestLoader;
-      requestLoader=new Promise((resolve,reject)=>{
-        const el=document.createElement('script');
-        el.src='/assets/js/global-quote-flow.js?v=git-formspree-20261122';
-        el.async=true;el.onload=()=>window.SMGlobalQuote?resolve(window.SMGlobalQuote):reject(new Error('Quote cart unavailable'));
-        el.onerror=()=>reject(new Error('Quote cart could not load'));
-        document.head.appendChild(el);
-      }).catch(e=>{requestLoader=null;throw e;});
-      return requestLoader;
-    }
-    async function requestSelected(quick){
-      if(requestBusy)return;
-      const f=document.getElementById('greq');if(!f)return;
-      const q=Number(f.qty.value),notes=String(f.opt.value||'').trim();
-      if(!Number.isInteger(q)||q<1||q>99){toast('Enter a quantity between 1 and 99.');return}
-      if(!chosen.v&&!notes){toast('Describe the size, colour or model needed for a supplier quotation.');f.opt.focus();return}
-      requestBusy=true;
-      const buttons=[document.getElementById('gadd'),document.getElementById('gbuy')].filter(Boolean);
-      buttons.forEach(b=>b.disabled=true);
-      try{
-        const api=await quoteAdapter();
-        const result=await api.save({id:r[0],sku:r[1],name:r[2]},chosen.v,q,notes,ownUrl(cs,r));
-        if(!result.ok)throw new Error(result.message||'Could not save request');
-        if(quick){
-          const country=(document.getElementById('gship-cc')||{}).value||
-            (window.SMMarket&&window.SMMarket.state&&window.SMMarket.state().country)||'';
-          location.assign(api.orderUrl(country));return;
-        }
-        toast('Added to request cart. Shipping and final amount require staff confirmation; no payment taken.');
-      }catch(e){toast('Request was not saved: '+String(e.message||e).slice(0,170));}
-      finally{requestBusy=false;buttons.forEach(b=>b.disabled=false)}
-    }
-    window.__gcAct={add:()=>{void requestSelected(false)},buy:()=>{void requestSelected(true)}};
-    if(!window.__gcActBound){window.__gcActBound=true;window.addEventListener('click',e=>{
-      const b=e.target&&e.target.closest&&e.target.closest('#gadd,#gbuy');
-      if(!b||!window.__gcAct)return;
-      e.preventDefault();e.stopImmediatePropagation();
-      window.__gcAct[b.id==='gbuy'?'buy':'add']();
-    },true)}
+    /* Add to cart / Buy now (restored 2026-11-22, owner request; same as 20 November): the chosen supplier option, quantity and
+       shipping go into the site's global cart (sm_gcart) and the shared checkout (cash on delivery in Pakistan, PayPal or card through
+       a PayPal payment link; every order is recorded in Formspree first). */
+    const addRow = () => {
+      const f = document.getElementById('greq'); const row = rowFrom(f);
+      if (!row.unit) { toast('This item has no listed price yet. Order it on WhatsApp and we will quote it.'); return null; }
+      if (window.SMStore) { const res = window.SMStore.addCj(row); if (!res.ok) { toast(res.message); return null; } } else gcAdd(row);
+      return row;
+    };
+    const toCheckout = () => { if (window.SMStore) location.assign(window.SMStore.checkoutUrl()); else A.go('checkout'); };
+    window.__gcAct = {
+      add: () => { if (addRow()) { if (window.SMStore) window.SMStore.notice('Added to cart.', true); else toast('Added to cart'); } },
+      buy: () => { if (addRow()) toCheckout(); }
+    };
+    if (!window.__gcActBound) { window.__gcActBound = true; window.addEventListener('click', e => { const b = e.target && e.target.closest && e.target.closest('#gadd,#gbuy'); if (!b || !window.__gcAct) return; e.preventDefault(); e.stopImmediatePropagation(); window.__gcAct[b.id === 'gbuy' ? 'buy' : 'add'](); }, true); }
     document.getElementById('greq').addEventListener('submit', e => {
       e.preventDefault(); const f = e.target; const v = chosen.v;
       const shipEl = document.querySelector('.sm-ship-card [name=ship]:checked'), ship = shipEl && shipEl.value ? `Shipping chosen: ${shipEl.value}\n` : '';
@@ -386,7 +356,10 @@
     /* Real options: the CJ Worker when configured, otherwise the WordPress store's live options (same CJ data, the store's own price). */
     const RATE = { USD: 1, SAR: 1 / 3.75, AED: 1 / 3.6725 };   // pegged currencies only; anything else keeps the catalogue price
     const fromWp = d => ({ variants: ((d && d.options) || []).map(o => { const m = /([A-Z]{3})\s*([\d.,]+)/.exec(o.price_label || ''); const usd = m && RATE[m[1]] ? parseFloat(m[2].replace(/,/g, '')) * RATE[m[1]] : (r[3] || 0) * MARGIN; return { vid: o.vid, name: o.name, key: o.name, sku: o.sku, image: o.image || '', price: usd / MARGIN, label: m ? o.price_label : '' }; }) });   /* a label without a price (feed down) is dropped: the tile shows the catalogue estimate, refined below from the supplier price */
-    (W ? fetchRetry(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`, 2).then(x => x.json()).then(d => { if (!d || !Array.isArray(d.variants)) throw new Error('Invalid supplier options'); return d; }) : (window.SMWoo && window.SMWoo.active ? window.SMWoo.sync() : Promise.resolve()).then(() => fetchRetry(`${(window.SMWoo && window.SMWoo.active ? (() => { try { return new URL(C.wpApi).pathname; } catch (e) { return C.wpApi; } })() : C.wpApi).replace(/\/$/, '')}/live/options/${encodeURIComponent(r[0])}`).then(x => { if (!x.ok) throw new Error(x.status); return x.json(); }).then(fromWp))).then(d => {
+    /* Options source: the CJ Worker first; if it fails (supplier quota, timeout), the store's WordPress options; only when both fail does
+       the "could not be loaded" box appear. */
+    const wpOptions = (tries = 4) => (window.SMWoo && window.SMWoo.active ? window.SMWoo.sync() : Promise.resolve()).then(() => fetchRetry(`${(window.SMWoo && window.SMWoo.active ? (() => { try { return new URL(C.wpApi).pathname; } catch (e) { return C.wpApi; } })() : C.wpApi).replace(/\/$/, '')}/live/options/${encodeURIComponent(r[0])}`, tries).then(x => { if (!x.ok) throw new Error(x.status); return x.json(); }).then(fromWp));
+    (W ? fetchRetry(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`, 2).then(x => x.json()).then(d => { if (!d || !Array.isArray(d.variants)) throw new Error('Invalid supplier options'); return d; }).catch(e => (C.wpApi ? wpOptions(2) : Promise.reject(e))) : wpOptions()).then(d => {
       const list = (d && d.variants) || [];
       /* Additive live-supplier transparency: never alters existing PDP sections or purchase flow. */
       if (list.length) {

@@ -71,15 +71,14 @@ test('unpriced CJ requests survive reloads without a manufactured offer price',(
  assert.ok(values.get('sm_cart'));
  assert.ok(values.get('sm_gcart'));
 });
-test('global quota fallback does not assert payment success or retry a blocked backend',()=>{
+test('global supplier fallback never puts an unpriced item in the paid cart or asserts payment',()=>{
  const product=read('assets/js/global-pdp.js');
+ const store=read('assets/js/woo-bridge.js');
  const form=read('assets/js/order-page.js');
  assert.match(product,/function requestFallback\(message\)/);
- assert.match(product,/Save quotation request/);
- assert.match(product,/unit:null/);
- assert.match(product,/requestCartReady\(\)\.then/);
+ assert.match(product,/Ask for this option on WhatsApp/);
+ assert.match(store,/if \(!\(unit > 0\)\) return \{ ok: false/);   // no price, no cart line
  assert.doesNotMatch(product,/api\('\/wp-json\/gdcs\/v1\/live\/cart'/);
- assert.match(product,/No order was placed/);
  assert.match(form,/payment_status','NOT_PAID'/);
  assert.match(form,/if\(!result\.ok\)throw/);
  assert.doesNotMatch(product,/localStorage\.clear\(/);

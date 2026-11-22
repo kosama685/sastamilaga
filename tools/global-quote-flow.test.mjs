@@ -81,12 +81,10 @@ test('product actions no longer submit to broken WordPress cart',()=>{
   assert.doesNotMatch(s,/fetch\('\/wp-json\/gdcs\/v1\/live\/cart'/);
   assert.match(s,/id="gadd">Add to cart/);
   assert.match(s,/id="gbuy">Buy now/);
-  assert.match(s,/window\.__gcAct\s*=\s*\{add:/);
-  assert.match(s,/requestBusy\s*=\s*true/);
-  assert.match(s,/await api\.save\(\{id:r\[0\],sku:r\[1\],name:r\[2\]\},chosen\.v,q,notes,ownUrl\(cs,r\)\)/);
-  assert.match(s,/location\.assign\(api\.orderUrl\(country\)\)/);
-  assert.match(s,/buttons\.forEach\(b=>b\.disabled=false\)/);
-  assert.match(s,/no payment taken/);
+  // 20 November flow (restored 2026-11-22): the exact option goes into the site cart, Buy now opens the static checkout.
+  assert.match(s,/window\.__gcAct\s*=\s*\{/);
+  assert.match(s,/window\.SMStore\.addCj\(row\)/);
+  assert.match(s,/location\.assign\(window\.SMStore\.checkoutUrl\(\)\)/);
 });
 test('checkout auto-prefills chosen shipping destination and remains unpaid',()=>{
   const s=read('assets/js/order-page.js');
@@ -96,6 +94,6 @@ test('checkout auto-prefills chosen shipping destination and remains unpaid',()=
   assert.match(s,/order_items_json/);
 });
 test('production page loads cache-busted global product handler',()=>{
-  const s=read('index.html');
-  assert.match(s,/assets\/js\/global\.js\?v=purchase-checkout-20261122-2/);
+ const s=read('index.html');
+ assert.match(s,/assets\/js\/global\.js\?v=store-20261122/);
 });

@@ -120,6 +120,10 @@ let _byPage = null;
 function productByPage(file) { if (!_byPage) { _byPage = new Map(); products.forEach(p => _byPage.set(pagePath(p), p)); } return _byPage.get(file); }
 function blogPublished(s) { const today = new Date(Date.now() + 5 * 3600e3).toISOString().slice(0, 10); return (window.SM_BLOG || []).some(b => b.slug === s && b.publish <= today); }
 /* '#/shop' -> 'shop/', '#/product/x' -> 'p/x-id.html' … ; null when the route has no clean page. */
+/* On sastamilaga.com the paths /cart/ and /checkout/ are served by WordPress (WooCommerce). The site's own cart and checkout therefore stay
+   on #/cart and #/checkout there, so a reload or a shared link keeps the static checkout (PayPal / card link, cash on delivery, Formspree).
+   On the GitHub Pages copy cart/ and checkout/ are static pages and keep their clean URLs. */
+var WP_OWNED_PATHS = new Set(/(^|\.)sastamilaga\.com$/i.test(location.hostname) ? ['cart', 'checkout'] : []);
 function hashToClean(hash) {
   const full = String(hash || '').replace(/^#?\/?/, ''), qi = full.indexOf('?');
   const raw = qi < 0 ? full : full.slice(0, qi), qs = qi < 0 ? '' : full.slice(qi + 1);
@@ -136,6 +140,7 @@ function hashToClean(hash) {
   if (parts[0] === 'global' && parts.length === 2 && CLEAN_SECTIONS.includes(`global/${parts[1]}`)) return withQuery(`global/${parts[1]}/`);
   if (parts[0] === 'blog' && parts.length === 1) return 'b/';
   if (parts[0] === 'blog' && parts[1]) return blogPublished(parts[1]) ? `b/${parts[1]}.html` : null;
+  if (parts.length === 1 && WP_OWNED_PATHS.has(parts[0])) return null;   /* /cart/ and /checkout/ are WordPress pages on the live domain: keep #/cart, #/checkout */
   if (parts.length === 1 && CLEAN_SECTIONS.includes(parts[0])) return withQuery(`${parts[0]}/`);
   return null;
 }
@@ -1944,7 +1949,7 @@ window.placeOrder = function (e, landing, trigger) {
     if (response.ok && response.usd) {
       try { localStorage.setItem('latestOrder', JSON.stringify({ total: orderTotal, currency: 'PKR', itemIds: productIds, transactionId: orderId, timestamp: Date.now(), paypal: response.usd })); } catch (e) { }
       setCart([]); if (window.SMGCart) window.SMGCart.clear();
-      location.href = paypalLink({ email: C.paypalEmail, usd: response.usd, currency: payCur, orderId, items: lines.length, landing: landing || 'Login' });
+      location.href = paypalLink({ email: C.paypalEmail, usd: response.usd, currency: payCur, orderId, items: lines.length + GL.length, landing: landing || 'Login' });   /* local + global lines */
       return;
     }
     if (response.ok) {
@@ -1999,8 +2004,11 @@ function paypalLink({ email, usd, currency = 'USD', orderId, items, landing = 'L
   const q = new URLSearchParams({
     cmd: '_xclick', business: email, item_name: `Sasta Milaga order ${orderId} (${items} item${items > 1 ? 's' : ''})`,
     item_number: orderId, invoice: orderId, amount: usd, currency_code: currency, quantity: '1', no_shipping: '1', no_note: '1',
-    charset: 'utf-8', return: `${SITE_URL}/thank-you/`, cancel_return: `${SITE_URL}/cart/`, rm: '1', landing_page: landing
+    charset: 'utf-8', return: `${SITE_URL}/thank-you/`, cancel_return: `${SITE_URL}/#/cart`, rm: '1', landing_page: landing
   });
+  /* "Pay by debit or credit card": PayPal's guest card form first, no PayPal account needed (the same parameters as
+     kosama685.github.io/paypal-link-generator-debit-card). */
+  if (landing === 'Billing') q.set('solution_type', 'Sole');
   return 'https://www.paypal.com/cgi-bin/webscr?' + q.toString();
 }
 window.SMApp && (window.SMApp.paypalLink = paypalLink);

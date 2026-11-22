@@ -22,16 +22,6 @@
     if(!Array.isArray(rows))throw new Error('invalid catalogue rows');
     return rows.filter(r=>Array.isArray(r)&&r.length>=6&&r[0]&&r[2]&&/^https:\/\//.test(String(r[5]))).slice(0,10);
   };
-  let quoteLoading=null;
-  function quoteReady(){
-    if(window.SMGlobalQuote)return Promise.resolve(window.SMGlobalQuote);
-    if(quoteLoading)return quoteLoading;
-    quoteLoading=new Promise((resolve,reject)=>{
-      const script=document.createElement('script');script.src='/assets/js/global-quote-flow.js?v=compare-20261122';
-      script.onload=()=>window.SMGlobalQuote?resolve(window.SMGlobalQuote):reject(new Error('Cart unavailable'));
-      script.onerror=()=>reject(new Error('Cart could not load'));document.head.appendChild(script);
-    }).catch(e=>{quoteLoading=null;throw e});return quoteLoading;
-  }
   const records=new Map();
   const card=(cat,r)=>{
     const name=String(r[2]),url='/global/p/'+encodeURIComponent(cat.s)+'/'+encodeURIComponent(r[0]);
@@ -149,42 +139,36 @@
       selector.innerHTML='';
       variants.forEach((v,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=String(v.key||v.name||v.sku);selector.add(o);});
       qty.value='1';controls.hidden=false;status.textContent='Choose the exact supplier option before ordering.';
-
+      let isMapped=null, optionSeq=0;
       const update=()=>{
-        const v=variants[Number(selector.value)]||variants[0];
+        const v=variants[Number(selector.value)]||variants[0],seq=++optionSeq;
         // Use a verified supplier option photo when available; otherwise keep the product cover.
         const variantPhoto=String(v.image||v.imageUrl||v.img||'');
         photo.src=/^https:\/\//i.test(variantPhoto)?variantPhoto:String(r[5]);
+        isMapped=null;
         estimate.textContent='Estimated '+money.format(Number(v.price)*1.2)+' each · '+money.format(Number(v.price)*1.2*(Math.min(99,Math.max(1,Number(qty.value)||1))))+' items subtotal, excluding delivery';
         wa.href=waHref(r[2],url,String(v.key||v.name||v.sku));
         confirm.disabled=false;
-        confirm.textContent=action==='buy'?'Buy now':'Add to cart';
-        status.textContent='Your exact option will be saved in the combined cart. Compare static and WordPress checkout on the next page.';
+        confirm.textContent=action==='buy'?'Buy now - continue to checkout':'Add to cart';
+        status.textContent='Choose the exact supplier option, then '+(action==='buy'?'continue to checkout.':'add it to your cart.');
       };
       selector.onchange=update;qty.oninput=update;update();
       onConfirm=async()=>{
         const v=variants[Number(selector.value)]||variants[0],n=Number(qty.value);
         if(!Number.isInteger(n)||n<1||n>99){status.textContent='Please enter a quantity between 1 and 99.';return;}
         if(!v?.sku||!v?.vid){status.textContent='This supplier option cannot be verified. Please use WhatsApp.';return;}
-        confirm.disabled=true;confirm.setAttribute('aria-busy','true');
-        status.textContent='Verifying this variation with the WooCommerce cart…';
-        try{
-          const adapter=await quoteReady();
-          const saved=await adapter.save({id:String(r[0]),sku:String(r[1]),name:String(r[2])},v,n,'',url);
-          if(!saved?.ok)throw new Error(saved?.message||'The cart could not save this option.');
-          dialog.close();
-          if(action==='buy')location.assign(adapter.orderUrl(window.SMMarket?.state?.().country||''));
-          else{
-            const label=document.createElement('span');
-            label.className='sm-cj-feedback';label.setAttribute('role','status');
-            label.textContent='Added to cart';
-            const original=[...host.querySelectorAll('[data-cj-order="add"]')].find(b=>b.dataset.cjKey===key);
-            if(original){original.after(label);setTimeout(()=>label.remove(),4500);}
-          }
-        }catch(err){
-          status.textContent='The combined cart could not save this option. No order was created. Please use WhatsApp or retry.';
-          console.warn('Combined cart add failed',String(err?.message||err));
-        }finally{confirm.disabled=false;confirm.removeAttribute('aria-busy');}
+        // Restored 2026-11-22 (owner request): the site's own cart, the same one the global product pages use; checkout records the order in Formspree first.
+        const store=window.SMStore;
+        if(!store){status.textContent='The cart is still loading. Please try again in a moment.';return;}
+        const res=store.addCj({id:String(r[0]),sku:String(v.sku),name:String(r[2]),img:String(v.image||v.imageUrl||v.img||r[5]||''),vkey:String(v.sku||v.vid),vname:String(v.key||v.name||v.sku),unit:Number(v.price)*1.2,qty:n,url:String(url)});
+        if(!res.ok){status.textContent=res.message;return;}
+        dialog.close();
+        if(action==='buy'){location.assign(store.checkoutUrl());return;}
+        const label=document.createElement('span');
+        label.className='sm-cj-feedback';label.setAttribute('role','status');label.textContent='Added to cart';
+        const original=[...host.querySelectorAll('[data-cj-order="add"]')].find(btn=>btn.dataset.cjKey===key);
+        if(original){original.after(label);setTimeout(()=>label.remove(),4500);}
+        store.notice('Added to cart.',true);
       };
     }catch(e){
       if(id!==activeRequest)return;

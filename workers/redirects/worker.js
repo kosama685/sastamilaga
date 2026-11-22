@@ -24,6 +24,8 @@ const PAGES = {
   '/privacy-policy': '/privacy/', '/terms-conditions': '/terms/', '/returns-refunds': '/returns/', '/shipping-delivery': '/shipping/',
   '/track-order': '/track/', '/sell-with-us': '/seller/', '/rewards-program': '/earn-points/', '/refer-and-earn': '/earn-points/',
   '/product-category': '/shop/', '/earn': '/earn-points/', '/home': '/', '/home-ur': '/ur/about/',
+  // WooCommerce-only visa services linked from the travel section (no static product page): their visa guides, which carry the enquiry cards
+  '/product/umrah-visa-from-pakistan': '/visa/saudi-arabia/', '/product/serbia-work-visa-package': '/visa/serbia/',
 };
 const URDU_PAGES = { '/privacy-policy': '/ur/privacy/', '/terms-conditions': '/ur/terms/', '/returns-refunds': '/ur/returns/', '/shipping-delivery': '/ur/shipping/', '/sell-with-us': '/seller/' };
 
