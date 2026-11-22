@@ -190,12 +190,14 @@ const feedback = page => page.locator('#sm-store-feedback').innerText({ timeout:
   ok((await carts(page)).local.length === 1 && await page.inputValue('#checkoutForm [name=full_name]') === 'Test Customer' && !(await page.locator('#smPlaceOrder').isDisabled()), 'Formspree down: cart and form kept, the button can be pressed again');
   await ctx.close(); }
 
-// 8) WordPress bridge + header cart link (live, not mocked)
+// 8) WordPress bridge + header cart link (live, not mocked). The bridge target is the WordPress option sm_static_cart_target:
+//    'hash' (this release: /#/cart, /#/checkout) or 'pages' (the request cart /request-cart/, /order/). SM_BRIDGE_TARGET=pages before the switch.
 { const { ctx, page } = await context();
+  const pages = process.env.SM_BRIDGE_TARGET === 'pages', cartTo = pages ? '/request-cart/' : '/#/cart', coTo = pages ? '/order/' : '/#/checkout';
   await page.goto(SITE + '/cart/', { waitUntil: 'domcontentloaded', timeout: 120000 });
-  ok(page.url().startsWith(SITE + '/#/cart'), 'sastamilaga.com/cart/ (WordPress) forwards to the static cart /#/cart');
+  ok(page.url().startsWith(SITE + cartTo), `sastamilaga.com/cart/ (WordPress) forwards to the static cart ${cartTo}`);
   await page.goto(SITE + '/checkout/', { waitUntil: 'domcontentloaded', timeout: 120000 });
-  ok(page.url().startsWith(SITE + '/#/checkout'), 'sastamilaga.com/checkout/ forwards to the static checkout /#/checkout');
+  ok(page.url().startsWith(SITE + coTo), `sastamilaga.com/checkout/ forwards to the static checkout ${coTo}`);
   await page.goto(LOCAL_HHC, { waitUntil: 'domcontentloaded', timeout: 120000 });
   await page.waitForTimeout(2500);
   const hdr = page.locator('a.smh-tool--cart, a[aria-label="Cart"]').first();
@@ -235,6 +237,23 @@ const feedback = page => page.locator('#sm-store-feedback').innerText({ timeout:
     ok(page.url().startsWith(SITE + '/#/checkout'), 'Quick Buy dialog: Buy now opens the checkout');
   } else ok(false, 'no product-video Quick Buy cards on the homepage');
   ok(rec.errors.length === 0, 'Quick Buy: no JavaScript errors' + (rec.errors.length ? ': ' + rec.errors.join(' | ') : ''));
+  await ctx.close(); }
+
+// 11) A basket saved in the request cart (sm_order_cart_v1, live 22 Nov 20:12 until this release) moves into the cart once; an unpriced row stays
+{ const { ctx, page, rec } = await context();
+  await page.goto(SITE + '/robots.txt', { waitUntil: 'domcontentloaded', timeout: 120000 });
+  await page.evaluate(() => localStorage.setItem('sm_order_cart_v1', JSON.stringify([
+    { type: 'local', id: 'HHC-3759872', sku: 'HHC-3759872', name: 'Coffee grinder', qty: 2, unit: 1000, currency: 'PKR', attributes: [] },
+    { type: 'cj', id: '1368068170002337792', sku: 'CJNS103193001AZ', name: 'Leather Business Handbag', vkey: '1368068171344515072', vname: 'Black', qty: 1, unit: 10.12, currency: 'USD' },
+    { type: 'cj', id: '1368068170002337792', sku: 'CJNS103193002BY', name: 'Leather Business Handbag', vkey: '1368068171344515073', vname: 'Brown', qty: 1, unit: null, priceStatus: 'pending', currency: 'USD' }])));
+  await page.goto(LOCAL_HHC, { waitUntil: 'domcontentloaded', timeout: 120000 }); await page.waitForTimeout(2500);
+  const c = await carts(page), left = await page.evaluate(() => JSON.parse(localStorage.getItem('sm_order_cart_v1') || '[]'));
+  ok(c.local.some(r => r.id === 'hhc-3759872' && r.qty === 2), 'request-cart basket: the local item moved into the cart with its quantity');
+  ok(c.cj.some(r => r.id === '1368068170002337792' && r.vkey === '1368068171344515072' && r.unit === 10.12), 'request-cart basket: the priced CJ option moved with its option and USD price');
+  ok(left.length === 1 && left[0].unit === null, 'request-cart basket: the unpriced row is left untouched (nothing invented)');
+  await page.reload({ waitUntil: 'domcontentloaded' }); await page.waitForTimeout(2000);
+  ok((await carts(page)).local.filter(r => r.id === 'hhc-3759872').every(r => r.qty === 2), 'request-cart basket: a reload does not add it twice');
+  ok(rec.errors.length === 0, 'request-cart basket: no JavaScript errors' + (rec.errors.length ? ': ' + rec.errors.join(' | ') : ''));
   await ctx.close(); }
 
 await browser.close();
