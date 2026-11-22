@@ -66,3 +66,36 @@ test('unpriced Pakistan quote does not crash Formspree payload and copyable refe
  assert.match(html,/id="sm-copy-reference"/);
  assert.match(html,/id="sm-help-reference"/);
 });
+
+test('mixed local and CJ request cart allows both line types',()=>{
+ const {cart}=cartFixture();
+ assert.equal(cart.add({type:'local',id:'L1',sku:'PK-M',unit:1500,qty:1,attributes:[{attribute:'Size',value:'M'}]}).ok,true);
+ assert.equal(cart.add({type:'cj',id:'CJ1',sku:'VIOLET',vkey:'VID-1',unit:null,qty:1}).ok,true);
+ assert.equal(cart.count(),2);
+ assert.equal(cart.totals().cj.finalTotal,null);
+ const order=read('assets/js/order-page.js');
+ assert.match(order,/MIXED|Mixed local\/CJ enquiry|hasCJ\(\)/);
+ assert.doesNotMatch(order,/Remove local items for another destination/);
+});
+test('legacy PayPal link composer permits only reviewed USD totals and never claims payment',()=>{
+ let code=read('assets/js/paypal-payment-link.js'),ctx={URL,window:{}};
+ vm.runInNewContext(code,ctx);
+ let make=ctx.window.SMPayPalLink.create;
+ assert.equal(make({amountUSD:15,productName:'Product name',reference:'SM-REQ-1234'}).ok,false);
+ let ok=make({amountUSD:15,productName:'Product name',reference:'SM-REQ-1234',confirmedFinalTotal:true,shippingVerified:true});
+ assert.equal(ok.ok,true);
+ let link=new URL(ok.url);
+ assert.equal(link.hostname,'www.paypal.com');
+ assert.equal(link.searchParams.get('business'),'osamakhancv@gmail.com');
+ assert.equal(link.searchParams.get('amount'),'15.00');
+ assert.equal(link.searchParams.get('item_name'),'Product name');
+ assert.equal(link.searchParams.get('invoice'),'SM-REQ-1234');
+ assert.equal(ok.status,'PAYMENT_LINK_NOT_YET_PAID');
+});
+test('request checkout collects PayPal/card preference but never claims paid for Formspree 2xx',()=>{
+ const h=read('order/index.html'),js=read('assets/js/order-page.js');
+ assert.match(h,/name="payment_preference"/);
+ assert.match(js,/values.set\('payment_status','NOT_PAID'\)/);
+ assert.match(js,/values.set\('customer_requested_payment'/);
+ assert.doesNotMatch(js,/payment_status','PAID'/);
+});
