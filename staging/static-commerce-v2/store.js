@@ -30,7 +30,7 @@
    let rows=read(),item=rows.find(x=>key(x)===k);if(!item)return {ok:false,error:'Item not found'};item.qty=q;return write(rows)}
  function remove(k){return write(read().filter(x=>key(x)!==k))}
  function count(){return read().reduce((s,x)=>s+x.qty,0)}
- function totals(){let local=0,cj=0,missing=0;for(const x of read()){if(x.estimate===null){missing++;continue}(x.type==='local'?(()=>local+=x.estimate*x.qty):(()=>cj+=x.estimate*x.qty))())}
+ function totals(){let local=0,cj=0,missing=0;for(const x of read()){if(x.estimate===null){missing++;continue}if(x.type==='local')local+=x.estimate*x.qty;else cj+=x.estimate*x.qty)}
   return {localEstimate:local,cjEstimate:cj,missingPriceCount:missing,shipping:null,payableTotal:null,unpaid:true}}
  function clear(){return write([])}
  function reference(){let old='';try{old=g.sessionStorage.getItem('sm_pending_request_v2')||''}catch{}
