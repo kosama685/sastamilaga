@@ -1,0 +1,27 @@
+name: Post-deployment global checkout live verification
+on:
+  workflow_run:
+    workflows: ['Deploy static content to Pages']
+    types: [completed]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-live:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Verify real public product JavaScript and request pages
+        run: node tools/global-quote-live-smoke.mjs
+      - name: Preserve evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: global-checkout-live-${{ github.run_id }}
+          path: artifacts/global-quote-live-smoke.json
+          if-no-files-found: warn
