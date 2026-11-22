@@ -1,0 +1,37 @@
+name: Hardened static request demo safety
+on:
+  push:
+    branches:
+      - feature/static-request-preview-hardened
+    paths:
+      - 'staging/static-request/**'
+      - 'tools/static-request-preview.test.mjs'
+      - '.github/workflows/static-request-preview.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check demo JS and regression tests
+        run: |
+          node --check staging/static-request/preview.js
+          node --check tools/static-request-preview.test.mjs
+          node --test tools/static-request-preview.test.mjs
+      - name: Enforce separation from production carts and checkout
+        run: |
+          node --input-type=module - <<'NODE'
+          import fs from 'node:fs';
+          const js=fs.readFileSync('staging/static-request/preview.js','utf8');
+          const html=fs.readFileSync('staging/static-request/index.html','utf8');
+          if(!js.includes("KEY='sm_preview_cart_v1'"))throw Error('Isolated demo basket key missing');
+          if(/localStorage|fetch\(|wp-json|paypal|formspree|authRegister|password/i.test(js))throw Error('Prototype improperly touches live accounts, orders, or network services');
+          if(!html.includes('noindex,nofollow,noarchive'))throw Error('Noindex required for sample SKUs');
+          console.log('PASS: preview isolated from real orders, payments and accounts');
+          NODE
