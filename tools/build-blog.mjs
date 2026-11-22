@@ -1,4 +1,4 @@
-// Build static blog pages for every post whose publish date has arrived (Asia/Karachi).
+// Build static blog pages for every post whose publish date has arrived (Asia/Riyadh).
 // Usage: node tools/build-blog.mjs   (run daily by .github/workflows/blog-schedule.yml)
 // Output: b/index.html, b/<slug>.html, sitemap-blog.xml, and sitemap.xml index entry.
 import fs from 'node:fs';
@@ -7,7 +7,7 @@ import vm from 'node:vm';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/(\w:)/, '$1')), '..');
 const SITE = 'https://sastamilaga.com';
-const today = new Date(Date.now() + 5 * 3600e3).toISOString().slice(0, 10);
+const today = new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10);
 const ctx = { window: {} };
 vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'assets/data/blog.js'), 'utf8'), ctx);
 // Posts cloned from sastamilaga.com (metadata here, body in data/wp/posts/<slug>.html)
