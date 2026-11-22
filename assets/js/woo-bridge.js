@@ -6,7 +6,7 @@
 (function(g){
 'use strict';
 if(g.SMRequestBridge)return;
-var loading=null,busy=false,undo={},MAX_QTY=99;
+var loading=null,busy=false,vmCard=null,MAX_QTY=99;
 function clean(s,n){return String(s==null?'':s).trim().slice(0,n)}
 function getCart(){
  if(g.SMOrderCart)return Promise.resolve(g.SMOrderCart);
@@ -91,14 +91,17 @@ function productSku(){
  return schemaProduct().sku || clean((document.querySelector('main [data-sku]')||{}).dataset?.sku,128);
 }
 function onClick(e){
+ var opener=e.target&&e.target.closest?e.target.closest('[data-vm-src]'):null;
+ if(opener){vmCard=opener;return}
  var target=e.target&&e.target.closest?e.target.closest('[data-add-cart],#smvm-cart,#smvm-buy,main a[href*="#/product/"]'):null;
  if(!target)return;
- var quick=target.id==='smvm-buy',local=false,sku='',q=1,selected;
+ var quick=target.id==='smvm-buy',local=false,sku='',q=null,selected;
  if(target.hasAttribute('data-add-cart')){local=true;sku=target.getAttribute('data-add-cart');}
  else if(target.id==='smvm-cart'||target.id==='smvm-buy'){
    local=true;var sel=document.getElementById('smvm-opt');
-   sku=(sel&&sel.selectedOptions[0]&&sel.selectedOptions[0].dataset.sku)||
-    (document.querySelector('[data-vm-q]')||{}).getAttribute?.('data-vm-q')||'';
+   var opts=[];try{opts=JSON.parse(vmCard&&vmCard.getAttribute('data-vm-opts')||'[]')}catch(e){}
+   var selectedOption=sel&&sel.selectedIndex>=0?opts[sel.selectedIndex]:null;
+   sku=(selectedOption&&selectedOption.q)||(vmCard&&vmCard.getAttribute('data-vm-q'))||'';
    q=Number((document.getElementById('smvm-qty')||{}).value)||1;
  }else{
    var label=clean(target.textContent,80).toLowerCase();
@@ -110,8 +113,8 @@ function onClick(e){
  if(busy){notice('Your earlier click is still processing.');return}
  selected=options();
  if(target.id==='smvm-cart'||target.id==='smvm-buy'){
-  var s=document.getElementById('smvm-opt');
-  if(s&&s.value)selected.attrs.push({attribute:'Selected option',value:clean(s.value,120)});
+  var sel=document.getElementById('smvm-opt');
+  if(sel&&sel.value)selected.attrs.push({attribute:'Selected option',value:clean(sel.options[sel.selectedIndex]?.text||sel.value,120)});
  }
  add(sku,q,selected,quick,target);
 }
