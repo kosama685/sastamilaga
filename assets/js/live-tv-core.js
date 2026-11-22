@@ -176,7 +176,7 @@
       return { code: "CODEC_UNSUPPORTED", summary: "The browser cannot decode this media format.", next: "Inspect codecs with ffprobe; provide browser-compatible H.264/AAC or a supported DASH/HLS rendition." };
     if (/stall|buffer|timeout|25 seconds|timed.out|no playback/.test(detail))
       return { code: "STALL_OR_TIMEOUT", summary: "Playback stalled or timed out.", next: "Inspect segment timings, bitrate, live window and upstream capacity." };
-    if (/cors|network|manifest.load|frag.load|source unavailable/.test(detail))
+    if (/cors|network|manifest.?load|frag.?load|source unavailable/.test(detail))
       return { code: "NETWORK_OR_CORS", summary: "Browser media fetch failed; CORS is one possibility, not a confirmed cause.", next: "Inspect DevTools Network and Console: response status, Origin, CORS, redirects and segment requests." };
     return { code: "PLAYER_FAILURE", summary: "The browser could not play the selected source.", next: "Check the stream's official availability, format and player requirements." };
   }
