@@ -63,7 +63,7 @@ form.addEventListener('submit',async function(e){
   var receiptSaved=false;
   try { var receipts=JSON.parse(localStorage.getItem(RECEIPT_KEY)||'[]');if(!Array.isArray(receipts))receipts=[];
     receipts=receipts.filter(function(x){return x&&x.id!==id}).slice(-49);
-    receipts.push({id:id,at:new Date().toISOString(),state:'INTAKE_ACKNOWLEDGED_UNPAID',itemCount:cart.count()});
+    receipts.push({id:id,at:new Date().toISOString(),state:'INTAKE_ACKNOWLEDGED_UNPAID',itemCount:cart.count(),items:cart.get().map(function(r){return {sku:r.sku,variant_id:r.vkey,variant_name:r.vname,attributes:r.attributes,quantity:r.qty,price_status:r.priceStatus};})});
     localStorage.setItem(RECEIPT_KEY,JSON.stringify(receipts));receiptSaved=true;
   }catch(storageError){}
   if(receiptSaved)cart.clear();
