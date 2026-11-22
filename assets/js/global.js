@@ -187,9 +187,9 @@
         <p id="gvariant-photo-status" class="sm-global-photo-status" role="status" aria-live="polite">Select an option to view its supplier photo</p>${r[6] ? `<div class="gallery-thumbs"><button type="button" data-gallery="${esc(r[5])}" data-type="img" aria-label="Show image"><img src="${esc(r[5])}" alt=""></button><button type="button" class="active" data-gallery="${esc(r[6])}" data-type="video" aria-label="Play video"><img src="${esc(r[5])}" alt=""></button></div>` : ''}</div>
       <aside class="buy-panel" aria-label="Order options"><span class="eyebrow">${esc(c.n)}</span><h1>${esc(r[2])}</h1><p class="product-meta">SKU: ${esc(maskSku(r[1]))} · Global item</p>
         <div style="margin:12px 0"><span class="big-price">${est(r)}</span> <small class="sm-est">estimated</small></div>
-        <form class="sm-greq" id="greq">${varBox()}<label><span>Quantity</span><input type="number" name="qty" min="1" max="99" value="1"></label><label><span>Size / colour / model (required if supplier options are unavailable)</span><input name="opt" maxlength="120" placeholder="e.g. Violet, size G, or extra order notes"></label><label><span>Deliver to (country and city)</span><input name="to" required maxlength="120" value="${esc(gcTo())}" placeholder="e.g. Pakistan, Karachi"></label>
+        <form class="sm-greq" id="greq">${varBox()}<label><span>Quantity</span><input type="number" name="qty" min="1" max="99" value="1"></label><label><span>${(window.SM_CONFIG || {}).cjShippingWorker || (window.SM_CONFIG || {}).wpApi ? 'Notes (optional)' : 'Size, colour or option (optional)'}</span><input name="opt" maxlength="120" placeholder="${(window.SM_CONFIG || {}).cjShippingWorker || (window.SM_CONFIG || {}).wpApi ? 'Anything we should know' : 'e.g. Blue, size M'}"></label><label><span>Deliver to (country and city)</span><input name="to" required maxlength="120" value="${esc(gcTo())}" placeholder="e.g. Pakistan, Karachi"></label>
           <div class="sm-total" id="gtotal" role="status" aria-live="polite"></div>
-          <div class="sm-gactions"><button type="button" class="primary-btn" id="gadd">Add to request cart</button><button type="button" class="primary-btn sm-buynow" id="gbuy">Request shipping &amp; total</button></div><p class="product-meta" style="margin:6px 0 10px">No payment is taken. We confirm stock, delivery and the final amount before any purchase.</p><div id="gorder-status" role="status" aria-live="polite"></div>
+          <div class="sm-gactions"><button type="button" class="primary-btn" id="gadd">Add to cart</button><button type="button" class="primary-btn sm-buynow" id="gbuy">Buy now</button></div>
           <button type="submit" class="sm-wa-btn">Order on WhatsApp</button></form>
         <ul class="sm-trust" role="list"><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.4 3.1 8.2 7.5 9.5 4.4-1.3 7.5-5.1 7.5-9.5V6z"/><path d="m9 12 2 2 4-4"/></svg><span>Stock confirmed before you pay</span></li><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19"/></svg><span>Card or PayPal</span></li><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg><span>Destination-dependent shipping</span></li><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.6-4.3a8.5 8.5 0 1 1 15.4-4.6Z"/></svg><span>WhatsApp support</span></li></ul>
         <p class="product-meta">More like this: <a href="#/global/c/${cs}">${esc(c.n)}</a>${g ? ` · <a href="#/global/g/${g.s}">${esc(g.n)}</a>` : ''}</p></aside>
@@ -204,38 +204,15 @@
     const chosen = { v: null };
     const gTotal = () => {
       const el = document.getElementById('gtotal'), f = document.getElementById('greq'); if (!el || !f) return;
-      if (!chosen.v) {
-        el.innerHTML = '<p role="status"><strong>Live supplier options are not yet verified.</strong> ' +
-          'Describe your required size or colour in the notes field to request a shipping and price quote without payment.</p>';
-        return;
-      }
       const q = Math.max(1, Math.min(99, parseInt(f.qty.value, 10) || 1)), unit = (chosen.v ? chosen.v.price : (r[3] || 0)) * MARGIN, items = unit * q;
       if (!unit) { el.innerHTML = '<small>This item has no listed price yet. Order it on WhatsApp and we will quote it.</small>'; return; }
       const s = document.querySelector('.sm-ship-card [name=ship]:checked'), amt = s ? parseFloat(s.dataset.amt) : NaN, cur = s ? (s.dataset.cur || 'USD') : 'USD';
       const money = (n, c) => { try { return new Intl.NumberFormat('en', { style: 'currency', currency: c }).format(n); } catch (e) { return `${c} ${n.toFixed(2)}`; } };
-      const shippingText = String((document.getElementById('gship-out') || {}).textContent || '');
-      const failed = /not available|unavailable|could not|cannot|temporarily|request limit|confirm shipping|no verified carrier rate|no carrier|no verified shipping|shipping quote required|supplier shipping is/i.test(shippingText);
-      const ship = isNaN(amt) ? (failed ? '<dd>Confirm with support</dd>' : '<dd>Checking live rates…</dd>') : `<dd>${money(amt, cur)}</dd>`;
-      const total = isNaN(amt) ? 'Request a final shipping quote' : (cur === 'USD' ? USD.format(items + amt) : `${USD.format(items)} + ${money(amt, cur)}`);
-      el.innerHTML = `<dl><div><dt>${USD.format(unit)} × ${q}${chosen.v && (chosen.v.key || chosen.v.name) ? ' · ' + esc(chosen.v.key || chosen.v.name) : ''}</dt><dd>${USD.format(items)}</dd></div><div><dt>Delivery to ${esc((document.getElementById('gship-to') || {}).textContent || (f.to.value || 'your country'))}</dt>${ship}</div><div class="sm-total__sum"><dt>${isNaN(amt) ? 'Next step' : 'Indicative total (before duties)'}</dt><dd>${total}</dd></div></dl><small>Price and shipping are estimates, not an amount due. Submit a request for the confirmed total. No payment is collected.</small>`;
+      const ship = isNaN(amt) ? '<dd>Calculating for your country…</dd>' : `<dd>${money(amt, cur)}</dd>`;
+      const total = isNaN(amt) ? `${USD.format(items)} + delivery` : (cur === 'USD' ? USD.format(items + amt) : `${USD.format(items)} + ${money(amt, cur)}`);
+      el.innerHTML = `<dl><div><dt>${USD.format(unit)} × ${q}${chosen.v && (chosen.v.key || chosen.v.name) ? ' · ' + esc(chosen.v.key || chosen.v.name) : ''}</dt><dd>${USD.format(items)}</dd></div><div><dt>Delivery to ${esc((document.getElementById('gship-to') || {}).textContent || (f.to.value || 'your country'))}</dt>${ship}</div><div class="sm-total__sum"><dt>Total</dt><dd>${total}</dd></div></dl><small>Estimated prices in US dollars. Stock and the final total are confirmed before you pay.</small>`;
     };
     window.__gTotal = gTotal;
-    /* A supplier outage must not make quotation requests impossible.
-       We still prevent payment, but a manual option description can be saved. */
-    const setVerifiedOrderState = ready => {
-      for (const button of document.querySelectorAll('#gadd, #gbuy')) {
-        if (!button.dataset.smOriginalLabel) button.dataset.smOriginalLabel = button.textContent;
-        button.disabled = false;
-        button.setAttribute('aria-disabled', 'false');
-        button.title = ready ? 'Save this option for a final supplier quotation' :
-          'If live options are unavailable, describe the required size or colour in Notes';
-        button.textContent = button.dataset.smOriginalLabel;
-      }
-      const shippingButton = document.getElementById('gship-go');
-      if (shippingButton) shippingButton.disabled = !ready;
-    };
-    window.__gOrderReady = setVerifiedOrderState;
-    setVerifiedOrderState(false);
     ['change', 'input'].forEach(ev => document.getElementById('greq').addEventListener(ev, e => { if (e.target.name === 'qty') { gTotal(); if (ev === 'change') quoteSoon(); } }));
     document.addEventListener('change', e => { if (e.target && e.target.name === 'ship') gTotal(); });
     { const so = document.getElementById('gship-out'); if (so) new MutationObserver(gTotal).observe(so, { childList: true, subtree: true }); }
@@ -243,84 +220,10 @@
     bindVariants(r, chosen);
     (wpShip() ? bindShipWp : bindShip)(r, chosen);
     const rowFrom = f => { const v = chosen.v; return { id: r[0], cs, sku: r[1], name: r[2], img: (v && v.image) || r[5], unit: (v ? v.price : (r[3] || 0)) * MARGIN, qty: Math.max(1, Math.min(99, parseInt(f.qty.value, 10) || 1)), opt: (f.opt.value || '').trim(), ship: ((document.querySelector('.sm-ship-card [name=ship]:checked') || {}).value || ''), shipAmt: parseFloat(((document.querySelector('.sm-ship-card [name=ship]:checked') || {}).dataset || {}).amt) || 0, shipCur: ((document.querySelector('.sm-ship-card [name=ship]:checked') || {}).dataset || {}).cur || 'USD', vkey: v ? (v.sku || v.key || '') : '', vname: v ? (v.key || v.name || '') : '', url: ownUrl(cs, r) }; };
-    /* Primary product actions are request-only and NEVER call WooCommerce,
-       Cloudflare payment APIs or a fake local payment flow. */
-    let requestFlowLoading = null, requestBusy = false;
-    async function globalRequestAdapter() {
-      if (window.SMGlobalQuote) return window.SMGlobalQuote;
-      if (!requestFlowLoading) {
-        requestFlowLoading = loadScript((A.APP_BASE || '/') + 'assets/js/global-quote-flow.js?v=20261122-2')
-          .then(() => {
-            if (!window.SMGlobalQuote) throw new Error('Order request service unavailable.');
-            return window.SMGlobalQuote;
-          }).catch(e => { requestFlowLoading = null; throw e; });
-      }
-      return requestFlowLoading;
-    }
-    async function saveQuoteRequest(buyNow) {
-      const form = document.getElementById('greq');
-      if (!form || requestBusy) return;
-      const notes = String(form.elements.opt.value || '').trim();
-      const q = Number(form.elements.qty.value);
-      if (!Number.isInteger(q) || q < 1 || q > 99) {
-        toast('Choose a quantity between 1 and 99.'); form.elements.qty.focus(); return;
-      }
-      if (!chosen.v && !notes) {
-        toast('Describe the required colour, size or model in Notes to request a quote.');
-        form.elements.opt.focus(); return;
-      }
-      const selector = document.getElementById('gship-cc');
-      const cc = (selector && selector.value) ||
-        (window.SMMarket && window.SMMarket.state && window.SMMarket.state().country) || '';
-      const source = {id:r[0],sku:r[1],name:r[2]};
-      const status = document.getElementById('gorder-status');
-      requestBusy = true;
-      const buttons = Array.from(document.querySelectorAll('#gadd, #gbuy'));
-      buttons.forEach(b => { b.disabled = true; b.setAttribute('aria-busy','true'); });
-      if (status) status.textContent = 'Saving your selection for a shipping and price quotation…';
-      try {
-        const adapter = await globalRequestAdapter();
-        const response = await adapter.save(source,chosen.v,q,notes,ownUrl(cs,r));
-        if (!response.ok) {
-          if (status) status.textContent = response.message || 'Unable to save this request.';
-          toast(response.message || 'Unable to save your request. Please use WhatsApp.');
-          return;
-        }
-        if (buyNow) {
-          location.assign(adapter.orderUrl(cc));
-          return;
-        }
-        if (status) {
-          status.replaceChildren();
-          const label = document.createElement('span');
-          label.textContent = 'Added to your quotation cart. No payment made. ';
-          const link = document.createElement('a');
-          link.href = adapter.cartUrl();
-          link.textContent = 'View request cart (' + response.quantity + ')';
-          status.append(label,link);
-        }
-        toast('Selection saved to request cart. Shipping and final total are confirmed before payment.');
-      } catch (error) {
-        const message = 'Could not load request checkout. Please use WhatsApp; no order or payment was made.';
-        if (status) status.textContent = message;
-        toast(message);
-      } finally {
-        requestBusy = false;
-        buttons.forEach(b => { b.disabled = false; b.removeAttribute('aria-busy'); });
-      }
-    }
-    /* Capture before older global cart listeners. One handler survives SPA navigation. */
-    window.__gcAct = { add: () => { void saveQuoteRequest(false); },
-      buy: () => { void saveQuoteRequest(true); } };
-    if (!window.__gcActBound) {
-      window.__gcActBound = true;
-      window.addEventListener('click', e => {
-        const b = e.target && e.target.closest && e.target.closest('#gadd,#gbuy');
-        if (!b || !window.__gcAct) return;
-        e.preventDefault(); e.stopImmediatePropagation();
-        window.__gcAct[b.id === 'gbuy' ? 'buy' : 'add']();
-      }, true);
-    }
+    const addRow = () => { const f = document.getElementById('greq'); const row = rowFrom(f); if (!row.unit) { toast('This item has no listed price yet. Order it on WhatsApp and we will quote it.'); return null; } gcAdd(row); return row; };
+    /* Window-capture handler: on the store's own domain a site-wide script swallows add-to-cart clicks at document level, so these two buttons are handled before it (window comes first in the event path). */
+    window.__gcAct = { add: () => { if (addRow()) toast('Added to cart'); }, buy: () => { if (addRow()) { A.go('checkout'); } } };
+    if (!window.__gcActBound) { window.__gcActBound = true; window.addEventListener('click', e => { const b = e.target && e.target.closest && e.target.closest('#gadd,#gbuy'); if (!b || !window.__gcAct) return; e.preventDefault(); e.stopImmediatePropagation(); window.__gcAct[b.id === 'gbuy' ? 'buy' : 'add'](); }, true); }
     document.getElementById('greq').addEventListener('submit', e => {
       e.preventDefault(); const f = e.target; const v = chosen.v;
       const shipEl = document.querySelector('.sm-ship-card [name=ship]:checked'), ship = shipEl && shipEl.value ? `Shipping chosen: ${shipEl.value}\n` : '';
@@ -338,32 +241,6 @@
   const wpShip = () => { const C = window.SM_CONFIG || {}; return !supplierWorker() && C.wpApi && window.SMWoo && window.SMWoo.active && !/\.github\.io$/i.test(location.hostname); };
   /* Fallback quote: workers/cj-shipping (supplier carrier prices in US$) for the visitor's detected country. Returns true when quotes were shown. */
   let qSeq = 0;   /* only the newest quote request may write to the page (options can be clicked quickly) */
-  /* The published CJ Worker uses GET /api/cj/shipping with pid+vid+country+quantity;
-     the older provider Worker accepts POST with items[]. Never confuse the contracts. */
-  async function fetchCjShipping(r, chosen, qty, cc) {
-    const W = supplierWorker();
-    const p = new URLSearchParams({pid:String(r[0]),vid:String(chosen.v.vid),country:String(cc).toUpperCase(),quantity:String(qty)});
-    const options={signal:typeof AbortSignal !== 'undefined' && AbortSignal.timeout?AbortSignal.timeout(10000):undefined};
-    const live=await fetch('/api/cj/shipping?'+p.toString(),options);
-    if(live.status===429){const e=new Error('Cloudflare CJ request allowance reached');e.quota=true;throw e;}
-    if(live.ok){
-      const data=await live.json();
-      if(Array.isArray(data.rates)&&data.rates.length){
-        return {methods:data.rates.map(m=>({name:String(m.carrier||''),price:Number(m.amountUsd),days:String(m.eta||'Confirm ETA')}))
-          .filter(m=>m.name&&Number.isFinite(m.price)&&m.price>=0)};
-      }
-    }
-    if(!W)throw new Error('CJ shipping service unavailable');
-    const backup=await fetch(W+'/api/cj/shipping',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      signal:typeof AbortSignal!=='undefined'&&AbortSignal.timeout?AbortSignal.timeout(10000):undefined,
-      body:JSON.stringify({country:cc,items:[{pid:r[0],sku:chosen.v.sku||r[1],qty,vid:chosen.v.vid}]})
-    });
-    if(backup.status===429){const e=new Error('Cloudflare supplier request allowance reached');e.quota=true;throw e;}
-    const data=await backup.json().catch(()=>({}));
-    if(!backup.ok||!Array.isArray(data.methods))throw new Error('No verified carrier quote');
-    return {methods:data.methods.filter(m=>m&&m.name&&Number.isFinite(Number(m.price))&&Number(m.price)>=0)};
-  }
   async function workerQuote(r, chosen, qty, out, stale) {
     const C = window.SM_CONFIG || {}, W = (C.cjShippingWorker || C.cjImageWorker || '').replace(/\/$/, ''); if (!W) return false;
     let cc = 'PK'; try { cc = (window.SMMarket && window.SMMarket.state().country) || 'PK'; } catch (e) { }
@@ -371,16 +248,14 @@
     try { const c = JSON.parse(sessionStorage.getItem(ck) || 'null'); if (c && Date.now() - c.t < 30 * 60e3) d = c.d; } catch (e) { }   /* same country, option and quantity: no second call to the supplier (it allows one request per second) */
     try {
       if (!d) {
-        d = await fetchCjShipping(r,chosen,qty,cc); if (!d.methods || !d.methods.length) { if (stale && stale()) return true; return false; }
+        const res = await fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ country: cc, items: [{ pid: r[0], sku: r[1], qty, ...(chosen && chosen.v ? { vid: chosen.v.vid } : {}) }] }) });
+        d = await res.json(); if (!res.ok || !d.methods || !d.methods.length) { if (stale && stale()) return true; return false; }
         try { sessionStorage.setItem(ck, JSON.stringify({ t: Date.now(), d })); } catch (e) { }
       }
       if (stale && stale()) return true; if (!d.methods || !d.methods.length) return false;
       out.innerHTML = d.methods.slice(0, 6).map((m, i) => `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(`${neutral(m.name)}: ${USD.format(m.price)}, ${m.days} days`)}" data-amt="${esc(String(m.price))}" data-cur="USD"${i ? '' : ' checked'}> <span>${esc(neutral(m.name))}</span> <b>${USD.format(m.price)}</b> <small>${esc(m.days)} days</small></label>`).join('') + `<p class="sm-ship__note">Carrier price in US$ for ${qty} item${qty > 1 ? 's' : ''} to ${esc((window.SMMarket && window.SMMarket.countryName(cc)) || cc)}, before any customs duties. The final total is confirmed before you pay.</p>`;
       return true;
-    } catch (e) {
-      if (e.quota) { out.textContent='Supplier shipping is temporarily at capacity. No final shipping quote is available. Please confirm on WhatsApp.';return true; }
-      return false;
-    }
+    } catch (e) { return false; }
   }
   function shipBoxWp() {
     const mk = window.SMMarket; let nm = ''; try { nm = mk ? mk.countryName(mk.state().country) : ''; } catch (e) { }
@@ -441,21 +316,12 @@
   let quoteTimer = null;
   function quoteSoon() { clearTimeout(quoteTimer); quoteTimer = setTimeout(() => { const go = document.getElementById('gship-go'); if (go && !go.disabled) go.click(); }, 250); }
   /* The supplier allows one request per second for the whole shop, so a busy moment answers 503 once and succeeds a few seconds later (successes are cached for an hour). Ask again quietly before telling the visitor anything. */
-  function fetchRetry(u, n = 2) {
-    return fetch(u, {signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(9000) : undefined}).then(x => {
-      if (!x.ok) { const error = new Error('HTTP ' + x.status); error.status = x.status; throw error; }
-      return x;
-    }).catch(e => {
-      if ([400,401,403,404,429].includes(e.status) || n <= 0) return Promise.reject(e);
-      return new Promise(done => setTimeout(done, 1300)).then(() => fetchRetry(u, n - 1));
-    });
-  }
+  function fetchRetry(u, n = 4) { return fetch(u).then(x => { if (!x.ok) throw new Error(x.status); return x; }).catch(e => (n > 0 ? new Promise(res => setTimeout(res, 1800 + (4 - n) * 1200)).then(() => fetchRetry(u, n - 1)) : Promise.reject(e))); }
   function bindVariants(r, chosen) {
     const box = document.getElementById('gvar'); if (!box) return;
     const C = window.SM_CONFIG || {}, W = supplierWorker();
     const pick = v => {
       chosen.v = v;
-      if (typeof window.__gOrderReady === 'function') window.__gOrderReady(true);
       const price = document.querySelector('.buy-panel .big-price'); if (price) price.textContent = v.label || USD.format(v.price * MARGIN);
       const img = document.querySelector('.sm-global-pdp .gallery-main img');
       if (img && v.image && /^https:\/\//i.test(v.image)) {
@@ -479,38 +345,7 @@
     /* Real options: the CJ Worker when configured, otherwise the WordPress store's live options (same CJ data, the store's own price). */
     const RATE = { USD: 1, SAR: 1 / 3.75, AED: 1 / 3.6725 };   // pegged currencies only; anything else keeps the catalogue price
     const fromWp = d => ({ variants: ((d && d.options) || []).map(o => { const m = /([A-Z]{3})\s*([\d.,]+)/.exec(o.price_label || ''); const usd = m && RATE[m[1]] ? parseFloat(m[2].replace(/,/g, '')) * RATE[m[1]] : (r[3] || 0) * MARGIN; return { vid: o.vid, name: o.name, key: o.name, sku: o.sku, image: o.image || '', price: usd / MARGIN, label: m ? o.price_label : '' }; }) });   /* a label without a price (feed down) is dropped: the tile shows the catalogue estimate, refined below from the supplier price */
-    const pid = encodeURIComponent(r[0]);
-    const normalizedCJ = d => {
-      if (!d || !Array.isArray(d.variants)) throw new Error('Invalid supplier options');
-      const variants = d.variants.map(v => ({
-        ...v, key: v.key || v.name || v.sku || '',
-        price: Number(v.price) > 0 ? Number(v.price) :
-          Number(v.indicativeRetailUsd) > 0 ? Number(v.indicativeRetailUsd) / MARGIN : 0,
-        label: v.label || (Number(v.indicativeRetailUsd) > 0 ? 'est. ' + USD.format(Number(v.indicativeRetailUsd)) : '')
-      })).filter(v => v && v.vid && v.sku && Number(v.price) > 0);
-      if (!variants.length) throw new Error('No valid supplier options');
-      return { variants };
-    };
-    const readWp = () => (window.SMWoo && window.SMWoo.active ? window.SMWoo.sync() : Promise.resolve())
-      .then(() => {
-        const wp = window.SMWoo && window.SMWoo.active ?
-          (() => { try { return new URL(C.wpApi).pathname; } catch (e) { return C.wpApi; } })() : C.wpApi;
-        return fetchRetry(wp.replace(/\/$/, '') + '/live/options/' + pid, 1);
-      }).then(x => x.json()).then(fromWp).then(normalizedCJ);
-    const supplierOptions = async () => {
-      // This route supports /variants, not /product. Its indicative retail price already includes markup.
-      try { return normalizedCJ(await (await fetchRetry('/api/cj/variants?pid=' + pid, 1)).json()); }
-      catch (e) {
-        if (e.status === 429) throw e; // Cloudflare Error 1027; no other Worker can help.
-      }
-      if (W) {
-        try { return normalizedCJ(await (await fetchRetry(W + '/api/cj/product?pid=' + pid, 1)).json()); }
-        catch (e) { if (e.status === 429) throw e; }
-      }
-      if (C.wpApi) return readWp();
-      throw new Error('Supplier options are unavailable');
-    };
-    supplierOptions().then(d => {
+    (W ? fetchRetry(`${W}/api/cj/product?pid=${encodeURIComponent(r[0])}`, 2).then(x => x.json()).then(d => { if (!d || !Array.isArray(d.variants)) throw new Error('Invalid supplier options'); return d; }) : (window.SMWoo && window.SMWoo.active ? window.SMWoo.sync() : Promise.resolve()).then(() => fetchRetry(`${(window.SMWoo && window.SMWoo.active ? (() => { try { return new URL(C.wpApi).pathname; } catch (e) { return C.wpApi; } })() : C.wpApi).replace(/\/$/, '')}/live/options/${encodeURIComponent(r[0])}`).then(x => { if (!x.ok) throw new Error(x.status); return x.json(); }).then(fromWp))).then(d => {
       const list = (d && d.variants) || [];
       /* Additive live-supplier transparency: never alters existing PDP sections or purchase flow. */
       if (list.length) {
@@ -533,7 +368,7 @@
       if (list.length === 1) {
         box.innerHTML = `<legend>Option</legend><p class="sm-var__one"><b>${esc(list[0].key || list[0].name)}</b> <small>SKU ${esc(maskSku(list[0].sku))}</small></p>`; pick(list[0]); return;
       }
-      box.innerHTML = `<legend>Choose an option <small>(${list.length})</small></legend><div class="sm-var__grid" role="radiogroup">${list.map((v, i) => `<label class="sm-var__opt"><input type="radio" name="variant" value="${esc(v.vid)}" required><span class="sm-var__img">${v.image ? `<img src="${esc(v.image)}" alt="" width="56" height="56" loading="lazy">` : ''}</span><span class="sm-var__t"><b>${esc(v.key || v.name)}</b><small>${esc(v.label || USD.format(v.price * MARGIN))}</small></span></label>`).join('')}</div>`;
+      box.innerHTML = `<legend>Choose an option <small>(${list.length})</small></legend><div class="sm-var__grid" role="radiogroup">${list.map((v, i) => `<label class="sm-var__opt"><input type="radio" name="variant" value="${esc(v.vid)}" required><span class="sm-var__img">${v.image ? `<img src="${esc(v.image)}" alt="" width="56" height="56" loading="lazy">` : ''}</span><span class="sm-var__t"><b>${esc(v.key || v.name)}</b><small>${v.label || USD.format(v.price * MARGIN)}</small></span></label>`).join('')}</div>`;
       box.addEventListener('change', e => { if (e.target.name === 'variant') pick(list.find(v => v.vid === e.target.value)); });
       { const f0 = box.querySelector('input[name=variant]'); if (f0) { f0.checked = true; pick(list[0]); } }   /* default option: the first one, so price and delivery show at once */
       // Variation photos arrive a moment later from the image Worker: fill the tiles and keep the main picture in step with the choice.
@@ -548,21 +383,7 @@
           const sel = box.querySelector('input[name=variant]:checked'); if (sel) { const v = list.find(x => x.vid === sel.value), g = document.querySelector('.gallery-main img'); if (v && v.image && g) { g.removeAttribute('srcset'); g.src = v.image; g.alt = r[2] + ' – ' + (v.key || v.name || 'selected option'); } else if (v && v.image) sel.dispatchEvent(new Event('change', { bubbles: true })); }
         }).catch(() => { });
       })();
-    }).catch(error => {
-      chosen.v = null;
-      if (typeof window.__gOrderReady === 'function') window.__gOrderReady(false);
-      if (typeof window.__gTotal === 'function') window.__gTotal();
-      const shipping = document.getElementById('gship-out');
-      if (shipping) shipping.textContent = 'Shipping cannot be confirmed until a supplier variation is verified.';
-      const limited = error && error.status === 429;
-      box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">' +
-        (limited ? 'Supplier options are temporarily unavailable because the live service reached its request limit. No order has been placed.' :
-          'Options could not be verified just now. No order has been placed.') +
-        ' Please tell us your size or colour and we will confirm it on WhatsApp.' +
-        (limited ? '' : ' <button type="button" class="sm-btn sm-btn--ghost" id="gvar-retry">Try again</button>') + '</p>';
-      const retry = document.getElementById('gvar-retry');
-      if (retry) retry.addEventListener('click', () => { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Loading supplier options…</p>'; bindVariants(r, chosen); });
-    });
+    }).catch(() => { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Options could not be loaded just now. <button type="button" class="sm-btn sm-btn--ghost" id="gvar-retry">Try again</button> Or tell us your size or colour in the notes and we will confirm it on WhatsApp.</p>'; const b = document.getElementById('gvar-retry'); if (b) b.addEventListener('click', () => { box.innerHTML = '<legend>Choose an option</legend><p class="sm-var__load">Loading the supplier\'s options…</p>'; bindVariants(r, chosen); }); });
   }
   function bindShip(r, chosen) {
     const go = document.getElementById('gship-go'); if (!go) return;
@@ -574,18 +395,15 @@
     window.addEventListener('sm:market', window.__shipMk);
     const out = document.getElementById('gship-out'), W = supplierWorker();
     go.addEventListener('click', async () => {
-      if (!chosen.v) { out.textContent = 'Choose a verified supplier option before requesting shipping.'; return; }
       const cc = document.getElementById('gship-cc').value, qty = Number(document.querySelector('#greq [name="qty"]').value) || 1;
-      go.disabled = true; out.textContent = 'Checking carrier rates for the selected variation…';
+      go.disabled = true; out.textContent = 'Getting shipping options from the supplier…';
       try {
-        const d = await fetchCjShipping(r,chosen,qty,cc);
-        if (!d.methods || !d.methods.length) {
-          out.textContent = 'No verified carrier rate is available for this variation and destination. Use Request shipping & total to submit the exact option for a manual quote. No payment is taken.';
-          return;
-        }
+        const res = await fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ country: cc, items: [{ pid: r[0], sku: r[1], qty, ...(chosen && chosen.v ? { vid: chosen.v.vid } : {}) }] }) });
+        const d = await res.json();
+        if (!res.ok || !d.methods || !d.methods.length) { out.textContent = (d && d.error ? d.error + '. ' : '') + 'We will confirm shipping on WhatsApp.'; return; }
         out.innerHTML = d.methods.slice(0, 6).map((m, i) => `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(`${m.name}: ${USD.format(m.price)}, ${m.days} days`)}" data-amt="${esc(String(m.price))}" data-cur="USD"${i ? '' : ' checked'}> <span>${esc(neutral(m.name))}</span> <b>${USD.format(m.price)}</b> <small>${esc(m.days)} days</small></label>`).join('') + '<p class="sm-ship__note">Supplier shipping price in US$ for this quantity, before any customs duties.</p>';
-      } catch (e) { out.textContent = e.quota?'Supplier shipping is temporarily at capacity. Confirm the delivery charge on WhatsApp.':'Carrier prices are unavailable right now. Select Request shipping & total to submit a quotation request without paying.'; }
-      finally { go.disabled = !chosen.v; }
+      } catch (e) { out.textContent = 'Shipping prices are not available right now. We will confirm shipping on WhatsApp.'; }
+      finally { go.disabled = false; }
     });
   }
   function searchBox(q) {
