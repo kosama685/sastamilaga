@@ -16,11 +16,16 @@ test('quota exhausted never causes repeated CJ attempts or a claimed purchase',(
   assert.match(global,/No order has been placed/);
   assert.match(rails,/No order has been created/);
 });
-test('legacy global product actions require a real WooCommerce cart acknowledgement',()=>{
-  assert.match(global,/fetch\('\/wp-json\/gdcs\/v1\/live\/cart'/);
-  assert.match(global,/if \(!result\.ok \|\| !data\.added\)/);
-  assert.match(global,/String\(variant\.vid\)/);
-  assert.doesNotMatch(global,/window\.__gcAct = \{ add: \(\) => \{ if \(addRow\(\)\)/);
+test('global product quote actions do not depend on an unavailable WooCommerce cart',()=>{
+  assert.doesNotMatch(global,/fetch\('\/wp-json\/gdcs\/v1\/live\/cart'/);
+  assert.doesNotMatch(global,/Verifying your selection with secure WooCommerce checkout/);
+  assert.match(global,/window\.__gcAct = \{ add:/);
+  assert.match(global,/adapter\.save\(source,chosen\.v,q,notes,ownUrl\(cs,r\)\)/);
+  assert.match(global,/location\.assign\(adapter\.orderUrl\(cc\)\)/);
+  assert.match(global,/No payment is taken/);
+  const quote=source('global-quote-flow.js');
+  assert.match(quote,/type:'cj'/);
+  assert.match(quote,/requestOnly:true/);
 });
 test('store API quota failures do not get mistaken for successful local orders',()=>{
   assert.match(woo,/worker_limit/);
@@ -29,12 +34,15 @@ test('store API quota failures do not get mistaken for successful local orders',
   assert.match(pdp,/No item was added/);
 });
 
-test('unverified CJ options disable purchase buttons and never display a payable total',()=>{
+test('unverified CJ options allow unpaid quotation requests but never pretend payment or freight exists',()=>{
   assert.match(global,/setVerifiedOrderState\(false\)/);
-  assert.match(global,/button\.disabled = !ready/);
-  assert.match(global,/Live price and shipping require a verified supplier option/);
+  assert.match(global,/button\.disabled = false/);
+  assert.match(global,/Describe your required size or colour in the notes field/);
+  assert.match(global,/Request a final shipping quote/);
+  assert.match(global,/No verified carrier rate is available/);
+  assert.match(global,/form\.elements\.opt\.focus\(\)/);
   assert.doesNotMatch(global,/Calculating for your country…/);
-  assert.match(global,/Final total pending shipping verification/);
+  assert.doesNotMatch(global,/Final total pending shipping verification/);
 });
 test('local cart bridge requires WooCommerce JSON and does not call cart API for every empty visitor',()=>{
   assert.match(woo,/Array\.isArray\(x\.j\.items\)/);
