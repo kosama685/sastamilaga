@@ -1,0 +1,30 @@
+name: Safe unified request-cart preview tests
+on:
+  push:
+    branches:
+      - feature/unified-order-request-cart
+    paths:
+      - assets/js/order-cart.js
+      - assets/js/order-page.js
+      - assets/js/request-cart-page.js
+      - order/index.html
+      - request-cart/index.html
+      - tools/unified-order-request.test.mjs
+      - .github/workflows/unified-order-request-preview.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          node --check assets/js/order-cart.js
+          node --check assets/js/order-page.js
+          node --check assets/js/request-cart-page.js
+          node --check tools/unified-order-request.test.mjs
+      - run: node --test tools/unified-order-request.test.mjs
