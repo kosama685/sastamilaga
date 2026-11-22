@@ -20,7 +20,7 @@ function render(){
    controls.append(qty,remove);wrap.append(title,meta,controls);rowsEl.append(wrap);
  });
  totalsEl.textContent='Pakistan items: '+money(totals.local.subtotal,'PKR')+' + indicative delivery '+money(totals.local.shippingEstimate,'PKR')+
-   ' · Global items: '+money(totals.cj.productSubtotalEstimate,'USD')+' before shipping, taxes and supplier confirmation.';
+   ' · Global quoted products: '+(totals.cj.unpricedOptionCount||0)+' option(s) requiring individual pricing; priced-product estimate '+money(totals.cj.productSubtotalEstimate,'USD')+' before shipping, taxes and supplier confirmation.';
  form.hidden=rows.length===0||confirmed;
  if(!rows.length)status.textContent='Your separate request cart is empty. Existing WooCommerce and COD carts are unchanged.';
 }
@@ -40,6 +40,7 @@ form.addEventListener('submit',async function(e){
  values.set('order_local_subtotal_pkr',totals.local.subtotal.toFixed(2));
  values.set('order_local_delivery_estimate_pkr',totals.local.shippingEstimate.toFixed(2));
  values.set('order_global_product_estimate_usd',totals.cj.productSubtotalEstimate.toFixed(2));
+ values.set('order_global_unpriced_option_count',String(totals.cj.unpricedOptionCount||0));
  values.set('payment_status','NOT_PAID');
  values.set('fulfilment_status','UNCONFIRMED');
  values.set('request_type',hasCJ()?'CJ and/or Pakistan local enquiry; full final quote required':'Pakistan COD request pending manual acceptance');
