@@ -454,52 +454,65 @@
           dash.initialize(video, item.url, true);
         })
         .catch(() => fail("DASH player could not load"));
-    } else if (item.engine === "hls" && window.Hls?.isSupported()) {
-      hls = new window.Hls({ maxBufferLength: 20, backBufferLength: 20 });
-      hls.on(window.Hls.Events.MANIFEST_PARSED, () => {
-        if (!valid()) return;
-        const q = $("sltv-quality");
-        q.replaceChildren();
-        const automatic = node("option", "", "Auto quality");
-        automatic.value = "-1";
-        q.appendChild(automatic);
-        hls.levels.forEach((level, i) => {
-          const o = node(
-            "option",
-            "",
-            level.height ? level.height + "p" : "Quality " + (i + 1),
-          );
-          o.value = String(i);
-          q.appendChild(o);
+    } else if (item.engine === "hls") {
+      // Load HLS.js even when the global app bootstrap did not load it.
+      // Avoid attaching a stale loader after switching channels.
+      Promise.resolve(window.Hls || script("assets/vendor/hls-1.5.17.min.js", "Hls"))
+        .then((Hls) => {
+          if (!valid()) return;
+          if (!Hls?.isSupported?.()) {
+            fail("This browser does not support HLS decoding");
+            return;
+          }
+          hls = new Hls({ maxBufferLength: 20, backBufferLength: 20 });
+          hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            if (!valid()) return;
+            const q = $("sltv-quality");
+            q.replaceChildren();
+            const automatic = node("option", "", "Auto quality");
+            automatic.value = "-1";
+            q.appendChild(automatic);
+            hls.levels.forEach((level, i) => {
+              const o = node(
+                "option",
+                "",
+                level.height ? level.height + "p" : "Quality " + (i + 1),
+              );
+              o.value = String(i);
+              q.appendChild(o);
+            });
+            q.hidden = hls.levels.length < 2;
+            q.onchange = () => {
+              if (valid()) hls.currentLevel = Number(q.value);
+            };
+            play();
+          });
+          hls.on(Hls.Events.ERROR, (_, data) => {
+            if (!valid() || !data.fatal) return;
+            const httpCode = Number(data.response?.code || data.response?.status || 0);
+            if (
+              data.type === Hls.ErrorTypes.NETWORK_ERROR &&
+              ![401,403,404,410].includes(httpCode) &&
+              networkRetries++ < 2
+            ) {
+              hls.startLoad();
+              return;
+            }
+            if (
+              data.type === Hls.ErrorTypes.MEDIA_ERROR &&
+              mediaRetries++ < 1
+            ) {
+              hls.recoverMediaError();
+              return;
+            }
+            fail(data.details || data.type || "HLS source unavailable", httpCode);
+          });
+          hls.loadSource(item.url);
+          hls.attachMedia(video);
+        })
+        .catch(() => {
+          if (valid()) fail("HLS playback library could not load");
         });
-        q.hidden = hls.levels.length < 2;
-        q.onchange = () => {
-          if (valid()) hls.currentLevel = Number(q.value);
-        };
-        play();
-      });
-      hls.on(window.Hls.Events.ERROR, (_, data) => {
-        if (!valid() || !data.fatal) return;
-        const httpCode = Number(data.response?.code || data.response?.status || 0);
-        if (
-          data.type === window.Hls.ErrorTypes.NETWORK_ERROR &&
-          ![401,403,404,410].includes(httpCode) &&
-          networkRetries++ < 2
-        ) {
-          hls.startLoad();
-          return;
-        }
-        if (
-          data.type === window.Hls.ErrorTypes.MEDIA_ERROR &&
-          mediaRetries++ < 1
-        ) {
-          hls.recoverMediaError();
-          return;
-        }
-        fail(data.details || data.type || "HLS source unavailable", httpCode);
-      });
-      hls.loadSource(item.url);
-      hls.attachMedia(video);
     } else if (
       item.engine === "mp4" ||
       item.engine === "native" ||
