@@ -57,3 +57,29 @@ test('separate order page uses Formspree only and never assumes payment',()=>{
  assert.match(html,/noindex,nofollow/);
  assert.match(html,/order-cart\.js/);
 });
+
+test('unpriced CJ requests survive reloads without a manufactured offer price',()=>{
+ const {cart,values}=client();
+ assert.equal(cart.add({type:'cj',id:'cj-187',sku:'CJ187',name:'Supplier dress',vname:'black medium',
+   unit:null,qty:2,url:'https://sastamilaga.com/global-shop/p/187/dress/'}).ok,true);
+ assert.equal(cart.read().length,1);
+ assert.equal(cart.read()[0].unit,null);
+ assert.equal(cart.read()[0].priceStatus,'pending');
+ assert.equal(cart.totals().cj.unpricedOptionCount,1);
+ assert.equal(cart.totals().cj.productSubtotalEstimate,0);
+ assert.match(cart.message(),/price\/stock\/shipping pending/);
+ assert.ok(values.get('sm_cart'));
+ assert.ok(values.get('sm_gcart'));
+});
+test('global quota fallback does not assert payment success or retry a blocked backend',()=>{
+ const product=read('assets/js/global-pdp.js');
+ const form=read('assets/js/order-page.js');
+ assert.match(product,/function requestFallback\(message\)/);
+ assert.match(product,/Save quotation request/);
+ assert.match(product,/unit:null/);
+ assert.match(product,/if \(r.status === 429 \|\| r.status >= 500\)/);
+ assert.match(product,/No item was added/);
+ assert.match(form,/payment_status','NOT_PAID'/);
+ assert.match(form,/if\(!result\.ok\)throw/);
+ assert.doesNotMatch(product,/localStorage\.clear\(/);
+});
