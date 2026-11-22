@@ -19,6 +19,13 @@ button:disabled{opacity:.55;cursor:wait}.row-controls{display:flex;align-items:c
 .status{border:1px solid #d9b66f;background:#fffaf0;padding:16px;border-radius:9px;margin-top:18px;white-space:pre-wrap}
 .checkbox{display:flex;align-items:flex-start;gap:10px;font-weight:500}.checkbox input{width:auto;margin-top:5px}
 .honeypot{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+.sm-qr-reference{margin-top:18px;border:1px solid #cfe4d5;background:linear-gradient(135deg,#f4fbf6,#fff);border-radius:14px;padding:18px}
+.sm-qr-reference[hidden],.sm-qr-reference #sm-qr-output[hidden]{display:none}
+.sm-qr-reference h3{margin:0 0 8px;font-size:1.07rem;color:#124a2b}
+.sm-qr-reference #sm-qr-image{display:flex;justify-content:center;align-items:center;background:#fff;padding:10px;border:1px solid #dfeee4;border-radius:12px;width:max-content;max-width:100%;margin:14px 0}
+.sm-qr-reference #sm-qr-image img,.sm-qr-reference #sm-qr-image canvas{max-width:100%;height:auto}
+.sm-qr-reference button{margin:6px 7px 6px 0}
+.sm-qr-reference p{overflow-wrap:anywhere}
 @media(max-width:750px){.columns,.two{grid-template-columns:1fr}.panel{padding:16px}}
 </style></head>
 <body><header><a href="/">Sasta Milaga</a> · <a href="/shop/">Continue shopping</a></header>
@@ -64,5 +71,6 @@ button:disabled{opacity:.55;cursor:wait}.row-controls{display:flex;align-items:c
 <script src="/assets/js/paypal-payment-link.js?v=purchase-20261122" defer></script>
 <script src="/assets/js/checkout-pricing.js?v=purchase-20261122" defer></script>
 <script src="/assets/js/order-page.js?v=purchase-20261122" defer></script>
+<script src="/assets/js/order-reference-qr.js?v=20261122" defer></script>
 <script src="/assets/js/wordpress-checkout.js?v=compare-20261122" defer></script>
 </body></html>
