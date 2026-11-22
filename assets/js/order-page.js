@@ -5,6 +5,10 @@ var cart=window.SMOrderCart,form=document.getElementById('sm-request-form'),
  rowsEl=document.getElementById('sm-request-rows'),totalsEl=document.getElementById('sm-request-totals'),
  status=document.getElementById('sm-request-status'),submit=document.getElementById('sm-request-submit');
 if(!cart||!form||!rowsEl||!totalsEl||!status)return;
+// Preserve the selected shipping destination from the product-page request handoff.
+var selectedCountry=new URLSearchParams(location.search).get('country');
+if(/^[A-Za-z]{2}$/.test(selectedCountry||'')&&!form.elements.country.value)
+  form.elements.country.value=selectedCountry.toUpperCase();
 var submitting=false,confirmed=false,ref=null,REF_KEY='sm_order_request_ref_v2';
 function money(n,c){return new Intl.NumberFormat('en-US',{style:'currency',currency:c,currencyDisplay:'code'}).format(n)}
 function reference(){if(ref)return ref;try{var saved=sessionStorage.getItem(REF_KEY);if(/^SM-REQ-[A-F0-9]{20}$/.test(saved||'')){ref=saved;return ref}}catch(e){}var a=new Uint8Array(10);crypto.getRandomValues(a);ref='SM-REQ-'+Array.from(a).map(function(x){return x.toString(16).padStart(2,'0')}).join('').toUpperCase();try{sessionStorage.setItem(REF_KEY,ref)}catch(e){}return ref}

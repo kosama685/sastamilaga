@@ -187,9 +187,9 @@
         <p id="gvariant-photo-status" class="sm-global-photo-status" role="status" aria-live="polite">Select an option to view its supplier photo</p>${r[6] ? `<div class="gallery-thumbs"><button type="button" data-gallery="${esc(r[5])}" data-type="img" aria-label="Show image"><img src="${esc(r[5])}" alt=""></button><button type="button" class="active" data-gallery="${esc(r[6])}" data-type="video" aria-label="Play video"><img src="${esc(r[5])}" alt=""></button></div>` : ''}</div>
       <aside class="buy-panel" aria-label="Order options"><span class="eyebrow">${esc(c.n)}</span><h1>${esc(r[2])}</h1><p class="product-meta">SKU: ${esc(maskSku(r[1]))} · Global item</p>
         <div style="margin:12px 0"><span class="big-price">${est(r)}</span> <small class="sm-est">estimated</small></div>
-        <form class="sm-greq" id="greq">${varBox()}<label><span>Quantity</span><input type="number" name="qty" min="1" max="99" value="1"></label><label><span>${(window.SM_CONFIG || {}).cjShippingWorker || (window.SM_CONFIG || {}).wpApi ? 'Notes (optional)' : 'Size, colour or option (optional)'}</span><input name="opt" maxlength="120" placeholder="${(window.SM_CONFIG || {}).cjShippingWorker || (window.SM_CONFIG || {}).wpApi ? 'Anything we should know' : 'e.g. Blue, size M'}"></label><label><span>Deliver to (country and city)</span><input name="to" required maxlength="120" value="${esc(gcTo())}" placeholder="e.g. Pakistan, Karachi"></label>
+        <form class="sm-greq" id="greq">${varBox()}<label><span>Quantity</span><input type="number" name="qty" min="1" max="99" value="1"></label><label><span>Size / colour / model (required if supplier options are unavailable)</span><input name="opt" maxlength="120" placeholder="e.g. Violet, size G, or extra order notes"></label><label><span>Deliver to (country and city)</span><input name="to" required maxlength="120" value="${esc(gcTo())}" placeholder="e.g. Pakistan, Karachi"></label>
           <div class="sm-total" id="gtotal" role="status" aria-live="polite"></div>
-          <div class="sm-gactions"><button type="button" class="primary-btn" id="gadd">Add to cart</button><button type="button" class="primary-btn sm-buynow" id="gbuy">Buy now</button></div>
+          <div class="sm-gactions"><button type="button" class="primary-btn" id="gadd">Add to request cart</button><button type="button" class="primary-btn sm-buynow" id="gbuy">Request shipping &amp; total</button></div><p class="product-meta" style="margin:6px 0 10px">No payment is taken. We confirm stock, delivery and the final amount before any purchase.</p><div id="gorder-status" role="status" aria-live="polite"></div>
           <button type="submit" class="sm-wa-btn">Order on WhatsApp</button></form>
         <ul class="sm-trust" role="list"><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.4 3.1 8.2 7.5 9.5 4.4-1.3 7.5-5.1 7.5-9.5V6z"/><path d="m9 12 2 2 4-4"/></svg><span>Stock confirmed before you pay</span></li><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19"/></svg><span>Card or PayPal</span></li><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg><span>Destination-dependent shipping</span></li><li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.6-4.3a8.5 8.5 0 1 1 15.4-4.6Z"/></svg><span>WhatsApp support</span></li></ul>
         <p class="product-meta">More like this: <a href="#/global/c/${cs}">${esc(c.n)}</a>${g ? ` · <a href="#/global/g/${g.s}">${esc(g.n)}</a>` : ''}</p></aside>
@@ -205,8 +205,8 @@
     const gTotal = () => {
       const el = document.getElementById('gtotal'), f = document.getElementById('greq'); if (!el || !f) return;
       if (!chosen.v) {
-        el.innerHTML = '<p role="status"><strong>Live price and shipping require a verified supplier option.</strong> ' +
-          'Catalogue estimates are not a payable total. Confirm your size or colour on WhatsApp if options are unavailable.</p>';
+        el.innerHTML = '<p role="status"><strong>Live supplier options are not yet verified.</strong> ' +
+          'Describe your required size or colour in the notes field to request a shipping and price quote without payment.</p>';
         return;
       }
       const q = Math.max(1, Math.min(99, parseInt(f.qty.value, 10) || 1)), unit = (chosen.v ? chosen.v.price : (r[3] || 0)) * MARGIN, items = unit * q;
@@ -216,17 +216,20 @@
       const shippingText = String((document.getElementById('gship-out') || {}).textContent || '');
       const failed = /not available|unavailable|could not|cannot|temporarily|request limit|confirm shipping/i.test(shippingText);
       const ship = isNaN(amt) ? (failed ? '<dd>Confirm with support</dd>' : '<dd>Checking live rates…</dd>') : `<dd>${money(amt, cur)}</dd>`;
-      const total = isNaN(amt) ? 'Final total pending shipping verification' : (cur === 'USD' ? USD.format(items + amt) : `${USD.format(items)} + ${money(amt, cur)}`);
-      el.innerHTML = `<dl><div><dt>${USD.format(unit)} × ${q}${chosen.v && (chosen.v.key || chosen.v.name) ? ' · ' + esc(chosen.v.key || chosen.v.name) : ''}</dt><dd>${USD.format(items)}</dd></div><div><dt>Delivery to ${esc((document.getElementById('gship-to') || {}).textContent || (f.to.value || 'your country'))}</dt>${ship}</div><div class="sm-total__sum"><dt>Total</dt><dd>${total}</dd></div></dl><small>Estimated prices in US dollars. Stock and the final total are confirmed before you pay.</small>`;
+      const total = isNaN(amt) ? 'Request a final shipping quote' : (cur === 'USD' ? USD.format(items + amt) : `${USD.format(items)} + ${money(amt, cur)}`);
+      el.innerHTML = `<dl><div><dt>${USD.format(unit)} × ${q}${chosen.v && (chosen.v.key || chosen.v.name) ? ' · ' + esc(chosen.v.key || chosen.v.name) : ''}</dt><dd>${USD.format(items)}</dd></div><div><dt>Delivery to ${esc((document.getElementById('gship-to') || {}).textContent || (f.to.value || 'your country'))}</dt>${ship}</div><div class="sm-total__sum"><dt>${isNaN(amt) ? 'Next step' : 'Indicative total (before duties)'}</dt><dd>${total}</dd></div></dl><small>Price and shipping are estimates, not an amount due. Submit a request for the confirmed total. No payment is collected.</small>`;
     };
     window.__gTotal = gTotal;
+    /* A supplier outage must not make quotation requests impossible.
+       We still prevent payment, but a manual option description can be saved. */
     const setVerifiedOrderState = ready => {
       for (const button of document.querySelectorAll('#gadd, #gbuy')) {
         if (!button.dataset.smOriginalLabel) button.dataset.smOriginalLabel = button.textContent;
-        button.disabled = !ready;
-        button.setAttribute('aria-disabled', String(!ready));
-        button.title = ready ? '' : 'Select a verified option or ask about this product on WhatsApp';
-        button.textContent = ready ? button.dataset.smOriginalLabel : 'Verification required';
+        button.disabled = false;
+        button.setAttribute('aria-disabled', 'false');
+        button.title = ready ? 'Save this option for a final supplier quotation' :
+          'If live options are unavailable, describe the required size or colour in Notes';
+        button.textContent = button.dataset.smOriginalLabel;
       }
       const shippingButton = document.getElementById('gship-go');
       if (shippingButton) shippingButton.disabled = !ready;
@@ -240,48 +243,84 @@
     bindVariants(r, chosen);
     (wpShip() ? bindShipWp : bindShip)(r, chosen);
     const rowFrom = f => { const v = chosen.v; return { id: r[0], cs, sku: r[1], name: r[2], img: (v && v.image) || r[5], unit: (v ? v.price : (r[3] || 0)) * MARGIN, qty: Math.max(1, Math.min(99, parseInt(f.qty.value, 10) || 1)), opt: (f.opt.value || '').trim(), ship: ((document.querySelector('.sm-ship-card [name=ship]:checked') || {}).value || ''), shipAmt: parseFloat(((document.querySelector('.sm-ship-card [name=ship]:checked') || {}).dataset || {}).amt) || 0, shipCur: ((document.querySelector('.sm-ship-card [name=ship]:checked') || {}).dataset || {}).cur || 'USD', vkey: v ? (v.sku || v.key || '') : '', vname: v ? (v.key || v.name || '') : '', url: ownUrl(cs, r) }; };
-    const addRow = () => { const f = document.getElementById('greq'); const row = rowFrom(f); if (!row.unit) { toast('This item has no listed price yet. Order it on WhatsApp and we will quote it.'); return null; } gcAdd(row); return row; };
-    /* The real WooCommerce cart is the only transactional cart. A localStorage
-       draft is not an order and may never be presented as a successful add. */
-    const addToSecureCart = async buyNow => {
-      const form = document.getElementById('greq'), variant = chosen.v;
-      if (!variant || !variant.vid) {
-        toast('Please select a verified supplier option first, or request it on WhatsApp below.');
-        return;
+    /* Primary product actions are request-only and NEVER call WooCommerce,
+       Cloudflare payment APIs or a fake local payment flow. */
+    let requestFlowLoading = null, requestBusy = false;
+    async function globalRequestAdapter() {
+      if (window.SMGlobalQuote) return window.SMGlobalQuote;
+      if (!requestFlowLoading) {
+        requestFlowLoading = loadScript((A.APP_BASE || '/') + 'assets/js/global-quote-flow.js?v=20261122-2')
+          .then(() => {
+            if (!window.SMGlobalQuote) throw new Error('Order request service unavailable.');
+            return window.SMGlobalQuote;
+          }).catch(e => { requestFlowLoading = null; throw e; });
       }
-      const qty = Math.max(1, Math.min(99, parseInt(form.elements.qty.value, 10) || 1));
-      toast('Verifying your selection with secure WooCommerce checkout…');
+      return requestFlowLoading;
+    }
+    async function saveQuoteRequest(buyNow) {
+      const form = document.getElementById('greq');
+      if (!form || requestBusy) return;
+      const notes = String(form.elements.opt.value || '').trim();
+      const q = Number(form.elements.qty.value);
+      if (!Number.isInteger(q) || q < 1 || q > 99) {
+        toast('Choose a quantity between 1 and 99.'); form.elements.qty.focus(); return;
+      }
+      if (!chosen.v && !notes) {
+        toast('Describe the required colour, size or model in Notes to request a quote.');
+        form.elements.opt.focus(); return;
+      }
+      const selector = document.getElementById('gship-cc');
+      const cc = (selector && selector.value) ||
+        (window.SMMarket && window.SMMarket.state && window.SMMarket.state().country) || '';
+      const source = {id:r[0],sku:r[1],name:r[2]};
+      const status = document.getElementById('gorder-status');
+      requestBusy = true;
+      const buttons = Array.from(document.querySelectorAll('#gadd, #gbuy'));
+      buttons.forEach(b => { b.disabled = true; b.setAttribute('aria-busy','true'); });
+      if (status) status.textContent = 'Saving your selection for a shipping and price quotation…';
       try {
-        // Global CJ supplier items use GDCS VirtualCheckout, which validates the
-        // product+variation+destination and creates a real WooCommerce cart line.
-        // The static SKU map only covers imported local products: never use it
-        // to pretend a supplier-wide product is a synchronized local SKU.
-        if (window.SMWoo && typeof window.SMWoo.sync === 'function') await window.SMWoo.sync();
-        const ctx = await fetch('/wp-json/gdcs/v1/context?light=1', { credentials:'include', headers:{Accept:'application/json'} });
-        if (!ctx.ok) throw new Error(ctx.status === 429 ?
-          'Secure checkout has reached its temporary request limit.' :
-          'Secure checkout session is temporarily unavailable.');
-        const context = await ctx.json();
-        if (!context || !context.csrf) throw new Error('Secure checkout could not verify the session.');
-        const result = await fetch('/wp-json/gdcs/v1/live/cart', {
-          method:'POST',credentials:'include',
-          headers:{'Content-Type':'application/json','X-GDCS-CSRF':context.csrf,Accept:'application/json'},
-          body:JSON.stringify({pid:String(r[0]),vid:String(variant.vid),quantity:qty})
-        });
-        const data = await result.json().catch(() => ({}));
-        if (!result.ok || !data.added) throw new Error(result.status === 429 ?
-          'Secure checkout has reached its temporary request limit.' :
-          String(data.message || data.error || 'Secure cart could not verify this supplier option.').replace(/<[^>]+>/g,''));
-        if (buyNow) { location.assign('/checkout/'); return; }
-        toast('Added to your verified WooCommerce cart. <a href="/cart/" style="color:#fff;text-decoration:underline">View secure cart</a>');
-      } catch (e) {
-        toast(String(e.message || 'Secure checkout temporarily unavailable.').slice(0,200) +
-          ' No order or payment has been created. You can use the WhatsApp form below to confirm availability.');
+        const adapter = await globalRequestAdapter();
+        const response = await adapter.save(source,chosen.v,q,notes,ownUrl(cs,r));
+        if (!response.ok) {
+          if (status) status.textContent = response.message || 'Unable to save this request.';
+          toast(response.message || 'Unable to save your request. Please use WhatsApp.');
+          return;
+        }
+        if (buyNow) {
+          location.assign(adapter.orderUrl(cc));
+          return;
+        }
+        if (status) {
+          status.replaceChildren();
+          const label = document.createElement('span');
+          label.textContent = 'Added to your quotation cart. No payment made. ';
+          const link = document.createElement('a');
+          link.href = adapter.cartUrl();
+          link.textContent = 'View request cart (' + response.quantity + ')';
+          status.append(label,link);
+        }
+        toast('Selection saved to request cart. Shipping and final total are confirmed before payment.');
+      } catch (error) {
+        const message = 'Could not load request checkout. Please use WhatsApp; no order or payment was made.';
+        if (status) status.textContent = message;
+        toast(message);
+      } finally {
+        requestBusy = false;
+        buttons.forEach(b => { b.disabled = false; b.removeAttribute('aria-busy'); });
       }
-    };
-    /* Capture before document-level static-cart listeners, but never fake a cart. */
-    window.__gcAct = { add: () => { void addToSecureCart(false); }, buy: () => { void addToSecureCart(true); } };
-    if (!window.__gcActBound) { window.__gcActBound = true; window.addEventListener('click', e => { const b = e.target && e.target.closest && e.target.closest('#gadd,#gbuy'); if (!b || !window.__gcAct) return; e.preventDefault(); e.stopImmediatePropagation(); window.__gcAct[b.id === 'gbuy' ? 'buy' : 'add'](); }, true); }
+    }
+    /* Capture before older global cart listeners. One handler survives SPA navigation. */
+    window.__gcAct = { add: () => { void saveQuoteRequest(false); },
+      buy: () => { void saveQuoteRequest(true); } };
+    if (!window.__gcActBound) {
+      window.__gcActBound = true;
+      window.addEventListener('click', e => {
+        const b = e.target && e.target.closest && e.target.closest('#gadd,#gbuy');
+        if (!b || !window.__gcAct) return;
+        e.preventDefault(); e.stopImmediatePropagation();
+        window.__gcAct[b.id === 'gbuy' ? 'buy' : 'add']();
+      }, true);
+    }
     document.getElementById('greq').addEventListener('submit', e => {
       e.preventDefault(); const f = e.target; const v = chosen.v;
       const shipEl = document.querySelector('.sm-ship-card [name=ship]:checked'), ship = shipEl && shipEl.value ? `Shipping chosen: ${shipEl.value}\n` : '';
@@ -541,11 +580,11 @@
       try {
         const d = await fetchCjShipping(r,chosen,qty,cc);
         if (!d.methods || !d.methods.length) {
-          out.textContent = 'No verified carrier rate is available for this variation. Please confirm shipping on WhatsApp.';
+          out.textContent = 'No verified carrier rate is available for this variation and destination. Use Request shipping & total to submit the exact option for a manual quote. No payment is taken.';
           return;
         }
         out.innerHTML = d.methods.slice(0, 6).map((m, i) => `<label class="sm-ship__opt"><input type="radio" name="ship" value="${esc(`${m.name}: ${USD.format(m.price)}, ${m.days} days`)}" data-amt="${esc(String(m.price))}" data-cur="USD"${i ? '' : ' checked'}> <span>${esc(neutral(m.name))}</span> <b>${USD.format(m.price)}</b> <small>${esc(m.days)} days</small></label>`).join('') + '<p class="sm-ship__note">Supplier shipping price in US$ for this quantity, before any customs duties.</p>';
-      } catch (e) { out.textContent = e.quota?'Supplier shipping is temporarily at capacity. Confirm the delivery charge on WhatsApp.':'Shipping prices are not available right now. We will confirm shipping on WhatsApp.'; }
+      } catch (e) { out.textContent = e.quota?'Supplier shipping is temporarily at capacity. Confirm the delivery charge on WhatsApp.':'Carrier prices are unavailable right now. Select Request shipping & total to submit a quotation request without paying.'; }
       finally { go.disabled = !chosen.v; }
     });
   }

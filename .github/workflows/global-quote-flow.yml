@@ -1,0 +1,36 @@
+name: Global product quote checkout end-to-end contract
+on:
+  push:
+    branches: [fix/global-pdp-request-checkout-20261122]
+  pull_request:
+    paths:
+      - 'assets/js/global.js'
+      - 'assets/js/global-quote-flow.js'
+      - 'assets/js/order-cart.js'
+      - 'assets/js/order-page.js'
+      - 'index.html'
+      - 'tools/global-quote-flow.test.mjs'
+      - '.github/workflows/global-quote-flow.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Check syntax of production scripts
+        run: |
+          node --check assets/js/global.js
+          node --check assets/js/global-quote-flow.js
+          node --check assets/js/order-cart.js
+          node --check assets/js/order-page.js
+          node --check tools/global-quote-flow.test.mjs
+      - name: Real quotation cart module and regression suite
+        run: node --test tools/global-quote-flow.test.mjs tools/unified-order-request.test.mjs tools/github-only-commerce.test.mjs
+      - name: GitHub Actions runtime compliance
+        run: node tools/check-github-actions-runtime.mjs
