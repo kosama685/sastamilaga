@@ -3,7 +3,7 @@ const base='https://sastamilaga.com';
 const checks=[
   {path:'/',test:html=>html.includes('assets/js/global.js?v=quote-checkout-20261122-1'),name:'home references the current global script'},
   {path:'/assets/js/global.js?v=quote-checkout-20261122-1',test:js=>js.includes('Request shipping &amp; total')&&/window\.__gcAct\s*=/.test(js)&&!js.includes('Verifying your selection with secure WooCommerce checkout'),name:'global purchase buttons use request checkout, not legacy Woo'},
-  {path:'/assets/js/global-pdp.js',test:js=>js.includes('Saving your exact supplier variation to the combined cart')&&js.includes('requestCartReady().then(function (cart)')&&!/api\('\\/wp-json\\/gdcs\\/v1\\/live\\/cart'/.test(js),name:'CJ product page uses the shared request cart'},
+  {path:'/assets/js/global-pdp.js',test:js=>js.includes('Saving your exact supplier variation to the combined cart')&&js.includes('requestCartReady().then(function (cart)')&&!js.includes("api('/wp-json/gdcs/v1/live/cart'"),name:'CJ product page uses the shared request cart'},
   {path:'/assets/js/paypal-payment-link.js',test:js=>js.includes('SMPayPalLink')&&js.includes('PAYMENT_LINK_NOT_YET_PAID'),name:'PayPal USD payment-link guard published'},
   {path:'/order/',test:html=>html.includes('name="payment_preference"'),name:'checkout shows PayPal or card payment preference'},
   {path:'/assets/js/global-quote-flow.js',test:js=>js.includes('SMGlobalQuote')&&js.includes('requestOnly:true'),name:'quote cart adapter published'},
