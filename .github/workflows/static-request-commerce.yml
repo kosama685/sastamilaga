@@ -40,6 +40,7 @@ jobs:
           node --check assets/js/order-cart.js
           node --check assets/js/order-page.js
           node --check assets/js/request-cart-page.js
+          for file in staging/static-commerce-v2/*.js; do node --check "$file"; done
       - name: Request-only commerce tests
         run: |
           node --test tools/static-request-commerce.test.mjs
