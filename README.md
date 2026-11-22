@@ -16,7 +16,7 @@ files, and crawlable HTML pages are generated ahead of time and committed.
 | Global category pages | `c/global/*.html` | 573 |
 | Global product videos | `data/cj/videos.js` | 5,804 |
 | Airports for flight search (OurAirports, public domain) | `data/travel/airports.js` | 4,133 |
-| Live TV channels | `data/livetv/channels.js` + all-mirror `playlist.m3u` | 17,463 channels / 191 countries |
+| Live TV channels | `data/livetv/channels.js` + all-mirror `playlist.m3u` | 39,844 records / 250 countries and territories |
 
 Global product prices are the supplier's US$ price plus margin, shown as estimates. Orders for them are sent as a
 WhatsApp request and confirmed by the team before payment.
@@ -64,12 +64,15 @@ Open [the live directory](https://sastamilaga.com/live-tv/). The static catalogu
 
 ```sh
 node tools/build-livetv.mjs
+node tools/enrich-livetv.mjs
 node tools/check-livetv.mjs
+node tools/build-livetv-discovery.mjs
 node tools/verify-livetv-coverage.mjs
-node --test tools/build-livetv.test.mjs tools/check-livetv.test.mjs tools/live-tv-hub.test.mjs
+node tools/verify-livetv-discovery.mjs
+node --test tools/build-livetv.test.mjs tools/check-livetv.test.mjs tools/live-tv-hub.test.mjs tools/livetv-discovery.test.mjs tools/livetv-edge.test.mjs
 ```
 
-The daily `livetv-refresh.yml` workflow rebuilds, audits and validates data before dispatching the central Pages deployment. Failed probes never delete channels. Review `data/livetv/build-report.json` for feed failures and `playback-report.json` for dated regional observations. See [the release guide](docs/world-tv-release-2026-11-22.md) for playback behaviour, complete verification, browser testing and asset provenance.
+The `livetv-refresh.yml` workflow syncs every six hours, performs a daily full health audit, and generates crawlable discovery before dispatching central Pages deployment. The existing dedicated Live TV delivery Worker serves the validated Git revision and follows successful Pages deployments. Failed probes never delete channels. Review `data/livetv/build-report.json` for feed failures and `playback-report.json` for dated regional observations. See [the current discovery release guide](docs/world-tv-discovery-2026-11-22.md) and [the player release guide](docs/world-tv-release-2026-11-22.md) for playback behaviour, complete verification, browser testing and asset provenance.
 
 ## Known limits
 

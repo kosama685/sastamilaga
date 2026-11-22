@@ -1059,3 +1059,16 @@ body[data-view="tv"] .smwa-web,
 body[data-view="tv"] .smqb-float {
   display: none !important;
 }
+
+/* Discovery and factual local-time programme guide. */
+#sltv .sltv-tabs {overflow-x:auto;flex-wrap:nowrap;justify-content:flex-start;gap:16px;scrollbar-width:thin;}
+#sltv .sltv-tabs button {flex-shrink:0;white-space:nowrap;}
+#sltv .sltv-guide {margin-top:18px;padding:20px;border:1px solid #284253;border-radius:16px;background:#10202e;}
+#sltv .sltv-guide h3{color:#f3f7ff;margin:0 0 12px;}
+#sltv .sltv-guide p,#sltv .sltv-guide small{color:#b7c8d8;}
+#sltv .sltv-programme{display:grid;gap:6px;padding:12px 0;border-top:1px solid #284253;}
+#sltv .sltv-programme strong{color:#fff;}#sltv .sltv-programme span{color:#64dfbf;}
+#sltv .sltv-location{color:#bcebdc;font-size:13px;line-height:1.5;}
+#sltv .sltv-filters label:last-child{grid-column:1/-1;}
+
+#sltv .sltv-programme-art{width:min(240px,100%);height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:10px;}

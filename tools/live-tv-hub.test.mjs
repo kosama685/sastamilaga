@@ -118,3 +118,27 @@ test("canonical saved channel IDs take precedence over legacy alias collisions",
   assert.equal(C.resolve(list, "canonical").id, "canonical");
   assert.equal(C.resolve(list, "123").id, "canonical");
 });
+
+test("first and second failures reach the working third source exactly once", async () => {
+  const attempts = [];
+  const c = {
+    ...ch,
+    sources: [
+      ...ch.sources,
+      { url: "https://third.test/live.m3u8", type: "hls" },
+    ],
+  };
+  const f = C.failover({
+    attempt: (item, cb) => {
+      attempts.push(item.url);
+      if (attempts.length < 3) cb.failed();
+      else cb.playing();
+      return () => {};
+    },
+    onExhausted: () => assert.fail("Third source should play"),
+  });
+  f.start(C.plan(c));
+  await new Promise((r) => setTimeout(r, 0));
+  assert.equal(attempts.length, 3);
+  assert.match(attempts[2], /third\.test/);
+});

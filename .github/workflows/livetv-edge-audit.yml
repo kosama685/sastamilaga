@@ -1,9 +1,6 @@
 name: Inspect existing Live TV delivery (read only)
 on:
   workflow_dispatch:
-  push:
-    branches: [feat/world-tv-discovery-20261122]
-    paths: ['tools/livetv-edge-audit.mjs', '.github/workflows/livetv-edge-audit.yml']
 permissions: {contents: read}
 jobs:
   audit:

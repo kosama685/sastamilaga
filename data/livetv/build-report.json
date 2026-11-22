@@ -2224,9 +2224,9 @@
   ],
   "retainedPrevious": 27420,
   "metadataError": "The operation was aborted due to timeout",
-  "channels": 17463,
-  "sources": 23738,
-  "countries": 191,
+  "channels": 39844,
+  "sources": 33386,
+  "countries": 250,
   "successfulFeeds": 443,
   "failedFeeds": 1,
   "retainedBaseline": {

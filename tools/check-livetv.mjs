@@ -154,15 +154,27 @@ export async function checkCatalog() {
       db.items.flatMap((c) => c.sources.map((s) => [s.url, s])),
     ).values(),
   ];
-  const observed=new Map();
-  for(const source of db.items.flatMap(c=>c.sources))if(source.checkedAt&&(!observed.has(source.url)||source.checkedAt>observed.get(source.url).checkedAt))observed.set(source.url,{status:source.status,checkedAt:source.checkedAt,reason:source.reason});
-  const incremental=process.argv.includes('--unchecked-only');
-  const queue=incremental?all.filter(source=>!observed.has(source.url)):all;
+  const observed = new Map();
+  for (const source of db.items.flatMap((c) => c.sources))
+    if (
+      source.checkedAt &&
+      (!observed.has(source.url) ||
+        source.checkedAt > observed.get(source.url).checkedAt)
+    )
+      observed.set(source.url, {
+        status: source.status,
+        checkedAt: source.checkedAt,
+        reason: source.reason,
+      });
+  const incremental = process.argv.includes("--unchecked-only");
+  const queue = incremental
+    ? all.filter((source) => !observed.has(source.url))
+    : all;
   const max =
     Number(
       process.argv.find((s) => s.startsWith("--max-sources="))?.split("=")[1],
     ) || queue.length;
-  const results = incremental?new Map(observed):new Map();
+  const results = incremental ? new Map(observed) : new Map();
   let cursor = 0,
     done = 0;
   await Promise.all(
@@ -185,13 +197,15 @@ export async function checkCatalog() {
     for (const s of ch.sources) {
       if (results.has(s.url)) Object.assign(s, results.get(s.url));
     }
-    ch.status = ch.sources.some((s) => s.status === "ok")
-      ? "ok"
-      : ch.sources.every((s) => s.status === "dead")
-        ? "dead"
-        : ch.sources.some((s) => s.status === "unchecked")
-          ? "unchecked"
-          : "needs-player";
+    ch.status = !ch.sources.length
+      ? "no-source"
+      : ch.sources.some((s) => s.status === "ok")
+        ? "ok"
+        : ch.sources.every((s) => s.status === "dead")
+          ? "dead"
+          : ch.sources.some((s) => s.status === "unchecked")
+            ? "unchecked"
+            : "needs-player";
     ch.chk = ch.status === "dead" ? "fail" : undefined;
   }
   const report = {
@@ -205,9 +219,15 @@ export async function checkCatalog() {
         c.sources.filter((s) => s.checkedAt).map((s) => s.url),
       ),
     ).size,
-    remaining:all.length-new Set(db.items.flatMap(c=>c.sources.filter(s=>s.checkedAt).map(s=>s.url))).size,
+    remaining:
+      all.length -
+      new Set(
+        db.items.flatMap((c) =>
+          c.sources.filter((s) => s.checkedAt).map((s) => s.url),
+        ),
+      ).size,
     statuses: Object.fromEntries(
-      ["ok", "dead", "needs-player", "unchecked"].map((s) => [
+      ["ok", "dead", "needs-player", "unchecked", "no-source"].map((s) => [
         s,
         db.items.filter((c) => c.status === s).length,
       ]),

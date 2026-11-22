@@ -1,7 +1,7 @@
 name: World TV catalogue and player regression
 on:
   pull_request:
-    paths: ['assets/js/live-tv-*.js', 'assets/js/local-api.js', 'assets/theme/live-tv-hub.css', 'tools/*livetv*', 'tools/live-tv-*', '.github/workflows/livetv-*.yml']
+    paths: ['assets/js/live-tv-*.js', 'assets/js/local-api.js', 'assets/theme/live-tv-hub.css', 'tools/*livetv*', 'tools/live-tv-*', '.github/workflows/livetv-*.yml', 'workers/live-tv-static/**', 'data/livetv/metadata.json']
   push:
     branches: [main]
     paths: ['assets/js/live-tv-*.js', 'tools/*livetv*', 'tools/live-tv-*']
@@ -19,5 +19,6 @@ jobs:
           node --check assets/js/live-tv-hub.js
           node --check assets/js/live-tv-core.js
           node --check assets/js/local-api.js
-          node --test tools/build-livetv.test.mjs tools/check-livetv.test.mjs tools/live-tv-hub.test.mjs
+          node --test tools/build-livetv.test.mjs tools/check-livetv.test.mjs tools/live-tv-hub.test.mjs tools/livetv-discovery.test.mjs tools/livetv-edge.test.mjs
           node tools/verify-livetv-coverage.mjs
+          node tools/verify-livetv-discovery.mjs

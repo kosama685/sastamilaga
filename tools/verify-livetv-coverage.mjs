@@ -15,7 +15,7 @@ const db = context.window.SM_LIVETV,
   ids = new Set();
 for (const ch of items) {
   assert.ok(
-    ch.id && ch.name && ch.sources.length,
+    ch.id && ch.name && (ch.sources.length || ch.catalogueOnly),
     "Every channel needs an identity and sources",
   );
   assert.ok(!ids.has(ch.id), "IDs must be unique");

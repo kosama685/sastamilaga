@@ -125,6 +125,22 @@ const items = mergeChannels(inputs),
     source: "Public FTA playlists + retained previous channels",
     license: "Upstream public playlists; broadcaster restrictions still apply",
     epg: "https://iptv-org.github.io/api/guides.json",
+    ...(() => {
+      try {
+        const meta = JSON.parse(
+          fs.readFileSync(path.join(dir, "metadata.json"), "utf8"),
+        );
+        return {
+          countryDirectory: meta.countries,
+          regions: meta.regions,
+          languageDirectory: meta.languages,
+          categoryDirectory: meta.categories,
+          epgBase: meta.epgBase,
+        };
+      } catch {
+        return {};
+      }
+    })(),
   });
 try {
   const previousHealth = JSON.parse(
@@ -143,10 +159,9 @@ try {
       checked: checked.size,
       remaining: unique.size - checked.size,
       statuses: Object.fromEntries(
-        ["ok", "dead", "needs-player", "unchecked"].map((status) => [
-          status,
-          items.filter((c) => c.status === status).length,
-        ]),
+        ["ok", "dead", "needs-player", "unchecked", "no-source"].map(
+          (status) => [status, items.filter((c) => c.status === status).length],
+        ),
       ),
     };
     fs.writeFileSync(

@@ -44,6 +44,15 @@ const BASE = process.env.SM_TV_BASE || "http://localhost:8798";
         SLTVHub.filtered().every((c) => (c.country || c.cc) === "PK"),
       ),
     );
+    const countryFacets = await page.evaluate(() => SM_LIVETV.facets.countries);
+    for (const c of countryFacets) {
+      await page.select("#sltv-country", c.k);
+      assert.equal(
+        await page.evaluate(() => SLTVHub.filtered().length),
+        c.n,
+        c.k,
+      );
+    }
     await page.click('[data-tab="countries"]');
     assert.ok(
       (await page.$$eval("#sltv-groups button", (b) => b.length)) > 180,
@@ -69,7 +78,7 @@ const BASE = process.env.SM_TV_BASE || "http://localhost:8798";
     });
     await page.waitForSelector("#sltv-external:not([hidden])");
     assert.ok(
-      await page.$eval(".sltv-external-actions a", (a) =>
+      await page.$eval('.sltv-external-actions a[href^="vlc:"]', (a) =>
         a.href.startsWith("vlc:"),
       ),
     );
@@ -141,8 +150,19 @@ const BASE = process.env.SM_TV_BASE || "http://localhost:8798";
         { url: "https://fixture.test/good.m3u8", type: "hls" },
       ],
     });
-    db.facets.countries[0].n = 3;
-    db.facets.categories[0].n = 3;
+    db.items.push({
+      id: "third-mirror",
+      name: "Three mirrors",
+      country: "PK",
+      group: "News",
+      sources: [
+        { url: "https://fixture.test/dead-one.m3u8", type: "hls" },
+        { url: "https://fixture.test/dead-two.m3u8", type: "hls" },
+        { url: "https://fixture.test/good.m3u8", type: "hls" },
+      ],
+    });
+    db.facets.countries[0].n = 4;
+    db.facets.categories[0].n = 4;
     await fixture.evaluateOnNewDocument((db) => (window.SM_LIVETV = db), db);
     await fixture.goto(BASE + "/live-tv/", { waitUntil: "domcontentloaded" });
     await fixture.waitForFunction(() => window.SLTVHub);
@@ -199,6 +219,17 @@ const BASE = process.env.SM_TV_BASE || "http://localhost:8798";
         events.some((e) => e.outcome === "playing" && e.sourceIndex === 1),
       ),
     );
+    await fixture.evaluate(() => SLTVHub.select("third-mirror"));
+    await fixture.waitForFunction(
+      () =>
+        document.querySelector(".sltv-player").dataset.state === "playing" &&
+        document.getElementById("sltv-source-choice").value === "2",
+    );
+    assert.ok(
+      await fixture.evaluate(() =>
+        events.some((e) => e.outcome === "playing" && e.sourceIndex === 2),
+      ),
+    );
     await fixture.evaluate(() => {
       window.YT = {
         Player: class {
@@ -226,7 +257,7 @@ const BASE = process.env.SM_TV_BASE || "http://localhost:8798";
     await fixture.waitForFunction(
       () => document.querySelector(".sltv-player").dataset.state === "external",
     );
-    assert.equal(await fixture.evaluate(() => SLTVHub.all().length), 3);
+    assert.equal(await fixture.evaluate(() => SLTVHub.all().length), 4);
     assert.ok(
       await fixture.$eval(".sltv-external-hint", (e) =>
         e.textContent.includes("remains listed"),
@@ -240,8 +271,36 @@ const BASE = process.env.SM_TV_BASE || "http://localhost:8798";
       timeout: 60000,
     });
     assert.equal(await spa.evaluate(() => SLTVHub.all().length), count);
+    const geoContext = await browser.createBrowserContext();
+    const geo = await geoContext.newPage();
+    await geo.setRequestInterception(true);
+    geo.on("request", (r) =>
+      r.url().includes("/cdn-cgi/trace")
+        ? r.respond({
+            status: 200,
+            contentType: "text/plain",
+            body: "ip=192.0.2.1\nloc=SA\n",
+          })
+        : r.continue(),
+    );
+    await geo.goto(BASE + "/live-tv/", { waitUntil: "domcontentloaded" });
+    await geo.waitForFunction(
+      () =>
+        window.SLTVHub &&
+        document.getElementById("sltv-country").value === "SA",
+      { timeout: 60000 },
+    );
+    await geo.select("#sltv-country", "PK");
+    await geo.reload({ waitUntil: "domcontentloaded" });
+    await geo.waitForFunction(
+      () =>
+        window.SLTVHub &&
+        document.getElementById("sltv-country").value === "PK",
+      { timeout: 60000 },
+    );
+    await geoContext.close();
     console.log(
-      "PASS: full catalogue, last virtual row, 191-country directory, country filters, favourites, recent, persisted source/player, mobile layout, explicit external apps, working second mirror, all-dead fallback, playback events and both page surfaces.",
+      "PASS: full catalogue, last virtual row, complete country directory, country filters, favourites, recent, persisted source/player, mobile layout, explicit external apps, working second and third mirrors, IP country selection and manual override, all-dead fallback, playback events and both page surfaces.",
     );
   } finally {
     await browser.close();
