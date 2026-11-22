@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - 'assets/js/woo-bridge.js'
+      - 'assets/js/global-pdp.js'
+      - 'assets/js/paypal-payment-link.js'
       - 'assets/js/order-cart.js'
       - 'assets/js/order-page.js'
       - 'assets/js/request-cart-page.js'
@@ -39,6 +41,8 @@ jobs:
           node --check assets/js/woo-bridge.js
           node --check assets/js/order-cart.js
           node --check assets/js/order-page.js
+          node --check assets/js/global-pdp.js
+          node --check assets/js/paypal-payment-link.js
           node --check assets/js/request-cart-page.js
           for file in staging/static-commerce-v2/*.js; do node --check "$file"; done
       - name: Request-only commerce tests
