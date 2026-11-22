@@ -1,10 +1,12 @@
 # Publish due blog entries without network-heavy Live TV maintenance.
-# 19:10 UTC = 00:10 Asia/Karachi; builder is deterministic and deduplicates.
+# 21:17 UTC = 00:17 Asia/Riyadh (due posts); 09:17 UTC = 12:17 Riyadh catch-up.
+# GitHub cron delivery is best-effort. Both runs deduplicate against existing posts.
 name: Publish scheduled blog posts
 
 on:
   schedule:
-    - cron: '10 19 * * *'
+    - cron: '17 21 * * *'
+    - cron: '17 9 * * *'
   workflow_dispatch:
   push:
     branches: [main]
