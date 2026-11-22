@@ -19,7 +19,7 @@
     var token = String(cfg.storefrontPublicToken || '').trim();
     var version = String(cfg.apiVersion || '2026-10');
     if (!/^[a-z0-9][a-z0-9-]*\.myshopify\.com$/.test(domain)) throw new Error('A verified .myshopify.com store domain is required');
-    if (!/^[0-9]{4}-0[147]|[0-9]{4}-10$/.test(version)) throw new Error('A supported Shopify API version is required');
+    if (!/^20[0-9]{2}-(01|04|07|10)$/.test(version)) throw new Error('A supported Shopify API version is required');
     if (!/^[A-Za-z0-9_-]{12,}$/.test(token)) throw new Error('Public Shopify Storefront token is missing or invalid');
     config = { shopDomain: domain, token: token, version: version };
     return { ready: true, shopDomain: domain };
@@ -96,7 +96,7 @@
       if (!cart || !cart.totalQuantity || !cart.checkoutUrl) throw new Error('No commerce-validated items in cart');
       // Only an official Shopify hosted checkout URL, never an arbitrary redirect.
       var url = new URL(cart.checkoutUrl);
-      if (url.protocol !== 'https:' || !(url.hostname === config.shopDomain || url.hostname.endsWith('.myshopify.com')))
+      if (url.protocol !== 'https:' || !(url.hostname === config.shopDomain || url.hostname === 'checkout.shopify.com'))
         throw new Error('Checkout destination did not match the managed-commerce platform');
       return url.href;
     });
