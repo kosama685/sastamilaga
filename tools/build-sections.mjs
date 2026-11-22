@@ -30,7 +30,7 @@ const SECTIONS = {
   travel: ['Flights, hotels, Umrah and visas', 'Search flights and hotels, and request Umrah, tours and visa services from Pakistan with Sasta Milaga.'],
   visa: ['Visa destinations: check requirements with our team', 'Search more than 240 destinations, choose your visa type and send the request. Free first check of your documents; visa decisions belong to the embassy.'],
   rewards: ['Rewards and lowest prices', 'The lowest-priced products at Sasta Milaga, cheapest first, with price bands from Rs 300. Prices in PKR, cash on delivery in Pakistan.'],
-  'live-tv': ['Live TV – watch free-to-air channels online', 'Watch more than 2,000 free-to-air TV channels from around the world online: news, entertainment, sports, music and kids.'],
+  'live-tv': ['Live TV – watch free-to-air channels online', 'Explore the complete free-to-air channel directory by country, category and language. Watch in your browser or choose VLC, MX Player and IPTV apps.'],
   about: ['About Sasta Milaga', 'Sasta Milaga is an online store and travel desk for Pakistan and Pakistanis abroad: affordable products, cash on delivery and travel services.'],
   faq: ['Frequently asked questions', 'Answers about ordering, cash on delivery, delivery charges, returns, global items and travel bookings at Sasta Milaga.'],
   contact: ['Contact Sasta Milaga', 'Contact Sasta Milaga on WhatsApp +923343582295 for orders, delivery, returns and travel requests.'],
@@ -123,6 +123,10 @@ function shell({ key, keepHome = false, keepTv = false, lang = 'en', dir = 'ltr'
   h = rep(h, /<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${esc(title)}">`);
   h = rep(h, /<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${esc(desc)}">`);
   h = rep(h, /<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="${url}">`);
+  if(key === 'live-tv') {
+    h = rep(h, /<meta property="og:image" content="[^"]*">/, '<meta property="og:image" content="https://sastamilaga.com/assets/images/livetv/broadcast-studio.png">');
+    h = rep(h, /<meta name="twitter:image" content="[^"]*">/, '<meta name="twitter:image" content="https://sastamilaga.com/assets/images/livetv/broadcast-studio.png">');
+  }
   if (locale) h = rep(h, /<meta property="og:locale" content="[^"]*">/, `<meta property="og:locale" content="${locale}">`);
   h = rep(h, /<meta name="twitter:title" content="[^"]*">/, `<meta name="twitter:title" content="${esc(title)}">`);
   h = rep(h, /<meta name="twitter:description" content="[^"]*">/, `<meta name="twitter:description" content="${esc(desc)}">`);

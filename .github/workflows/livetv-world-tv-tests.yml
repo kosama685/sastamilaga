@@ -1,0 +1,23 @@
+name: World TV catalogue and player regression
+on:
+  pull_request:
+    paths: ['assets/js/live-tv-*.js', 'assets/js/local-api.js', 'assets/theme/live-tv-hub.css', 'tools/*livetv*', 'tools/live-tv-*', '.github/workflows/livetv-*.yml']
+  push:
+    branches: [main]
+    paths: ['assets/js/live-tv-*.js', 'tools/*livetv*', 'tools/live-tv-*']
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: {node-version: '24'}
+      - name: Validate static data and player contracts
+        run: |
+          node --check assets/js/live-tv-hub.js
+          node --check assets/js/live-tv-core.js
+          node --check assets/js/local-api.js
+          node --test tools/build-livetv.test.mjs tools/check-livetv.test.mjs tools/live-tv-hub.test.mjs
+          node tools/verify-livetv-coverage.mjs

@@ -1,290 +1,1009 @@
+﻿/* Sasta Milaga World TV: static directory, source failover and explicit external-player choices. */
 (function () {
-	var root = document.getElementById('sltv');
-	if (!root || !window.SLTV_CFG) return;
-	var cfg = window.SLTV_CFG, $ = function (id) { return document.getElementById(id); };
-	var video = $('sltv-video'), player = root.querySelector('.sltv-player'), frame = root.querySelector('.sltv-frame');
-	function secureLogo(u) { return String(u).replace(/^http:\/\//i, 'https://'); }   // http logos are blocked on an https page
-  var live = root.querySelector('.sltv-live'), logo = root.querySelector('.sltv-logo'), msg = root.querySelector('.sltv-msg');
-	var list = $('sltv-list'), more = $('sltv-more'), drawer = $('sltv-drawer'), allBtn = $('sltv-all'), catSel = $('sltv-cat');
-	var state = { tab: 'all', page: 1, pages: 1, current: null, hls: null };
-	var catLabel = { News: 'News & Current Affairs', General: 'General Entertainment', Religious: 'Islamic & Religious', Kids: 'Kids & Family' };
-	var region;
-	try { var dn = new Intl.DisplayNames(['en'], { type: 'region' }); region = function (c) { try { return dn.of(c); } catch (e) { return c; } }; } catch (e) { region = function (c) { return c; }; }
-
-	function store(k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem('sltv_' + k) || '[]'); localStorage.setItem('sltv_' + k, JSON.stringify(v)); } catch (e) { return []; } }
-	function api(path, params) {
-		var u = new URL(cfg.api + path);
-		Object.keys(params || {}).forEach(function (k) { if (params[k]) u.searchParams.set(k, params[k]); });
-		return fetch(u.toString(), { credentials: 'omit' }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
-	}
-	function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; }
-
-
-	var recoveryTimer, startupTimer, playRun = 0;
-	var toolbar = el('div', 'sltv-controls');
-	var now = el('div', 'sltv-now', 'Choose a channel');
-	var status = el('span', 'sltv-status', 'Ready');
-	status.setAttribute('role', 'status');
-	status.setAttribute('aria-live', 'polite');
-	var buttons = el('div', 'sltv-control-actions');
-	function action(label, fn) { var b = el('button', 'sltv-control', label); b.type = 'button'; b.addEventListener('click', fn); buttons.appendChild(b); return b; }
-	var retryButton = action('Retry', retryCurrent);
-	var liveButton = action('Go live', function () {
-		if (video.seekable.length) { video.currentTime = Math.max(0, video.seekable.end(video.seekable.length - 1) - 2); video.play().catch(function () {}); }
-	});
-	var quality = el('select', 'sltv-quality'); quality.setAttribute('aria-label', 'Video quality'); quality.hidden = true; buttons.appendChild(quality);
-	quality.addEventListener('change', function () { if (state.hls) state.hls.currentLevel = Number(quality.value); });
-	var pip = action('Picture in picture', function () {
-		if (!document.pictureInPictureEnabled || video.hidden || video.readyState < 2) return;
-		var promise = document.pictureInPictureElement ? document.exitPictureInPicture() : video.requestPictureInPicture();
-		promise.catch(function () { status.textContent = 'Picture in picture is unavailable for this stream.'; });
-	});
-	pip.hidden = !document.pictureInPictureEnabled;
-	action('Fullscreen', function () { if (player.requestFullscreen) player.requestFullscreen().catch(function () {}); else if (video.webkitEnterFullscreen) video.webkitEnterFullscreen(); });
-	toolbar.appendChild(now); toolbar.appendChild(status); toolbar.appendChild(buttons);
-	root.querySelector('.sltv-main').insertAdjacentElement('afterend', toolbar);
-	retryButton.disabled = liveButton.disabled = true;
-
-	function original(ch) { return ch.httpSrc || ch.orig || ch.src; }
-	var dashP = null;
-	function loadDash() {
-		if (window.dashjs) return Promise.resolve();
-		return dashP || (dashP = new Promise(function (ok, fail) { var s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.7.4/dash.all.min.js'; s.onload = ok; s.onerror = function () { dashP = null; fail(); }; document.head.appendChild(s); }));
-	}
-	function clearTimers() { clearTimeout(recoveryTimer); clearTimeout(startupTimer); }
-	function stop() {
-		playRun++; clearTimers(); state.active = false;
-		if (state.hls) { state.hls.destroy(); state.hls = null; }
-		if (state.dash) { try { state.dash.reset(); } catch (e) {} state.dash = null; }
-		video.pause(); video.removeAttribute('src'); video.load(); video.hidden = false;
-		frame.innerHTML = ''; frame.hidden = true; live.hidden = true; logo.hidden = true; player.dataset.state = 'idle';
-		quality.hidden = true; quality.innerHTML = ''; liveButton.disabled = true;
-		var x = player.querySelector('.sltv-ext'); if (x) x.remove();
-	}
-	function armTimeout(run) {
-		clearTimeout(startupTimer);
-		startupTimer = setTimeout(function () {
-			if (run === playRun && state.active) failure('The broadcaster did not respond in time.');
-		}, 25000);
-	}
-	function retryCurrent() {
-		var c = state.current; if (!c) return;
-		status.textContent = 'Refreshing channel...';
-		var run = playRun;
-		api('channels', { ids: c.id, _refresh: Date.now() }).then(function (d) {
-			if (run !== playRun) return;
-			if (d.items && d.items.length) play(d.items[0]); else failure('This channel is no longer available.');
-		}).catch(function () { if (run === playRun) play(c); });
-	}
-	function external(ch, reason) {
-		var ua = navigator.userAgent, box = el('div', 'sltv-ext');
-		box.setAttribute('role', 'group'); box.setAttribute('aria-label', 'Playback options');
-		box.appendChild(el('strong', '', ch.name));
-		box.appendChild(el('p', '', reason || 'This source cannot currently play in your browser. Try again, choose another channel, or open it in an installed player.'));
-		var acts = el('div', 'sltv-ext__a'), note = el('small', 'sltv-ext__n');
-		function btn(label, href, dl) { var a = el('a', 'sltv-btn sltv-btn--ghost', label); a.href = href; if (dl) a.download = dl; else a.rel = 'nofollow noopener'; acts.appendChild(a); return a; }
-		var retry = el('button', 'sltv-btn', 'Try browser again'); retry.type = 'button'; retry.addEventListener('click', retryCurrent); acts.appendChild(retry);
-		// Playlist file made in the browser (no server needed): opens in VLC, MX Player, Kodi or any IPTV app.
-		var source = original(ch), m3uUrl = URL.createObjectURL(new Blob(['#EXTM3U\n#EXTINF:-1 tvg-logo="' + (ch.logo || '') + '",' + ch.name + '\n' + source + '\n'], { type: 'audio/x-mpegurl' }));
-		var file = ch.name.replace(/[^\w\- ]+/g, '').trim() + '.m3u';
-		var direct = /iPhone|iPad|iPod/.test(ua) ? 'vlc-x-callback://x-callback-url/stream?url=' + encodeURIComponent(source)
-			: /Android/.test(ua) ? 'intent:' + source.replace(/^https?:/, '') + '#Intent;scheme=' + (/^https:/i.test(source) ? 'https' : 'http') + ';package=org.videolan.vlc;type=application/x-mpegURL;end'
-			: 'vlc://' + source;
-		var watch = btn('Open VLC app', direct);
-		watch.addEventListener('click', function () { note.textContent = 'VLC must be installed. If it does not open, use Download playlist and open that file in VLC.'; });
-		btn('Download playlist (.m3u)', m3uUrl, file);
-		var copy = el('button', 'sltv-btn sltv-btn--ghost', 'Copy stream link'); copy.type = 'button';
-		copy.addEventListener('click', function () {
-			if (!navigator.clipboard) { window.prompt('Copy this link', source); return; }
-			navigator.clipboard.writeText(source).then(function () { note.textContent = 'Stream link copied.'; }).catch(function () { note.textContent = 'Copy was blocked by your browser. Use Download playlist instead.'; });
-		});
-		acts.appendChild(copy); box.appendChild(acts); box.appendChild(note);
-		box.appendChild(el('small', '', 'Browser access depends on the broadcaster, region and supported video format. Playlist downloads happen only when you choose them.'));
-		player.appendChild(box); player.dataset.state = 'ext'; msg.textContent = ''; status.textContent = 'Source unavailable in browser';
-	}
-	function failure(reason) {
-		var c = state.current; if (!c) return;
-		if (c.fallback && c.fallback !== c.src) {
-			status.textContent = 'Trying secure relay...';
-			return play(Object.assign({}, c, { src: c.fallback, fallback: null, orig: original(c), ext: false }), true);
-		}
-		stop(); video.hidden = true;
-		external(c, reason || 'The broadcaster is unavailable or this stream is not supported here. You can retry browser playback or choose another channel.');
-		root.dispatchEvent(new CustomEvent('sltv:playback', { detail: { channelId: c.id, outcome: 'failed', reason: reason || 'source_unavailable' } }));
-	}
-	function ytId(u) { var m = /(?:youtu\.be\/|v=|embed\/|live\/)([\w-]{11})/.exec(u); return m ? m[1] : null; }
-	function allowed(u) { try { var x = new URL(u); return x.protocol === 'https:' && cfg.frames.indexOf(x.hostname) > -1; } catch (e) { return false; } }
-	function play(ch, renewed) {
-		stop(); var run = playRun;
-		state.current = ch; state.active = true;
-		var networkRetries = 0, mediaRetries = 0, refreshing = false;
-		now.textContent = ch.name; status.textContent = ch.orig ? 'Connecting through secure relay...' : 'Connecting...';
-		retryButton.disabled = false;
-		msg.textContent = 'Loading ' + ch.name + '...'; player.dataset.state = 'loading';
-		if (ch.logo) { logo.onerror = function () { this.hidden = true; }; logo.src = secureLogo(ch.logo); logo.alt = ch.name; logo.hidden = false; }
-		var recent = store('recent').filter(function (i) { return i !== ch.id; }); recent.unshift(ch.id); store('recent', recent.slice(0, 30));
-		list.querySelectorAll('button[aria-current]').forEach(function (b) { b.removeAttribute('aria-current'); });
-		var selected = list.querySelector('button[data-id="' + ch.id + '"]'); if (selected) selected.setAttribute('aria-current', 'true');
-		/* Plain http:// streams cannot play on an https page. Some broadcasters also serve the same address over https: try that first (the original address stays available for VLC, the playlist file and the copy button). */
-		if (/^http:\/\//i.test(ch.src) && !ch.httpSrc && ch.why !== 'cors') return play(Object.assign({}, ch, { httpSrc: ch.src, src: ch.src.replace(/^http:/i, 'https:'), ext: false }), renewed);
-		if (ch.ext || /^http:\/\//i.test(ch.src)) { state.active = false; video.hidden = true; return external(ch, ch.why === 'cors' ? 'This broadcaster does not allow playback in web browsers. Open it in VLC or another player instead.' : 'A secure browser route is not available for this source.'); }
-		if (ch.type === 'youtube' || ch.type === 'iframe') {
-			var src = ch.type === 'youtube' ? (ytId(ch.src) ? 'https://www.youtube-nocookie.com/embed/' + ytId(ch.src) + '?autoplay=1' : null) : (allowed(ch.src) ? ch.src : null);
-			if (!src) return failure('This channel cannot be embedded.');
-			var f = document.createElement('iframe');
-			f.src = src; f.allow = 'autoplay; fullscreen; picture-in-picture'; f.allowFullscreen = true; f.referrerPolicy = 'strict-origin-when-cross-origin'; f.title = ch.name;
-			video.hidden = true; frame.hidden = false; frame.appendChild(f); player.dataset.state = 'embedded';
-			msg.textContent = ''; status.textContent = 'Broadcaster player'; return;
-		}
-		armTimeout(run);
-		if (ch.type === 'mp4') video.src = ch.src;
-		else if (ch.type === 'dash') {
-			// MPEG-DASH (.mpd): dash.js, loaded on first use.
-			loadDash().then(function () {
-				if (run !== playRun) return;
-				var d = window.dashjs.MediaPlayer().create(); state.dash = d;
-				d.updateSettings({ streaming: { delay: { liveDelayFragmentCount: 3 } } });
-				d.on(window.dashjs.MediaPlayer.events.ERROR, function (e) { if (run === playRun) failure('The broadcaster could not deliver this stream (it may be protected or region-locked).'); });
-				d.initialize(video, ch.src, true);
-			}).catch(function () { if (run === playRun) failure('The DASH player could not load. Check your connection and try again.'); });
-			return;
-		}
-		else if (window.Hls && window.Hls.isSupported()) {
-			var h = new window.Hls({ maxBufferLength: 20, backBufferLength: 30, enableWorker: true });
-			state.hls = h;
-			h.on(window.Hls.Events.MANIFEST_PARSED, function () {
-				if (run !== playRun) return;
-				quality.innerHTML = '';
-				var auto = el('option', '', 'Auto quality'); auto.value = '-1'; quality.appendChild(auto);
-				h.levels.forEach(function (level, n) { var option = el('option', '', level.height ? level.height + 'p' : Math.round(level.bitrate / 1000) + ' kbps'); option.value = String(n); quality.appendChild(option); });
-				quality.hidden = h.levels.length < 2;
-				video.play().catch(function (e) { if (run === playRun && e.name !== 'AbortError') { clearTimeout(startupTimer); msg.textContent = 'Press play to start'; status.textContent = 'Ready - press play'; } });
-			});
-			h.on(window.Hls.Events.ERROR, function (e, d) {
-				if (run !== playRun || !d.fatal || refreshing) return;
-				var code = d.response && d.response.code;
-				if ((code === 403 || code === 410) && !renewed) {
-					refreshing = true; clearTimers(); status.textContent = 'Refreshing stream access...';
-					api('channels', { ids: ch.id, _refresh: Date.now() }).then(function (data) {
-						if (run !== playRun) return;
-						if (data.items && data.items.length) play(data.items[0], true); else failure('This channel is no longer available.');
-					}).catch(function () { if (run === playRun) failure('Could not refresh the stream. Please retry.'); }); return;
-				}
-				if (d.type === window.Hls.ErrorTypes.NETWORK_ERROR && networkRetries < 2) {
-					networkRetries++; status.textContent = 'Reconnecting (' + networkRetries + '/2)...';
-					recoveryTimer = setTimeout(function () { if (run === playRun) { h.startLoad(); armTimeout(run); } }, networkRetries * 1500); return;
-				}
-				if (d.type === window.Hls.ErrorTypes.MEDIA_ERROR && mediaRetries < 1) {
-					mediaRetries++; status.textContent = 'Recovering video...'; h.recoverMediaError(); armTimeout(run); return;
-				}
-				failure(d.type === window.Hls.ErrorTypes.MEDIA_ERROR ? 'This stream uses a video or audio format your browser cannot decode.' : 'The broadcaster could not deliver this stream. Try again or choose another channel.');
-			});
-			h.loadSource(ch.src); h.attachMedia(video);
-		} else if (video.canPlayType('application/vnd.apple.mpegurl')) video.src = ch.src;
-		else return failure('Your browser does not support this stream format.');
-		if (!state.hls) {
-			var promise = video.play();
-			if (promise && promise.catch) promise.catch(function (e) { if (run === playRun && e.name !== 'AbortError') { clearTimeout(startupTimer); msg.textContent = 'Press play to start'; status.textContent = 'Ready - press play'; } });
-		}
-	}
-	video.addEventListener('playing', function () {
-		if (!state.active) return;
-		clearTimers(); player.dataset.state = 'playing'; msg.textContent = '';
-		live.hidden = !(state.current && state.current.type === 'hls'); liveButton.disabled = !video.seekable.length;
-		status.textContent = 'Playing' + (state.current.orig ? ' through secure relay' : '');
-		root.dispatchEvent(new CustomEvent('sltv:playback', { detail: { channelId: state.current.id, outcome: 'playing' } }));
-	});
-	video.addEventListener('waiting', function () { if (state.active) { status.textContent = 'Buffering...'; armTimeout(playRun); } });
-	video.addEventListener('pause', function () { if (state.active && !video.ended) { clearTimers(); status.textContent = 'Paused'; } });
-	video.addEventListener('error', function () { if (state.current && state.active && !state.hls) failure('Your browser could not load or decode this stream.'); });
-
-	function row(ch, first) {
-		var li = el('li'), b = el('button');
-		b.type = 'button'; b.dataset.id = ch.id;
-		if (state.current && state.current.id === ch.id) b.setAttribute('aria-current', 'true');
-		var ph = function () { return el('span', 'sltv-ph', ch.name.slice(0, 2)); };
-		if (ch.logo) { var i = el('img'); i.src = secureLogo(ch.logo); i.alt = ''; i.loading = first ? 'eager' : 'lazy'; i.onerror = function () { this.replaceWith(ph()); }; b.appendChild(i); }
-		else b.appendChild(ph());
-		var t = el('span'); t.appendChild(el('b', '', ch.name)); t.appendChild(el('small', '', [catLabel[ch.cat] || ch.cat, ch.cc ? region(ch.cc) : '', ch.chk === 'fail' ? 'may be offline' : ''].filter(Boolean).join(' · ')));
-		b.appendChild(t);
-		b.appendChild(ch.ext ? el('span', 'sltv-vlc', 'VLC') : el('span', 'sltv-dot', 'Watch'));
-		b.appendChild(el('span', 'sltv-play'));
-		b.setAttribute('aria-label', 'Watch ' + ch.name);
-		b.addEventListener('click', function () { play(ch); });
-		li.appendChild(b); return li;
-	}
-
-	var timer, seq = 0;
-	function load(reset) {
-		if (reset) { state.page = 1; list.innerHTML = ''; }
-		var my = ++seq, params = { page: state.page };
-		if (state.tab === 'all') { params.q = $('sltv-q').value.trim(); params.country = $('sltv-country').value; params.category = catSel.value; }
-		else { var ids = store('recent'); if (!ids.length) { list.appendChild(el('li', 'sltv-empty', 'Channels you watch appear here.')); more.hidden = true; return; } params.ids = ids.join(','); }
-		api('channels', params).then(function (d) {
-			if (my !== seq) return;
-			state.pages = d.pages;
-			var items = d.items;
-			if (params.ids) { var order = params.ids.split(',').map(Number); items.sort(function (a, b) { return order.indexOf(a.id) - order.indexOf(b.id); }); }
-			if (!items.length && state.page === 1) list.appendChild(el('li', 'sltv-empty', d.total === 0 && !params.q && !params.category && !params.country ? 'Channels are being reviewed and will appear here soon.' : 'No channels found.'));
-			items.forEach(function (c, i) { list.appendChild(row(c, i < 6)); });
-			more.hidden = state.page >= state.pages || !!params.ids;
-		}).catch(function () { if (my !== seq) return; list.innerHTML = ''; list.appendChild(el('li', 'sltv-empty', 'Channels could not be loaded. Please refresh.')); });
-	}
-	function syncTiles() { root.querySelectorAll('.sltv-grid button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.cat === catSel.value ? 'true' : 'false'); }); }
-	function setCat(c) {
-		if (c && !catSel.querySelector('option[value="' + c + '"]')) { var o = el('option', '', catLabel[c] || c); o.value = c; catSel.appendChild(o); }
-		catSel.value = c; syncTiles();
-		root.querySelector('.sltv-tabs button[data-tab=all]').click();
-		root.querySelector('.sltv-main').scrollIntoView({ behavior: 'smooth', block: 'start' });
-	}
-
-	more.addEventListener('click', function () { state.page++; load(false); });
-	$('sltv-q').addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(function () { load(true); }, 300); });
-	$('sltv-country').addEventListener('change', function () { load(true); });
-	catSel.addEventListener('change', function () { syncTiles(); load(true); });
-	allBtn.addEventListener('click', function () { var open = drawer.hidden; drawer.hidden = !open; allBtn.setAttribute('aria-expanded', open ? 'true' : 'false'); if (open) $('sltv-q').focus(); });
-	root.querySelectorAll('.sltv-tabs button').forEach(function (b) {
-		b.addEventListener('click', function () {
-			state.tab = b.dataset.tab;
-			root.querySelectorAll('.sltv-tabs button').forEach(function (x) { x.setAttribute('aria-selected', x === b ? 'true' : 'false'); });
-			load(true);
-		});
-	});
-	root.querySelectorAll('.sltv-grid button, .sltv-cats .sltv-all').forEach(function (b) {
-		b.addEventListener('click', function () { setCat(b.dataset.cat === catSel.value ? '' : b.dataset.cat); });
-	});
-
-	// Shareable deep links: /live-tv/?category=News&country=PK
-	var qs = new URLSearchParams(location.search), qCat = (qs.get('category') || '').slice(0, 60), qCc = (qs.get('country') || '').toUpperCase().slice(0, 2);
-	function addOpt(sel, v, label) { if (!v || sel.querySelector('option[value="' + CSS.escape(v) + '"]')) return; var o = el('option', '', label); o.value = v; sel.appendChild(o); }
-	addOpt(catSel, qCat, catLabel[qCat] || qCat); addOpt($('sltv-country'), qCc, region(qCc));
-	if (qCat) catSel.value = qCat;
-	if (qCc) $('sltv-country').value = qCc;
-	if (qCat || qCc) { drawer.hidden = false; allBtn.setAttribute('aria-expanded', 'true'); syncTiles(); }
-
-	api('facets').then(function (f) {
-		f.countries.forEach(function (c) { addOpt($('sltv-country'), c.k, region(c.k) + ' (' + c.n + ')'); });
-		f.categories.forEach(function (c) { addOpt(catSel, c.k, (catLabel[c.k] || c.k) + ' (' + c.n + ')'); });
-		defaultCountry();
-	}).catch(function () {});
-
-	/* Country default: the channels start filtered to the visitor's country (from the site's own country detection, the same one the shop uses).
-	   "All countries" or any other pick is remembered for the visit and wins over detection; the shareable ?country= link always wins. */
-	var cSel = $('sltv-country'), picked = null;
-	try { picked = sessionStorage.getItem('sltv_cc'); } catch (e) { }
-	cSel.addEventListener('change', function () { try { sessionStorage.setItem('sltv_cc', cSel.value); } catch (e) { } picked = cSel.value; hint(); });
-	function hint() {
-		var h = $('sltv-cc-hint'); if (!h) { h = el('p', 'sltv-cc-hint'); h.id = 'sltv-cc-hint'; h.setAttribute('role', 'status'); h.style.cssText = 'margin:8px 0 0;font-size:.9rem'; cSel.parentNode.appendChild(h); }
-		h.textContent = ''; if (!cSel.value || qCc) return;
-		var auto = picked === null; h.appendChild(document.createTextNode((auto ? 'Showing channels from ' : 'Country: ') + region(cSel.value) + '. '));
-		var b = el('button', '', 'Change'); b.type = 'button'; b.style.cssText = 'background:none;border:0;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit'; b.addEventListener('click', function () { drawer.hidden = false; allBtn.setAttribute('aria-expanded', 'true'); cSel.focus(); }); h.appendChild(b);
-	}
-	function defaultCountry() {
-		if (qCc || picked !== null) { hint(); return; }
-		var mk = window.SMMarket, cc = ''; try { cc = mk ? String(mk.state().country || '').toUpperCase() : ''; } catch (e) { }
-		if (!cc || !cSel.querySelector('option[value="' + CSS.escape(cc) + '"]')) return;
-		cSel.value = cc; drawer.hidden = false; allBtn.setAttribute('aria-expanded', 'true'); hint(); load(true);
-	}
-	window.addEventListener('sm:market', function () { if (picked === null && !qCc) defaultCountry(); });
-	load(true);
+  "use strict";
+  const root = document.getElementById("sltv");
+  if (!root || root.dataset.worldTv) return;
+  root.dataset.worldTv = "1";
+  const asset = (p) => new URL(p, document.baseURI).href;
+  function script(path, key) {
+    if (window[key]) return Promise.resolve(window[key]);
+    return new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = asset(path);
+      s.onload = () =>
+        window[key] ? resolve(window[key]) : reject(Error("Empty " + path));
+      s.onerror = () => reject(Error("Could not load " + path));
+      document.head.appendChild(s);
+    });
+  }
+  root.innerHTML = `<header class="sltv-hero"><div class="sltv-hero-content"><p class="sltv-eyebrow">SASTA MILAGA / WORLD TV</p><h1>The world.<br><em>Live on your screen.</em></h1><p>News, culture, sport and discovery. Explore free-to-air television from around the world, with more ways to watch.</p><a class="sltv-btn" href="#sltv-directory">Explore channels</a></div><div class="sltv-hero-stats" aria-live="polite"><span><b id="sltv-total">—</b>channels</span><span><b id="sltv-countries-count">—</b>countries</span><span><b id="sltv-source-count">—</b>sources &amp; mirrors</span></div></header>
+<div class="sltv-workspace"><section class="sltv-stage" aria-label="Television player"><div class="sltv-stage-top"><span class="sltv-onair">WORLD TV</span><span id="sltv-now">Your window to the world</span><button type="button" id="sltv-fav-current" aria-label="Save current channel" disabled>☆ Save</button></div><div class="sltv-player" data-state="idle"><video id="sltv-video" controls playsinline preload="none" poster="${asset("assets/images/livetv/broadcast-studio.png")}"></video><div id="sltv-frame" hidden></div><div class="sltv-welcome"><span class="sltv-welcome-icon">▶</span><h2>Something worth watching.</h2><p>Choose a channel to start. Your next perspective is one click away.</p></div><p class="sltv-msg" role="status" aria-live="polite"></p></div>
+<div class="sltv-controls"><span class="sltv-status" role="status" aria-live="polite">Ready when you are</span><div class="sltv-selects"><label>Player<select id="sltv-player-choice"><option value="auto">Browser / Auto</option><option value="native">Native / Safari</option><option value="vlc">VLC app</option><option value="mx">MX Player</option><option value="kodi">Kodi / IPTV app</option><option value="iina">IINA / macOS</option><option value="download">Download playlist</option></select></label><label>Source<select id="sltv-source-choice" disabled><option>Choose a channel first</option></select></label></div><div class="sltv-player-buttons"><label class="sltv-sr" for="sltv-quality">Quality</label><select id="sltv-quality" aria-label="Stream quality" hidden></select><button type="button" id="sltv-live-edge">Go live</button><button type="button" id="sltv-retry" disabled>Retry</button><button type="button" id="sltv-pip">Picture in picture</button><button type="button" id="sltv-fullscreen">Fullscreen</button><button type="button" id="sltv-share" disabled>Share channel</button></div></div>
+<div id="sltv-external" class="sltv-external" hidden><h3>More ways to watch</h3><p class="sltv-external-hint">Choose a channel to see its player options.</p><div class="sltv-external-actions"></div><p class="sltv-player-note">External apps open only when you choose a link. An installed app and a broadcaster-accessible source are required.</p></div>
+<aside class="sltv-insight"><span>MADE FOR YOUR WORLD</span><h2>One directory. Every perspective.</h2><p>Switch mirrors without losing your place. Keep favourites on this device, discover another country, or take your channel to an installed TV player.</p><div class="sltv-insight-features"><b>Browser playback</b><b>Multiple mirrors</b><b>VLC &amp; IPTV apps</b></div></aside></section>
+<section class="sltv-directory" id="sltv-directory" aria-label="Channel directory"><div class="sltv-directory-head"><div><p class="sltv-eyebrow">FIND YOUR NEXT CHANNEL</p><h2>Discover live TV</h2></div><button type="button" id="sltv-reset">Reset</button></div><label class="sltv-search"><span class="sltv-sr">Search channels, countries, categories or languages</span><input id="sltv-q" type="search" placeholder="Channel, country or language…" autocomplete="off"></label><div class="sltv-tabs" role="tablist" aria-label="Browse channels"><button type="button" role="tab" data-tab="all" aria-selected="true">All channels</button><button type="button" role="tab" data-tab="countries" aria-selected="false">Countries</button><button type="button" role="tab" data-tab="categories" aria-selected="false">Categories</button><button type="button" role="tab" data-tab="favorites" aria-selected="false">Favourites</button><button type="button" role="tab" data-tab="recent" aria-selected="false">Recent</button></div><div class="sltv-filters"><label><span class="sltv-sr">Country</span><select id="sltv-country"><option value="">All countries</option></select></label><label><span class="sltv-sr">Category</span><select id="sltv-category"><option value="">All categories</option></select></label><label><span class="sltv-sr">Channel sorting</span><select id="sltv-sort"><option value="recommended">Recommended</option><option value="name">A–Z</option><option value="working">Working first</option><option value="mirrors">Most mirrors</option></select></label></div><div id="sltv-count" role="status" aria-live="polite">Loading the complete channel directory…</div><div id="sltv-groups" class="sltv-groups" hidden></div><div id="sltv-viewport" class="sltv-viewport" tabindex="0" aria-label="Scrollable channel list"><ul id="sltv-list" aria-label="All matching channels"></ul></div><p class="sltv-directory-foot">Every retained channel stays searchable, including sources that are currently unavailable. Scroll to browse the full list.</p></section></div>
+<section class="sltv-world"><div><p class="sltv-eyebrow">THERE IS MORE TO EXPLORE</p><h2>Choose a country.<br>Find a different point of view.</h2><p>Local voices. Global stories. Open a country to discover its complete channel directory.</p></div><div id="sltv-world-countries" class="sltv-world-countries"></div></section><footer class="sltv-footnote"><p>Free-to-air source directory. Broadcasters control availability, formats and regional access. A reachable stream is not a guarantee of playback in every country.</p><p id="sltv-updated"></p><a href="${asset("data/livetv/playlist.m3u")}" download>Download full IPTV playlist</a> · <a id="sltv-epg" href="https://iptv-org.github.io/api/guides.json" target="_blank" rel="noopener">EPG source directory</a></footer>`;
+  const $ = (id) => root.querySelector("#" + id),
+    video = $("sltv-video"),
+    frame = $("sltv-frame"),
+    player = root.querySelector(".sltv-player"),
+    status = root.querySelector(".sltv-status"),
+    message = root.querySelector(".sltv-msg"),
+    sourceSel = $("sltv-source-choice"),
+    playerSel = $("sltv-player-choice"),
+    viewport = $("sltv-viewport"),
+    list = $("sltv-list"),
+    country = $("sltv-country"),
+    category = $("sltv-category"),
+    groups = $("sltv-groups"),
+    ext = $("sltv-external");
+  let core,
+    channels = [],
+    filtered = [],
+    current = null,
+    sourceIndex = 0,
+    tab = "all",
+    runner,
+    activeEngine = null,
+    activeCleanup = () => {},
+    blobs = [],
+    renderedStart = -1,
+    renderedEnd = -1;
+  const displayNames = (() => {
+    try {
+      return new Intl.DisplayNames(["en"], { type: "region" });
+    } catch {
+      return null;
+    }
+  })();
+  const region = (cc) => {
+    try {
+      return cc ? displayNames?.of(cc) || cc : "Worldwide / unspecified";
+    } catch {
+      return cc;
+    }
+  };
+  function read(key, fallback = []) {
+    try {
+      const value = JSON.parse(localStorage.getItem("sltv_" + key));
+      return value &&
+        (Array.isArray(fallback)
+          ? Array.isArray(value)
+          : typeof value === "object")
+        ? value
+        : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+  function write(key, value) {
+    try {
+      localStorage.setItem("sltv_" + key, JSON.stringify(value));
+    } catch {}
+  }
+  function node(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = String(text);
+    return e;
+  }
+  function event(outcome, extra = {}) {
+    root.dispatchEvent(
+      new CustomEvent("sltv:playback", {
+        bubbles: true,
+        detail: {
+          channelId: current?.id,
+          sourceIndex,
+          player: activeEngine || playerSel.value,
+          outcome,
+          ...extra,
+        },
+      }),
+    );
+  }
+  function copy(text) {
+    if (navigator.clipboard?.writeText)
+      return navigator.clipboard.writeText(text);
+    window.prompt("Copy this link", text);
+    return Promise.resolve();
+  }
+  function preferences() {
+    const p = read("player_v2", {});
+    return typeof p === "object" && !Array.isArray(p) ? p : {};
+  }
+  function remember(playerName = playerSel.value) {
+    if (!current) return;
+    const p = preferences();
+    p[current.id] = { sourceIndex, player: playerName };
+    write("player_v2", p);
+  }
+  function clearMedia() {
+    $("sltv-quality").hidden = true;
+    activeCleanup();
+    activeCleanup = () => {};
+    video.pause();
+    video.removeAttribute("src");
+    video.load();
+    frame.replaceChildren();
+    frame.hidden = true;
+    video.hidden = false;
+  }
+  function favorite(id) {
+    const ids = read("favorites");
+    write(
+      "favorites",
+      ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id],
+    );
+    updateFavorite();
+    filter(false);
+  }
+  function updateFavorite() {
+    const b = $("sltv-fav-current");
+    b.disabled = !current;
+    b.textContent =
+      current && read("favorites").includes(current.id) ? "★ Saved" : "☆ Save";
+    b.setAttribute(
+      "aria-pressed",
+      String(!!current && read("favorites").includes(current.id)),
+    );
+  }
+  function setExternal(reason) {
+    if (!current) return;
+    ext.hidden = false;
+    ext.querySelector(".sltv-external-hint").textContent =
+      reason ||
+      "Open the selected source in another player, or download it for your IPTV app.";
+    const actions = ext.querySelector(".sltv-external-actions");
+    actions.replaceChildren();
+    blobs.forEach((u) => URL.revokeObjectURL(u));
+    blobs = [];
+    const source = core.sources(current)[sourceIndex];
+    if (!source) return;
+    const links = core.externalLinks(
+      source.url,
+      current.name,
+      navigator.userAgent,
+    );
+    function link(label, href, download) {
+      if (!href) return;
+      const a = node("a", "sltv-btn sltv-btn--ghost", label);
+      a.href = href;
+      a.rel = "nofollow noopener";
+      if (download) a.download = download;
+      actions.appendChild(a);
+    }
+    function button(label, fn) {
+      const b = node("button", "sltv-btn sltv-btn--ghost", label);
+      b.type = "button";
+      b.onclick = fn;
+      actions.appendChild(b);
+    }
+    button("Try browser again", () => {
+      playerSel.value = "auto";
+      startCurrent();
+    });
+    link("Open VLC", links.vlc);
+    link("MX Player", links.mx);
+    link("MX Player Pro", links.mxPro);
+    link("IINA / macOS", links.iina);
+    const clean = (s) => String(s || "").replace(/[\r\n"]/g, "");
+    const content =
+      '#EXTM3U\n#EXTINF:-1 tvg-id="' +
+      clean(current.id) +
+      '" tvg-logo="' +
+      clean(current.logo) +
+      '",' +
+      clean(current.name) +
+      "\n" +
+      source.url +
+      "\n";
+    const blob = URL.createObjectURL(
+      new Blob([content], { type: "audio/x-mpegurl" }),
+    );
+    blobs.push(blob);
+    link("Kodi / IPTV playlist", blob, current.id + ".m3u");
+    button("Copy stream link", () =>
+      copy(source.url)
+        .then(() => (status.textContent = "Stream link copied"))
+        .catch(
+          () =>
+            (status.textContent =
+              "Copy unavailable; use the playlist download."),
+        ),
+    );
+    button("Copy full playlist URL", () =>
+      copy(asset("data/livetv/playlist.m3u")).then(
+        () => (status.textContent = "Full playlist URL copied"),
+      ),
+    );
+  }
+  let youtubeLoading;
+  function loadYouTube() {
+    if (window.YT?.Player) return Promise.resolve(window.YT);
+    if (youtubeLoading) return youtubeLoading;
+    youtubeLoading = new Promise((resolve, reject) => {
+      const prior = window.onYouTubeIframeAPIReady;
+      const timer = setTimeout(
+        () => reject(Error("YouTube API did not respond")),
+        15000,
+      );
+      window.onYouTubeIframeAPIReady = () => {
+        try {
+          prior?.();
+        } catch {}
+        clearTimeout(timer);
+        resolve(window.YT);
+      };
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      tag.onerror = () => {
+        clearTimeout(timer);
+        reject(Error("YouTube API unavailable"));
+      };
+      document.head.appendChild(tag);
+    }).catch((error) => {
+      youtubeLoading = null;
+      throw error;
+    });
+    return youtubeLoading;
+  }
+  function embedURL(item) {
+    try {
+      const u = new URL(item.url);
+      if (item.engine === "youtube") {
+        const id =
+          u.hostname === "youtu.be"
+            ? u.pathname.slice(1)
+            : u.searchParams.get("v") ||
+              u.pathname.match(/(?:embed|live)\/([\w-]{11})/)?.[1];
+        return /^[\w-]{11}$/.test(id || "")
+          ? "https://www.youtube-nocookie.com/embed/" +
+              id +
+              "?autoplay=1&rel=0&enablejsapi=1&origin=" +
+              encodeURIComponent(location.origin)
+          : null;
+      }
+      if (item.engine === "twitch") {
+        const channel =
+          u.searchParams.get("channel") ||
+          u.pathname.split("/").filter(Boolean)[0];
+        return /^[\w-]+$/.test(channel || "")
+          ? "https://player.twitch.tv/?channel=" +
+              encodeURIComponent(channel) +
+              "&parent=" +
+              encodeURIComponent(location.hostname) +
+              "&autoplay=true"
+          : null;
+      }
+      if (
+        u.hostname === "www.dailymotion.com" &&
+        /^\/video\/[\w]+/.test(u.pathname)
+      )
+        return "https://www.dailymotion.com/embed" + u.pathname + "?autoplay=1";
+      const allowed = window.SLTV_CFG?.frames || [];
+      return u.protocol === "https:" && allowed.includes(u.hostname)
+        ? u.href
+        : null;
+    } catch {
+      return null;
+    }
+  }
+  const dashLoad = () => script("assets/vendor/dash-4.7.4.min.js", "dashjs");
+  function attempt(item, callbacks) {
+    clearMedia();
+    sourceIndex = item.sourceIndex;
+    sourceSel.value = String(sourceIndex);
+    activeEngine = item.engine;
+    player.dataset.state = "loading";
+    message.textContent = "Connecting to " + current.name + "…";
+    let ended = false,
+      networkRetries = 0,
+      mediaRetries = 0,
+      hls = null,
+      dash = null,
+      youtube = null;
+    const valid = () => !ended;
+    const fail = (reason) => {
+      if (!valid()) return;
+      event("source_failed", { reason });
+      callbacks.failed();
+    };
+    const played = () => {
+      if (!valid()) return;
+      clearTimeout(timer);
+      message.textContent = "";
+      player.dataset.state = "playing";
+      status.textContent = "Playing · " + current.name;
+      remember();
+      callbacks.playing();
+      event("playing");
+    };
+    let timer = setTimeout(() => fail("No playback within 25 seconds"), 25000);
+    const failed = () => {
+      if (!hls) fail("This source could not be decoded");
+    };
+    const stalled = () => {
+      if (valid()) {
+        status.textContent = "Buffering…";
+        clearTimeout(timer);
+        timer = setTimeout(() => fail("Playback stalled"), 25000);
+      }
+    };
+    video.addEventListener("playing", played);
+    video.addEventListener("error", failed);
+    video.addEventListener("waiting", stalled);
+    function play() {
+      const p = video.play();
+      p?.catch((e) => {
+        if (!valid() || e.name === "AbortError") return;
+        if (e.name === "NotAllowedError") {
+          clearTimeout(timer);
+          message.textContent = "Press play to begin";
+          status.textContent = "Ready · press play";
+        } else fail(e.message);
+      });
+    }
+    if (["youtube", "twitch", "iframe"].includes(item.engine)) {
+      const url = embedURL(item);
+      const allowedFrames = window.SLTV_CFG?.frames || [];
+      if (!url || !allowedFrames.includes(new URL(url).hostname)) {
+        Promise.resolve().then(() => fail("Embedded host is not allowed"));
+      } else {
+        video.hidden = true;
+        frame.hidden = false;
+        const iframe = node("iframe");
+        iframe.title = current.name + " broadcaster player";
+        iframe.allow = "autoplay; fullscreen; picture-in-picture";
+        iframe.allowFullscreen = true;
+        iframe.referrerPolicy = "strict-origin-when-cross-origin";
+        iframe.src = url;
+        iframe.onload = () => {
+          if (!valid()) return;
+          if (item.engine === "youtube") return;
+          clearTimeout(timer);
+          message.textContent = "";
+          status.textContent =
+            "Broadcaster player opened · press play if prompted";
+          player.dataset.state = "embedded";
+          event("embedded_unverified");
+        };
+        iframe.onerror = () => fail("Broadcaster frame unavailable");
+        frame.appendChild(iframe);
+        if (item.engine === "youtube")
+          loadYouTube()
+            .then((YT) => {
+              if (!valid()) return;
+              youtube = new YT.Player(iframe, {
+                events: {
+                  onReady: (event) => {
+                    if (valid()) event.target.playVideo();
+                  },
+                  onStateChange: (event) => {
+                    if (!valid()) return;
+                    if (event.data === 1) played();
+                    else if (event.data === 2) {
+                      clearTimeout(timer);
+                      status.textContent = "Broadcaster player paused";
+                    } else if (event.data === 0)
+                      fail("Broadcaster stream ended");
+                  },
+                  onError: () =>
+                    fail("YouTube broadcaster embedding is unavailable"),
+                  onAutoplayBlocked: () => {
+                    if (valid()) {
+                      clearTimeout(timer);
+                      message.textContent =
+                        "Press play in the broadcaster player";
+                      status.textContent = "Ready - press play";
+                    }
+                  },
+                },
+              });
+            })
+            .catch(() => fail("YouTube player API unavailable"));
+      }
+    } else if (item.engine === "dash") {
+      dashLoad()
+        .then(() => {
+          if (!valid()) return;
+          dash = window.dashjs.MediaPlayer().create();
+          dash.updateSettings({
+            streaming: { delay: { liveDelayFragmentCount: 3 } },
+          });
+          dash.on(window.dashjs.MediaPlayer.events.ERROR, () =>
+            fail("DASH playback failed"),
+          );
+          dash.initialize(video, item.url, true);
+        })
+        .catch(() => fail("DASH player could not load"));
+    } else if (item.engine === "hls" && window.Hls?.isSupported()) {
+      hls = new window.Hls({ maxBufferLength: 20, backBufferLength: 20 });
+      hls.on(window.Hls.Events.MANIFEST_PARSED, () => {
+        if (!valid()) return;
+        const q = $("sltv-quality");
+        q.replaceChildren();
+        const automatic = node("option", "", "Auto quality");
+        automatic.value = "-1";
+        q.appendChild(automatic);
+        hls.levels.forEach((level, i) => {
+          const o = node(
+            "option",
+            "",
+            level.height ? level.height + "p" : "Quality " + (i + 1),
+          );
+          o.value = String(i);
+          q.appendChild(o);
+        });
+        q.hidden = hls.levels.length < 2;
+        q.onchange = () => {
+          if (valid()) hls.currentLevel = Number(q.value);
+        };
+        play();
+      });
+      hls.on(window.Hls.Events.ERROR, (_, data) => {
+        if (!valid() || !data.fatal) return;
+        if (
+          data.type === window.Hls.ErrorTypes.NETWORK_ERROR &&
+          networkRetries++ < 2
+        ) {
+          hls.startLoad();
+          return;
+        }
+        if (
+          data.type === window.Hls.ErrorTypes.MEDIA_ERROR &&
+          mediaRetries++ < 1
+        ) {
+          hls.recoverMediaError();
+          return;
+        }
+        fail("HLS source unavailable");
+      });
+      hls.loadSource(item.url);
+      hls.attachMedia(video);
+    } else if (
+      item.engine === "mp4" ||
+      item.engine === "native" ||
+      video.canPlayType("application/vnd.apple.mpegurl")
+    ) {
+      video.src = item.url;
+      play();
+    } else
+      Promise.resolve().then(() =>
+        fail("This browser does not support the stream format"),
+      );
+    const cleanup = () => {
+      ended = true;
+      clearTimeout(timer);
+      video.removeEventListener("playing", played);
+      video.removeEventListener("error", failed);
+      video.removeEventListener("waiting", stalled);
+      hls?.destroy();
+      try {
+        youtube?.destroy();
+      } catch {}
+      try {
+        dash?.reset();
+      } catch {}
+      activeCleanup = () => {};
+    };
+    activeCleanup = cleanup;
+    return cleanup;
+  }
+  function startCurrent() {
+    if (!current) return;
+    root.querySelector(".sltv-welcome").hidden = true;
+    runner.stop();
+    clearMedia();
+    setExternal();
+    if (!["auto", "native"].includes(playerSel.value)) {
+      remember();
+      video.hidden = true;
+      message.textContent = "Choose an installed player below";
+      status.textContent =
+        "Ready for " + playerSel.options[playerSel.selectedIndex].text;
+      event("external_choice");
+      return;
+    }
+    runner.start(
+      core.plan(
+        current,
+        sourceIndex,
+        playerSel.value,
+        !!video.canPlayType("application/vnd.apple.mpegurl"),
+      ),
+    );
+  }
+  function select(ch) {
+    current = ch;
+    const saved = preferences()[ch.id] || {};
+    sourceIndex = Math.min(
+      Math.max(
+        0,
+        Number.isInteger(saved.sourceIndex)
+          ? saved.sourceIndex
+          : Math.max(
+              0,
+              core.sources(ch).findIndex((s) => s.status === "ok"),
+            ),
+      ),
+      core.sources(ch).length - 1,
+    );
+    playerSel.value = [
+      "auto",
+      "native",
+      "vlc",
+      "mx",
+      "kodi",
+      "iina",
+      "download",
+    ].includes(saved.player)
+      ? saved.player
+      : "auto";
+    sourceSel.replaceChildren();
+    core.sources(ch).forEach((s, i) => {
+      let host = "";
+      try {
+        host = new URL(s.url).hostname;
+      } catch {}
+      const o = node(
+        "option",
+        "",
+        `Mirror ${i + 1} · ${s.type.toUpperCase()} · ${s.status || "unchecked"} · ${host}`,
+      );
+      o.value = String(i);
+      sourceSel.appendChild(o);
+    });
+    sourceSel.disabled = false;
+    sourceSel.value = String(sourceIndex);
+    $("sltv-now").textContent = ch.name;
+    $("sltv-retry").disabled = $("sltv-share").disabled = false;
+    const recent = read("recent").filter((x) => x !== ch.id);
+    write("recent", [ch.id, ...recent].slice(0, 100));
+    updateFavorite();
+    renderedStart = -1;
+    render();
+    const url = new URL(location.href);
+    url.searchParams.set("channel", ch.id);
+    history.replaceState(null, "", url);
+    startCurrent();
+  }
+  function render() {
+    const range = core.windowRange(
+      filtered.length,
+      viewport.scrollTop,
+      viewport.clientHeight || 600,
+      88,
+      10,
+    );
+    if (range.start === renderedStart && range.end === renderedEnd) return;
+    renderedStart = range.start;
+    renderedEnd = range.end;
+    list.replaceChildren();
+    const spacer = (h) => {
+      const li = node("li", "sltv-spacer");
+      li.style.height = h + "px";
+      li.setAttribute("aria-hidden", "true");
+      return li;
+    };
+    list.appendChild(spacer(range.top));
+    for (let i = range.start; i < range.end; i++) {
+      const ch = filtered[i],
+        li = node("li", "sltv-channel");
+      li.dataset.status = ch.status || "unchecked";
+      li.setAttribute("aria-setsize", String(filtered.length));
+      li.setAttribute("aria-posinset", String(i + 1));
+      const b = node("button", "sltv-channel-main");
+      b.type = "button";
+      b.dataset.index = String(i);
+      if (current?.id === ch.id) b.setAttribute("aria-current", "true");
+      const mark = node("span", "sltv-channel-logo");
+      if (/^https?:\/\//.test(ch.logo || "")) {
+        const img = node("img");
+        img.src = ch.logo.replace(/^http:/, "https:");
+        img.alt = "";
+        img.loading = "lazy";
+        img.onerror = () => {
+          mark.textContent = ch.name.slice(0, 2).toUpperCase();
+        };
+        mark.appendChild(img);
+      } else mark.textContent = ch.name.slice(0, 2).toUpperCase();
+      const text = node("span", "sltv-channel-text");
+      text.append(
+        node("strong", "", ch.name),
+        node(
+          "small",
+          "",
+          [region(ch.country || ch.cc), ch.group || ch.cat, ch.language]
+            .filter(Boolean)
+            .join(" · "),
+        ),
+      );
+      const badge = node(
+        "span",
+        "sltv-channel-badge",
+        ch.status === "ok"
+          ? "Observed OK"
+          : ch.status === "dead"
+            ? "Try player"
+            : ch.status === "needs-player"
+              ? "Player options"
+              : "Unchecked",
+      );
+      badge.title = core.sources(ch).length + " source(s)";
+      b.append(
+        node("span", "sltv-channel-number", String(i + 1).padStart(2, "0")),
+        mark,
+        text,
+        badge,
+      );
+      b.onclick = () => select(ch);
+      const fav = node(
+        "button",
+        "sltv-favorite",
+        read("favorites").includes(ch.id) ? "★" : "☆",
+      );
+      fav.type = "button";
+      fav.setAttribute("aria-label", "Save " + ch.name);
+      fav.setAttribute(
+        "aria-pressed",
+        String(read("favorites").includes(ch.id)),
+      );
+      fav.onclick = () => favorite(ch.id);
+      li.append(b, fav);
+      list.appendChild(li);
+    }
+    list.appendChild(spacer(range.bottom));
+    if (!filtered.length)
+      list.appendChild(
+        node(
+          "li",
+          "sltv-empty",
+          tab === "favorites"
+            ? "Save channels with the star to build your favourites."
+            : tab === "recent"
+              ? "Channels you watch will appear here."
+              : "No channels match. Reset filters to browse the full directory.",
+        ),
+      );
+  }
+  function filter(reset = true) {
+    let ids =
+      tab === "favorites"
+        ? read("favorites")
+        : tab === "recent"
+          ? read("recent")
+          : null;
+    const wanted = ids
+      ? new Set(ids.map((id) => core.resolve(channels, id)?.id).filter(Boolean))
+      : null;
+    filtered = channels.filter(
+      (ch) =>
+        (!wanted || wanted.has(ch.id)) &&
+        core.matches(
+          ch,
+          $("sltv-q").value.trim(),
+          country.value,
+          category.value,
+          region,
+        ),
+    );
+    if (tab === "recent")
+      filtered.sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
+    else if ($("sltv-sort").value === "recommended") {
+      const names = [
+        "al jazeera english",
+        "france 24 english",
+        "dw english",
+        "nhk world-japan",
+        "trt world",
+        "ary news",
+        "geo news",
+      ];
+      const rank = (c) => {
+        const i = names.indexOf(c.name.toLowerCase());
+        return (i < 0 ? 100 : i) + (c.status === "dead" ? 1000 : 0);
+      };
+      filtered.sort(
+        (a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name),
+      );
+    } else if ($("sltv-sort").value === "working") {
+      const rank = { ok: 0, unchecked: 1, "needs-player": 2, dead: 3 };
+      filtered.sort(
+        (a, b) =>
+          (rank[a.status] ?? 1) - (rank[b.status] ?? 1) ||
+          a.name.localeCompare(b.name),
+      );
+    } else if ($("sltv-sort").value === "mirrors")
+      filtered.sort((a, b) => core.sources(b).length - core.sources(a).length);
+    if (reset) viewport.scrollTop = 0;
+    renderedStart = -1;
+    render();
+    $("sltv-count").textContent =
+      filtered.length.toLocaleString() +
+      " matching / " +
+      channels.length.toLocaleString() +
+      " total · " +
+      channels.filter((c) => c.status === "ok").length.toLocaleString() +
+      " observed OK · " +
+      channels
+        .filter((c) => c.status === "needs-player")
+        .length.toLocaleString() +
+      " need player options";
+    renderGroups();
+  }
+  function renderGroups() {
+    groups.hidden = !["countries", "categories"].includes(tab);
+    if (groups.hidden) return;
+    groups.replaceChildren();
+    const map = new Map();
+    channels.forEach((c) => {
+      const key =
+        tab === "countries"
+          ? c.country || c.cc || ""
+          : c.group || c.cat || "General";
+      map.set(key, (map.get(key) || 0) + 1);
+    });
+    [...map]
+      .sort((a, b) => String(a[0]).localeCompare(String(b[0])))
+      .forEach(([key, n]) => {
+        const b = node(
+          "button",
+          "",
+          ((tab === "countries" ? region(key) : key) || "Unspecified") +
+            " · " +
+            n,
+        );
+        b.type = "button";
+        b.onclick = () => {
+          if (tab === "countries") country.value = key || "__world";
+          else category.value = key;
+          setTab("all");
+        };
+        groups.appendChild(b);
+      });
+  }
+  root.querySelector(".sltv-hero .sltv-btn").onclick = (e) => {
+    e.preventDefault();
+    $("sltv-directory").scrollIntoView({
+      behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+      block: "start",
+    });
+  };
+  function setTab(value) {
+    tab = value;
+    root.querySelectorAll("[data-tab]").forEach((b) => {
+      b.setAttribute("aria-selected", String(b.dataset.tab === value));
+      b.tabIndex = b.dataset.tab === value ? 0 : -1;
+    });
+    filter();
+  }
+  viewport.addEventListener("scroll", () => requestAnimationFrame(render));
+  list.addEventListener("keydown", (e) => {
+    const b = e.target.closest("[data-index]");
+    if (!b || !["ArrowDown", "ArrowUp", "Home", "End"].includes(e.key)) return;
+    e.preventDefault();
+    let n = Number(b.dataset.index) + (e.key === "ArrowDown" ? 1 : -1);
+    if (e.key === "Home") n = 0;
+    if (e.key === "End") n = filtered.length - 1;
+    n = Math.min(Math.max(0, n), filtered.length - 1);
+    viewport.scrollTop = n * 88;
+    renderedStart = -1;
+    render();
+    list.querySelector('[data-index="' + n + '"]')?.focus();
+  });
+  root.querySelectorAll("[data-tab]").forEach((b) => {
+    b.onclick = () => setTab(b.dataset.tab);
+    b.addEventListener("keydown", (e) => {
+      if (!["ArrowLeft", "ArrowRight"].includes(e.key)) return;
+      e.preventDefault();
+      const tabs = [...root.querySelectorAll("[data-tab]")],
+        i = tabs.indexOf(b),
+        next =
+          tabs[
+            (i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length
+          ];
+      next.focus();
+      setTab(next.dataset.tab);
+    });
+  });
+  let searchTimer;
+  $("sltv-q").addEventListener("input", () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => filter(), 120);
+  });
+  [country, category, $("sltv-sort")].forEach(
+    (s) => (s.onchange = () => filter()),
+  );
+  $("sltv-reset").onclick = () => {
+    $("sltv-q").value = "";
+    country.value = "";
+    category.value = "";
+    setTab("all");
+  };
+  $("sltv-fav-current").onclick = () => {
+    if (current) favorite(current.id);
+  };
+  playerSel.onchange = startCurrent;
+  sourceSel.onchange = () => {
+    sourceIndex = Number(sourceSel.value);
+    startCurrent();
+  };
+  $("sltv-retry").onclick = startCurrent;
+  $("sltv-live-edge").onclick = () => {
+    if (video.seekable.length) {
+      video.currentTime = Math.max(
+        0,
+        video.seekable.end(video.seekable.length - 1) - 2,
+      );
+      video.play().catch(() => {});
+    } else status.textContent = "A live seek range is not available yet";
+  };
+  $("sltv-share").onclick = () =>
+    copy(location.href).then(
+      () => (status.textContent = "Channel link copied"),
+    );
+  $("sltv-fullscreen").onclick = () => {
+    if (player.requestFullscreen)
+      player
+        .requestFullscreen()
+        .catch(() => (status.textContent = "Fullscreen unavailable"));
+    else video.webkitEnterFullscreen?.();
+  };
+  $("sltv-pip").hidden = !document.pictureInPictureEnabled;
+  $("sltv-pip").onclick = () => {
+    if (video.readyState < 2) {
+      status.textContent = "Start browser playback first";
+      return;
+    }
+    (document.pictureInPictureElement
+      ? document.exitPictureInPicture()
+      : video.requestPictureInPicture()
+    ).catch(() => (status.textContent = "Picture in picture unavailable"));
+  };
+  Promise.all([
+    script("assets/js/live-tv-core.js?v=world-tv-20261122", "SLTVCore"),
+    script("data/livetv/channels.js?v=world-tv-20261122", "SM_LIVETV"),
+  ])
+    .then(([C, db]) => {
+      core = C;
+      channels = db.items;
+      let languageNames;
+      try {
+        languageNames = new Intl.DisplayNames(["en"], { type: "language" });
+      } catch {}
+      channels.forEach((ch) => {
+        ch.languageDisplay = String(ch.language || "")
+          .split(/[,;\s]+/)
+          .map((code) => {
+            try {
+              return languageNames?.of(code) || code;
+            } catch {
+              return code;
+            }
+          })
+          .join(", ");
+      });
+      runner = core.failover({
+        attempt,
+        onExhausted: () => {
+          clearMedia();
+          video.hidden = true;
+          player.dataset.state = "external";
+          message.textContent = "This channel is not playing in the browser.";
+          status.textContent =
+            "All browser mirrors tried · choose another player";
+          setExternal(
+            "All browser-compatible mirrors were tried. This channel remains listed. Try VLC, MX Player or an IPTV app below.",
+          );
+          event("failed");
+        },
+        onState: (item, n, total, outcome) => {
+          if (outcome !== "playing")
+            status.textContent =
+              "Trying mirror " +
+              (item.sourceIndex + 1) +
+              " · " +
+              item.engine +
+              " (" +
+              n +
+              "/" +
+              total +
+              ")";
+        },
+      });
+      $("sltv-total").textContent = channels.length.toLocaleString();
+      $("sltv-countries-count").textContent =
+        db.facets.countries.length.toLocaleString();
+      $("sltv-source-count").textContent = channels
+        .reduce((n, c) => n + (c.sources?.length || core.sources(c).length), 0)
+        .toLocaleString();
+      const addOption = (select, value, label) => {
+        const o = node("option", "", label);
+        o.value = value;
+        select.appendChild(o);
+      };
+      db.facets.countries
+        .sort((a, b) => region(a.k).localeCompare(region(b.k)))
+        .forEach((c) =>
+          addOption(country, c.k, region(c.k) + " (" + c.n + ")"),
+        );
+      db.facets.categories.forEach((c) =>
+        addOption(category, c.k, c.k + " (" + c.n + ")"),
+      );
+      if (channels.some((c) => !c.country && !c.cc))
+        addOption(country, "__world", "Worldwide / unspecified");
+      const qs = new URLSearchParams(location.hash.split("?")[1] || "");
+      new URLSearchParams(location.search).forEach((value, key) =>
+        qs.set(key, value),
+      );
+      $("sltv-epg").href =
+        window.SM_CONFIG?.liveTvEpgDirectory ||
+        db.epg ||
+        "https://iptv-org.github.io/api/guides.json";
+      country.value =
+        qs.get("country") === "UK" ? "GB" : qs.get("country") || "";
+      category.value = qs.get("category") || "";
+      $("sltv-q").value = qs.get("q") || "";
+      $("sltv-updated").textContent =
+        "Catalogue updated " +
+        new Date(db.snapshot).toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        }) +
+        " · " +
+        (db.health
+          ? "Health observations: " +
+            new Date(db.health.at).toLocaleDateString("en-GB")
+          : "Health checks pending");
+      const world = $("sltv-world-countries");
+      db.facets.countries
+        .sort((a, b) => region(a.k).localeCompare(region(b.k)))
+        .forEach((c) => {
+          const a = node("a", "sltv-country-link");
+          a.href = asset("live-tv/") + "?country=" + encodeURIComponent(c.k);
+          const flag = node("span", "sltv-country-code", c.k);
+          a.append(
+            flag,
+            node("strong", "", region(c.k)),
+            node("small", "", c.n + " channels"),
+          );
+          world.appendChild(a);
+        });
+      filter();
+      const ch = core.resolve(channels, qs.get("channel") || "");
+      if (ch) select(ch);
+      window.SLTVHub = {
+        select: (id) => {
+          const ch = core.resolve(channels, id);
+          if (ch) select(ch);
+        },
+        all: () => channels,
+        filtered: () => filtered,
+        stop: () => {
+          runner.stop();
+          clearMedia();
+        },
+      };
+    })
+    .catch((e) => {
+      $("sltv-count").textContent =
+        "The channel directory could not load. Refresh to try again.";
+      status.textContent = e.message;
+    });
+  document.addEventListener("sasta:view", (event) => {
+    if (event.detail?.view !== "tv" && runner) {
+      runner.stop();
+      clearMedia();
+      if (current)
+        status.textContent =
+          "Paused while browsing the site. Choose Retry to continue.";
+    }
+  });
+  window.addEventListener("beforeunload", () => {
+    runner?.stop();
+    blobs.forEach((u) => URL.revokeObjectURL(u));
+  });
 })();

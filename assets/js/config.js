@@ -30,5 +30,7 @@ window.SM_CONFIG = {
   freeDeliveryFrom: 5000,
   /* true = Live TV lists channels from data/livetv/channels.js (a full snapshot of the approved sltv list)
      instead of the WordPress API. Turn on only after that file has been built from all pages. */
+  liveTvEpgDirectory: 'https://iptv-org.github.io/api/guides.json',
+  liveTvPlaylist: '/data/livetv/playlist.m3u',
   liveTvSnapshot: true   /* data/livetv/channels.js = Free-TV/IPTV playlist, rebuilt daily by tools/build-livetv.mjs */
 };

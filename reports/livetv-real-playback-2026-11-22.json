@@ -1,0 +1,22 @@
+[
+  {
+    "sample": "real-dash",
+    "passed": true,
+    "width": 768,
+    "height": 432,
+    "currentTime": 2.065512,
+    "readyState": 4,
+    "state": "playing",
+    "errors": []
+  },
+  {
+    "sample": "real-hls",
+    "passed": true,
+    "width": 1920,
+    "height": 1080,
+    "currentTime": 83.613139,
+    "readyState": 4,
+    "state": "playing",
+    "errors": []
+  }
+]

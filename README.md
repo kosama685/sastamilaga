@@ -16,7 +16,7 @@ files, and crawlable HTML pages are generated ahead of time and committed.
 | Global category pages | `c/global/*.html` | 573 |
 | Global product videos | `data/cj/videos.js` | 5,804 |
 | Airports for flight search (OurAirports, public domain) | `data/travel/airports.js` | 4,133 |
-| Live TV channels | live sltv API (local snapshot pending, see below) | 10,619 on the API |
+| Live TV channels | `data/livetv/channels.js` + all-mirror `playlist.m3u` | 17,463 channels / 191 countries |
 
 Global product prices are the supplier's US$ price plus margin, shown as estimates. Orders for them are sent as a
 WhatsApp request and confirmed by the team before payment.
@@ -33,7 +33,7 @@ description, canonical URL and JSON-LD.
 ## Scripts
 
 - `assets/js/local-api.js` answers flight airport suggestions from `data/travel/airports.js`, so they work without the
-  WordPress API. It can do the same for Live TV listings once the channel snapshot exists (`liveTvSnapshot`). Hotel city lookup uses the live
+  WordPress API. Live TV also uses the complete local snapshot (`liveTvSnapshot: true`). Hotel city lookup uses the live
   API because the booking partner needs its own city IDs.
 - `assets/js/checkout.js` adds PayPal when `paypalClientId` is set in `assets/js/config.js`. Only the public Client ID
   goes there, never the secret.
@@ -58,11 +58,22 @@ python -m http.server 8000
 
 Then open http://localhost:8000.
 
+## World TV maintenance
+
+Open [the live directory](https://sastamilaga.com/live-tv/). The static catalogue retains all archived WordPress streams and merges iptv-org country/category/language playlists, Free-TV, epg.pw and regional lists. Mirror sources, favourites, recent viewing, country filters and the virtualized list work without WordPress. HLS/native/DASH and supported embeds attempt browser playback; installed-player links remain available when a source cannot play.
+
+```sh
+node tools/build-livetv.mjs
+node tools/check-livetv.mjs
+node tools/verify-livetv-coverage.mjs
+node --test tools/build-livetv.test.mjs tools/check-livetv.test.mjs tools/live-tv-hub.test.mjs
+```
+
+The daily `livetv-refresh.yml` workflow rebuilds, audits and validates data before dispatching the central Pages deployment. Failed probes never delete channels. Review `data/livetv/build-report.json` for feed failures and `playback-report.json` for dated regional observations. See [the release guide](docs/world-tv-release-2026-11-22.md) for playback behaviour, complete verification, browser testing and asset provenance.
+
 ## Known limits
 
-- Live TV still reads from the WordPress sltv API, which is slow (about 50 s per page) and sometimes times out (524).
-  `local-api.js` can serve a local snapshot once `data/livetv/channels.js` holds all 177 pages; then set
-  `liveTvSnapshot: true` in `assets/js/config.js`.
+- Live TV preserves every source, including unreachable, HTTP-only and app-only sources. Broadcaster availability, regional restrictions, CORS and codecs affect playback; no browser can guarantee every upstream stream.
 
 - PayPal is off until a public Client ID is added. A server-side endpoint is needed to verify payments, and GitHub Pages
   cannot run one.

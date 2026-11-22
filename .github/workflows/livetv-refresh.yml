@@ -1,55 +1,47 @@
-# Independent Live TV maintenance: never block scheduled blog publishing.
 name: Refresh Live TV channels
 on:
   schedule:
-    - cron: '30 3 * * 1'
+    - cron: '30 3 * * *'
   workflow_dispatch:
-
 permissions:
   contents: write
-  pages: write
-  id-token: write
-
+  actions: write
 concurrency:
-  group: pages
+  group: livetv-refresh
   cancel-in-progress: false
-
 jobs:
   refresh:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
-        with:
-          node-version: '20'
-      - name: Refresh and inspect supplier channel list (bounded)
-        timeout-minutes: 25
-        run: node tools/build-livetv.mjs --check
-      - name: Commit Live TV data only
+        with: {node-version: '24'}
+      - name: Merge all public playlist feeds without deleting prior channels
+        run: node tools/build-livetv.mjs
+      - name: Observe every unique stream URL and preserve unavailable entries
+        timeout-minutes: 50
+        run: node tools/check-livetv.mjs
+      - name: Verify retained coverage and source integrity
+        run: node tools/verify-livetv-coverage.mjs
+      - name: Commit only channel data
         id: commit
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "sasta-milaga-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A data/livetv
+          git add data/livetv
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
-            git commit -m "Refresh Live TV channel snapshot"
+            git commit -m "Refresh complete World TV catalogue and stream observations"
+            git pull --rebase origin main
             git push origin HEAD:main
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
-      - uses: actions/configure-pages@v6
+      - name: Deploy through the central Pages workflow
         if: steps.commit.outputs.changed == 'true'
-      - uses: actions/upload-pages-artifact@v5
-        if: steps.commit.outputs.changed == 'true'
-        with:
-          path: '.'
-      - uses: actions/deploy-pages@v5
-        if: steps.commit.outputs.changed == 'true'
-        id: deployment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run static.yml --ref main
