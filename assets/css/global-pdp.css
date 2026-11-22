@@ -50,9 +50,9 @@
 .sm-gpdp-page .gpdp-status.is-ok { color: var(--sm-green, #0F7A3B); font-weight: 700; }
 .sm-gpdp-page .gpdp-status.is-warn { color: #9a3b00; font-weight: 600; }
 .sm-gpdp-page .gpdp-status a { color: inherit; text-decoration: underline; margin-left: 4px; }
-/* match the local product page exactly: the base theme rule (.buy-panel{position:sticky;top:140px}) is overridden to 16px there;
-   buttons here are <button> elements, so mirror the local <a> button colours, weight and height */
-.sm-gpdp-page section.pdp .buy-panel { top: 16px; }
+/* Align the sticky purchase panel to the top as requested; preserve existing purchase handlers.
+   Buttons here are <button> elements, so mirror the local <a> button colours, weight and height. */
+.sm-gpdp-page section.pdp .buy-panel { top: 0px; }
 .sm-gpdp-page .buy-actions .primary-btn, .sm-gpdp-page .buy-actions .ghost-btn { min-height: 46px; font-weight: 700; font-family: inherit; cursor: pointer; }
 .sm-gpdp-page .buy-actions .ghost-btn { color: #fff !important; background: var(--sm-green, #0F7A3B); border-color: #fff; }
 .sm-gpdp-page .buy-actions .ghost-btn:hover { background: var(--sm-green-dark, #0B5E2D); }
