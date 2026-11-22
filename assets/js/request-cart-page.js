@@ -10,7 +10,7 @@ function render(){
  list.forEach(function(r){
   var box=document.createElement('div');box.className='row';
   var name=document.createElement('strong');name.textContent=r.name;
-  var meta=document.createElement('p');meta.textContent=r.sku+' · '+r.type.toUpperCase()+' · '+(r.unit===null?'Quote required':r.currency+' '+r.unit.toFixed(2))+' per unit (subject to final confirmation)';
+  var meta=document.createElement('p');var options=(r.attributes||[]).map(function(a){return a.attribute+': '+a.value;}).join(', ');meta.textContent=r.sku+' · '+r.type.toUpperCase()+(r.vname?' · Variant: '+r.vname:'')+(options?' · '+options:'')+' · '+(r.unit===null?'Quote required':r.currency+' '+r.unit.toFixed(2))+' per unit (subject to final confirmation)';
   var control=document.createElement('div');control.className='controls';
   var qty=document.createElement('input');qty.type='number';qty.min=1;qty.max=99;qty.step=1;qty.value=r.qty;
   qty.setAttribute('aria-label','Quantity for '+r.name);

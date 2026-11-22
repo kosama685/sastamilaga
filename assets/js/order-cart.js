@@ -28,7 +28,7 @@
     if(!clean(r.id,128)||(!quotePending&&(!Number.isFinite(unit)||unit<=0))||!Number.isInteger(qty)||qty<1||qty>MAX_QTY)return null;
     var attrs=Array.isArray(r.attributes)?r.attributes.slice(0,12).map(function(a){
       return {attribute:clean(a&&a.attribute,60),value:clean(a&&a.value,120)};
-    }):[];
+    }).filter(function(a){return a.attribute&&a.value;}).sort(function(a,b){return a.attribute.localeCompare(b.attribute)||a.value.localeCompare(b.value);}):[];
     var url=clean(r.url,900);
     try{var u=new URL(url,g.location.href);if(u.protocol!=='https:'||(u.hostname!=='sastamilaga.com'&&!u.hostname.endsWith('.sastamilaga.com')))url='';else url=u.href;}catch(e){url=''}
     return {type:r.type,id:clean(r.id,128),sku:clean(r.sku||r.id,128),name:clean(r.name||r.sku||r.id,240),
@@ -68,7 +68,7 @@
   function summary(){
     var t=totals();
     var lines=read().map(function(r,i){return (i+1)+'. '+r.name+' | SKU: '+r.sku+
-      (r.vname?' | Variant: '+r.vname:'')+' | '+r.qty+' × '+(r.unit===null?'price/stock/shipping pending':r.currency+' '+r.unit.toFixed(2))+
+      (r.vname?' | Variant: '+r.vname:'')+(r.attributes.length?' | Options: '+r.attributes.map(function(a){return a.attribute+'='+a.value;}).join(', '):'')+' | '+r.qty+' × '+(r.unit===null?'price/stock/shipping pending':r.currency+' '+r.unit.toFixed(2))+
       (r.url?' | '+r.url:'');});
     return lines.join('\n')+'\nLocal PKR subtotal: '+t.local.subtotal.toFixed(2)+
       '\nLocal delivery indication (Pakistan only): '+t.local.shippingEstimate.toFixed(2)+
