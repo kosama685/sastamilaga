@@ -19,4 +19,4 @@ export async function handle(request,fetcher=fetch){
  if(!upstream.ok)headers.set('X-Robots-Tag','noindex');
  return new Response(request.method==='HEAD'?null:upstream.body,{status:upstream.status,headers});
 }
-export default {fetch:handle};
+export default {fetch(request){return handle(request);}};
