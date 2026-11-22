@@ -99,3 +99,14 @@ test('request checkout collects PayPal/card preference but never claims paid for
  assert.match(js,/values.set\('customer_requested_payment'/);
  assert.doesNotMatch(js,/payment_status','PAID'/);
 });
+
+test('global product PDP sends chosen CJ SKU and quantity to same request cart',()=>{
+ const code=read('assets/js/global-pdp.js');
+ assert.match(code,/requestCartReady\(\)\.then\(function \(cart\)/);
+ assert.match(code,/sku:String\(o\.sku\|\|P\.sku\|\|P\.pid\)/);
+ assert.match(code,/vkey:String\(o\.vid\|\|''\)/);
+ assert.match(code,/qty:qty\(\),url:location\.href/);
+ assert.match(code,/location\.href='\/order\/\?country='/);
+ assert.doesNotMatch(code,/api\('\/wp-json\/gdcs\/v1\/live\/cart'/);
+ assert.match(code,/var can=!!\(state\.option&&state\.option\.vid\)/);
+});
