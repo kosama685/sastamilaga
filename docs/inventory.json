@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-21T15:47:27Z",
+  "checked_at": "2026-11-22T20:22:19Z",
   "token": {
     "success": true,
     "status": "active"
@@ -248,7 +248,7 @@
       },
       {
         "id": "sasta-global-pdp-v6",
-        "modified_on": "2026-11-21T15:45:49.712968Z",
+        "modified_on": "2026-11-21T15:48:22.23792Z",
         "created_on": "2026-11-21T07:57:46.631339Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-01"
@@ -346,7 +346,7 @@
       },
       {
         "id": "sasta-live-tv-static-v2",
-        "modified_on": "2026-11-12T05:34:36.784621Z",
+        "modified_on": "2026-11-22T20:20:41.39862Z",
         "created_on": "2026-11-11T04:35:16.296202Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-11"
@@ -395,7 +395,7 @@
       },
       {
         "id": "sasta-robots-policy-v1",
-        "modified_on": "2026-11-16T05:35:23.77291Z",
+        "modified_on": "2026-11-22T20:20:51.51667Z",
         "created_on": "2026-11-16T05:28:32.446362Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-16"
@@ -471,6 +471,13 @@
         "compatibility_date": "2026-11-04"
       },
       {
+        "id": "sasta-woo-namecheap-bridge-v1",
+        "modified_on": "2026-11-21T17:52:08.318411Z",
+        "created_on": "2026-11-21T17:51:55.140945Z",
+        "usage_model": "standard",
+        "compatibility_date": "2026-11-21"
+      },
+      {
         "id": "sasta-wp-cron-autopilot",
         "modified_on": "2026-11-07T10:19:56.758704Z",
         "created_on": "2026-10-28T18:10:32.736251Z",
@@ -479,28 +486,28 @@
       },
       {
         "id": "sastamilaga-cj-shipping",
-        "modified_on": "2026-11-21T15:45:56.353481Z",
+        "modified_on": "2026-11-22T20:20:54.694701Z",
         "created_on": "2026-11-11T03:54:36.589467Z",
         "usage_model": "standard",
         "compatibility_date": "2025-07-18"
       },
       {
         "id": "sastamilaga-global-pages",
-        "modified_on": "2026-11-21T15:46:04.650128Z",
+        "modified_on": "2026-11-22T20:21:02.577162Z",
         "created_on": "2026-11-11T03:54:44.151298Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-paypal",
-        "modified_on": "2026-11-21T15:46:01.064236Z",
+        "modified_on": "2026-11-22T20:20:58.992362Z",
         "created_on": "2026-11-11T03:54:41.174076Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-redirects",
-        "modified_on": "2026-11-21T15:46:09.284157Z",
+        "modified_on": "2026-11-22T20:21:07.383613Z",
         "created_on": "2026-11-11T05:14:22.59741Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
@@ -535,24 +542,12 @@
     "success": true,
     "routes": [
       {
-        "pattern": "www.sastamilaga.com/*",
-        "script": "sasta-canonical-sync-v11"
-      },
-      {
-        "pattern": "sastamilaga.com/cjv/*",
-        "script": "sasta-cj-video-proxy"
+        "pattern": "sastamilaga.com/assets/theme/live-tv-discovery.css",
+        "script": "sasta-live-tv-static-v2"
       },
       {
         "pattern": "sastamilaga.com/api/cj/*",
         "script": "sasta-cj-variants-shipping"
-      },
-      {
-        "pattern": "sastamilaga.com/feeds/google-merchant.xml",
-        "script": "sastamilaga-global-pages"
-      },
-      {
-        "pattern": "sastamilaga.com/feeds/global/*",
-        "script": "sastamilaga-global-pages"
       },
       {
         "pattern": "sastamilaga.com/smcs-oauth/*",
@@ -563,47 +558,47 @@
         "script": "sasta-catalog-readonly-v1"
       },
       {
-        "pattern": "sastamilaga.com/live-tv/*",
-        "script": "sasta-live-tv-static-v2"
+        "pattern": "sastamilaga.com/__ops-health.json",
+        "script": "sasta-ops-guard-v1"
       },
       {
-        "pattern": "sastamilaga.com/live-tv",
-        "script": "sasta-live-tv-static-v2"
+        "pattern": "sastamilaga.com/__cj-preview/*",
+        "script": "sasta-cj-storefront-preview-v1"
       },
       {
-        "pattern": "sastamilaga.com/contact/*",
-        "script": "sastamilaga-redirects"
+        "pattern": "sastamilaga.com/global-shop/p/*",
+        "script": "sasta-global-pdp-v6"
       },
       {
-        "pattern": "sastamilaga.com/product-tag/*",
-        "script": "sastamilaga-redirects"
+        "pattern": "sastamilaga.com/account/*",
+        "script": "sasta-cj-storefront-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/global/g/*",
+        "script": "sasta-clean-global-route-v1"
       },
       {
         "pattern": "sastamilaga.com/refer-and-earn/",
         "script": "sastamilaga-redirects"
       },
       {
-        "pattern": "sastamilaga.com/terms-conditions/",
+        "pattern": "sastamilaga.com/blog/online-earning-pakistan-content-sales-rewards/",
         "script": "sastamilaga-redirects"
       },
       {
-        "pattern": "sastamilaga.com/rewards-program/",
-        "script": "sastamilaga-redirects"
+        "pattern": "sastamilaga.com/feed-cj.*",
+        "script": "sasta-cj-storefront-v1"
       },
       {
-        "pattern": "sastamilaga.com/videos/*",
-        "script": "sastamilaga-redirects"
+        "pattern": "sastamilaga.com/search*",
+        "script": "sasta-cj-storefront-v1"
       },
       {
-        "pattern": "sastamilaga.com/ur/sell-with-us/",
-        "script": "sastamilaga-redirects"
+        "pattern": "sastamilaga.com/ships-from/*",
+        "script": "sasta-cj-storefront-v1"
       },
       {
-        "pattern": "sastamilaga.com/ur/privacy-policy/",
-        "script": "sastamilaga-redirects"
-      },
-      {
-        "pattern": "sastamilaga.com/ur/store/*",
+        "pattern": "sastamilaga.com/blog/best-abayas-hijabs-to-buy-in-pakistan-practical-shopping-guide/",
         "script": "sastamilaga-redirects"
       },
       {
@@ -611,35 +606,71 @@
         "script": "sastamilaga-redirects"
       },
       {
+        "pattern": "sastamilaga.com/sitemaps/global/*",
+        "script": "sasta-sitemap-legacy-canonical-v1"
+      },
+      {
         "pattern": "sastamilaga.com/ur/terms-conditions/",
         "script": "sastamilaga-redirects"
       },
       {
-        "pattern": "sastamilaga.com/shipping-delivery/",
+        "pattern": "sastamilaga.com/brand/*",
+        "script": "sasta-cj-storefront-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/digital-marketing/",
         "script": "sastamilaga-redirects"
       },
       {
-        "pattern": "sastamilaga.com/ur/visa/*",
+        "pattern": "sastamilaga.com/visa/*",
         "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/store/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/guides/*",
+        "script": "sasta-cj-storefront-v1"
       },
       {
         "pattern": "sastamilaga.com/track-order/",
         "script": "sastamilaga-redirects"
       },
       {
-        "pattern": "sastamilaga.com/product-category/*",
+        "pattern": "sastamilaga.com/sitemap-global-qualified.xml",
+        "script": "sasta-qualified-sitemaps-quota-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/visa/*",
         "script": "sastamilaga-redirects"
       },
       {
-        "pattern": "sastamilaga.com/sell-with-us/",
+        "pattern": "sastamilaga.com/ur/",
         "script": "sastamilaga-redirects"
       },
       {
-        "pattern": "sastamilaga.com/ur/product-category/*",
+        "pattern": "sastamilaga.com/shipping-policy/",
+        "script": "sasta-cj-storefront-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/best-bags-to-buy-in-karachi-practical-shopping-guide/",
         "script": "sastamilaga-redirects"
       },
       {
-        "pattern": "sastamilaga.com/returns-refunds/",
+        "pattern": "sastamilaga.com/sitemap-cj-images.xml",
+        "script": "sasta-cj-storefront-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/sitemap.xml",
+        "script": "sasta-static-blog-reader"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/holiday-gift-budget-including-delivery-costs/",
+        "script": "sasta-static-blog-reader"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/travel/",
         "script": "sastamilaga-redirects"
       },
       {
@@ -647,16 +678,160 @@
         "script": "sastamilaga-redirects"
       },
       {
+        "pattern": "sastamilaga.com/blog/winter-kitchen-essentials-pakistan/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/cjv/*",
+        "script": "sasta-cj-video-proxy"
+      },
+      {
+        "pattern": "sastamilaga.com/feeds/google-merchant.xml",
+        "script": "sastamilaga-global-pages"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/best-art-craft-materials-to-buy-in-rawalpindi-practical-shopping-guide/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/cj-media/*",
+        "script": "sasta-cj-storefront-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/videos/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/global/c/*",
+        "script": "sasta-global-category-legacy-route-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/sitemap-pages.xml",
+        "script": "sasta-pages-sitemap-dedupe-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/",
+        "script": "sasta-static-blog-reader"
+      },
+      {
+        "pattern": "sastamilaga.com/rewards-program/",
+        "script": "sastamilaga-redirects"
+      },
+      {
         "pattern": "sastamilaga.com/ur/shipping-delivery/",
         "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/global-shop/sitemap.xml",
+        "script": "sasta-sitemap-legacy-canonical-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/feeds/global/*",
+        "script": "sastamilaga-global-pages"
+      },
+      {
+        "pattern": "sastamilaga.com/product-tag/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/sitemap-cj.xml",
+        "script": "sasta-cj-storefront-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/shipping-delivery/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/best-academic-books-to-buy-in-karachi-practical-shopping-guide/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/global/p/*",
+        "script": "sasta-global-legacy-resilient-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/robots.txt",
+        "script": "sasta-robots-policy-v1"
       },
       {
         "pattern": "sastamilaga.com/ur/product/*",
         "script": "sastamilaga-redirects"
       },
       {
-        "pattern": "sastamilaga.com/ur/",
+        "pattern": "sastamilaga.com/returns-refunds/",
         "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/sitemaps/global-qualified/*",
+        "script": "sasta-qualified-sitemaps-quota-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/sell-with-us/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/product/*",
+        "script": "sasta-cj-storefront-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/terms-conditions/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/live-tv/*",
+        "script": "sasta-live-tv-static-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/privacy-policy/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/sitemap-cj-products.xml",
+        "script": "sasta-cj-storefront-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/faq/*",
+        "script": "sasta-cj-storefront-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/sell-with-us/",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/sitemap-cj-categories.xml",
+        "script": "sasta-cj-storefront-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/product-category/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/contact/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/live-tv",
+        "script": "sasta-live-tv-static-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/blog/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/videos/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/sitemap-cj-guides.xml",
+        "script": "sasta-cj-storefront-v1"
+      },
+      {
+        "pattern": "sastamilaga.com/ur/product-category/*",
+        "script": "sastamilaga-redirects"
+      },
+      {
+        "pattern": "sastamilaga.com/sitemap-global-products.xml",
+        "script": "sasta-sitemap-legacy-canonical-v1"
       },
       {
         "pattern": "sastamilaga.com/privacy-policy/",
@@ -667,39 +842,7 @@
         "script": "sastamilaga-redirects"
       },
       {
-        "pattern": "sastamilaga.com/ur/videos/*",
-        "script": "sastamilaga-redirects"
-      },
-      {
-        "pattern": "sastamilaga.com/visa/*",
-        "script": "sastamilaga-redirects"
-      },
-      {
-        "pattern": "sastamilaga.com/blog/winter-kitchen-essentials-pakistan/",
-        "script": "sastamilaga-redirects"
-      },
-      {
-        "pattern": "sastamilaga.com/ur/travel/",
-        "script": "sastamilaga-redirects"
-      },
-      {
-        "pattern": "sastamilaga.com/blog/best-art-craft-materials-to-buy-in-rawalpindi-practical-shopping-guide/",
-        "script": "sastamilaga-redirects"
-      },
-      {
-        "pattern": "sastamilaga.com/blog/best-bags-to-buy-in-karachi-practical-shopping-guide/",
-        "script": "sastamilaga-redirects"
-      },
-      {
-        "pattern": "sastamilaga.com/blog/online-earning-pakistan-content-sales-rewards/",
-        "script": "sastamilaga-redirects"
-      },
-      {
-        "pattern": "sastamilaga.com/blog/best-academic-books-to-buy-in-karachi-practical-shopping-guide/",
-        "script": "sastamilaga-redirects"
-      },
-      {
-        "pattern": "sastamilaga.com/blog/best-abayas-hijabs-to-buy-in-pakistan-practical-shopping-guide/",
+        "pattern": "sastamilaga.com/language-currency/",
         "script": "sastamilaga-redirects"
       },
       {
@@ -707,188 +850,96 @@
         "script": "sastamilaga-redirects"
       },
       {
-        "pattern": "sastamilaga.com/blog/*",
-        "script": "sastamilaga-redirects"
-      },
-      {
-        "pattern": "sastamilaga.com/digital-marketing/",
-        "script": "sastamilaga-redirects"
-      },
-      {
-        "pattern": "sastamilaga.com/language-currency/",
-        "script": "sastamilaga-redirects"
-      },
-      {
-        "pattern": "sastamilaga.com/live-tv/category/*",
-        "script": "sastamilaga-redirects"
-      },
-      {
-        "pattern": "sastamilaga.com/blog/",
-        "script": "sasta-static-blog-reader"
-      },
-      {
-        "pattern": "sastamilaga.com/blog/holiday-gift-budget-including-delivery-costs/",
-        "script": "sasta-static-blog-reader"
+        "pattern": "sastamilaga.com/category/*",
+        "script": "sasta-cj-storefront-v1"
       },
       {
         "pattern": "sastamilaga.com/blog/bluetooth-speaker-watts-vs-real-world-loudness/",
         "script": "sasta-static-blog-reader"
       },
       {
-        "pattern": "sastamilaga.com/blog/sitemap.xml",
-        "script": "sasta-static-blog-reader"
+        "pattern": "sastamilaga.com/order-pay*",
+        "script": "sasta-woo-namecheap-bridge-v1"
       },
       {
-        "pattern": "sastamilaga.com/robots.txt",
-        "script": "sasta-robots-policy-v1"
+        "pattern": "sastamilaga.com/cart*",
+        "script": "sasta-woo-namecheap-bridge-v1"
       },
       {
-        "pattern": "sastamilaga.com/__ops-health.json",
-        "script": "sasta-ops-guard-v1"
+        "pattern": "sastamilaga.com/my-account*",
+        "script": "sasta-woo-namecheap-bridge-v1"
       },
       {
-        "pattern": "sastamilaga.com/assets/js/cj-storefront.js",
-        "script": "sasta-cj-storefront-v1"
+        "pattern": "sastamilaga.com/wp-content*",
+        "script": "sasta-woo-namecheap-bridge-v1"
       },
       {
-        "pattern": "sastamilaga.com/__cj-preview/*",
-        "script": "sasta-cj-storefront-preview-v1"
+        "pattern": "sastamilaga.com/wc-api*",
+        "script": "sasta-woo-namecheap-bridge-v1"
       },
       {
-        "pattern": "sastamilaga.com/global/p/*",
-        "script": "sasta-global-legacy-resilient-v2"
+        "pattern": "sastamilaga.com/wp-login.php*",
+        "script": "sasta-woo-namecheap-bridge-v1"
       },
       {
-        "pattern": "sastamilaga.com/global-shop/p/*",
-        "script": "sasta-global-pdp-v6"
+        "pattern": "sastamilaga.com/wp-admin*",
+        "script": "sasta-woo-namecheap-bridge-v1"
       },
       {
-        "pattern": "sastamilaga.com/assets/js/cj-storefront.js*",
-        "script": "sasta-cj-storefront-v1"
+        "pattern": "sastamilaga.com/order-received*",
+        "script": "sasta-woo-namecheap-bridge-v1"
       },
       {
-        "pattern": "sastamilaga.com/sitemap-global-products.xml",
-        "script": "sasta-sitemap-legacy-canonical-v1"
+        "pattern": "sastamilaga.com/checkout*",
+        "script": "sasta-woo-namecheap-bridge-v1"
       },
       {
-        "pattern": "sastamilaga.com/cj-media/*",
-        "script": "sasta-cj-storefront-v1"
+        "pattern": "sastamilaga.com/wp-json*",
+        "script": "sasta-woo-namecheap-bridge-v1"
       },
       {
-        "pattern": "sastamilaga.com/feed-cj.*",
-        "script": "sasta-cj-storefront-v1"
+        "pattern": "sastamilaga.com/wp-includes*",
+        "script": "sasta-woo-namecheap-bridge-v1"
       },
       {
-        "pattern": "sastamilaga.com/global-shop/sitemap.xml",
-        "script": "sasta-sitemap-legacy-canonical-v1"
+        "pattern": "sastamilaga.com/assets/js/local-api.js",
+        "script": "sasta-live-tv-static-v2"
       },
       {
-        "pattern": "sastamilaga.com/sitemaps/global/*",
-        "script": "sasta-sitemap-legacy-canonical-v1"
+        "pattern": "sastamilaga.com/assets/js/config.js",
+        "script": "sasta-live-tv-static-v2"
       },
       {
-        "pattern": "sastamilaga.com/guides/*",
-        "script": "sasta-cj-storefront-v1"
+        "pattern": "sastamilaga.com/sitemap-livetv.xml",
+        "script": "sasta-live-tv-static-v2"
       },
       {
-        "pattern": "sastamilaga.com/sitemap-cj-categories.xml",
-        "script": "sasta-cj-storefront-v1"
+        "pattern": "sastamilaga.com/data/livetv/*",
+        "script": "sasta-live-tv-static-v2"
       },
       {
-        "pattern": "sastamilaga.com/llms.txt",
-        "script": "sasta-cj-storefront-v1"
+        "pattern": "sastamilaga.com/live-tv/category/*",
+        "script": "sastamilaga-redirects"
       },
       {
-        "pattern": "sastamilaga.com/sitemap-cj-guides.xml",
-        "script": "sasta-cj-storefront-v1"
+        "pattern": "sastamilaga.com/app.js",
+        "script": "sasta-live-tv-static-v2"
       },
       {
-        "pattern": "sastamilaga.com/shop",
-        "script": "sasta-cj-storefront-v1"
+        "pattern": "sastamilaga.com/assets/js/live-tv-*",
+        "script": "sasta-live-tv-static-v2"
       },
       {
-        "pattern": "sastamilaga.com/brand/*",
-        "script": "sasta-cj-storefront-v1"
+        "pattern": "sastamilaga.com/assets/vendor/*",
+        "script": "sasta-live-tv-static-v2"
       },
       {
-        "pattern": "sastamilaga.com/faq/*",
-        "script": "sasta-cj-storefront-v1"
+        "pattern": "sastamilaga.com/assets/images/livetv/*",
+        "script": "sasta-live-tv-static-v2"
       },
       {
-        "pattern": "sastamilaga.com/search*",
-        "script": "sasta-cj-storefront-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/c/global/*",
-        "script": "sasta-static-html-normalizer-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/ships-from/*",
-        "script": "sasta-cj-storefront-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/sitemap-global-qualified.xml",
-        "script": "sasta-qualified-sitemaps-quota-v2"
-      },
-      {
-        "pattern": "sastamilaga.com/account/*",
-        "script": "sasta-cj-storefront-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/llms-full.txt",
-        "script": "sasta-cj-storefront-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/sitemaps/global-qualified/*",
-        "script": "sasta-qualified-sitemaps-quota-v2"
-      },
-      {
-        "pattern": "sastamilaga.com/shop/*",
-        "script": "sasta-shop-category-alias-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/sitemap-cj-products.xml",
-        "script": "sasta-cj-storefront-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/category/*",
-        "script": "sasta-cj-storefront-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/shipping-policy/",
-        "script": "sasta-cj-storefront-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/sitemap-cj.xml",
-        "script": "sasta-cj-storefront-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/sitemap-cj-images.xml",
-        "script": "sasta-cj-storefront-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/global/g/*",
-        "script": "sasta-clean-global-route-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/global/c/*",
-        "script": "sasta-global-category-legacy-route-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/p/*",
-        "script": "sasta-static-html-normalizer-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/*",
-        "script": "sasta-canonical-sync-v11"
-      },
-      {
-        "pattern": "sastamilaga.com/product/*",
-        "script": "sasta-cj-storefront-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/sitemap-pages.xml",
-        "script": "sasta-pages-sitemap-dedupe-v1"
+        "pattern": "sastamilaga.com/assets/theme/live-tv-hub.css",
+        "script": "sasta-live-tv-static-v2"
       }
     ]
   },
@@ -913,7 +964,7 @@
         "name": "sastamilaga",
         "uuid": "ac28088f-6a54-4d29-8c64-821661efe88f",
         "created_at": "2026-11-07T16:43:12.023Z",
-        "file_size": 330420224,
+        "file_size": 330485760,
         "num_tables": 0
       },
       {
