@@ -134,3 +134,18 @@ test("matching stream APIs retain request requirements and quality without overw
   assert.equal(items[0].sources[0].quality, "1080p");
   assert.equal(items[0].sources[0].referrer, "https://broadcaster.test/");
 });
+
+
+test("full schedules search genuine titles and descriptions, normalize accents and reject invalid times", () => {
+  const rows = [
+    {title:"Evening News", description:"World headlines", start:"2026-11-23T18:00:00Z", stop:"2026-11-23T19:00:00Z"},
+    {title:"Cafe cinema", description:"Drama", start:"2026-11-23T15:00:00Z", stop:"2026-11-23T16:00:00Z"},
+    {title:"Invalid", start:"bad", stop:"bad"},
+    {title:"Reversed", start:"2026-11-23T19:00:00Z", stop:"2026-11-23T18:00:00Z"}
+  ];
+  assert.equal(D.scheduleRows(rows).length,2);
+  assert.equal(D.scheduleRows(rows)[0].title,"Cafe cinema");
+  assert.equal(D.scheduleRows(rows,"world news")[0].title,"Evening News");
+  assert.equal(D.scheduleRows(rows,"nonexistent").length,0);
+  assert.equal(D.scheduleRows(null).length,0);
+});

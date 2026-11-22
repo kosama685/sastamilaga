@@ -21,6 +21,15 @@
       next: rows.find((p) => Date.parse(p.start) > now) || null,
     };
   }
+  function scheduleRows(programmes, query = "") {
+    const fold = (value) => String(value || "").normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const words = fold(query).trim().split(/\s+/).filter(Boolean);
+    return (Array.isArray(programmes) ? programmes : []).filter(p =>
+      typeof p?.title === "string" && Number.isFinite(Date.parse(p.start)) &&
+      Number.isFinite(Date.parse(p.stop)) && Date.parse(p.stop) > Date.parse(p.start) &&
+      words.every(word => fold(p.title + " " + (p.description || "")).includes(word))
+    ).sort((a,b) => Date.parse(a.start) - Date.parse(b.start));
+  }
   async function detectCountry() {
     try {
       const r = await fetch("/cdn-cgi/trace", {
@@ -73,6 +82,7 @@
   g.SLTVDiscovery = Object.freeze({
     countryFromTrace,
     nowNext,
+    scheduleRows,
     detectCountry,
     programmes,
   });

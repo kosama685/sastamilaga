@@ -62,6 +62,15 @@ function page(url, title, description, body, items = [], index = true) {
         "@type": "ItemList",
         "@id": full + "#list",
         numberOfItems: items.length,
+        itemListElement: items.map((channel, i) => ({
+          "@type": "ListItem", position: i + 1,
+          item: {"@type": "BroadcastService", name: channel.name,
+            alternateName: channel.alternateNames || [],
+            url: site + "/live-tv/?channel=" + encodeURIComponent(channel.id),
+            broadcastDisplayName: channel.name,
+            ...(channel.languages?.length ? {inLanguage: channel.languages} : {}),
+            ...(channel.country ? {areaServed: {"@type":"Country", identifier:channel.country}} : {})}
+        })),
       },
     ],
   };
@@ -96,7 +105,7 @@ function listings(
     const cards = subset
       .map((c) => {
         coverage.add(c.id);
-        return `<li><a class="tv-channel" href="/live-tv/?channel=${encodeURIComponent(c.id)}"><strong>${esc(c.name)}</strong><span>${esc(c.languageDisplay || c.language || c.country || "International")} · ${c.sources.length} source${c.sources.length === 1 ? "" : "s"}</span></a><small>${esc(state(c))}</small></li>`;
+        return `<li><a class="tv-channel" href="/live-tv/?channel=${encodeURIComponent(c.id)}"><strong>${esc(c.name)}</strong><span>${esc(c.languageDisplay || c.language || c.country || "International")} · ${c.sources.length} source${c.sources.length === 1 ? "" : "s"}</span></a><small>${esc(state(c))}</small>${c.alternateNames?.length ? `<p>Also known as ${esc(c.alternateNames.join(", "))}</p>` : ""}<details><summary>Channel sources and programme guide</summary><p>${esc(c.name)} live broadcast, available mirrors and supplied TV schedule. ${esc(c.sources.length ? "Open the player to compare every supplied source URL and search the channel programme guide." : "No public source has been supplied; broadcaster availability may change.")}</p><a href="/live-tv/?channel=${encodeURIComponent(c.id)}">Watch ${esc(c.name)} and view its TV schedule</a></details></li>`;
       })
       .join("");
     page(
@@ -128,7 +137,7 @@ for (const c of meta.countries) {
     `Explore ${c.name} television channels, public live-stream sources, available programme listings and player alternatives. Availability depends on the broadcaster.`,
     rows,
     "country=" + c.code,
-    true,
+    false,
   );
 }
 page(
@@ -159,7 +168,7 @@ for (const cat of meta.categories.filter((c) => c.id !== "xxx")) {
     `Browse ${cat.name.toLowerCase()} television channels. ${cat.description || ""} Compare available sources and find supplied programme listings.`,
     rows,
     "category=" + cat.id,
-    true,
+    false,
   );
 }
 page(
@@ -191,6 +200,9 @@ for (const [type, rows, param, key] of [
         .join("") +
       "</ul></section>",
   );
+page("/live-tv/programmes/", "TV shows and programme guides by channel and country",
+  "Find supplied TV schedules, current and upcoming programmes, and channel-specific show searches. Browse television by country, channel, language and category.",
+  '<section class="tv-section"><h2>Find a programme on your channel</h2><p>Open any channel in the player, expand its full TV schedule, and search genuine upstream programme titles and descriptions. Times are shown in your device timezone. A listing describes a broadcast schedule; it is not an on-demand replay.</p><ul class="tv-grid"><li><a href="/live-tv/countries/">Browse TV schedules by country</a></li><li><a href="/live-tv/directory/">Find a channel A-Z</a></li><li><a href="/live-tv/categories/">News, sport, films, series, documentary and other supplied categories</a></li></ul><h2>Why is a TV show missing?</h2><p>Some broadcasters do not supply programme data. Missing schedules are labeled in the player. We do not invent TV show titles, broadcast times, episode availability or search-volume claims.</p></section>');
 fs.writeFileSync(
   path.join(root, "sitemap-livetv.xml"),
   '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
@@ -246,7 +258,7 @@ console.log(
 );
 
 const intro =
-  '<!-- TV-DISCOVERY-START --><section id="tv-discovery-index" style="max-width:1260px;margin:30px auto;padding:24px"><h2>Worldwide live TV and channel guides</h2><p>Browse the complete channel index, country and territory directories, news, sports, entertainment and supplied TV programme listings. Public stream availability varies by broadcaster and location.</p><nav aria-label="TV discovery"><a href="/live-tv/directory/">Every channel A-Z</a> &middot; <a href="/live-tv/countries/">All countries and territories</a> &middot; <a href="/live-tv/categories/">TV categories</a> &middot; <a href="/live-tv/languages/">Languages</a> &middot; <a href="/live-tv/regions/">World regions</a></nav><p>Automatic source switching tries alternate browser-compatible streams. VLC, MX Player and playlist downloads are available where a source is supplied. Programme listings appear only when upstream guide data exists.</p></section><!-- TV-DISCOVERY-END -->';
+  '<!-- TV-DISCOVERY-START --><section id="tv-discovery-index" style="max-width:1260px;margin:30px auto;padding:24px"><h2>Worldwide live TV and channel guides</h2><p>Browse the complete channel index, country and territory directories, news, sports, entertainment and supplied TV programme listings. Public stream availability varies by broadcaster and location.</p><nav aria-label="TV discovery"><a href="/live-tv/directory/">Every channel A-Z</a> &middot; <a href="/live-tv/countries/">All countries and territories</a> &middot; <a href="/live-tv/categories/">TV categories</a> &middot; <a href="/live-tv/programmes/">TV shows &amp; schedules</a> &middot; <a href="/live-tv/languages/">Languages</a> &middot; <a href="/live-tv/regions/">World regions</a></nav><p>Automatic source switching tries alternate browser-compatible streams. VLC, MX Player and playlist downloads are available where a source is supplied. Programme listings appear only when upstream guide data exists.</p></section><!-- TV-DISCOVERY-END -->';
 for (const name of ["index.html", "live-tv/index.html"]) {
   const file = path.join(root, name);
   let html = fs.readFileSync(file, "utf8");

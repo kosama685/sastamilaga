@@ -1072,3 +1072,6 @@ body[data-view="tv"] .smqb-float {
 #sltv .sltv-filters label:last-child{grid-column:1/-1;}
 
 #sltv .sltv-programme-art{width:min(240px,100%);height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:10px;}
+
+/* Source inspection and factual channel schedules. */
+.sltv-mirrors,.sltv-schedule{padding:18px;border:1px solid #ccdcd8;border-radius:12px;margin-top:16px;background:#f7fbf9;color:#183b33}.sltv-mirrors summary,.sltv-schedule summary{font-weight:700;cursor:pointer}.sltv-mirrors [role=tablist]{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.sltv-mirrors button,.sltv-schedule button{padding:9px 13px;border:1px solid #698d80;border-radius:7px;background:#fff;color:#174b3a;cursor:pointer}.sltv-mirrors [aria-selected=true]{background:#154c39;color:white}.sltv-source-url{display:block;overflow-wrap:anywhere;margin:14px 0}.sltv-mirrors small{display:block;margin-top:12px}.sltv-schedule label,.sltv-schedule input{display:block;margin-top:14px}.sltv-schedule input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #78968a;border-radius:7px}.sltv-schedule-rows{max-height:600px;overflow:auto}.sltv-schedule-item{border-top:1px solid #cfddd6;padding:14px 0}.sltv-schedule-item h4{margin:6px 0}.sltv-schedule-item time{font-size:12px;color:#49675b}

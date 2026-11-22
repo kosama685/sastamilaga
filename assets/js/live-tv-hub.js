@@ -19,10 +19,10 @@
   root.innerHTML = `<header class="sltv-hero"><div class="sltv-hero-content"><p class="sltv-eyebrow">SASTA MILAGA / WORLD TV</p><h1>The world.<br><em>Live on your screen.</em></h1><p>News, culture, sport and discovery. Explore free-to-air television from around the world, with more ways to watch.</p><a class="sltv-btn" href="#sltv-directory">Explore channels</a></div><div class="sltv-hero-stats" aria-live="polite"><span><b id="sltv-total">—</b>channels</span><span><b id="sltv-countries-count">—</b>countries</span><span><b id="sltv-source-count">—</b>sources &amp; mirrors</span></div></header>
 <div class="sltv-workspace"><section class="sltv-stage" aria-label="Television player"><div class="sltv-stage-top"><span class="sltv-onair">WORLD TV</span><span id="sltv-now">Your window to the world</span><button type="button" id="sltv-fav-current" aria-label="Save current channel" disabled>☆ Save</button></div><div class="sltv-player" data-state="idle"><video id="sltv-video" controls playsinline preload="none" poster="${asset("assets/images/livetv/broadcast-studio.png")}"></video><div id="sltv-frame" hidden></div><div class="sltv-welcome"><span class="sltv-welcome-icon">▶</span><h2>Something worth watching.</h2><p>Choose a channel to start. Your next perspective is one click away.</p></div><p class="sltv-msg" role="status" aria-live="polite"></p></div>
 <div class="sltv-controls"><span class="sltv-status" role="status" aria-live="polite">Ready when you are</span><div class="sltv-selects"><label>Player<select id="sltv-player-choice"><option value="auto">Browser / Auto</option><option value="native">Native / Safari</option><option value="vlc">VLC app</option><option value="mx">MX Player</option><option value="kodi">Kodi / IPTV app</option><option value="iina">IINA / macOS</option><option value="download">Download playlist</option></select></label><label>Source<select id="sltv-source-choice" disabled><option>Choose a channel first</option></select></label></div><div class="sltv-player-buttons"><label class="sltv-sr" for="sltv-quality">Quality</label><select id="sltv-quality" aria-label="Stream quality" hidden></select><button type="button" id="sltv-next-source" disabled>Next source</button><button type="button" id="sltv-previous" disabled>Previous channel</button><button type="button" id="sltv-live-edge">Go live</button><button type="button" id="sltv-retry" disabled>Retry</button><button type="button" id="sltv-pip">Picture in picture</button><button type="button" id="sltv-fullscreen">Fullscreen</button><button type="button" id="sltv-share" disabled>Share channel</button></div></div>
-<section id="sltv-guide" class="sltv-guide" aria-live="polite"><h3>On TV now &amp; next</h3><p>Choose a channel to check its supplied programme guide.</p></section><div id="sltv-external" class="sltv-external" hidden><h3>More ways to watch</h3><p class="sltv-external-hint">Choose a channel to see its player options.</p><div class="sltv-external-actions"></div><p class="sltv-player-note">External apps open only when you choose a link. An installed app and a broadcaster-accessible source are required.</p></div>
+<details id="sltv-mirrors" class="sltv-mirrors" hidden><summary>All source mirrors &amp; URLs</summary><div id="sltv-mirror-tabs" role="tablist" aria-label="Stream mirrors"></div><section id="sltv-mirror-panel" role="tabpanel"></section></details><section id="sltv-guide" class="sltv-guide" aria-live="polite"><h3>On TV now &amp; next</h3><p>Choose a channel to check its supplied programme guide.</p></section><div id="sltv-external" class="sltv-external" hidden><h3>More ways to watch</h3><p class="sltv-external-hint">Choose a channel to see its player options.</p><div class="sltv-external-actions"></div><p class="sltv-player-note">External apps open only when you choose a link. An installed app and a broadcaster-accessible source are required.</p></div>
 <aside class="sltv-insight"><span>MADE FOR YOUR WORLD</span><h2>One directory. Every perspective.</h2><p>Switch mirrors without losing your place. Keep favourites on this device, discover another country, or take your channel to an installed TV player.</p><div class="sltv-insight-features"><b>Browser playback</b><b>Multiple mirrors</b><b>VLC &amp; IPTV apps</b></div></aside></section>
 <section class="sltv-directory" id="sltv-directory" aria-label="Channel directory"><div class="sltv-directory-head"><div><p class="sltv-eyebrow">FIND YOUR NEXT CHANNEL</p><h2>Discover live TV</h2></div><button type="button" id="sltv-reset">Reset</button></div><label class="sltv-search"><span class="sltv-sr">Search channels, countries, categories or languages</span><input id="sltv-q" type="search" placeholder="Channel, country or language…" autocomplete="off"></label><div class="sltv-tabs" role="tablist" aria-label="Browse channels"><button type="button" role="tab" data-tab="all" aria-selected="true">All channels</button><button type="button" role="tab" data-tab="countries" aria-selected="false">Countries</button><button type="button" role="tab" data-tab="categories" aria-selected="false">Categories</button><button type="button" role="tab" data-tab="regions" aria-selected="false">Regions</button><button type="button" role="tab" data-tab="languages" aria-selected="false">Languages</button><button type="button" role="tab" data-tab="working" aria-selected="false">Observed OK</button><button type="button" role="tab" data-tab="unavailable" aria-selected="false">Player / availability</button><button type="button" role="tab" data-tab="favorites" aria-selected="false">Favourites</button><button type="button" role="tab" data-tab="recent" aria-selected="false">Recent</button></div><p id="sltv-location" class="sltv-location" role="status"></p><div class="sltv-filters"><label><span class="sltv-sr">Country</span><select id="sltv-country"><option value="">All countries</option></select></label><label><span class="sltv-sr">Category</span><select id="sltv-category"><option value="">All categories</option></select></label><label><span class="sltv-sr">Language</span><select id="sltv-language"><option value="">All languages</option></select></label><label><span class="sltv-sr">Region</span><select id="sltv-region"><option value="">All regions</option></select></label><label><span class="sltv-sr">Channel sorting</span><select id="sltv-sort"><option value="recommended">Recommended</option><option value="name">A–Z</option><option value="working">Working first</option><option value="mirrors">Most mirrors</option></select></label></div><div id="sltv-count" role="status" aria-live="polite">Loading the complete channel directory…</div><div id="sltv-groups" class="sltv-groups" hidden></div><div id="sltv-viewport" class="sltv-viewport" tabindex="0" aria-label="Scrollable channel list"><ul id="sltv-list" aria-label="All matching channels"></ul></div><p class="sltv-directory-foot">Every retained channel stays searchable, including sources that are currently unavailable. Scroll to browse the full list.</p></section></div>
-<section class="sltv-world"><div><p class="sltv-eyebrow">THERE IS MORE TO EXPLORE</p><h2>Choose a country.<br>Find a different point of view.</h2><p>Local voices. Global stories. Open a country to discover its complete channel directory.</p></div><div id="sltv-world-countries" class="sltv-world-countries"></div></section><footer class="sltv-footnote"><p>Free-to-air source directory. Broadcasters control availability, formats and regional access. A reachable stream is not a guarantee of playback in every country.</p><p id="sltv-updated"></p><a href="${asset("data/livetv/playlist.m3u")}" download>Download full IPTV playlist</a> &middot; <a href="${asset("live-tv/directory/")}">Complete A-Z channel index</a> &middot; <a href="${asset("live-tv/countries/")}">Country guides</a> &middot; <a href="${asset("contact/")}">Rights-holder contact / removal</a> · <a id="sltv-epg" href="https://iptv-org.github.io/api/guides.json" target="_blank" rel="noopener">EPG source directory</a></footer>`;
+<section class="sltv-world"><div><p class="sltv-eyebrow">THERE IS MORE TO EXPLORE</p><h2>Choose a country.<br>Find a different point of view.</h2><p>Local voices. Global stories. Open a country to discover its complete channel directory.</p></div><div id="sltv-world-countries" class="sltv-world-countries"></div></section><footer class="sltv-footnote"><p>Free-to-air source directory. Broadcasters control availability, formats and regional access. A reachable stream is not a guarantee of playback in every country.</p><p id="sltv-updated"></p><a href="${asset("data/livetv/playlist.m3u")}" download>Download full IPTV playlist</a> &middot; <a href="${asset("live-tv/directory/")}">Complete A-Z channel index</a> &middot; <a href="${asset("live-tv/countries/")}">Country guides</a> &middot; <a href="${asset("contact/")}">Rights-holder contact / removal</a> · <a href="${asset("live-tv/programmes/")}">TV shows &amp; schedules</a> ? <a id="sltv-epg" href="https://iptv-org.github.io/api/guides.json" target="_blank" rel="noopener">EPG source directory</a></footer>`;
   const $ = (id) => root.querySelector("#" + id),
     video = $("sltv-video"),
     frame = $("sltv-frame"),
@@ -325,6 +325,7 @@
     clearMedia();
     sourceIndex = item.sourceIndex;
     sourceSel.value = String(sourceIndex);
+    updateMirrorSelection();
     activeEngine = item.engine;
     player.dataset.state = "loading";
     message.textContent = "Connecting to " + current.name + "…";
@@ -544,6 +545,7 @@
   }
   function startCurrent() {
     if (!current) return;
+    updateMirrorSelection();
     lastPlaybackProblem = null;
     root.querySelector(".sltv-welcome").hidden = true;
     runner.stop();
@@ -566,6 +568,60 @@
         !!video.canPlayType("application/vnd.apple.mpegurl"),
       ),
     );
+  }
+  function updateMirrorSelection() {
+    const sources = current ? core.sources(current) : [], panel = $("sltv-mirror-panel");
+    $("sltv-mirrors").hidden = !sources.length;
+    const tabs = $("sltv-mirror-tabs");
+    tabs.replaceChildren(); panel.replaceChildren();
+    sources.forEach((source, index) => {
+      const tab = node("button", "", "Mirror " + (index + 1));
+      tab.type = "button"; tab.id = "sltv-mirror-" + index;
+      tab.setAttribute("role", "tab"); tab.setAttribute("aria-controls", panel.id);
+      tab.setAttribute("aria-selected", String(index === sourceIndex));
+      tab.tabIndex = index === sourceIndex ? 0 : -1;
+      const choose = () => { sourceIndex = index; sourceSel.value = String(index); startCurrent(); };
+      tab.onclick = choose;
+      tab.onkeydown = event => {
+        const next = event.key === "ArrowRight" ? (index + 1) % sources.length : event.key === "ArrowLeft" ? (index + sources.length - 1) % sources.length : event.key === "Home" ? 0 : event.key === "End" ? sources.length - 1 : null;
+        if (next !== null) { event.preventDefault(); sourceIndex = next; sourceSel.value = String(next); startCurrent(); $("sltv-mirror-" + next)?.focus(); }
+      };
+      tabs.append(tab);
+    });
+    const source = sources[sourceIndex]; if (!source) return;
+    panel.setAttribute("aria-labelledby", "sltv-mirror-" + sourceIndex);
+    panel.append(node("strong", "", (source.type || "external").toUpperCase() + " ? " + (source.status || "unchecked")));
+    if (/^https?:\/\//i.test(source.url)) {
+      const link = node("a", "sltv-source-url", source.url); link.href = source.url;
+      link.target = "_blank"; link.rel = "noopener noreferrer"; panel.append(link);
+    } else panel.append(node("code", "sltv-source-url", source.url));
+    const copy = node("button", "", "Copy source URL"); copy.type = "button";
+    copy.onclick = async () => { try { await navigator.clipboard.writeText(source.url); copy.textContent = "Copied"; } catch { copy.textContent = "Select the URL above to copy"; } }; panel.append(copy);
+    if (source.quality) panel.append(node("small", "", "Supplied quality: " + source.quality));
+    if (source.label) panel.append(node("small", "", "Source directory: " + source.label));
+    if (source.checkedAt) panel.append(node("small", "", "Observed: " + new Date(source.checkedAt).toLocaleString()));
+    panel.append(node("p", "", "Every supplied mirror remains selectable. A reachable URL does not confirm browser playback; location, codecs and broadcaster access still apply."));
+  }
+  function fullSchedule(guide, programmes) {
+    if (!discovery?.scheduleRows) return;
+    const all = discovery.scheduleRows(programmes); if (!all.length) return;
+    const details = node("details", "sltv-schedule"), summary = node("summary", "", "Full TV schedule & show search (" + all.length + " listings)");
+    const label = node("label", "", "Find a TV show or programme in this channel's supplied guide"), input = node("input", "");
+    input.type = "search"; input.placeholder = "Programme title or description"; label.append(input);
+    const count = node("p", ""), rows = node("div", "sltv-schedule-rows"), more = node("button", "", "Show more programmes");more.type = "button";
+    let limit = 50;
+    function draw() {
+      const matches = discovery.scheduleRows(all, input.value); rows.replaceChildren();
+      count.textContent = matches.length + " matching listings ? times in " + Intl.DateTimeFormat().resolvedOptions().timeZone;
+      matches.slice(0, limit).forEach(programme => {
+        const article = node("article", "sltv-schedule-item"), title = node("h4", "", programme.title), time = node("time", "", new Date(programme.start).toLocaleString() + " ? " + new Date(programme.stop).toLocaleTimeString());
+        time.dateTime = programme.start; article.append(time, title);
+        if (programme.description) article.append(node("p", "", String(programme.description)));
+        rows.append(article);
+      }); more.hidden = matches.length <= limit;
+    }
+    input.oninput = () => { limit = 50; draw(); }; more.onclick = () => { limit += 50; draw(); };
+    details.append(summary, label, count, rows, more); guide.append(details);draw();
   }
   function refreshGuide(ch) {
     const token = ++guideToken,
@@ -618,6 +674,7 @@
         }
         guide.append(row);
       }
+      fullSchedule(guide, data.programmes);
       guide.append(
         node(
           "small",
