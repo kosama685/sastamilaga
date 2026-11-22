@@ -36,6 +36,19 @@ add_action( 'template_redirect', function () {
 		return;   // a real WooCommerce cart (e.g. a staff payment link in progress) stays in WooCommerce
 	}
 	nocache_headers();
-	wp_safe_redirect( home_url( '/#/' . ( $is_checkout ? 'checkout' : 'cart' ) ), 302, 'Sasta Milaga static cart bridge' );
+	wp_safe_redirect( sm_static_cart_target( $is_checkout ), 302, 'Sasta Milaga static cart bridge' );
 	exit;
 }, 1 );
+
+/**
+ * Where the static shop's cart and checkout live. Two static designs exist on 22 Nov 2026:
+ *   'pages' (default): the unified request cart  /request-cart/  and its checkout  /order/   (live on main since 22 Nov 20:12)
+ *   'hash':            the 20 November cart       /#/cart         and checkout      /#/checkout  (branch product-pages-fix)
+ * Switch with: wp option update sm_static_cart_target hash   (or pages). Must match the storefront scripts that are live.
+ */
+function sm_static_cart_target( $checkout ) {
+	if ( 'hash' === get_option( 'sm_static_cart_target', 'pages' ) ) {
+		return home_url( $checkout ? '/#/checkout' : '/#/cart' );
+	}
+	return home_url( $checkout ? '/order/' : '/request-cart/' );
+}
