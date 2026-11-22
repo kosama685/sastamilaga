@@ -96,3 +96,19 @@ test('staging page cannot access real payments, accounts or legacy carts',()=>{
  assert.match(ui,/Cart confirmed; Quick Buy checkout requires explicit sandbox pilot approval/);
  assert.doesNotMatch(ui,/wp-json|woocommerce|formspree/i);
 });
+
+test('reject malicious provider checkout redirect before accepting a new cart',async()=>{
+ const {api,values}=client([reply({cartCreate:{cart:{...cart(),checkoutUrl:'https://evil.example/cart/c/abc'},userErrors:[]}})]);
+ api.configure(config);
+ await assert.rejects(api.add(variant,1),/did not match/);
+ assert.equal(values.has('sm_hosted_cart_preview_v1'),false);
+});
+test('reject insecure or credential-bearing checkout URL returned on cart read',async()=>{
+ const {api,values}=client([
+  reply({cart:{...cart(),checkoutUrl:'http://test-shop.myshopify.com/cart/c/abc'}}),
+  reply({cart:{...cart(),checkoutUrl:'https://user:pass@test-shop.myshopify.com/cart/c/abc'}})
+ ]);
+ api.configure(config);values.set('sm_hosted_cart_preview_v1',cart().id);
+ await assert.rejects(api.read(),/did not match/);
+ await assert.rejects(api.read(),/did not match/);
+});
