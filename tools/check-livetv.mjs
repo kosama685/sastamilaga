@@ -14,7 +14,7 @@ export function publicURL(url) {
       !/^(localhost|127\.|10\.|192\.168\.|169\.254\.|0\.|\[|172\.(1[6-9]|2\d|3[01])\.)/i.test(
         u.hostname,
       ) &&
-      !u.hostname.endsWith(".local")
+      !/(?:\.local|\.localhost|\.internal|\.test|\.invalid)$/i.test(u.hostname)
     );
   } catch {
     return false;
@@ -90,11 +90,15 @@ export async function probeSource(
           base = r.url || url;
           continue;
         }
-        const key = text.match(/#EXT-X-KEY:[^\n]*URI="([^"]+)"/);
-        if (key) {
-          const k = await get(new URL(key[1], base).href, true);
-          await k.body?.cancel();
-        }
+        // A reachable manifest does not establish a right to fetch decryption keys.
+        // Defer encrypted sources to the broadcaster's authorized player.
+        const protection = text.match(/#EXT-X-(?:SESSION-)?KEY:[^\r\n]*/i);
+        if (protection && !/\bMETHOD=NONE\b/i.test(protection[0]))
+          return {
+            status: "needs-player",
+            checkedAt: at,
+            reason: "Encrypted HLS requires authorized player and entitlement verification",
+          };
         const segment = await get(url, true);
         const reader = segment.body?.getReader();
         if (reader) {
@@ -122,7 +126,14 @@ export async function probeSource(
           "DASH manifest reachable; media playback requires player verification",
       };
     }
+    const mediaType = r.headers.get("content-type") || "";
     await r.body?.cancel();
+    if (source.type === "mp4" && /(?:text\/html|application\/json)/i.test(mediaType))
+      return {
+        status: "dead",
+        checkedAt: at,
+        reason: "HTTP endpoint returned a page or JSON, not an MP4 stream",
+      };
     return {
       status: cors ? "ok" : "needs-player",
       checkedAt: at,
@@ -132,11 +143,11 @@ export async function probeSource(
     };
   } catch (e) {
     return {
-      status: "dead",
+      status: e.name === "AbortError" ? "needs-player" : "dead",
       checkedAt: at,
       reason:
         e.name === "AbortError"
-          ? "Probe timed out; may be region restricted"
+          ? "Probe timed out; source may be playable in another region or player"
           : String(e.message).slice(0, 150),
     };
   } finally {
