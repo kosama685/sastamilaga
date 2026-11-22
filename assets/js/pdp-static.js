@@ -4,9 +4,14 @@
    The Add to cart / Buy now buttons themselves are handled in chrome.js. Pages without this script keep working as plain pages. */
 (function () {
   'use strict';
+  /* Site root from this script's own URL (…/assets/js/pdp-static.js): correct on /p/*.html, on /global-shop/p/<pid>/<slug>/ and on the
+     GitHub Pages copy. The header's data-prefix is lost when chrome.js replaces the header before this script runs (it was then guessed
+     as "../", so CJ pages requested /global-shop/p/<pid>/assets/js/config.js and got a 404 with no site config). */
+  var me = document.currentScript || [].filter.call(document.scripts, function (s) { return /\/assets\/js\/pdp-static\.js/.test(s.src); })[0];
+  var root = me && me.src ? me.src.replace(/assets\/js\/pdp-static\.js.*$/, '') : '';
   var pdp = document.querySelector('main .pdp'), buy = pdp && pdp.querySelector('.buy-panel');
   if (!pdp || !buy || !buy.querySelector('.buy-actions') || pdp.classList.contains('pdp3')) return;
-  var holder = document.getElementById('sm-chrome-header'), prefix = (holder && holder.getAttribute('data-prefix')) || '../';
+  var holder = document.getElementById('sm-chrome-header'), prefix = (holder && holder.getAttribute('data-prefix')) || root || '../';
   /* Global supplier pages (/global-shop/p/, class "gpdp", rendered by workers/global-pdp) get the same three-column design, but their
      gallery, quantity and price are live (assets/js/global-pdp.js) and their terms differ: prepaid, delivery by country, no cash on delivery. */
   var G = pdp.classList.contains('gpdp');
@@ -79,5 +84,5 @@
     if (first) first.remove();
     document.dispatchEvent(new CustomEvent('sm:pdp-ready'));
   }
-  if (window.SM_CONFIG) run(); else { var s = document.createElement('script'); s.src = prefix + 'assets/js/config.js'; s.onload = run; s.onerror = run; document.head.appendChild(s); }
+  if (window.SM_CONFIG) run(); else { var s = document.createElement('script'); s.src = (root || prefix) + 'assets/js/config.js'; s.onload = run; s.onerror = run; document.head.appendChild(s); }
 })();

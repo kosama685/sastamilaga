@@ -52,13 +52,16 @@ function notice(message,link){
  if(link){var a=document.createElement('a');a.href=link;a.style.cssText='color:#fff;text-decoration:underline;margin-left:10px';a.textContent='Review request';t.appendChild(a)}
 }
 function schemaProduct(){
- var sku='',name='';
+ var sku='',name='',price=null;
  document.querySelectorAll('script[type="application/ld+json"]').forEach(function(el){
   try{var j=JSON.parse(el.textContent||'{}'),nodes=Array.isArray(j)?j:(j['@graph']||[j]);
-   nodes.forEach(function(x){if(x&&x['@type']==='Product'){sku=sku||clean(x.sku,100);name=name||clean(x.name,240)}})
+   nodes.forEach(function(x){if(x&&x['@type']==='Product'){sku=sku||clean(x.sku,100);name=name||clean(x.name,240);
+    // the price this page shows (schema.org offer, PKR only): local product pages do not load the catalogue, so without it the row had no price
+    var o=Array.isArray(x.offers)?x.offers[0]:x.offers;
+    if(price===null&&o&&String(o.priceCurrency||'').toUpperCase()==='PKR'&&Number(o.price)>0)price=Number(o.price);}})
   }catch(e){}
  });
- return {sku:sku,name:name};
+ return {sku:sku,name:name,price:price};
 }
 function details(sku,attrs,source){
  var A=g.SMApp||{},p=product(sku),schema=schemaProduct();
@@ -66,8 +69,10 @@ function details(sku,attrs,source){
  var heading=el&&el.querySelector('h2,h3,.product-title');
  var name=clean((p&&p.name)||schema.name||(heading&&heading.textContent)||sku,240);
  var variation=attrs.map(function(x){return x.attribute+': '+x.value}).join(', ');
+ // Use the page's own offer price only for the product this page is about (its buy panel, or the same SKU), never for other cards.
+ var same=!!(source&&source.closest&&source.closest('main .pdp'))||(!!schema.sku&&schema.sku.toLowerCase()===String(sku).toLowerCase());
  return {type:'local',id:clean((p&&(p.id||p.sku))||sku,128),
-  sku:clean(sku,128),name:name,qty:qty(),unit:money(p,A),
+  sku:clean(sku,128),name:name,qty:qty(),unit:money(p,A)||(same?schema.price:null),
   vkey:variation,vname:variation,attributes:attrs,url:location.href};
 }
 function add(sku,amount,variation,buyNow,source){
