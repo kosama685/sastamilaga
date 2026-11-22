@@ -56,6 +56,7 @@ let sources = arg
   : [
       "https://iptv-org.github.io/iptv/index.m3u",
       "https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8",
+      "https://raw.githubusercontent.com/freecasthub/public-iptv/main/playlist.m3u",
       ...["", "_hong_kong", "_macau", "_taiwan", "_singapore", "_malaysia"].map(
         (s) => "https://epg.pw/test_channels" + s + ".m3u",
       ),

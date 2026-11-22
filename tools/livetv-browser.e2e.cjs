@@ -161,6 +161,10 @@ const BASE = process.env.SM_TV_BASE || "http://localhost:8798";
         { url: "https://fixture.test/good.m3u8", type: "hls" },
       ],
     });
+    db.items[0].upstreamId = "Fixture.test";
+    await fixture.setRequestInterception(true);
+    fixture.on("request", request => request.url().includes("/epg/channels/Fixture.test.json")
+      ? request.respond({status:200,contentType:"application/json",headers:{"Access-Control-Allow-Origin":"*"},body:JSON.stringify({channel:"Fixture.test",programmes:Array.from({length:52},(_,i)=>({title:i===51?"Evening World News":"Programme "+i,description:"Supplied test listing",start:new Date(Date.now()+i*3600000).toISOString(),stop:new Date(Date.now()+(i+1)*3600000).toISOString()}))})}) : request.continue());
     db.facets.countries[0].n = 4;
     db.facets.categories[0].n = 4;
     await fixture.evaluateOnNewDocument((db) => (window.SM_LIVETV = db), db);
@@ -219,6 +223,15 @@ const BASE = process.env.SM_TV_BASE || "http://localhost:8798";
         events.some((e) => e.outcome === "playing" && e.sourceIndex === 1),
       ),
     );
+    assert.equal(await fixture.$$eval('#sltv-mirror-tabs [role="tab"]', rows=>rows.length),2);
+    assert.equal(await fixture.$eval('#sltv-mirror-tabs [aria-selected="true"]', el=>el.id),"sltv-mirror-1");
+    assert.equal(await fixture.$eval('.sltv-source-url', el=>el.textContent),"https://fixture.test/good.m3u8");
+    await fixture.waitForSelector('.sltv-schedule');
+    await fixture.$eval('.sltv-schedule', el=>el.open=true);
+    assert.equal(await fixture.$$eval('.sltv-schedule-item',rows=>rows.length),50);
+    await fixture.type('.sltv-schedule input','evening world');
+    assert.equal(await fixture.$$eval('.sltv-schedule-item',rows=>rows.length),1);
+    assert.ok(await fixture.$eval('.sltv-schedule-item',el=>el.textContent.includes('Evening World News')));
     await fixture.evaluate(() => SLTVHub.select("third-mirror"));
     await fixture.waitForFunction(
       () =>
