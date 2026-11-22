@@ -5,7 +5,9 @@
     try {
       const x = new URL(u);
       return (
-        ["https:", "http:", "rtsp:", "rtmp:", "udp:", "rtp:"].includes(x.protocol) &&
+        ["https:", "http:", "rtsp:", "rtmp:", "udp:", "rtp:"].includes(
+          x.protocol,
+        ) &&
         !x.username &&
         !x.password
       );
@@ -75,8 +77,30 @@
     };
   }
   function matches(ch, q, country = "", group = "", region = (x) => x) {
+    q = String(q || "")
+      .normalize("NFKD")
+      .replace(/\p{M}/gu, "")
+      .trim();
+    if (
+      country &&
+      (country === "__world"
+        ? !!(ch.country || ch.cc)
+        : (ch.country || ch.cc) !== country)
+    )
+      return false;
+    if (
+      group &&
+      (ch.group || ch.cat) !== group &&
+      !ch.categories?.includes(group)
+    )
+      return false;
+    if (!q) return true;
     const text = [
       ch.name,
+      ...(ch.alternateNames || []),
+      ...(ch.languages || []),
+      ...(ch.categories || []),
+      ch.upstreamId,
       ch.country || ch.cc,
       region(ch.country || ch.cc),
       ch.group,
@@ -93,7 +117,9 @@
         (country === "__world"
           ? !ch.country && !ch.cc
           : (ch.country || ch.cc) === country)) &&
-      (!group || (ch.group || ch.cat) === group) &&
+      (!group ||
+        (ch.group || ch.cat) === group ||
+        ch.categories?.includes(group)) &&
       q
         .toLowerCase()
         .split(/\s+/)

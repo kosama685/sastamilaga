@@ -1,0 +1,26 @@
+name: Publish dedicated World TV static delivery
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['workers/live-tv-static/**', 'tools/deploy-livetv-edge.mjs', 'tools/livetv-edge.test.mjs', '.github/workflows/livetv-edge-delivery.yml']
+  workflow_run:
+    workflows: ['Deploy static content to Pages']
+    types: [completed]
+permissions: {contents: read}
+concurrency: {group: world-tv-static-delivery, cancel-in-progress: false}
+jobs:
+  publish:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with: {ref: main}
+      - uses: actions/setup-node@v7
+        with: {node-version: '24'}
+      - run: node --test tools/livetv-edge.test.mjs
+      - run: node tools/deploy-livetv-edge.mjs
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

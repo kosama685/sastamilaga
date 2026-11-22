@@ -64,6 +64,10 @@ jobs:
         run: node tools/build-blog.mjs
       - name: Clean URLs (section pages, clean links, sitemap entries)
         run: node tools/build-sections.mjs
+      - name: Refresh World TV crawlable discovery from the published snapshot
+        run: |
+          node tools/build-livetv-discovery.mjs
+          node tools/verify-livetv-discovery.mjs
       - name: Verify Clarity and worldwide WhatsApp order links on generated pages
         run: node tools/verify-clarity-worldwide-orders.mjs
       - name: Verify Google tag deployment on generated pages
@@ -136,11 +140,17 @@ jobs:
           fi
       - name: Setup Pages
         uses: actions/configure-pages@v6
+      - name: Stage the public site within the Pages size budget
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/sasta-pages"
+          rsync -a --exclude '/backup/' --exclude '/.git/' --exclude '/.github/' --exclude '/.tmp/' ./ "$RUNNER_TEMP/sasta-pages/"
+          du -sh "$RUNNER_TEMP/sasta-pages"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          # Upload entire repository
-          path: '.'
+          # Internal backup source stays in Git; every customer-facing site asset is retained.
+          path: ${{ runner.temp }}/sasta-pages
       # GitHub's artifact metadata list can lag immediately after a large
       # Pages upload. Verify registration before deploy-pages tries to read it.
       - name: Wait for Pages artifact registration

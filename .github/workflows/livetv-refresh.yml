@@ -1,7 +1,7 @@
 name: Refresh Live TV channels
 on:
   schedule:
-    - cron: '30 3 * * *'
+    - cron: '30 */6 * * *'
   workflow_dispatch:
 permissions:
   contents: write
@@ -19,19 +19,30 @@ jobs:
         with: {node-version: '24'}
       - name: Merge all public playlist feeds without deleting prior channels
         run: node tools/build-livetv.mjs
+      - name: Reconcile primary and supplemental metadata, mirrors and all countries
+        run: node tools/enrich-livetv.mjs
       - name: Observe every unique stream URL and preserve unavailable entries
         timeout-minutes: 50
-        run: node tools/check-livetv.mjs
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$(date -u +%H)" != "00" ]; then
+            node tools/check-livetv.mjs --unchecked-only
+          else
+            node tools/check-livetv.mjs
+          fi
       - name: Verify retained coverage and source integrity
         run: node tools/verify-livetv-coverage.mjs
-      - name: Commit only channel data
+      - name: Generate complete crawlable TV discovery and validate links
+        run: |
+          node tools/build-livetv-discovery.mjs
+          node tools/verify-livetv-discovery.mjs
+      - name: Commit the static TV release data and discovery pages
         id: commit
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "sasta-milaga-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/livetv
+          git add data/livetv live-tv index.html sitemap.xml sitemap_index.xml sitemap-livetv.xml
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else

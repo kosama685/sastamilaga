@@ -163,6 +163,21 @@ export function mergeChannels(inputs) {
         aliases: [],
         tvgIds: [],
         status: "unchecked",
+        ...Object.fromEntries(
+          [
+            "upstreamId",
+            "website",
+            "alternateNames",
+            "languages",
+            "categories",
+            "feedIds",
+            "closed",
+            "catalogueOnly",
+            "languageDisplay",
+          ]
+            .filter((k) => input[k] !== undefined)
+            .map((k) => [k, input[k]]),
+        ),
       };
       channels.set(key, ch);
     }
@@ -262,16 +277,19 @@ export function mergeChannels(inputs) {
     }
   }
   return [...channels.values()]
-    .filter((c) => c.sources.length)
+    .filter((c) => c.sources.length || c.catalogueOnly)
     .map((c) => {
-      const s = c.sources.find((s) => /^https:/i.test(s.url)) || c.sources[0];
-      c.status = c.sources.some((s) => s.status === "ok")
-        ? "ok"
-        : c.sources.every((s) => s.status === "dead")
-          ? "dead"
-          : c.sources.some((s) => s.status === "unchecked")
-            ? "unchecked"
-            : "needs-player";
+      const s =
+        c.sources.find((s) => /^https:/i.test(s.url)) || c.sources[0] || {};
+      c.status = !c.sources.length
+        ? "no-source"
+        : c.sources.some((s) => s.status === "ok")
+          ? "ok"
+          : c.sources.every((s) => s.status === "dead")
+            ? "dead"
+            : c.sources.some((s) => s.status === "unchecked")
+              ? "unchecked"
+              : "needs-player";
       return {
         ...c,
         src: s.url,
@@ -303,7 +321,14 @@ export function makeSnapshot(items, extra = {}) {
     ...extra,
     facets: {
       total: items.length,
-      countries: facets("country"),
+      countries: extra.countryDirectory?.length
+        ? extra.countryDirectory.map((c) => ({
+            k: c.code,
+            n: items.filter((x) => x.country === c.code).length,
+            name: c.name,
+            flag: c.flag,
+          }))
+        : facets("country"),
       categories: facets("group"),
       languages: facets("language"),
     },
@@ -311,10 +336,79 @@ export function makeSnapshot(items, extra = {}) {
   };
 }
 export function snapshotText(db) {
+  const labels = [],
+    provenance = [],
+    reasons = [],
+    labelMap = new Map(),
+    provenanceMap = new Map(),
+    reasonMap = new Map();
+  const intern = (list, map, key, value) => {
+    if (!map.has(key)) {
+      map.set(key, list.length);
+      list.push(value);
+    }
+    return map.get(key);
+  };
+  const packed = {
+    ...db,
+    sourceLabels: labels,
+    sourceProvenance: provenance,
+    sourceReasons: reasons,
+    items: db.items.map((ch) => {
+      const c = {
+        ...ch,
+        sources: ch.sources.map((source) => {
+          const s = { ...source };
+          if (s.label) {
+            s.labelRef = intern(labels, labelMap, s.label, s.label);
+            delete s.label;
+          }
+          if (s.provenance) {
+            s.provenanceRef = intern(
+              provenance,
+              provenanceMap,
+              JSON.stringify(s.provenance),
+              s.provenance,
+            );
+            delete s.provenance;
+          }
+          if (s.reason) {
+            s.reasonRef = intern(reasons, reasonMap, s.reason, s.reason);
+            delete s.reason;
+          }
+          return s;
+        }),
+      };
+      if (c.cc === c.country) delete c.cc;
+      if (c.cat === c.group) delete c.cat;
+      if (
+        c.src ===
+        (ch.sources.find((s) => /^https:/i.test(s.url)) || ch.sources[0])?.url
+      )
+        delete c.src;
+      if (
+        c.type ===
+        (ch.sources.find((s) => /^https:/i.test(s.url)) || ch.sources[0])?.type
+      )
+        delete c.type;
+      delete c.sourceCount;
+      delete c.catalogueOnly;
+      delete c.ext;
+      delete c.chk;
+      for (const k of ["aliases", "alternateNames", "categories"])
+        if (!c[k]?.length) delete c[k];
+      if (c.closed === null) delete c.closed;
+      if (c.language === c.languages?.join(", ")) delete c.language;
+      if (c.tvgIds?.length === 1 && c.tvgIds[0] === c.upstreamId)
+        delete c.tvgIds;
+      if (!c.sources.length) delete c.status;
+      return c;
+    }),
+  };
   return (
-    "/* Public free-to-air directory. Status is observational, not a guarantee. */\nwindow.SM_LIVETV=" +
-    JSON.stringify(db) +
-    ";\nwindow.LIVE_TV_CHANNELS=window.SM_LIVETV.items;\n"
+    "/* Public free-to-air directory. Compact metadata is restored below; source URLs are unchanged. */\nwindow.SM_LIVETV=" +
+    JSON.stringify(packed) +
+    ';\nwindow.SM_LIVETV.items.forEach(function(c){c.sources.forEach(function(s){if(s.labelRef!==undefined){s.label=window.SM_LIVETV.sourceLabels[s.labelRef];delete s.labelRef;}if(s.provenanceRef!==undefined){s.provenance=window.SM_LIVETV.sourceProvenance[s.provenanceRef];delete s.provenanceRef;}if(s.reasonRef!==undefined){s.reason=window.SM_LIVETV.sourceReasons[s.reasonRef];delete s.reasonRef;}});c.cc=c.cc===undefined?c.country||"":c.cc;c.cat=c.cat===undefined?c.group:c.cat;var s=c.sources.find(function(s){return /^https:/i.test(s.url)})||c.sources[0]||{};c.src=c.src===undefined?s.url:c.src;c.type=c.type===undefined?s.type:c.type;c.sourceCount=c.sources.length;c.catalogueOnly=!c.sources.length;c.aliases=c.aliases||[];c.alternateNames=c.alternateNames||[];c.categories=c.categories||[];if(c.language===undefined&&c.languages)c.language=c.languages.join(", ");c.tvgIds=c.tvgIds||(c.upstreamId?[c.upstreamId]:[]);if(!c.sources.length)c.status="no-source";c.ext=c.sources.every(function(s){return s.status==="needs-player"});if(c.status==="dead")c.chk="fail";});\nwindow.LIVE_TV_CHANNELS=window.SM_LIVETV.items;\n'
   );
 }
 export function playlistText(items) {

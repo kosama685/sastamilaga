@@ -1,0 +1,193 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, sans-serif;
+  color: #eaf3fc;
+  background: #09131f;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+a {
+  color: #77e7c4;
+  text-underline-offset: 4px;
+}
+a:hover {
+  color: #fff;
+}
+a:focus-visible {
+  outline: 3px solid #ff9700;
+  outline-offset: 5px;
+}
+.tv-header {
+  padding: 22px max(5vw, 20px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  background: #0b3425;
+  flex-wrap: wrap;
+}
+.tv-header > a {
+  font-size: 25px;
+  font-weight: 800;
+  text-decoration: none;
+  color: #fff;
+}
+.tv-header > a span {
+  color: #ff9500;
+}
+.tv-header nav {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+.tv-header nav a {
+  text-decoration: none;
+  font-size: 14px;
+}
+main {
+  max-width: 1260px;
+  margin: auto;
+  padding: 30px 24px;
+}
+.tv-hero {
+  position: relative;
+  border: 1px solid #294657;
+  border-radius: 22px;
+  padding: clamp(30px, 6vw, 80px);
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, #07121bf2, #07121baa),
+    url("/assets/images/livetv/broadcast-studio.png") center/cover;
+}
+.tv-hero > p:first-child {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #78e6c2;
+  font-weight: 800;
+}
+.tv-hero h1 {
+  font-size: clamp(30px, 4.2vw, 58px);
+  line-height: 1.12;
+  max-width: 850px;
+  letter-spacing: -1.3px;
+}
+.tv-hero p {
+  font-size: 17px;
+  line-height: 1.7;
+  max-width: 700px;
+  color: #c7d9e8;
+}
+.tv-button {
+  display: inline-block;
+  text-decoration: none;
+  padding: 14px 20px;
+  background: #68dfb8;
+  color: #061f19;
+  border-radius: 9px;
+  font-weight: 700;
+  margin: 12px 0;
+}
+.tv-button:hover {
+  background: #fff;
+  color: #061f19;
+}
+.tv-section,
+.tv-help {
+  margin: 28px 0;
+  padding: 26px;
+  border: 1px solid #243c50;
+  border-radius: 18px;
+  background: #10202e;
+}
+.tv-section h2,
+.tv-help h2 {
+  font-size: 27px;
+}
+.tv-channels,
+.tv-grid {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+  gap: 12px;
+}
+.tv-channels li,
+.tv-grid li {
+  padding: 18px;
+  border: 1px solid #294657;
+  border-radius: 12px;
+  min-width: 0;
+}
+.tv-channels strong,
+.tv-grid strong {
+  display: block;
+  font-size: 17px;
+}
+.tv-channels span,
+.tv-grid span {
+  display: block;
+  font-size: 13px;
+  color: #b5c6d8;
+  margin-top: 9px;
+}
+.tv-channels small {
+  display: block;
+  color: #d7cda5;
+  font-size: 12px;
+  margin-top: 10px;
+}
+.tv-channels a,
+.tv-grid a {
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.tv-help p {
+  line-height: 1.8;
+  color: #bdcfde;
+}
+.tv-pages {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 20px;
+}
+.tv-pages span {
+  font-size: 13px;
+  color: #bbcddd;
+}
+footer {
+  padding: 28px max(5vw, 24px);
+  background: #0b3425;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #c2d5d0;
+}
+body {
+  overflow-wrap: break-word;
+}
+@media (max-width: 500px) {
+  main {
+    padding: 16px 12px;
+  }
+  .tv-section,
+  .tv-help {
+    padding: 18px;
+  }
+  .tv-hero {
+    padding: 30px 22px;
+  }
+  .tv-header {
+    padding: 18px;
+  }
+  .tv-header nav {
+    gap: 12px;
+  }
+  .tv-header nav a {
+    font-size: 12px;
+  }
+}

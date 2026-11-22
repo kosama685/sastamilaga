@@ -18,11 +18,11 @@
   }
   root.innerHTML = `<header class="sltv-hero"><div class="sltv-hero-content"><p class="sltv-eyebrow">SASTA MILAGA / WORLD TV</p><h1>The world.<br><em>Live on your screen.</em></h1><p>News, culture, sport and discovery. Explore free-to-air television from around the world, with more ways to watch.</p><a class="sltv-btn" href="#sltv-directory">Explore channels</a></div><div class="sltv-hero-stats" aria-live="polite"><span><b id="sltv-total">—</b>channels</span><span><b id="sltv-countries-count">—</b>countries</span><span><b id="sltv-source-count">—</b>sources &amp; mirrors</span></div></header>
 <div class="sltv-workspace"><section class="sltv-stage" aria-label="Television player"><div class="sltv-stage-top"><span class="sltv-onair">WORLD TV</span><span id="sltv-now">Your window to the world</span><button type="button" id="sltv-fav-current" aria-label="Save current channel" disabled>☆ Save</button></div><div class="sltv-player" data-state="idle"><video id="sltv-video" controls playsinline preload="none" poster="${asset("assets/images/livetv/broadcast-studio.png")}"></video><div id="sltv-frame" hidden></div><div class="sltv-welcome"><span class="sltv-welcome-icon">▶</span><h2>Something worth watching.</h2><p>Choose a channel to start. Your next perspective is one click away.</p></div><p class="sltv-msg" role="status" aria-live="polite"></p></div>
-<div class="sltv-controls"><span class="sltv-status" role="status" aria-live="polite">Ready when you are</span><div class="sltv-selects"><label>Player<select id="sltv-player-choice"><option value="auto">Browser / Auto</option><option value="native">Native / Safari</option><option value="vlc">VLC app</option><option value="mx">MX Player</option><option value="kodi">Kodi / IPTV app</option><option value="iina">IINA / macOS</option><option value="download">Download playlist</option></select></label><label>Source<select id="sltv-source-choice" disabled><option>Choose a channel first</option></select></label></div><div class="sltv-player-buttons"><label class="sltv-sr" for="sltv-quality">Quality</label><select id="sltv-quality" aria-label="Stream quality" hidden></select><button type="button" id="sltv-live-edge">Go live</button><button type="button" id="sltv-retry" disabled>Retry</button><button type="button" id="sltv-pip">Picture in picture</button><button type="button" id="sltv-fullscreen">Fullscreen</button><button type="button" id="sltv-share" disabled>Share channel</button></div></div>
-<div id="sltv-external" class="sltv-external" hidden><h3>More ways to watch</h3><p class="sltv-external-hint">Choose a channel to see its player options.</p><div class="sltv-external-actions"></div><p class="sltv-player-note">External apps open only when you choose a link. An installed app and a broadcaster-accessible source are required.</p></div>
+<div class="sltv-controls"><span class="sltv-status" role="status" aria-live="polite">Ready when you are</span><div class="sltv-selects"><label>Player<select id="sltv-player-choice"><option value="auto">Browser / Auto</option><option value="native">Native / Safari</option><option value="vlc">VLC app</option><option value="mx">MX Player</option><option value="kodi">Kodi / IPTV app</option><option value="iina">IINA / macOS</option><option value="download">Download playlist</option></select></label><label>Source<select id="sltv-source-choice" disabled><option>Choose a channel first</option></select></label></div><div class="sltv-player-buttons"><label class="sltv-sr" for="sltv-quality">Quality</label><select id="sltv-quality" aria-label="Stream quality" hidden></select><button type="button" id="sltv-next-source" disabled>Next source</button><button type="button" id="sltv-previous" disabled>Previous channel</button><button type="button" id="sltv-live-edge">Go live</button><button type="button" id="sltv-retry" disabled>Retry</button><button type="button" id="sltv-pip">Picture in picture</button><button type="button" id="sltv-fullscreen">Fullscreen</button><button type="button" id="sltv-share" disabled>Share channel</button></div></div>
+<section id="sltv-guide" class="sltv-guide" aria-live="polite"><h3>On TV now &amp; next</h3><p>Choose a channel to check its supplied programme guide.</p></section><div id="sltv-external" class="sltv-external" hidden><h3>More ways to watch</h3><p class="sltv-external-hint">Choose a channel to see its player options.</p><div class="sltv-external-actions"></div><p class="sltv-player-note">External apps open only when you choose a link. An installed app and a broadcaster-accessible source are required.</p></div>
 <aside class="sltv-insight"><span>MADE FOR YOUR WORLD</span><h2>One directory. Every perspective.</h2><p>Switch mirrors without losing your place. Keep favourites on this device, discover another country, or take your channel to an installed TV player.</p><div class="sltv-insight-features"><b>Browser playback</b><b>Multiple mirrors</b><b>VLC &amp; IPTV apps</b></div></aside></section>
-<section class="sltv-directory" id="sltv-directory" aria-label="Channel directory"><div class="sltv-directory-head"><div><p class="sltv-eyebrow">FIND YOUR NEXT CHANNEL</p><h2>Discover live TV</h2></div><button type="button" id="sltv-reset">Reset</button></div><label class="sltv-search"><span class="sltv-sr">Search channels, countries, categories or languages</span><input id="sltv-q" type="search" placeholder="Channel, country or language…" autocomplete="off"></label><div class="sltv-tabs" role="tablist" aria-label="Browse channels"><button type="button" role="tab" data-tab="all" aria-selected="true">All channels</button><button type="button" role="tab" data-tab="countries" aria-selected="false">Countries</button><button type="button" role="tab" data-tab="categories" aria-selected="false">Categories</button><button type="button" role="tab" data-tab="favorites" aria-selected="false">Favourites</button><button type="button" role="tab" data-tab="recent" aria-selected="false">Recent</button></div><div class="sltv-filters"><label><span class="sltv-sr">Country</span><select id="sltv-country"><option value="">All countries</option></select></label><label><span class="sltv-sr">Category</span><select id="sltv-category"><option value="">All categories</option></select></label><label><span class="sltv-sr">Channel sorting</span><select id="sltv-sort"><option value="recommended">Recommended</option><option value="name">A–Z</option><option value="working">Working first</option><option value="mirrors">Most mirrors</option></select></label></div><div id="sltv-count" role="status" aria-live="polite">Loading the complete channel directory…</div><div id="sltv-groups" class="sltv-groups" hidden></div><div id="sltv-viewport" class="sltv-viewport" tabindex="0" aria-label="Scrollable channel list"><ul id="sltv-list" aria-label="All matching channels"></ul></div><p class="sltv-directory-foot">Every retained channel stays searchable, including sources that are currently unavailable. Scroll to browse the full list.</p></section></div>
-<section class="sltv-world"><div><p class="sltv-eyebrow">THERE IS MORE TO EXPLORE</p><h2>Choose a country.<br>Find a different point of view.</h2><p>Local voices. Global stories. Open a country to discover its complete channel directory.</p></div><div id="sltv-world-countries" class="sltv-world-countries"></div></section><footer class="sltv-footnote"><p>Free-to-air source directory. Broadcasters control availability, formats and regional access. A reachable stream is not a guarantee of playback in every country.</p><p id="sltv-updated"></p><a href="${asset("data/livetv/playlist.m3u")}" download>Download full IPTV playlist</a> · <a id="sltv-epg" href="https://iptv-org.github.io/api/guides.json" target="_blank" rel="noopener">EPG source directory</a></footer>`;
+<section class="sltv-directory" id="sltv-directory" aria-label="Channel directory"><div class="sltv-directory-head"><div><p class="sltv-eyebrow">FIND YOUR NEXT CHANNEL</p><h2>Discover live TV</h2></div><button type="button" id="sltv-reset">Reset</button></div><label class="sltv-search"><span class="sltv-sr">Search channels, countries, categories or languages</span><input id="sltv-q" type="search" placeholder="Channel, country or language…" autocomplete="off"></label><div class="sltv-tabs" role="tablist" aria-label="Browse channels"><button type="button" role="tab" data-tab="all" aria-selected="true">All channels</button><button type="button" role="tab" data-tab="countries" aria-selected="false">Countries</button><button type="button" role="tab" data-tab="categories" aria-selected="false">Categories</button><button type="button" role="tab" data-tab="regions" aria-selected="false">Regions</button><button type="button" role="tab" data-tab="languages" aria-selected="false">Languages</button><button type="button" role="tab" data-tab="working" aria-selected="false">Observed OK</button><button type="button" role="tab" data-tab="unavailable" aria-selected="false">Player / availability</button><button type="button" role="tab" data-tab="favorites" aria-selected="false">Favourites</button><button type="button" role="tab" data-tab="recent" aria-selected="false">Recent</button></div><p id="sltv-location" class="sltv-location" role="status"></p><div class="sltv-filters"><label><span class="sltv-sr">Country</span><select id="sltv-country"><option value="">All countries</option></select></label><label><span class="sltv-sr">Category</span><select id="sltv-category"><option value="">All categories</option></select></label><label><span class="sltv-sr">Language</span><select id="sltv-language"><option value="">All languages</option></select></label><label><span class="sltv-sr">Region</span><select id="sltv-region"><option value="">All regions</option></select></label><label><span class="sltv-sr">Channel sorting</span><select id="sltv-sort"><option value="recommended">Recommended</option><option value="name">A–Z</option><option value="working">Working first</option><option value="mirrors">Most mirrors</option></select></label></div><div id="sltv-count" role="status" aria-live="polite">Loading the complete channel directory…</div><div id="sltv-groups" class="sltv-groups" hidden></div><div id="sltv-viewport" class="sltv-viewport" tabindex="0" aria-label="Scrollable channel list"><ul id="sltv-list" aria-label="All matching channels"></ul></div><p class="sltv-directory-foot">Every retained channel stays searchable, including sources that are currently unavailable. Scroll to browse the full list.</p></section></div>
+<section class="sltv-world"><div><p class="sltv-eyebrow">THERE IS MORE TO EXPLORE</p><h2>Choose a country.<br>Find a different point of view.</h2><p>Local voices. Global stories. Open a country to discover its complete channel directory.</p></div><div id="sltv-world-countries" class="sltv-world-countries"></div></section><footer class="sltv-footnote"><p>Free-to-air source directory. Broadcasters control availability, formats and regional access. A reachable stream is not a guarantee of playback in every country.</p><p id="sltv-updated"></p><a href="${asset("data/livetv/playlist.m3u")}" download>Download full IPTV playlist</a> &middot; <a href="${asset("live-tv/directory/")}">Complete A-Z channel index</a> &middot; <a href="${asset("live-tv/countries/")}">Country guides</a> &middot; <a href="${asset("contact/")}">Rights-holder contact / removal</a> · <a id="sltv-epg" href="https://iptv-org.github.io/api/guides.json" target="_blank" rel="noopener">EPG source directory</a></footer>`;
   const $ = (id) => root.querySelector("#" + id),
     video = $("sltv-video"),
     frame = $("sltv-frame"),
@@ -37,6 +37,10 @@
     category = $("sltv-category"),
     groups = $("sltv-groups"),
     ext = $("sltv-external");
+  let discovery,
+    catalogue,
+    guideToken = 0,
+    manualCountry = false;
   let core,
     channels = [],
     filtered = [],
@@ -158,7 +162,30 @@
     blobs.forEach((u) => URL.revokeObjectURL(u));
     blobs = [];
     const source = core.sources(current)[sourceIndex];
-    if (!source) return;
+    if (/^https?:\/\//.test(current.website || "")) {
+      const official = node(
+        "a",
+        "sltv-btn sltv-btn--ghost",
+        "Broadcaster website",
+      );
+      official.href = current.website;
+      official.target = "_blank";
+      official.rel = "noopener";
+      actions.appendChild(official);
+    }
+    const report = node(
+      "a",
+      "sltv-btn sltv-btn--ghost",
+      "Report a channel / rights concern",
+    );
+    report.href =
+      asset("contact/") + "?channel=" + encodeURIComponent(current.id);
+    actions.appendChild(report);
+    if (!source) {
+      ext.querySelector(".sltv-external-hint").textContent =
+        "No public stream is currently supplied for this channel. Its directory record remains available.";
+      return;
+    }
     const links = core.externalLinks(
       source.url,
       current.name,
@@ -182,6 +209,10 @@
       playerSel.value = "auto";
       startCurrent();
     });
+    if (core.sources(current).length > 1)
+      button("Next available source", () => {
+        $("sltv-next-source").click();
+      });
     link("Open VLC", links.vlc);
     link("MX Player", links.mx);
     link("MX Player Pro", links.mxPro);
@@ -513,8 +544,69 @@
       ),
     );
   }
+  function refreshGuide(ch) {
+    const token = ++guideToken,
+      guide = $("sltv-guide");
+    guide.replaceChildren(
+      node("h3", "", "On TV now & next"),
+      node("p", "", "Checking the supplied programme guide..."),
+    );
+    discovery?.programmes(ch).then((data) => {
+      if (token !== guideToken) return;
+      const times = discovery.nowNext(data.programmes);
+      guide.replaceChildren(node("h3", "", "On TV now & next"));
+      for (const [label, p] of [
+        ["Now", times.now],
+        ["Next", times.next],
+      ]) {
+        const row = node("div", "sltv-programme");
+        if (p?.icon && /^https:\/\//.test(p.icon)) {
+          const image = node("img", "sltv-programme-art");
+          image.src = p.icon;
+          image.alt = "";
+          image.width = 240;
+          image.height = 135;
+          image.loading = "lazy";
+          image.onerror = () => image.remove();
+          row.append(image);
+        }
+        row.append(
+          node("small", "", label),
+          node("strong", "", p ? p.title : "No current listing supplied"),
+        );
+        if (p) {
+          row.append(
+            node(
+              "span",
+              "",
+              new Date(p.start).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }) +
+                " - " +
+                new Date(p.stop).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+            ),
+          );
+          if (p.description)
+            row.append(node("p", "", p.description.slice(0, 350)));
+        }
+        guide.append(row);
+      }
+      guide.append(
+        node(
+          "small",
+          "",
+          "Times use your device timezone. Listings are provided upstream and may be missing or delayed.",
+        ),
+      );
+    });
+  }
   function select(ch) {
     current = ch;
+    refreshGuide(ch);
     const saved = preferences()[ch.id] || {};
     sourceIndex = Math.min(
       Math.max(
@@ -553,12 +645,16 @@
       o.value = String(i);
       sourceSel.appendChild(o);
     });
-    sourceSel.disabled = false;
+    sourceSel.disabled = !core.sources(ch).length;
     sourceSel.value = String(sourceIndex);
     $("sltv-now").textContent = ch.name;
     $("sltv-retry").disabled = $("sltv-share").disabled = false;
     const recent = read("recent").filter((x) => x !== ch.id);
     write("recent", [ch.id, ...recent].slice(0, 100));
+    $("sltv-next-source").disabled = core.sources(ch).length < 2;
+    $("sltv-previous").disabled = !recent.some((id) =>
+      core.resolve(channels, id),
+    );
     updateFavorite();
     renderedStart = -1;
     render();
@@ -627,7 +723,9 @@
             ? "Try player"
             : ch.status === "needs-player"
               ? "Player options"
-              : "Unchecked",
+              : ch.status === "no-source"
+                ? "No public stream"
+                : "Unchecked",
       );
       badge.title = core.sources(ch).length + " source(s)";
       b.append(
@@ -662,7 +760,9 @@
             ? "Save channels with the star to build your favourites."
             : tab === "recent"
               ? "Channels you watch will appear here."
-              : "No channels match. Reset filters to browse the full directory.",
+              : country.value
+                ? "No public channels are currently supplied for this country with these filters. Choose All countries to continue."
+                : "No channels match. Reset filters to browse the full directory.",
         ),
       );
   }
@@ -679,6 +779,17 @@
     filtered = channels.filter(
       (ch) =>
         (!wanted || wanted.has(ch.id)) &&
+        (!$("sltv-language").value ||
+          ch.languages?.includes($("sltv-language").value) ||
+          String(ch.language || "")
+            .split(/[,;\s]+/)
+            .includes($("sltv-language").value)) &&
+        (!$("sltv-region").value ||
+          catalogue.regions
+            ?.find((r) => r.code === $("sltv-region").value)
+            ?.countries.includes(ch.country || ch.cc)) &&
+        (tab !== "working" || ch.status === "ok") &&
+        (tab !== "unavailable" || ch.status !== "ok") &&
         core.matches(
           ch,
           $("sltv-q").value.trim(),
@@ -701,7 +812,10 @@
       ];
       const rank = (c) => {
         const i = names.indexOf(c.name.toLowerCase());
-        return (i < 0 ? 100 : i) + (c.status === "dead" ? 1000 : 0);
+        return (
+          (i < 0 ? 100 : i) +
+          (c.status === "no-source" ? 2000 : c.status === "dead" ? 1000 : 0)
+        );
       };
       filtered.sort(
         (a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name),
@@ -732,30 +846,60 @@
     renderGroups();
   }
   function renderGroups() {
-    groups.hidden = !["countries", "categories"].includes(tab);
+    groups.hidden = ![
+      "countries",
+      "categories",
+      "regions",
+      "languages",
+    ].includes(tab);
     if (groups.hidden) return;
     groups.replaceChildren();
-    const map = new Map();
-    channels.forEach((c) => {
-      const key =
-        tab === "countries"
-          ? c.country || c.cc || ""
-          : c.group || c.cat || "General";
-      map.set(key, (map.get(key) || 0) + 1);
-    });
-    [...map]
-      .sort((a, b) => String(a[0]).localeCompare(String(b[0])))
-      .forEach(([key, n]) => {
-        const b = node(
-          "button",
-          "",
-          ((tab === "countries" ? region(key) : key) || "Unspecified") +
-            " · " +
-            n,
-        );
+    let entries;
+    if (tab === "countries")
+      entries = catalogue.facets.countries.map((c) => ({
+        key: c.k,
+        name: region(c.k),
+        n: c.n,
+      }));
+    else if (tab === "regions")
+      entries = (catalogue.regions || []).map((r) => ({
+        key: r.code,
+        name: r.name,
+        n: channels.filter((c) => r.countries.includes(c.country || c.cc))
+          .length,
+      }));
+    else if (tab === "languages")
+      entries = [...$("sltv-language").options]
+        .filter((o) => o.value)
+        .map((o) => ({
+          key: o.value,
+          name: o.textContent,
+          n: channels.filter((c) => c.languages?.includes(o.value)).length,
+        }));
+    else {
+      const map = new Map();
+      channels.forEach((c) =>
+        map.set(
+          c.group || c.cat || "General",
+          (map.get(c.group || c.cat || "General") || 0) + 1,
+        ),
+      );
+      entries = [...map].map(([key, n]) => ({ key, name: key, n }));
+    }
+    entries
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach(({ key, name, n }) => {
+        const b = node("button", "", name + " - " + n);
         b.type = "button";
         b.onclick = () => {
-          if (tab === "countries") country.value = key || "__world";
+          if (tab === "countries") {
+            country.value = key;
+            manualCountry = true;
+            try {
+              localStorage.setItem("sltv_country_v2", key);
+            } catch {}
+          } else if (tab === "regions") $("sltv-region").value = key;
+          else if (tab === "languages") $("sltv-language").value = key;
           else category.value = key;
           setTab("all");
         };
@@ -813,12 +957,23 @@
     clearTimeout(searchTimer);
     searchTimer = setTimeout(() => filter(), 120);
   });
-  [country, category, $("sltv-sort")].forEach(
-    (s) => (s.onchange = () => filter()),
-  );
+  [
+    country,
+    category,
+    $("sltv-sort"),
+    $("sltv-language"),
+    $("sltv-region"),
+  ].forEach((s) => (s.onchange = () => filter()));
   $("sltv-reset").onclick = () => {
     $("sltv-q").value = "";
     country.value = "";
+    manualCountry = true;
+    try {
+      localStorage.setItem("sltv_country_v2", "__all");
+    } catch {}
+    $("sltv-language").value = "";
+    $("sltv-region").value = "";
+    $("sltv-location").textContent = "";
     category.value = "";
     setTab("all");
   };
@@ -844,6 +999,19 @@
     copy(location.href).then(
       () => (status.textContent = "Channel link copied"),
     );
+  $("sltv-next-source").onclick = () => {
+    if (!current || core.sources(current).length < 2) return;
+    sourceIndex = (sourceIndex + 1) % core.sources(current).length;
+    sourceSel.value = String(sourceIndex);
+    playerSel.value = "auto";
+    startCurrent();
+  };
+  $("sltv-previous").onclick = () => {
+    const ch = read("recent")
+      .map((id) => core.resolve(channels, id))
+      .find((ch) => ch && ch.id !== current?.id);
+    if (ch) select(ch);
+  };
   $("sltv-fullscreen").onclick = () => {
     if (player.requestFullscreen)
       player
@@ -864,10 +1032,19 @@
   };
   Promise.all([
     script("assets/js/live-tv-core.js?v=world-tv-20261122", "SLTVCore"),
-    script("data/livetv/channels.js?v=world-tv-20261122", "SM_LIVETV"),
+    script(
+      "data/livetv/channels.js?v=world-tv-discovery-20261122",
+      "SM_LIVETV",
+    ),
+    script(
+      "assets/js/live-tv-discovery.js?v=world-tv-discovery-20261122",
+      "SLTVDiscovery",
+    ),
   ])
-    .then(([C, db]) => {
+    .then(([C, db, D]) => {
       core = C;
+      discovery = D;
+      catalogue = db;
       channels = db.items;
       let languageNames;
       try {
@@ -929,8 +1106,24 @@
         .forEach((c) =>
           addOption(country, c.k, region(c.k) + " (" + c.n + ")"),
         );
-      db.facets.categories.forEach((c) =>
-        addOption(category, c.k, c.k + " (" + c.n + ")"),
+      [
+        ...new Map(
+          [
+            ...(db.facets.categories || []),
+            ...(db.categoryDirectory || []).map((c) => ({
+              k: c.id,
+              n: channels.filter((ch) => ch.categories?.includes(c.id)).length,
+            })),
+          ].map((c) => [c.k, c]),
+        ).values(),
+      ]
+        .filter((c) => c.n)
+        .forEach((c) => addOption(category, c.k, c.k + " (" + c.n + ")"));
+      (db.languageDirectory || []).forEach((l) =>
+        addOption($("sltv-language"), l.code, l.name),
+      );
+      (db.regions || []).forEach((r) =>
+        addOption($("sltv-region"), r.code, r.name),
       );
       if (channels.some((c) => !c.country && !c.cc))
         addOption(country, "__world", "Worldwide / unspecified");
@@ -945,6 +1138,42 @@
       country.value =
         qs.get("country") === "UK" ? "GB" : qs.get("country") || "";
       category.value = qs.get("category") || "";
+      $("sltv-language").value = qs.get("language") || "";
+      $("sltv-region").value = qs.get("region") || "";
+      country.addEventListener("change", () => {
+        manualCountry = true;
+        try {
+          localStorage.setItem("sltv_country_v2", country.value || "__all");
+        } catch {}
+        $("sltv-location").textContent = "";
+      });
+      if (
+        !["country", "channel", "q", "category", "language", "region"].some(
+          (k) => qs.has(k),
+        )
+      ) {
+        let saved;
+        try {
+          saved = localStorage.getItem("sltv_country_v2");
+        } catch {}
+        if (saved) {
+          if (saved !== "__all") country.value = saved;
+        } else
+          discovery.detectCountry().then((cc) => {
+            if (
+              manualCountry ||
+              !cc ||
+              ![...country.options].some((o) => o.value === cc)
+            )
+              return;
+            country.value = cc;
+            filter();
+            $("sltv-location").textContent =
+              "Showing " +
+              region(cc) +
+              " from your approximate connection location. Change Country or choose Reset for the world. Your IP address is not stored.";
+          });
+      }
       $("sltv-q").value = qs.get("q") || "";
       $("sltv-updated").textContent =
         "Catalogue updated " +
@@ -963,7 +1192,16 @@
         .sort((a, b) => region(a.k).localeCompare(region(b.k)))
         .forEach((c) => {
           const a = node("a", "sltv-country-link");
-          a.href = asset("live-tv/") + "?country=" + encodeURIComponent(c.k);
+          a.href = asset(
+            "live-tv/country/" +
+              (c.name || region(c.k))
+                .normalize("NFKD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-|-$/g, "") +
+              "/",
+          );
           const flag = node("span", "sltv-country-code", c.k);
           a.append(
             flag,
@@ -1002,7 +1240,15 @@
           "Paused while browsing the site. Choose Retry to continue.";
     }
   });
+  const guideRefresh = setInterval(
+    () => {
+      if (current && document.visibilityState === "visible" && !root.closest("[hidden]"))
+        refreshGuide(current);
+    },
+    15 * 60 * 1000,
+  );
   window.addEventListener("beforeunload", () => {
+    clearInterval(guideRefresh);
     runner?.stop();
     blobs.forEach((u) => URL.revokeObjectURL(u));
   });
