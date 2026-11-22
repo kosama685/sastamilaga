@@ -21,7 +21,7 @@ function render(){
  });
  var t=cart.totals();
  totals.textContent='Local subtotal: PKR '+t.local.subtotal.toFixed(2)+'; indicative Pakistan delivery: PKR '+t.local.shippingEstimate.toFixed(2)+
- '; CJ product estimate: USD '+t.cj.productSubtotalEstimate.toFixed(2)+'; international freight, duties and final amount require confirmation.';
+ '; CJ product subtotal estimate: USD '+t.cj.productSubtotalEstimate.toFixed(2)+'; unpriced CJ options: '+(t.cj.unpricedOptionCount||0)+'; international freight, duties and final amount require confirmation.';
 }
 document.addEventListener('sm:order-cart-changed',render);render();
 })();
