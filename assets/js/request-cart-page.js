@@ -20,8 +20,8 @@ function render(){
   control.append(qty,remove);box.append(name,meta,control);target.append(box);
  });
  var t=cart.totals();
- totals.textContent='Local subtotal: PKR '+t.local.subtotal.toFixed(2)+'; indicative Pakistan delivery: PKR '+t.local.shippingEstimate.toFixed(2)+
- '; CJ product subtotal estimate: USD '+t.cj.productSubtotalEstimate.toFixed(2)+'; unpriced CJ options: '+(t.cj.unpricedOptionCount||0)+'; international freight, duties and final amount require confirmation.';
+ totals.textContent='Local subtotal: PKR '+t.local.subtotal.toFixed(2)+'; indicative Pakistan delivery: PKR '+(t.local.shippingEstimate===null?'Pending confirmation':t.local.shippingEstimate.toFixed(2))+
+ '; Unpriced local items: '+t.local.unpricedOptionCount+'; CJ product subtotal estimate: USD '+t.cj.productSubtotalEstimate.toFixed(2)+'; unpriced CJ options: '+(t.cj.unpricedOptionCount||0)+'; international freight, duties and final amount require confirmation.';
 }
 document.addEventListener('sm:order-cart-changed',render);render();
 })();
