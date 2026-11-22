@@ -113,6 +113,16 @@
   var hb = document.createElement('script'); hb.src = prefix + 'assets/js/hhcbridge.js?v=20261118-4'; hb.defer = true; document.head.appendChild(hb);
   var ay = document.createElement('script'); ay.src = prefix + 'assets/js/a11y.js'; ay.defer = true; document.head.appendChild(ay);
   var mt = document.createElement('script'); mt.src = prefix + 'assets/js/i18n.js'; mt.defer = true; document.head.appendChild(mt);
+  /* Local and CJ product pages share a single non-commerce social module.
+     Static pages already include chrome.js; load it without rebuilding 20k product files. */
+  if (document.querySelector('main .pdp .buy-panel')) {
+    var shareCss = document.createElement('link');
+    shareCss.rel = 'stylesheet'; shareCss.href = prefix + 'assets/css/product-share.css?v=20261122-1';
+    document.head.appendChild(shareCss);
+    var shareJs = document.createElement('script');
+    shareJs.src = prefix + 'assets/js/product-share.js?v=20261122-1';
+    shareJs.defer = true; document.head.appendChild(shareJs);
+  }
   /* Reusable video button for static local product pages. */
   var pv = document.createElement('script'); pv.src = prefix + 'assets/js/product-video-universal.js?v=20261117-1'; pv.defer = true; document.head.appendChild(pv);
   if (document.querySelector('main .pdp')) { var rc = document.createElement('script'); rc.src = prefix + 'assets/js/related-product-cards.js?v=20261119-1'; rc.defer = true; document.head.appendChild(rc); }

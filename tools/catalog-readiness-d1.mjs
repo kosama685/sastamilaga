@@ -70,6 +70,23 @@ const fields = Object.fromEntries(Object.entries(rows[0]).map(([k,v]) => [k, Num
 const cjCount = counts.find(x => x.source === 'cj').records;
 if (cjCount !== fields.records || cjCount === 0) throw new Error('Counts inconsistent: audit stopped');
 
+// Conservative ceiling for any FUTURE approved publication pipeline. This audit
+// never publishes products or submits sitemaps; a separate verified publisher is required.
+const DAILY_PUBLICATION_CEILING = 100;
+const editorialCandidates = enrichment.sitemap_eligible;
+const publicationPlan = {
+  max_new_qualified_products_per_day: DAILY_PUBLICATION_CEILING,
+  editorial_candidates_not_yet_verified_indexable: editorialCandidates,
+  supplier_records_pending_editorial_review: Math.max(0, cjCount - enrichment.reviewed_rows),
+  live_indexable_cj_pages_created_by_this_workflow: 0,
+  publication_enabled: false,
+  blocked_by: [
+    'The public CJ PDP renderer currently returns noindex; verify self-canonicals and indexability before enabling sitemaps.',
+    'Verify product-specific price, stock, country shipping, images, variants, and working checkout independently.',
+    'The static supplier snapshot sets allow_indexing=false; counts do not establish publishable offers.'
+  ],
+  github_api_strategy: 'No per-product GitHub writes. Use one batched commit/deployment only after a separate qualifying publisher is approved.'
+};
 const readyForMerchant = false; // Explicit human review: shipping, currency, live variants, checkout, policy and quota.
 const audit = {
   audit_time_utc: new Date().toISOString(),
@@ -77,6 +94,7 @@ const audit = {
   counts,
   fields,
   enrichment,
+  publicationPlan,
   merchant_automatic_publish_enabled: readyForMerchant,
   sitemap_automatic_publish_enabled: false,
   readiness: 'BLOCKED_PENDING_VERIFICATION',
@@ -114,9 +132,16 @@ const md = [
   '## SEO-reviewed D1 supplier pages',
   '',
   '- Reviewed enrichment rows: ' + enrichment.reviewed_rows.toLocaleString('en-US'),
-  '- Qualified for /global-shop/sitemap.xml: ' + enrichment.sitemap_eligible.toLocaleString('en-US'),
-  '- Supplier records NOT qualified yet: ' + (fields.records-enrichment.sitemap_eligible).toLocaleString('en-US'),
-  '- Eligibility is based only on the current D1 Worker rule: seo_approved=1 and description_text length >= 100; it does NOT certify checkout, Merchant Center approval, or Google indexing.',
+  '- Editorial enrichment candidates (not live-indexable): ' + enrichment.sitemap_eligible.toLocaleString('en-US'),
+  '- Supplier records without editorial enrichment: ' + (fields.records-enrichment.reviewed_rows).toLocaleString('en-US'),
+  '- Editorial screening only: seo_approved=1 and description_text length >= 100 does NOT certify checkout, public indexability, Merchant Center approval, or Google indexing.',
+  '',
+  '## Daily publication control (not automatic publication)',
+  '',
+  '- Planned maximum once fully qualified: ' + DAILY_PUBLICATION_CEILING.toLocaleString('en-US') + ' products/day.',
+  '- New public CJ pages created by this audit: 0.',
+  '- Current live SEO publishing status: BLOCKED — noindex renderer and missing offer/checkout verification.',
+  '- GitHub API protection: do not call the Contents API for each SKU; a future publisher must batch writes and deploy once.',
   '',
   '## Blocking verification requirements',
   '',
