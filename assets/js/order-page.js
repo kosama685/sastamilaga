@@ -13,7 +13,7 @@ function render(){
  var rows=cart.get(),totals=cart.totals();rowsEl.replaceChildren();
  rows.forEach(function(r){
    var wrap=element('div');wrap.className='request-row';
-   var title=element('strong',r.name);var meta=element('p',r.sku+(r.vname?' · '+r.vname:'')+' · '+money(r.unit,r.currency)+' each ('+(r.type==='cj'?'unconfirmed USD estimate':'PKR listing estimate')+')');
+   var title=element('strong',r.name);var meta=element('p',r.sku+(r.vname?' · '+r.vname:'')+' · '+(r.unit===null?'Quote required':money(r.unit,r.currency))+' each ('+(r.type==='cj'?'unconfirmed USD estimate':'PKR listing estimate')+')');
    var controls=element('div');controls.className='row-controls';var qty=element('input');qty.type='number';qty.min='1';qty.max='99';qty.step='1';qty.value=r.qty;qty.setAttribute('aria-label','Quantity for '+r.name);
    qty.addEventListener('change',function(){var n=Number(qty.value);var done=cart.quantity(cart.key(r),n);if(!done.ok)status.textContent=done.message;render()});
    var remove=element('button','Remove');remove.type='button';remove.addEventListener('click',function(){cart.remove(cart.key(r));render()});
