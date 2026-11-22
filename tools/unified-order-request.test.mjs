@@ -77,8 +77,9 @@ test('global quota fallback does not assert payment success or retry a blocked b
  assert.match(product,/function requestFallback\(message\)/);
  assert.match(product,/Save quotation request/);
  assert.match(product,/unit:null/);
- assert.match(product,/if \(r.status === 429 \|\| r.status >= 500\)/);
- assert.match(product,/No item was added/);
+ assert.match(product,/requestCartReady\(\)\.then/);
+ assert.doesNotMatch(product,/api\('\/wp-json\/gdcs\/v1\/live\/cart'/);
+ assert.match(product,/No order was placed/);
  assert.match(form,/payment_status','NOT_PAID'/);
  assert.match(form,/if\(!result\.ok\)throw/);
  assert.doesNotMatch(product,/localStorage\.clear\(/);
