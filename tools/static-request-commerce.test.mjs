@@ -34,7 +34,7 @@ test('Saudi CJ quote stays unpriced, exact variant survives, and local Pakistan 
  assert.equal(cart.get()[0].vkey,'VID-1');
  assert.equal(cart.totals().cj.finalTotal,null);
  const form=read('assets/js/order-page.js');
- assert.match(form,/country==='PK'/);
+ assert.match(form,/destination_eligibility/);
  assert.match(form,/payment_status','NOT_PAID'/);
  assert.match(form,/fulfilment_status','UNCONFIRMED'/);
 });
