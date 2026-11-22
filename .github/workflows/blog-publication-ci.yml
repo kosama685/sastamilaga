@@ -32,7 +32,9 @@ jobs:
           node --check tools/verify-blog-publication.mjs
           ! grep -q 'build-livetv' .github/workflows/blog-schedule.yml
           grep -q 'timeout-minutes:' .github/workflows/blog-schedule.yml
-          grep -q 'build-livetv.mjs --check' .github/workflows/livetv-refresh.yml
+          grep -q 'run: node tools/build-livetv.mjs' .github/workflows/livetv-refresh.yml
+          grep -q 'run: node tools/check-livetv.mjs' .github/workflows/livetv-refresh.yml
+          grep -q 'run: node tools/verify-livetv-coverage.mjs' .github/workflows/livetv-refresh.yml
       - name: Verify published pages match due source entries
         run: |
           node tools/build-blog.mjs
