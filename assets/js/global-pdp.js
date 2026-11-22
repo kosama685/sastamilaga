@@ -1,8 +1,9 @@
 /* Global product page (edge-rendered by workers/global-pdp; same layout as the local product pages).
  * Adds, in the browser: the full photo gallery with zoom, the supplier description, options with the price for the shopper's destination,
- * a delivery check, and the REAL cart: POST /wp-json/gdcs/v1/live/cart (GDCS VirtualCheckout) puts the item in the WooCommerce cart at a
- * server-verified price; "Buy now" then opens the WooCommerce checkout. Nothing is priced, stored or ordered in the browser.
- * Data: GET /wp-json/sm/v1/gpdp/<pid> (wordpress/mu-plugins/sm-global-pdp-api.php), GET /api/cj/shipping (indicative carrier quotes). */
+ * a delivery check, and the same browser-persisted UNPAID request cart used by Pakistan products.
+ * Buy Now opens a request form; never treats a supplier estimate as a payable total.
+ * Data: GET /wp-json/sm/v1/gpdp/<pid> for read-only options, plus a read-only freight lookup.
+ * These upstream data sources are legacy dependencies until an approved supplier snapshot replaces them. */
 (function () {
   'use strict';
   var root = document.querySelector('[data-gpdp]'), dataEl = document.getElementById('gpdp-data');
@@ -45,7 +46,7 @@
   }
   function requestFallback(message) {
     if (els.status.querySelector('.gpdp-request-fallback')) return;
-    say(message + ' You can save a separate quotation request without payment or contacting the checkout API.', 'warn');
+    say(message + ' You can save the selected item in your combined cart for a staff quotation without payment.', 'warn');
     var wrap = document.createElement('div');
     wrap.className = 'gpdp-request-fallback';
     wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:12px;';
@@ -71,9 +72,9 @@
           name:P.name || 'Global supplier product',vkey:state.option && state.option.vid || '',
           vname:requested,unit:null,qty:qty(),url:location.href});
         if (!answer.ok) throw new Error(answer.message || 'Could not save the quotation request');
-        say('Your supplier quotation request is saved. No item was added to WooCommerce and no order was placed.', 'ok');
+        say('Saved in your combined cart. No payment was collected and the request remains unconfirmed.', 'ok');
         var link = document.createElement('a'); link.href = '/request-cart/';
-        link.textContent = 'Review request cart and send details'; els.status.appendChild(document.createTextNode(' '));els.status.appendChild(link);
+        link.textContent = 'Review cart and continue to checkout'; els.status.appendChild(document.createTextNode(' '));els.status.appendChild(link);
       }).catch(function (e) { button.disabled = false; say(String(e.message||e)+' Please use WhatsApp instead.', 'warn'); });
     });
     wrap.appendChild(label);wrap.appendChild(button);els.status.appendChild(wrap);
@@ -174,7 +175,11 @@
   /* ---- delivery check: the store's own quote (POST /wp-json/gdcs/v1/live/freight), the same one the cart and checkout use.
      It knows which supplier warehouse holds stock (for example a US warehouse with domestic carriers). ---- */
   var dTimer = 0, dSeq = 0;
-  function setOrderable(yes) { var can = yes && !!(state.data && state.data.ordering_enabled); els.add.disabled = !can; els.buy.disabled = !can; }
+  function setOrderable(yes) {
+    // These actions only save an unpaid request. They do not capture funds or promise fulfillment.
+    var can=!!(state.option&&state.option.vid);
+    els.add.disabled=!can;els.buy.disabled=!can;
+  }
   function checkDelivery() {
     clearTimeout(dTimer);
     dTimer = setTimeout(function () {
@@ -191,15 +196,15 @@
         if (!r.ok) {
           els.delivery.className = 'gpdp-delivery is-warn';
           els.delivery.textContent = (r.j && r.j.message ? String(r.j.message).replace(/<[^>]+>/g, '') : 'Delivery could not be checked right now.') + ' You can still ask us on WhatsApp.';
-          setOrderable(false); // no unverified shipping or checkout when the carrier service is unavailable
-          requestFallback('Shipping is not verified for this option.');
+          setOrderable(false); // unpaid requests remain possible; do not offer a payable total
+          say('Shipping is not verified. Add this option to your cart to request the final price and delivery.', 'warn');
           return;
         }
         var q = (r.j.quotes || []).filter(function (z) { return z && z.service; });
         if (!q.length) {
           els.delivery.className = 'gpdp-delivery is-warn';
           els.delivery.textContent = 'This option cannot be delivered to ' + where + ' from the supplier\'s warehouses right now. Choose another option, change your destination at the top of the page, or ask us on WhatsApp.';
-          setOrderable(false); requestFallback('No verified carrier quote is available for this variation and destination.'); return;
+          setOrderable(false); say('No verified carrier quote for this variation and destination. Add to Cart to request a final quote.', 'warn'); return;
         }
         q.sort(function (a, b) { return (a.cost - b.cost) || (parseInt(a.estimate, 10) - parseInt(b.estimate, 10)); });
         var best = q[0], cur = r.j.currency || 'USD', fmt = function (v) { return cur === 'USD' ? money(v) : (cur + ' ' + Number(v).toFixed(r.j.digits == null ? 2 : r.j.digits)); };
@@ -208,7 +213,7 @@
         els.delivery.textContent = 'Delivers to ' + where + (from ? ' from the supplier\'s ' + from.replace(/\s*\([A-Z]{2}\)$/, '') + ' warehouse' : '') + ': ' + q.length + ' method' + (q.length > 1 ? 's' : '') +
           ', shipping from ' + fmt(best.cost) + (best.estimate ? ' (' + best.estimate + ' days, carrier estimate)' : '') + '. The exact shipping charge is shown at checkout before you pay.';
         setOrderable(true);
-      }).catch(function () { if (seq === dSeq) { els.delivery.className = 'gpdp-delivery is-warn'; els.delivery.textContent = 'No verified carrier rate is available. Request a supplier quote before payment.'; setOrderable(false); requestFallback('Shipping verification is unavailable.'); } });
+      }).catch(function () { if (seq === dSeq) { els.delivery.className = 'gpdp-delivery is-warn'; els.delivery.textContent = 'No verified carrier rate is available. Request a supplier quote before payment.'; setOrderable(false); say('Shipping verification is unavailable. Add to Cart to request a quote, without payment.', 'warn'); } });
     }, 250);
   }
 
@@ -217,24 +222,28 @@
   function toCart(buyNow) {
     if (state.busy || !state.option) return;
     state.busy = true; els.add.setAttribute('aria-busy', 'true'); els.buy.setAttribute('aria-busy', 'true');
-    say(buyNow ? 'Preparing secure checkout…' : 'Checking the supplier and adding to your cart…', 'info');
-    context().then(function () {
-      return api('/wp-json/gdcs/v1/live/cart', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-GDCS-CSRF': state.csrf },
-        body: JSON.stringify({ pid: P.pid, vid: state.option.vid, quantity: qty() }) });
-    }).then(function (r) {
-      if (r.ok && r.j.added) {
-        badge(r.j.items);
-        if (buyNow) { say('Opening secure checkout…', 'ok'); location.href = r.j.checkout || '/checkout/'; return; }
-        els.status.className = 'gpdp-status is-ok'; els.status.textContent = 'Added to your cart. ';
-        var a = document.createElement('a'); a.href = r.j.cart || '/cart/'; a.textContent = 'View cart'; els.status.appendChild(a);
-        return;
-      }
-      var msg = (r.j && r.j.message) ? String(r.j.message).replace(/<[^>]+>/g, '') : 'The cart could not be updated. Please try again.';
-      if (r.status === 403) msg = 'Your session expired. Please try again.';
-      if (r.status === 429 || r.status >= 500) { requestFallback('Secure checkout is temporarily unavailable. No item was added.'); return; }
-      say(msg, 'warn');
-    }).catch(function () { requestFallback('The store could not be reached. No order was placed.'); })
-      .then(function () { state.busy = false; els.add.removeAttribute('aria-busy'); els.buy.removeAttribute('aria-busy'); });
+    say('Saving your exact supplier variation to the combined cart…', 'info');
+    requestCartReady().then(function (cart) {
+      var o=state.option,unit=Number(o.usd);
+      var answer=cart.add({
+        type:'cj',id:String(P.pid),sku:String(o.sku||P.sku||P.pid),
+        name:String(P.name||'Global supplier product'),
+        vkey:String(o.vid||''),vname:String(o.name||o.sku||''),
+        attributes:[{attribute:'Supplier option',value:String(o.name||o.vid)}],
+        unit:Number.isFinite(unit)&&unit>0?unit:null,
+        qty:qty(),url:location.href
+      });
+      if (!answer.ok) throw new Error(answer.message||'Could not save the selected variation');
+      badge(cart.count());
+      if (buyNow) { location.href='/order/?country='+encodeURIComponent(state.country||wanted()||'SA'); return; }
+      els.status.className='gpdp-status is-ok';
+      els.status.textContent='Added to your combined cart. Final shipping and price require confirmation. ';
+      var link=document.createElement('a');link.href='/request-cart/';link.textContent='View cart';els.status.appendChild(link);
+    }).catch(function (err) {
+      say(String(err.message||'Cart could not be updated.')+' No order was placed.', 'warn');
+    }).then(function () {
+      state.busy=false;els.add.removeAttribute('aria-busy');els.buy.removeAttribute('aria-busy');
+    });
   }
   /* Window capture: runs before any page-level click guard, so these two buttons always reach the real cart. */
   window.addEventListener('click', function (e) {
@@ -252,20 +261,20 @@
       if (!r.ok) {
         renderDescription('');
         els.price.textContent = r.status === 404 ? 'Not available' : 'Price confirmed on WhatsApp';
-        if (r.status === 404) say('This product is not available from the supplier right now.', 'warn');
+        if (r.status === 404) say('Supplier availability is unconfirmed; contact support for a quote.', 'warn');
         else requestFallback('Live supplier options are unavailable right now.');
         return;
       }
       var d = r.j; state.data = d; state.country = (d.country || state.country || '').toUpperCase();
       buildGallery([P.image].concat(d.images || []));
       renderDescription(d.description);
-      els.dest.textContent = 'Global supplier item · prepaid' + (state.country ? ' · delivering to ' + countryName(state.country) : '');
+      els.dest.textContent = 'Global supplier item · quote before payment' + (state.country ? ' · delivering to ' + countryName(state.country) : '');
       var priced = (d.options || []).filter(function (o) { return o && o.vid; });
       if (!priced.length) { els.price.textContent = 'Price pending supplier verification'; requestFallback('Choose the option you need and send a quotation request.'); return; }
       renderOptions(priced); els.qtyWrap.hidden = false;
       var keep = state.option && priced.filter(function (o) { return o.vid === state.option.vid; })[0];
       choose(keep || priced[0]);
-      if (!d.ordering_enabled) { setOrderable(false); requestFallback('Online ordering is paused. Save a quotation request with your exact variation and quantity.'); }
+      if (!d.ordering_enabled) { setOrderable(false); say('Supplier order verification is paused. Add your exact option to the combined cart as an unpaid request.', 'warn'); }
     }).catch(function () { requestFallback('Live supplier details are unavailable right now.'); });
   }
   context().then(load);
