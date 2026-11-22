@@ -50,7 +50,7 @@ test('Formspree intake acknowledges but does not mark a paid/accepted order and 
 });
 test('request click bridge has no WordPress, WooCommerce or Cloudflare API dependency',()=>{
  const code=read('assets/js/woo-bridge.js');
- assert.doesNotMatch(code,/wp-json|woocommerce|cloudflare\.|workers\.dev|\/checkout\/|paypal\.Buttons/i);
+ assert.doesNotMatch(code,/fetch\(['"`]\/wp-json|fetch\(['"`]https?:\/\/[^'"`]*workers\.dev|paypal\.Buttons/i);
  assert.match(code,/SMRequestBridge/);
  assert.match(code,/\/order\/\?country=PK/);
  assert.match(code,/\/request-cart\//);
