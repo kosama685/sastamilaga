@@ -1,0 +1,43 @@
+name: Git-only Formspree request commerce acceptance
+on:
+  pull_request:
+    paths:
+      - 'assets/js/woo-bridge.js'
+      - 'assets/js/order-cart.js'
+      - 'assets/js/order-page.js'
+      - 'assets/js/request-cart-page.js'
+      - 'order/index.html'
+      - 'request-cart/index.html'
+      - 'tools/static-request-commerce.test.mjs'
+      - '.github/workflows/static-request-commerce.yml'
+  push:
+    branches: [main, feature/git-only-formspree-request-commerce-20261122]
+    paths:
+      - 'assets/js/woo-bridge.js'
+      - 'assets/js/order-cart.js'
+      - 'assets/js/order-page.js'
+      - 'assets/js/request-cart-page.js'
+      - 'tools/static-request-commerce.test.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  request-commerce-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax checks
+        run: |
+          node --check assets/js/woo-bridge.js
+          node --check assets/js/order-cart.js
+          node --check assets/js/order-page.js
+          node --check assets/js/request-cart-page.js
+      - name: Request-only commerce tests
+        run: |
+          node --test tools/static-request-commerce.test.mjs
+          node --test tools/github-only-commerce.test.mjs
+          node --test tools/unified-order-request.test.mjs
