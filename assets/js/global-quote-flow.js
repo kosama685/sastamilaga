@@ -12,7 +12,7 @@
     return p.endsWith('/')?p:p+'/';
   }
   function orderUrl(country){
-    var cc=str(country,2).toUpperCase();
+    var cc=String(country==null?'':country).trim().toUpperCase();
     return base()+'order/'+(/^[A-Z]{2}$/.test(cc)?'?country='+encodeURIComponent(cc):'');
   }
   function cartUrl(){return base()+'request-cart/';}
