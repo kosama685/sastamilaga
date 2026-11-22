@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><title>Managed commerce migration | Private staging | Sasta Milaga</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#133527;background:#f2f7f4}*{box-sizing:border-box}body{margin:0}
+header{padding:20px;background:#103d2a;color:#fff}header strong{font-size:1.15rem}header a{color:white}
+main{max-width:1060px;margin:0 auto;padding:25px 18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.panel{background:white;border-radius:14px;padding:24px;border:1px solid #d4e5d9;box-shadow:0 4px 16px #0d2b1810;min-width:0}
+h1{font-size:clamp(1.5rem,3vw,2.2rem)}h2{font-size:1.1rem}.notice{background:#fff9e8;padding:15px;border:1px solid #ebd8a7;border-radius:9px}
+label{display:block;font-weight:600;margin-top:14px;font-size:.93rem}input{width:100%;font:inherit;padding:11px;border:1px solid #a5baad;border-radius:8px;margin-top:5px}
+button{font:inherit;border:0;border-radius:8px;padding:11px 15px;background:#11683c;color:#fff;cursor:pointer}
+button[disabled]{opacity:.5;cursor:not-allowed}.secondary{background:#fff;color:#11583b;border:1px solid #8bb6a0}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.row{padding:12px 0;border-bottom:1px solid #e5eae5}
+a{color:#11613a}.message{white-space:pre-wrap;margin-top:20px;padding:14px;border-radius:8px;background:#e8f5ed}
+small{color:#57665d}#cartLines{list-style:none;padding:0}#cartLines li{padding:11px 0;border-bottom:1px solid #e0e9e4}
+footer{text-align:center;padding:20px;color:#456352}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.panel{padding:18px}}
+</style></head>
+<body><header><strong>Sasta Milaga / Staff-only Migration Preview</strong> · <a href="/">Return to current store</a></header>
+<main><h1>Managed cart and hosted checkout — staging</h1>
+<p class="notice">Not connected to production checkout. No store credentials or approved SKU mappings have been supplied. This page does not accept payment, show customer orders, or replace the existing carts. Test only with an approved Shopify sandbox/staging store. Do not enter an Admin API token or client secret.</p>
+<div class="grid"><section class="panel"><h2>1. Connect a Shopify test store</h2>
+<form id="connect">
+<label>Store domain <input name="shopDomain" placeholder="your-test-store.myshopify.com" autocomplete="off" required></label>
+<label>Public Storefront API access token <input name="token" type="password" autocomplete="off" required></label>
+<label>Storefront API version <input name="version" value="2026-10" required></label>
+<div class="actions"><button type="submit">Validate local configuration</button></div>
+<small>This public token is held in page memory only and is not committed to GitHub or stored in localStorage. This setup does not prove merchant onboarding.</small>
+</form></section>
+<section class="panel"><h2>2. Select a verified test variant</h2>
+<form id="product">
+<label>Reviewed Shopify ProductVariant GID <input name="variantId" placeholder="gid://shopify/ProductVariant/1234567890" required></label>
+<label>Quantity <input name="quantity" type="number" value="1" min="1" max="99" required></label>
+<div class="actions"><button type="submit" id="add" disabled>Add to test cart</button><button type="button" id="quick" disabled>Quick Buy (test checkout)</button></div>
+<small>This must map to a verified imported SKU and exact colour/size variation. It is never inferred from the current CJ catalogue.</small>
+</form></section>
+<section class="panel"><h2>3. Provider-confirmed cart</h2>
+<div class="actions"><button type="button" id="refresh" disabled>Refresh cart</button><button type="button" id="checkout" disabled>Open hosted checkout</button></div>
+<ul id="cartLines"></ul><p id="cartTotal"></p>
+<small>Shipping and tax are revalidated by the hosted checkout. Never mark payment complete from this screen.</small>
+</section>
+<section class="panel"><h2>4. Migration gate</h2>
+<p>Staff may inspect carts here. Production redirects remain disabled until merchant payment acceptance, COD configuration, a verified provider domain and staged order reconciliation pass.</p>
+<label><input id="pilot" type="checkbox" style="width:auto"> I am testing an approved, non-live sandbox store and authorize navigating to its hosted checkout</label>
+<p><small>Confirm payment gateway setup within the platform. This UI cannot verify merchant eligibility or process payment.</small></p>
+</section></div>
+<div class="message" id="status" role="status" aria-live="polite">Not configured. Current public storefront is unaffected.</div>
+</main><footer>Private staging — noindex — no live checkout migration</footer>
+<script src="/staging/hosted-commerce/adapter.js" defer></script>
+<script src="/staging/hosted-commerce/staging-ui.js" defer></script>
+</body></html>
