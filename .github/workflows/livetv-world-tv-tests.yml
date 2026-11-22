@@ -19,6 +19,7 @@ jobs:
           node --check assets/js/live-tv-hub.js
           node --check assets/js/live-tv-core.js
           node --check assets/js/local-api.js
-          node --test tools/build-livetv.test.mjs tools/check-livetv.test.mjs tools/live-tv-hub.test.mjs tools/livetv-discovery.test.mjs tools/livetv-edge.test.mjs
+          node --check examples/owned-hls-proxy/worker.mjs
+          node --test tools/build-livetv.test.mjs tools/check-livetv.test.mjs tools/live-tv-hub.test.mjs tools/livetv-discovery.test.mjs tools/livetv-edge.test.mjs tools/live-tv-diagnostics.test.mjs tools/owned-hls-proxy.test.mjs
           node tools/verify-livetv-coverage.mjs
           node tools/verify-livetv-discovery.mjs
