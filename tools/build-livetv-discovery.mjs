@@ -322,3 +322,6 @@ fs.writeFileSync(
     2,
   ),
 );
+
+// Keep the legacy sitemap-index URL byte-for-byte aligned with the primary index.
+fs.writeFileSync(path.join(root,'sitemap_index.xml'),fs.readFileSync(path.join(root,'sitemap.xml')));

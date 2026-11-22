@@ -575,6 +575,7 @@ live-tv/regions/index.html
 robots.txt
 sitemap-livetv.xml
 sitemap.xml
+sitemap_index.xml
 tools/build-livetv-discovery.mjs
 tools/build-livetv.mjs
 tools/check-livetv.mjs
