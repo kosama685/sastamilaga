@@ -29,7 +29,7 @@
       return {attribute:clean(a&&a.attribute,60),value:clean(a&&a.value,120)};
     }):[];
     var url=clean(r.url,900);
-    try{var u=new URL(url,g.location.href);if(u.protocol!=='https:'||!u.hostname.endsWith('sastamilaga.com'))url='';else url=u.href;}catch(e){url=''}
+    try{var u=new URL(url,g.location.href);if(u.protocol!=='https:'||(u.hostname!=='sastamilaga.com'&&!u.hostname.endsWith('.sastamilaga.com')))url='';else url=u.href;}catch(e){url=''}
     return {type:r.type,id:clean(r.id,128),sku:clean(r.sku||r.id,128),name:clean(r.name||r.sku||r.id,240),
       vkey:clean(r.vkey,128),vname:clean(r.vname,200),attributes:attrs,
       qty:qty,unit:Math.round(unit*100)/100,currency:r.type==='cj'?'USD':'PKR',url:url,
