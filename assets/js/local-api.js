@@ -48,10 +48,10 @@
     return load('data/livetv/channels.js', 'SM_LIVETV').then(function (db) {
       if (/\/facets\/?$/.test(u.pathname)) return db.facets;
       var p = u.searchParams, items = db.items;
-      if (p.get('ids')) { var ids = p.get('ids').split(',').map(Number); items = items.filter(function (c) { return ids.indexOf(c.id) >= 0; }); }
+      if (p.get('ids')) { var ids = p.get('ids').split(','); items = items.filter(function (c) { return ids.includes(String(c.id)) || (c.aliases || []).some(function(id){return ids.includes(String(id));}); }); }
       else {
         var q = fold(p.get('q')).trim(), cc = p.get('country'), cat = p.get('category');
-        items = items.filter(function (c) { return (!cc || c.cc === cc) && (!cat || c.cat === cat) && (!q || fold(c.name).indexOf(q) >= 0); });
+        items = items.filter(function (c) { return (!cc || c.cc === (cc === 'UK' ? 'GB' : cc)) && (!cat || c.cat === cat || c.group === cat) && (!q || fold([c.name,c.country,c.cc,c.group,c.cat,c.language].join(' ')).indexOf(q) >= 0); });
         // Unfiltered list: the visitor's chosen country first, then widely watched countries; channels that play in the
         // browser before external-only ones. Stable, so the playlist order is kept within each group.
         if (!cc && !q) {
@@ -113,7 +113,7 @@
     e.preventDefault();
     var q = new URL(a.href.replace(/&#038;/g, '&')).searchParams, cc = q.get('country'), cat = q.get('category');
     load('data/livetv/channels.js', 'SM_LIVETV').then(function (db) {
-      var items = db.items.filter(function (c) { return c.src && (!cc || c.cc === cc) && (!cat || c.cat === cat); });
+      var items = db.items.filter(function (c) { return c.src && (!cc || c.cc === (cc === 'UK' ? 'GB' : cc)) && (!cat || c.cat === cat || c.group === cat); });
       var text = '#EXTM3U\n' + items.map(function (c) { return '#EXTINF:-1 tvg-logo="' + (c.logo || '') + '" group-title="' + (c.cat || '') + '",' + c.name + '\n' + (c.page || c.src); }).join('\n') + '\n';
       var b = document.createElement('a'); b.href = URL.createObjectURL(new Blob([text], { type: 'audio/x-mpegurl' }));
       b.download = 'sasta-milaga-' + (cc || cat || 'all').toLowerCase() + '.m3u'; document.body.appendChild(b); b.click(); b.remove();
