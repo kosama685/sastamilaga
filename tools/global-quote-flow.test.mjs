@@ -79,14 +79,14 @@ test('product actions no longer submit to broken WordPress cart',()=>{
   const s=read('assets/js/global.js');
   assert.doesNotMatch(s,/Verifying your selection with secure WooCommerce checkout/);
   assert.doesNotMatch(s,/fetch\('\/wp-json\/gdcs\/v1\/live\/cart'/);
-  assert.match(s,/id="gadd">Add to request cart/);
-  assert.match(s,/id="gbuy">Request shipping &amp; total/);
-  assert.match(s,/window\.__gcAct = \{ add:/);
-  assert.match(s,/requestBusy = true/);
-  assert.match(s,/await adapter\.save\(source,chosen\.v,q,notes,ownUrl\(cs,r\)\)/);
-  assert.match(s,/location\.assign\(adapter\.orderUrl\(cc\)\)/);
-  assert.match(s,/button\.disabled = false/);
-  assert.match(s,/No payment is taken/);
+  assert.match(s,/id="gadd">Add to cart/);
+  assert.match(s,/id="gbuy">Buy now/);
+  assert.match(s,/window\.__gcAct\s*=\s*\{add:/);
+  assert.match(s,/requestBusy\s*=\s*true/);
+  assert.match(s,/await api\.save\(\{id:r\[0\],sku:r\[1\],name:r\[2\]\},chosen\.v,q,notes,ownUrl\(cs,r\)\)/);
+  assert.match(s,/location\.assign\(api\.orderUrl\(country\)\)/);
+  assert.match(s,/buttons\.forEach\(b=>b\.disabled=false\)/);
+  assert.match(s,/no payment taken/);
 });
 test('checkout auto-prefills chosen shipping destination and remains unpaid',()=>{
   const s=read('assets/js/order-page.js');
@@ -97,5 +97,5 @@ test('checkout auto-prefills chosen shipping destination and remains unpaid',()=
 });
 test('production page loads cache-busted global product handler',()=>{
   const s=read('index.html');
-  assert.match(s,/assets\/js\/global\.js\?v=quote-checkout-20261122-1/);
+  assert.match(s,/assets\/js\/global\.js\?v=purchase-checkout-20261122-2/);
 });
