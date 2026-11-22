@@ -208,8 +208,8 @@
       if (!unit) { el.innerHTML = '<small>This item has no listed price yet. Order it on WhatsApp and we will quote it.</small>'; return; }
       const s = document.querySelector('.sm-ship-card [name=ship]:checked'), amt = s ? parseFloat(s.dataset.amt) : NaN, cur = s ? (s.dataset.cur || 'USD') : 'USD';
       const money = (n, c) => { try { return new Intl.NumberFormat('en', { style: 'currency', currency: c }).format(n); } catch (e) { return `${c} ${n.toFixed(2)}`; } };
-      const ship = isNaN(amt) ? '<dd>Calculating for your country…</dd>' : `<dd>${money(amt, cur)}</dd>`;
-      const total = isNaN(amt) ? `${USD.format(items)} + delivery` : (cur === 'USD' ? USD.format(items + amt) : `${USD.format(items)} + ${money(amt, cur)}`);
+      const ship = isNaN(amt) ? '<dd>Shipping quote required</dd>' : `<dd>${money(amt, cur)}</dd>`;
+      const total = isNaN(amt) ? 'Request a final shipping quote' : (cur === 'USD' ? USD.format(items + amt) : `${USD.format(items)} + ${money(amt, cur)}`);
       el.innerHTML = `<dl><div><dt>${USD.format(unit)} × ${q}${chosen.v && (chosen.v.key || chosen.v.name) ? ' · ' + esc(chosen.v.key || chosen.v.name) : ''}</dt><dd>${USD.format(items)}</dd></div><div><dt>Delivery to ${esc((document.getElementById('gship-to') || {}).textContent || (f.to.value || 'your country'))}</dt>${ship}</div><div class="sm-total__sum"><dt>Total</dt><dd>${total}</dd></div></dl><small>Estimated prices in US dollars. Stock and the final total are confirmed before you pay.</small>`;
     };
     window.__gTotal = gTotal;
