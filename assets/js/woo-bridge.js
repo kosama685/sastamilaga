@@ -123,6 +123,15 @@ function onClick(e){
  add(sku,q,selected,quick,target);
 }
 g.addEventListener('click',onClick,true);
+ // Preserve the existing HTML links while routing to the unified request cart.
+ // This modifies only in-page links, not server DNS or payment/checkout routes.
+ function updateCartLinks(){
+   document.querySelectorAll('a.smh-cart,a.smh-cart__link,a[href="/cart/"]').forEach(function(a){
+     a.href='/request-cart/';a.setAttribute('aria-label','Review one combined local and CJ request cart');
+   });
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',updateCartLinks);
+ else updateCartLinks();
  document.addEventListener('sm:order-cart-changed',function(e){updateBadge(e.detail&&e.detail.count||0)});
  getCart().then(function(c){updateBadge(c.count())}).catch(function(){});
 g.SMRequestBridge={add:add,requestOnly:true,status:function(){return {busy:busy,receiver:'Formspree via /order/',payment:'NOT_PAID'}}};
