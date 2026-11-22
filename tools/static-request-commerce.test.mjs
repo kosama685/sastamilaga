@@ -57,3 +57,12 @@ test('request click bridge has no WordPress, WooCommerce or Cloudflare API depen
  assert.match(code,/busy=true/);
  assert.match(code,/options\(\)/);
 });
+
+test('unpriced Pakistan quote does not crash Formspree payload and copyable reference is available',()=>{
+ const js=read('assets/js/order-page.js');
+ const html=read('order/index.html');
+ assert.match(js,/shippingEstimate===null\?'UNVERIFIED'/);
+ assert.match(js,/referenceHelp\(id\)/);
+ assert.match(html,/id="sm-copy-reference"/);
+ assert.match(html,/id="sm-help-reference"/);
+});
