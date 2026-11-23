@@ -1,0 +1,37 @@
+name: Product share sidebar integration
+on:
+  pull_request:
+    paths:
+      - assets/js/product-share.js
+      - assets/css/product-share.css
+      - assets/js/chrome.js
+      - tools/product-share.test.mjs
+      - .github/workflows/product-share-sidebar.yml
+  push:
+    branches: [main]
+    paths:
+      - assets/js/product-share.js
+      - assets/css/product-share.css
+      - assets/js/chrome.js
+      - tools/product-share.test.mjs
+      - .github/workflows/product-share-sidebar.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Validate JavaScript syntax
+        run: |
+          node --check assets/js/product-share.js
+          node --check assets/js/chrome.js
+      - name: Test product social sharing in a real DOM-like environment
+        run: |
+          npm install --prefix "$RUNNER_TEMP/sasta-share-dom" linkedom@0.18.15 --no-audit --no-fund
+          SM_DOM_MODULE="$RUNNER_TEMP/sasta-share-dom/node_modules/linkedom" node --test tools/product-share.test.mjs
