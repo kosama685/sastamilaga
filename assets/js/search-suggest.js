@@ -75,9 +75,12 @@
     input.setAttribute('role', 'combobox'); input.setAttribute('aria-autocomplete', 'list'); input.setAttribute('aria-expanded', 'false'); input.setAttribute('aria-controls', 'smss-box');
     var app = !!window.SMApp, hd = document.getElementById('sm-chrome-header'), pre = app ? '' : ((hd && hd.getAttribute('data-prefix')) || '../');
     var L = {
-      search: function (q) { var route = window.SMMarket && window.SMMarket.state().country !== 'PK' ? '#/global/search?q=' : '#/search?q='; return (app ? '' : pre) + route + encodeURIComponent(q); },
-      cat: function (s) { return app ? '#/global/c/' + s : pre + 'c/global/' + s + '.html'; },
-      gp: function (c, id) { return app ? '#/global/p/' + c + '/' + encodeURIComponent(id) : pre + 'global/p/' + c + '/' + encodeURIComponent(id); },
+      search: function (q) { return BASE + 'search/?q=' + encodeURIComponent(q); },
+      cat: function (s) { return BASE + 'c/global/' + s + '.html'; },
+      gp: function (c, id, name) {
+        var slug = String(name || id).toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80).replace(/-+$/, '');
+        return BASE + 'global-shop/p/' + encodeURIComponent(id) + '/' + slug + '/';
+      },
       lp: function (p) {
         // Search results must link directly to their existing canonical static pages.
         var slug = function (v) { return String(v || '').toLowerCase().trim().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); };
@@ -98,7 +101,7 @@
       if ((!window.SMMarket || window.SMMarket.state().country === 'PK') && parts.local && parts.local.length) html += '<h3>Products in Pakistan</h3><ul>' + parts.local.map(function (p) { var im = p.img || (p.imgs && p.imgs[0]) || '';
         // Existing locally stored media for the affected HHC product.
         if (/3765680/.test(String(p.id) + ' ' + String(p.sku))) im = 'https://sastamilaga.com/wp-content/uploads/2026/10/zellbury-3-piece-embroidered-dhanak-suit-apparel-accessory-92632ca3be-scaled-420x420.webp'; return '<li><a role="option" id="' + id() + '" href="' + esc(L.lp(p)) + '" data-sm-product-id="' + esc(String(p.id || '').replace(/^hhc-/i, '')) + '" data-sm-product-image="' + esc(im) + '"><img src="' + esc(im) + '" alt="" width="44" height="44" loading="lazy"><span class="t"><b>' + hl(p.n, ws) + '</b></span><span class="p">' + esc(window.SMApp.PKR.format(window.SMApp.price(p))) + '</span></a></li>'; }).join('') + '</ul>';
-      if (parts.glob && parts.glob.length) html += '<h3>Global products</h3><ul>' + parts.glob.map(function (h) { var r = h.r; return '<li><a role="option" id="' + id() + '" href="' + esc(L.gp(h.cat, r[0])) + '"><img src="' + esc(r[5]) + '" alt="" width="44" height="44" loading="lazy" onerror="this.style.visibility=\'hidden\'"><span class="t"><b>' + hl(r[2], ws) + '</b><small>Global item · estimate</small></span><span class="p">' + USD.format((r[3] || 0) * MARGIN) + '</span></a></li>'; }).join('') + '</ul>';
+      if (parts.glob && parts.glob.length) html += '<h3>Global products</h3><ul>' + parts.glob.map(function (h) { var r = h.r; return '<li><a role="option" id="' + id() + '" href="' + esc(L.gp(h.cat, r[0], r[2])) + '"><img src="' + esc(r[5]) + '" alt="" width="44" height="44" loading="lazy" onerror="this.style.visibility=\'hidden\'"><span class="t"><b>' + hl(r[2], ws) + '</b><small>Global item · estimate</small></span><span class="p">' + USD.format((r[3] || 0) * MARGIN) + '</span></a></li>'; }).join('') + '</ul>';
       if (parts.loading) html += '<p class="st" role="status">Searching the global catalogue…</p>';
       else if (!n) html += '<p class="st" role="status">No suggestions yet. Press Enter to search everything.</p>';
       html += '<div class="all"><a role="option" id="' + id() + '" href="' + esc(L.search(q)) + '">See all results for “' + esc(q) + '”</a></div>';

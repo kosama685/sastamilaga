@@ -84,6 +84,10 @@ jobs:
         run: node tools/enhance-global-category-seo.mjs
       - name: Verify all global category schema links before publishing
         run: node tools/verify-global-schema-links.mjs
+      - name: Build verified legacy category and article destinations
+        run: |
+          node tools/build-legacy-root-routes.mjs
+          node --test tools/legacy-root-routes.test.mjs
       - name: Build factual internal links for all indexable static product pages
         run: node tools/enhance-local-product-links.mjs
       - name: Build and validate quota-safe CJ product recovery index from all 451812 snapshot rows
@@ -107,6 +111,9 @@ jobs:
           grep -q 'noindex' search/index.html
           grep -q 'rel="canonical" href="https://sastamilaga.com/c/global/index.html"' global-shop/index.html
           git add -f data/cj/lookup/ c/global/ partials/chrome-runtime.json shop/index.html search/index.html global-shop/index.html global/index.html global/all/index.html pakistan/ ur/pakistan/ shipping-to/ data/landing/routes.json sitemap-landing.xml
+          node -e "const fs=require('fs');const r=require('./data/legacy-root-routes.json');fs.writeFileSync('/tmp/sasta-legacy-paths',Object.keys(r).map(p=>p.slice(1)).join(String.fromCharCode(0))+String.fromCharCode(0))"
+          git add data/legacy-root-routes.json
+          git add --pathspec-from-file=/tmp/sasta-legacy-paths --pathspec-file-nul
           if git diff --cached --quiet; then
             echo "Verified global category SEO, public storefront shells and CJ lookup unchanged."
           else
