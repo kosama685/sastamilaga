@@ -1670,11 +1670,23 @@ function globalBlock(G) {
 function summaryBox(sub, onCheckout, G = []) {
   if (G.length) {
     const C = window.SM_CONFIG || {}, hasLocal = sub > 0, delivery = !hasLocal ? 0 : (sub > (C.freeDeliveryFrom || 5000) ? 0 : (C.deliveryFee || 250));
+    // Convert supplier carrier quotes only when a live, verified FX rate is already available.
+    const fx = window.SMMarket && window.SMMarket.fx;
+    const rates = G.map(x => {
+      if (!x.ship || !Number.isFinite(Number(x.shipAmt)) || Number(x.shipAmt) < 0) return null;
+      const currency = String(x.shipCur || 'USD').toUpperCase();
+      if (currency === 'USD') return Number(x.shipAmt);
+      const converted = fx && typeof fx.convert === 'function' ? fx.convert(Number(x.shipAmt), currency, 'USD') : null;
+      return converted === null || !Number.isFinite(Number(converted)) ? null : Number(converted);
+    });
+    const haveShipping = rates.every(x => x !== null);
+    const deliveryUsd = haveShipping ? rates.reduce((a, b) => a + b, 0) : null;
     return `<aside class="summary-box"><h2 style="margin:0 0 14px">Order Summary</h2>
       ${hasLocal ? `<div class="summary-row"><span>Local items</span><b>${PKR.format(sub)}</b></div><div class="summary-row"><span>Local delivery</span><b>${delivery ? PKR.format(delivery) : 'Free'}</b></div>` : ''}
       <div class="summary-row"><span>Global items (estimated)</span><b>${gFmt(gSub())}</b></div>
-      <div class="summary-row"><span>Global shipping</span><b>${G.every(x => x.shipAmt) ? 'Chosen carrier, added to your payment' : 'Confirmed before dispatch'}</b></div>
-      <p class="product-meta">Prices are estimates. The final total is confirmed with you on WhatsApp before dispatch.</p></aside>`;
+      <div class="summary-row"><span>Selected global shipping</span><b>${haveShipping ? gFmt(deliveryUsd) : 'Rate to be confirmed'}</b></div>
+      <div class="summary-row" style="border-top:2px solid #cce6d3;margin-top:10px;padding-top:12px"><span><strong>Estimated global total</strong></span><b style="color:#0b6b35;font-size:1.2rem">${haveShipping ? gFmt(gSub() + deliveryUsd) : 'Awaiting carrier quote'}</b></div>
+      <p class="product-meta">Global supplier prices are estimates in USD. ${hasLocal ? 'Local items are separately priced in PKR. ' : ''}Taxes and import duties may apply. Review the converted payable amount before payment.</p></aside>`;
   }
   const C = window.SM_CONFIG || {};
   const delivery = sub > (C.freeDeliveryFrom || 5000) ? 0 : (C.deliveryFee || 250);
