@@ -70,9 +70,9 @@ jobs:
         if: github.event_name == 'push' || inputs.action == 'deploy'
         run: |
           for i in $(seq 1 40); do
-            T=$(curl -sS -m 30 "https://kosama685.github.io/sastamilaga/assets/templates/global-pdp.html?cb=$RANDOM" || true)
-            J=$(curl -sS -m 30 -o /dev/null -w "%{http_code}" "https://kosama685.github.io/sastamilaga/assets/js/global-pdp.js?cb=$RANDOM" || true)
-            C=$(curl -sS -m 30 -o /dev/null -w "%{http_code}" "https://kosama685.github.io/sastamilaga/assets/css/global-pdp.css?cb=$RANDOM" || true)
+            T=$(curl -sSL -m 30 "https://kosama685.github.io/sastamilaga/assets/templates/global-pdp.html?cb=$RANDOM" || true)
+            J=$(curl -sSL -m 30 -o /dev/null -w "%{http_code}" "https://kosama685.github.io/sastamilaga/assets/js/global-pdp.js?cb=$RANDOM" || true)
+            C=$(curl -sSL -m 30 -o /dev/null -w "%{http_code}" "https://kosama685.github.io/sastamilaga/assets/css/global-pdp.css?cb=$RANDOM" || true)
             if echo "$T" | grep -q "GPDP:MAIN" && [ "$J" = "200" ] && [ "$C" = "200" ]; then echo "GitHub Pages is serving the new files"; exit 0; fi
             echo "waiting for GitHub Pages ($i/40) template=$(echo "$T" | grep -c GPDP:MAIN) js=$J css=$C"; sleep 15
           done
