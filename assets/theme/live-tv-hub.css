@@ -97,7 +97,7 @@
   max-width: 580px;
   z-index: 1;
 }
-.sltv-hero h1 {
+.sltv-hero :is(h1,h2) {
   font:
     600 clamp(2.3rem, 4.6vw, 4.2rem) / 1.08 "Host Grotesk",
     system-ui,
@@ -105,7 +105,7 @@
   letter-spacing: -0.045em;
   margin: 14px 0 18px;
 }
-.sltv-hero h1 em {
+.sltv-hero :is(h1,h2) em {
   font-style: normal;
   color: #a4efd2;
 }
@@ -759,7 +759,7 @@
   .sltv-hero-content {
     max-width: 490px;
   }
-  .sltv-hero h1 {
+  .sltv-hero :is(h1,h2) {
     font-size: 3.4rem;
   }
 }
@@ -780,7 +780,7 @@
   .sltv-hero-content {
     max-width: 95%;
   }
-  .sltv-hero h1 {
+  .sltv-hero :is(h1,h2) {
     font-size: 3.2rem;
   }
   .sltv-hero-content > p:not(.sltv-eyebrow) {
@@ -825,7 +825,7 @@
     padding: 24px 20px;
     min-height: 440px;
   }
-  .sltv-hero h1 {
+  .sltv-hero :is(h1,h2) {
     font-size: 2.6rem;
   }
   .sltv-hero-content > p:not(.sltv-eyebrow) {
@@ -953,7 +953,7 @@
 #sltv h3 {
   color: var(--tv-ink) !important;
 }
-#sltv h1 em {
+#sltv :is(h1,h2) em {
   color: #a4efd2 !important;
 }
 #sltv input,
@@ -1044,7 +1044,7 @@
       linear-gradient(90deg, #051321f2, #05132199),
       url("../images/livetv/broadcast-studio.png");
   }
-  #sltv .sltv-hero h1 {
+  #sltv .sltv-hero :is(h1,h2) {
     font-size: 2.5rem;
   }
   #sltv .sltv-hero-stats span {

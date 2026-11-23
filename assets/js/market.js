@@ -391,7 +391,7 @@
     paintHeader();
     document.addEventListener('click', function (e) { var t = e.target.closest && e.target.closest('[data-gdcs-market], [data-gdl-header-language], [data-gdl-header-currency]'); if (t) { e.preventDefault(); e.stopPropagation(); open(); } }, true);
     // Always watch for newly rendered prices; convertIn() does nothing while the currency is PKR or rates are not loaded.
-    var queued = false, again = function () { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; paintHeader(); convertIn(document); convertTagged(document); localiseText(document.body); destinationHome(); }); };
+    var queued = false, lastSweep = 0, again = function () { if (queued) return; queued = true; var wait = Math.max(0, 450 - (Date.now() - lastSweep)); setTimeout(function () { requestAnimationFrame(function () { queued = false; lastSweep = Date.now(); paintHeader(); convertIn(document); convertTagged(document); localiseText(document.body); destinationHome(); }); }, wait); };
     localiseText(document.body); destinationHome();
     if (document.querySelector('.gdcs-converted-price[data-currency]')) getRates().then(again).catch(function () {});
     new MutationObserver(function (m) { if (state.country === 'PK' && state.currency === 'PKR') return; for (var i = 0; i < m.length; i++) if (m[i].addedNodes.length) { again(); break; } }).observe(document.body, { childList: true, subtree: true });
