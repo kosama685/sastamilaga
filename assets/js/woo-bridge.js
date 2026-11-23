@@ -61,7 +61,10 @@
     };
     var key = [item.id, item.opt, item.vkey].join('|'), rows = read('sm_gcart');
     var same = rows.filter(function (x) { return [x.id, x.opt || '', x.vkey || ''].join('|') === key; })[0];
-    if (same) { same.qty = Math.min(MAX_QTY, (Number(same.qty) || 0) + item.qty); if (item.ship) { same.ship = item.ship; same.shipAmt = item.shipAmt; same.shipCur = item.shipCur; } }
+    // A CJ freight quotation is for one exact quantity. Combining two separately
+    // quoted additions would retain the wrong carrier amount and undercharge delivery.
+    if (same && (same.ship || item.ship)) return { ok: false, message: 'This option is already in your cart. Remove it and add the required total quantity from the product page for a fresh shipping quote.' };
+    if (same) { same.qty = Math.min(MAX_QTY, (Number(same.qty) || 0) + item.qty); }
     else rows.push(item);
     if (!write('sm_gcart', rows)) return { ok: false, message: 'Your browser blocked saving the cart. Allow site storage and try again.' };
     refresh(true);

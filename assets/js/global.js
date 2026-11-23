@@ -72,7 +72,10 @@
     if (gcBound) return; gcBound = true;
     document.addEventListener('click', e => {
       const b = e.target.closest && e.target.closest('[data-gc]'); if (!b) return; const act = b.getAttribute('data-gc'), k = b.getAttribute('data-k'); let l = gcGet();
-      if (act === 'inc' || act === 'dec') { l = l.map(x => gcKey(x) === k ? { ...x, qty: Math.max(1, Math.min(99, x.qty + (act === 'inc' ? 1 : -1))) } : x); gcSet(l); A.route(); }
+      if (act === 'inc' || act === 'dec') {
+        if (l.some(x => gcKey(x) === k && x.ship)) { toast('A carrier quote applies to the selected quantity. Remove this item and add your preferred quantity on its product page to refresh shipping.'); return; }
+        l = l.map(x => gcKey(x) === k ? { ...x, qty: Math.max(1, Math.min(99, x.qty + (act === 'inc' ? 1 : -1))) } : x); gcSet(l); A.route();
+      }
       else if (act === 'rm') { gcSet(l.filter(x => gcKey(x) !== k)); A.route(); }
       else if (act === 'clear') { gcSet([]); A.route(); }
       else if (act === 'order') {

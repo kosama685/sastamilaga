@@ -1670,11 +1670,23 @@ function globalBlock(G) {
 function summaryBox(sub, onCheckout, G = []) {
   if (G.length) {
     const C = window.SM_CONFIG || {}, hasLocal = sub > 0, delivery = !hasLocal ? 0 : (sub > (C.freeDeliveryFrom || 5000) ? 0 : (C.deliveryFee || 250));
+    // Convert supplier carrier quotes only when a live, verified FX rate is already available.
+    const fx = window.SMMarket && window.SMMarket.fx;
+    const rates = G.map(x => {
+      if (!x.ship || !Number.isFinite(Number(x.shipAmt)) || Number(x.shipAmt) < 0) return null;
+      const currency = String(x.shipCur || 'USD').toUpperCase();
+      if (currency === 'USD') return Number(x.shipAmt);
+      const converted = fx && typeof fx.convert === 'function' ? fx.convert(Number(x.shipAmt), currency, 'USD') : null;
+      return converted === null || !Number.isFinite(Number(converted)) ? null : Number(converted);
+    });
+    const haveShipping = rates.every(x => x !== null);
+    const deliveryUsd = haveShipping ? rates.reduce((a, b) => a + b, 0) : null;
     return `<aside class="summary-box"><h2 style="margin:0 0 14px">Order Summary</h2>
       ${hasLocal ? `<div class="summary-row"><span>Local items</span><b>${PKR.format(sub)}</b></div><div class="summary-row"><span>Local delivery</span><b>${delivery ? PKR.format(delivery) : 'Free'}</b></div>` : ''}
       <div class="summary-row"><span>Global items (estimated)</span><b>${gFmt(gSub())}</b></div>
-      <div class="summary-row"><span>Global shipping</span><b>${G.every(x => x.shipAmt) ? 'Chosen carrier, added to your payment' : 'Confirmed before dispatch'}</b></div>
-      <p class="product-meta">Prices are estimates. The final total is confirmed with you on WhatsApp before dispatch.</p></aside>`;
+      <div class="summary-row"><span>Selected global shipping</span><b>${haveShipping ? gFmt(deliveryUsd) : 'Rate to be confirmed'}</b></div>
+      <div class="summary-row" style="border-top:2px solid #cce6d3;margin-top:10px;padding-top:12px"><span><strong>Estimated global total</strong></span><b style="color:#0b6b35;font-size:1.2rem">${haveShipping ? gFmt(gSub() + deliveryUsd) : 'Awaiting carrier quote'}</b></div>
+      <p class="product-meta">Global supplier prices are estimates in USD. ${hasLocal ? 'Local items are separately priced in PKR. ' : ''}Taxes and import duties may apply. Review the converted payable amount before payment.</p></aside>`;
   }
   const C = window.SM_CONFIG || {};
   const delivery = sub > (C.freeDeliveryFrom || 5000) ? 0 : (C.deliveryFee || 250);
@@ -1844,6 +1856,9 @@ function cartInCur(rates, cur) {
   return v;
 }
 async function payAmount() {
+  // Do not take online payment for a global parcel without its selected carrier quote.
+  // A product-only amount would undercharge shipping and mislead the buyer.
+  if (gLines().some(x => !x.ship || !Number.isFinite(Number(x.shipAmt)) || Number(x.shipAmt) < 0)) throw new Error('shipping');
   const cur = paypalCurrency(), { totalPkr } = checkoutTotals();
   const r = await fetch('https://open.er-api.com/v6/latest/PKR').then(x => x.json());
   const rate = r && r.rates && r.rates[cur]; if (!rate) throw new Error('rate');
@@ -1867,7 +1882,7 @@ function syncPay() {
     if (my !== _payReq) return;
     amt.innerHTML = `You pay <b>${esc(a.cur)} ${esc(Number(a.amount).toLocaleString('en', { minimumFractionDigits: a.cur === 'JPY' || a.cur === 'HUF' || a.cur === 'TWD' ? 0 : 2 }))}</b> <small>(${gLines().length ? 'global items, chosen shipping' + (a.totalPkr ? ' and ' + PKR.format(a.totalPkr) + ' of local items' : '') : PKR.format(a.totalPkr) + ' including delivery'}, at today's rate of 1 PKR = ${esc(String(a.rate))} ${esc(a.cur)}${a.cur === 'USD' && (JSON.parse(localStorage.getItem('sm_market') || '{}').currency || 'PKR') !== 'USD' ? '. PayPal cannot charge ' + esc(JSON.parse(localStorage.getItem('sm_market') || '{}').currency || 'PKR') + ', so US$ is used' : ''})</small>`;
     panel.querySelectorAll('[data-pay]').forEach(b => { b.disabled = false; });
-  }).catch(() => { if (my === _payReq) amt.textContent = 'Could not get today\'s exchange rate. Check your connection and reselect PayPal, or choose cash on delivery.'; });
+  }).catch(err => { if (my === _payReq) amt.textContent = err && err.message === 'shipping' ? 'Please select delivery for every global item on its product page before online payment.' : 'Could not get today\'s exchange rate. Check your connection and reselect PayPal.'; });
 }
 document.addEventListener('change', e => { if (e.target.matches && e.target.matches('#checkoutForm select[name="payment_method"]')) syncPay(); });
 /* Window-capture handlers for the checkout buttons: on the store's own domain a site-wide script swallows these clicks at document level
@@ -1981,7 +1996,7 @@ window.placeOrder = function (e, landing, trigger) {
     }
   })
   .catch(error => {
-    toast(error && error.message === 'rate' ? 'Could not get today\'s exchange rate for PayPal. Try again, or choose cash on delivery.' : 'Your order could not be sent. Check your connection and try again.');
+    toast(error && error.message === 'shipping' ? 'Shipping must be selected for every global product before online payment. Return to the product page, choose a carrier, and update the cart.' : error && error.message === 'rate' ? 'Could not get today\'s exchange rate for PayPal. Try again.' : 'Your order could not be sent. Check your connection and try again.');
   })
   .finally(() => {
     btn.disabled = false;
