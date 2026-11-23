@@ -58,3 +58,10 @@ test('CJ real example: one US$3.30 item plus 3 quoted carriers', () => {
     assert.equal(Math.round((3.3 + freight) * 100) / 100, total);
   }
 });
+
+test('missing carrier quotes cannot be treated as confirmed payment amounts', () => {
+  assert.match(product, /No verified carrier quote/);
+  assert.match(product, /setOrderable\(false\)/);
+  assert.match(checkout, /some\(x => !x\.ship/);
+  assert.match(checkout, /error\.message === 'shipping'/);
+});
