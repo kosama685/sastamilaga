@@ -19,7 +19,10 @@ function createPage(withProduct=true, withSide=true) {
       (withSide?'<div class="pdp-side"><section class="pdp-share"><h2>Share this product</h2><div class="sm-share"><a href="#old">WhatsApp</a></div></section></div>':'')+
       '</section>':'<section><h1>Not a product</h1></section>')+
     '</main></body></html>';
-  const {document,window}=parseHTML(html);
+  const {document,window:domWindow}=parseHTML(html);
+  // Linkedom shares its global window proxy across documents. Isolate the
+  // module's one-time installation flag for each simulated browser page.
+  const window={Event:domWindow.Event};
   Object.defineProperty(document,'readyState',{value:'loading'});
   let copied='',nativeCount=0;
   const navigator={clipboard:{writeText:async text=>{copied=text;}},share:async()=>{nativeCount++;}};
