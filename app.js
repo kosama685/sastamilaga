@@ -1882,7 +1882,7 @@ function syncPay() {
     if (my !== _payReq) return;
     amt.innerHTML = `You pay <b>${esc(a.cur)} ${esc(Number(a.amount).toLocaleString('en', { minimumFractionDigits: a.cur === 'JPY' || a.cur === 'HUF' || a.cur === 'TWD' ? 0 : 2 }))}</b> <small>(${gLines().length ? 'global items, chosen shipping' + (a.totalPkr ? ' and ' + PKR.format(a.totalPkr) + ' of local items' : '') : PKR.format(a.totalPkr) + ' including delivery'}, at today's rate of 1 PKR = ${esc(String(a.rate))} ${esc(a.cur)}${a.cur === 'USD' && (JSON.parse(localStorage.getItem('sm_market') || '{}').currency || 'PKR') !== 'USD' ? '. PayPal cannot charge ' + esc(JSON.parse(localStorage.getItem('sm_market') || '{}').currency || 'PKR') + ', so US$ is used' : ''})</small>`;
     panel.querySelectorAll('[data-pay]').forEach(b => { b.disabled = false; });
-  }).catch(() => { if (my === _payReq) amt.textContent = 'Could not get today\'s exchange rate. Check your connection and reselect PayPal, or choose cash on delivery.'; });
+  }).catch(err => { if (my === _payReq) amt.textContent = err && err.message === 'shipping' ? 'Please select delivery for every global item on its product page before online payment.' : 'Could not get today\'s exchange rate. Check your connection and reselect PayPal.'; });
 }
 document.addEventListener('change', e => { if (e.target.matches && e.target.matches('#checkoutForm select[name="payment_method"]')) syncPay(); });
 /* Window-capture handlers for the checkout buttons: on the store's own domain a site-wide script swallows these clicks at document level
@@ -1996,7 +1996,7 @@ window.placeOrder = function (e, landing, trigger) {
     }
   })
   .catch(error => {
-    toast(error && error.message === 'rate' ? 'Could not get today\'s exchange rate for PayPal. Try again, or choose cash on delivery.' : 'Your order could not be sent. Check your connection and try again.');
+    toast(error && error.message === 'shipping' ? 'Shipping must be selected for every global product before online payment. Return to the product page, choose a carrier, and update the cart.' : error && error.message === 'rate' ? 'Could not get today\'s exchange rate for PayPal. Try again.' : 'Your order could not be sent. Check your connection and try again.');
   })
   .finally(() => {
     btn.disabled = false;
