@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
   push:
     branches: ["main"]
-    paths: ["workers/**"]  # CI-action upgrades must not redeploy live Cloudflare Workers
+    paths: ["workers/cj-shipping/**", "workers/paypal/**", "workers/product-pages/**", "workers/redirects/**"]
 
 permissions:
   contents: read
@@ -105,7 +105,12 @@ jobs:
                      "sastamilaga.com/ur/shipping-delivery/" "sastamilaga.com/ur/sell-with-us/" "sastamilaga.com/blog/best-bags-to-buy-in-karachi-practical-shopping-guide/" "sastamilaga.com/blog/winter-kitchen-essentials-pakistan/" "sastamilaga.com/blog/best-academic-books-to-buy-in-karachi-practical-shopping-guide/" "sastamilaga.com/blog/best-audio-entertainment-to-buy-in-peshawar-practical-shopping-guide/" "sastamilaga.com/blog/online-earning-pakistan-content-sales-rewards/" "sastamilaga.com/blog/best-art-craft-materials-to-buy-in-rawalpindi-practical-shopping-guide/" "sastamilaga.com/blog/best-abayas-hijabs-to-buy-in-pakistan-practical-shopping-guide/" "sastamilaga.com/ur/travel/" "sastamilaga.com/digital-marketing/" "sastamilaga.com/language-currency/" "sastamilaga.com/live-tv/category/*"; do attach "$pat" sastamilaga-redirects; done
           # Keep CJ numeric/UUID product URLs on the live CJ storefront; its LEGACY_PRODUCTS binding handles old WordPress slugs.
           # Without this override future Worker deploys could restore 404s for /product/<id>/<slug>/.
-          attach "sastamilaga.com/product/*" sasta-cj-storefront-v1
+          product_owner=$(echo "$ROUTES" | jq -r '[.result[]? | select(.pattern=="sastamilaga.com/product/*")][0].script // empty')
+          if [ "$product_owner" = "sasta-product-recovery-v1" ]; then
+            echo "Preserving verified supplier product outage recovery"
+          else
+            attach "sastamilaga.com/product/*" sasta-cj-storefront-v1
+          fi
           # Restore reviewed/qualified index semantics instead of rewriting to the broad CJ catalogue sitemap.
           attach "sastamilaga.com/sitemap-global-qualified.xml" sasta-qualified-sitemaps-quota-v2
           attach "sastamilaga.com/sitemaps/global-qualified/*" sasta-qualified-sitemaps-quota-v2

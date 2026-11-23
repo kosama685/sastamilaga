@@ -19,3 +19,5 @@ assert.ok(!legacyLoop[0].includes('"sastamilaga.com/product/*"'), 'Legacy loop w
 assert.ok(legacyLoop[0].includes('"sastamilaga.com/ur/product/*"'), 'Urdu legacy route must be preserved');
 assert.match(yml, /Preserving existing \/global\/p\/\* Worker route/, 'Preserve dedicated legacy global product Worker');
 console.log('PASS: CI preserves CJ product, qualified sitemap and historic legacy routes');
+assert.match(yml,/product_owner.*[\s\S]*sasta-product-recovery-v1/, 'Preserve the verified supplier outage wrapper');
+assert.ok(!yml.includes('paths: ["workers/**"]'), 'Independent recovery changes must not redeploy payment/shipping Workers');

@@ -19,8 +19,15 @@ const put=script=>api(base+'/'+route.id,{method:'PUT',headers:{'Content-Type':'a
 await put(name);
 try{
  for(const id of ['2111897917664645122','0AF026C6-B83F-4FC8-85B5-CD638A556EF7']){
-  const r=await fetch('https://sastamilaga.com/product/'+id+'/catalog-product/',{signal:AbortSignal.timeout(40000)}),html=await r.text();
-  if(r.status!==200||!html.includes(id)||html.includes('Supplier data is temporarily unavailable'))throw Error('Product smoke failed: '+r.status);
+  let ok=false;
+  for(let attempt=0;attempt<8;attempt++){
+   const r=await fetch('https://sastamilaga.com/product/'+id+'/catalog-product/?recovery_check='+Date.now(),{signal:AbortSignal.timeout(40000)}),html=await r.text();
+   ok=r.status===200&&html.includes(id)&&!html.includes('Supplier data is temporarily unavailable');
+   console.log(JSON.stringify({probe:id,attempt,status:r.status,renderer:r.headers.get('x-sasta-renderer'),recovery:r.headers.get('x-sasta-recovery')}));
+   if(ok)break;
+   await new Promise(resolve=>setTimeout(resolve,4000));
+  }
+  if(!ok)throw Error('Product smoke failed after bounded propagation retries');
   console.log('PASS verified product '+id+': HTTP 200');
  }
  const after=await api(base);
