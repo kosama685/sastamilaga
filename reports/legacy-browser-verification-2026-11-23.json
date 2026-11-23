@@ -1,0 +1,39 @@
+{
+  "checks": [
+    {
+      "start": "/wool-and-blend.html?utm_source=qa",
+      "status": 200,
+      "final": "https://sastamilaga.com/c/global/wool-and-blend.html?utm_source=qa",
+      "h1": [
+        "Wool & Blend"
+      ],
+      "productLinks": 240
+    },
+    {
+      "start": "/bicycle-lights.html",
+      "status": 200,
+      "final": "https://sastamilaga.com/c/global/bicycle-lights.html",
+      "h1": [
+        "Bicycle Lights"
+      ],
+      "productLinks": 240
+    },
+    {
+      "start": "/search/?q=smart%20watches",
+      "status": 200,
+      "final": "https://sastamilaga.com/search/?q=smart%20watches",
+      "h1": [
+        "Search: \"smart watches\""
+      ],
+      "productLinks": 18
+    },
+    {
+      "productStatus": 200,
+      "final": "https://sastamilaga.com/product/2111897917664645122/smart-watch-men-women-fitness-tracker-blood-pressure-heart-rate-sport-watches-uk/",
+      "h1": [
+        "Smart Watch Men Women Fitness Tracker Blood Pressure Heart Rate Sport Watches UK"
+      ]
+    }
+  ],
+  "errors": []
+}

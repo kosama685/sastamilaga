@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-11-23T15:38:47.471Z",
+  "htmlFiles": 23217,
+  "repoFiles": 25613,
+  "distinctInternalPaths": 80094,
+  "legacyShopCategoryLinks": 0,
+  "missingStaticReferences": 0,
+  "wordpressMediaPaths": 2,
+  "missingIsTruncated": false,
+  "chromeIssues": 0,
+  "notes": [
+    "Dynamic supplier/API/checkout routes, WordPress upload media, and WooCommerce block CSS are excluded from repository-only existence checks. The identified WordPress media image returned HTTP 200 on production on 2026-11-20; this does not prove every media URL is healthy.",
+    "A static audit does not prove live HTTP status or working checkout.",
+    "Legacy /shop/category.html links are redirected only when a corresponding category exists."
+  ],
+  "sampleMissing": [],
+  "sampleChrome": [],
+  "sampleLegacy": []
+}
