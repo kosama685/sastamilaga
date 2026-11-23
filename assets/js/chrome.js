@@ -78,8 +78,8 @@
     if (form) form.addEventListener('submit', function (e) {
       e.preventDefault(); e.stopImmediatePropagation();
       var q = (form.querySelector('input[type="search"]') || {}).value || '', cat = (form.querySelector('select') || {}).value || '';
-      if (window.SMMarket && window.SMMarket.state().country !== 'PK') { location.href = prefix + '#/global/search?q=' + encodeURIComponent(q); return; }
-      location.href = prefix + (cat ? '#/category/' + cat + (q ? '?q=' + encodeURIComponent(q) : '') : '#/search?q=' + encodeURIComponent(q));
+      if (!q.trim()) { if (cat) location.href = prefix + 'c/' + encodeURIComponent(cat) + '.html'; return; }
+      location.href = prefix + 'search/?q=' + encodeURIComponent(q.trim());
     }, true);
     document.querySelectorAll('[data-gdcs-market]').forEach(function (b) { if (b.tagName === 'BUTTON') b.addEventListener('click', function () { location.href = prefix + '#/language'; }); });
     /* Cart badge from the shared cart (same storage key as app.js) */

@@ -73,7 +73,6 @@
     if (getComputedStyle(form).position === 'static') form.style.position = 'relative';
     var box = document.createElement('div'); box.className = 'smss'; box.id = 'smss-box'; box.hidden = true; box.setAttribute('role', 'listbox'); box.setAttribute('aria-label', 'Search suggestions'); form.appendChild(box);
     input.setAttribute('role', 'combobox'); input.setAttribute('aria-autocomplete', 'list'); input.setAttribute('aria-expanded', 'false'); input.setAttribute('aria-controls', 'smss-box');
-    var app = !!window.SMApp, hd = document.getElementById('sm-chrome-header'), pre = app ? '' : ((hd && hd.getAttribute('data-prefix')) || '../');
     var L = {
       search: function (q) { return BASE + 'search/?q=' + encodeURIComponent(q); },
       cat: function (s) { return BASE + 'c/global/' + s + '.html'; },

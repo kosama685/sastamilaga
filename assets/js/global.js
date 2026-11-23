@@ -102,8 +102,8 @@
   if (gcCount()) { try { A.setCart(A.getCart()); } catch (e) { } if (/(^|\/)(cart|checkout)\/?$/.test(location.pathname) || /^#\/(cart|checkout)/.test(location.hash)) setTimeout(() => { const f0 = document.getElementById('checkoutForm'), typed = {}; if (f0) f0.querySelectorAll('input:not([type=hidden]),textarea').forEach(x => { if (x.name && x.value) typed[x.name] = x.value; }); A.route(); const f1 = document.getElementById('checkoutForm'); if (f1) Object.keys(typed).forEach(k => { const x = f1.elements[k]; if (x && x.type !== 'hidden' && !x.value) x.value = typed[k]; }); }, 0); }
   const est = r => r[3] ? (r[4] > r[3] ? `${USD.format(r[3] * MARGIN)} – ${USD.format(r[4] * MARGIN)}` : USD.format(r[3] * MARGIN)) : 'Price on request';
   const liveUrl = r => `${A.LIVE_URL}/global-shop/p/${encodeURIComponent(r[0])}/${slug(r[2]).slice(0, 80)}/`;
-  const detailHash = (cat, r) => `#/global/p/${cat}/${encodeURIComponent(r[0])}`;
-  const ownUrl = (cat, r) => `${A.SITE_URL}/global/p/${cat}/${encodeURIComponent(r[0])}`;   /* link that works for the customer (the WordPress copy is not reliable) */
+  const detailHash = (cat, r) => liveUrl(r);
+  const ownUrl = (cat, r) => liveUrl(r);
   const fallback = window.fallbackImg || '';
 
   function card(cat, r) {

@@ -39,3 +39,13 @@ test('search suggestions use existing canonical pages rather than page-local has
  assert.equal(L.cat('wool-and-blend'),'https://sastamilaga.com/c/global/wool-and-blend.html');
  assert.equal(L.gp('old-category','ABC-123','Warm Wool Coat'),'https://sastamilaga.com/global-shop/p/ABC-123/warm-wool-coat/');
 });
+test('rendered search product cards use the working supplier product page',()=>{
+ const src=fs.readFileSync('assets/js/global.js','utf8');
+ const block=src.slice(src.indexOf('  const liveUrl ='),src.indexOf('  const fallback ='));
+ const url=vm.runInNewContext(block+'detailHash("smart-watches",["2111897917664645122",null,"Smart Watch"]);',{
+  A:{LIVE_URL:'https://sastamilaga.com'},slug:s=>s.toLowerCase().replace(/ /g,'-'),encodeURIComponent
+ });
+ assert.equal(url,'https://sastamilaga.com/global-shop/p/2111897917664645122/smart-watch/');
+ const card=src.slice(src.indexOf('  function card('),src.indexOf('  function globalNote('));
+ assert.equal((card.match(/detailHash\(cat, r\)/g)||[]).length,3);
+});
