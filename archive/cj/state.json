@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "source": "Cloudflare D1 sastamilaga.catalog_products_cj",
+  "source_database_id": "ac28088f-6a54-4d29-8c64-821661efe88f",
+  "source_table": "catalog_products_cj",
+  "existing_archive_reference": "main:data/cj/c/*.js and main:data/cj/lookup/manifest.json",
+  "source_snapshot": "2026-11-05",
+  "baseline_verified_date_riyadh": "2026-11-23",
+  "baseline_rows": 451812,
+  "baseline_max_rowid": 451812,
+  "last_rowid": 451812,
+  "last_seen_source_total": 451812,
+  "last_seen_source_max_rowid": 451812,
+  "last_seen_imported_at": "2026-11-08 15:46:30",
+  "total_new_rows_archived": 0,
+  "last_run_new_rows": 0,
+  "last_run_categories": 0,
+  "live_publication_enabled": false,
+  "seo_indexing_enabled": false,
+  "notes": "Pre-existing 451,812 CJ supplier records are already archived by 572 category files on main. This offsite branch stores only future D1 appended rows. No sitemap, URL, canonical, product listing, checkout, Cloudflare routing, or website update is permitted."
+}
