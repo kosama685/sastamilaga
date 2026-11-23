@@ -19,6 +19,8 @@ jobs:
         with:
           node-version: '22'
       - run: node --test tools/product-recovery.test.mjs workers/global-pdp/worker.test.mjs
+      - name: Verify every source product and shared URL mapping
+        run: node tools/verify-complete-product-links.mjs
       - run: node tools/deploy-product-recovery.mjs
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -27,5 +29,7 @@ jobs:
         if: always()
         with:
           name: verified-product-recovery
-          path: artifacts/product-*.json
+          path: |
+            artifacts/product-*.json
+            reports/complete-product-link-mapping-2026-11-23.json
           if-no-files-found: ignore

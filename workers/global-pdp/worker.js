@@ -36,6 +36,9 @@ async function getText(fetcher, url, ttl) {
   return r.text();
 }
 export async function lookup(fetcher, id) {
+  // Snapshot keys are uppercase. Normalize BEFORE hashing, otherwise a shared
+  // lowercase UUID reads a different bucket and incorrectly becomes a 404.
+  id = String(id).toUpperCase();
   const key = bucketOf(id).toString(16).padStart(3, '0');
   const b = await getJSON(fetcher, `${PAGES}/data/cj/lookup/${key}.json`, 3600);
   const items = b.items || {};

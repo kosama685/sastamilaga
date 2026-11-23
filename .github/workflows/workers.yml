@@ -106,7 +106,7 @@ jobs:
           # Keep CJ numeric/UUID product URLs on the live CJ storefront; its LEGACY_PRODUCTS binding handles old WordPress slugs.
           # Without this override future Worker deploys could restore 404s for /product/<id>/<slug>/.
           product_owner=$(echo "$ROUTES" | jq -r '[.result[]? | select(.pattern=="sastamilaga.com/product/*")][0].script // empty')
-          if [ "$product_owner" = "sasta-product-recovery-v1" ]; then
+          if [ "$product_owner" = "sasta-product-recovery-v1" ] || [ "$product_owner" = "sasta-product-recovery-v2" ]; then
             echo "Preserving verified supplier product outage recovery"
           else
             attach "sastamilaga.com/product/*" sasta-cj-storefront-v1
