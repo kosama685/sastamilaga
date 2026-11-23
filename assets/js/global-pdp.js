@@ -13,11 +13,70 @@
   var els = { main: $('[data-gpdp-main]'), thumbs: $('[data-gpdp-thumbs]'), desc: document.querySelector('[data-gpdp-desc]'), price: $('[data-gpdp-price]'),
     dest: $('[data-gpdp-dest]'), opts: $('[data-gpdp-options]'), qtyWrap: $('[data-gpdp-qty-wrap]'), qty: $('[data-gpdp-qty]'), delivery: $('[data-gpdp-delivery]'),
     add: $('[data-gpdp-add]'), buy: $('[data-gpdp-buy]'), status: $('[data-gpdp-status]'), wa: $('[data-gpdp-wa]') };
-  var state = { data: null, option: null, images: [], index: 0, busy: false, country: '', csrf: '', ship: null };
+  var state = { data: null, option: null, images: [], index: 0, busy: false, country: '', csrf: '', ship: null, shipMethods: [], preferredCarrier: '' };
   // Header links to /cart/ and /checkout/ (WordPress paths on sastamilaga.com) are sent to the static cart by assets/js/woo-bridge.js.
   var COUNTRY_NAMES = {}; try { COUNTRY_NAMES = new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) { COUNTRY_NAMES = null; }
   function countryName(cc) { try { return (COUNTRY_NAMES && COUNTRY_NAMES.of(cc)) || cc; } catch (e) { return cc; } }
   function money(usd) { return 'US$' + Number(usd).toFixed(2); }
+  function amount(n, cur) {
+    if (!Number.isFinite(Number(n))) return 'Unavailable';
+    cur = String(cur || 'USD').toUpperCase();
+    if (cur === 'USD') return money(n);
+    try { return new Intl.NumberFormat('en', { style: 'currency', currency: cur, maximumFractionDigits: 2 }).format(n); }
+    catch (e) { return cur + ' ' + Number(n).toFixed(2); }
+  }
+  function fxUsd(n, currency) {
+    if (currency === 'USD') return n;
+    try {
+      var fx = window.SMMarket && window.SMMarket.fx;
+      return fx && typeof fx.convert === 'function' ? fx.convert(n, 'USD', currency) : null;
+    } catch (e) { return null; }
+  }
+  function orderAmounts() {
+    if (!state.option || !(Number(state.option.usd) > 0)) return null;
+    var base = Number(state.option.usd) * qty(), ship = state.ship;
+    if (!ship) return { baseUsd: base, subtotal: money(base), shipping: 'Choose delivery', total: '', totalCurrency: '' };
+    var cur = String(ship.cur || 'USD').toUpperCase(), itemInCur = fxUsd(base, cur);
+    var valid = Number.isFinite(Number(itemInCur)) && itemInCur !== null && Number.isFinite(Number(ship.amt)) && Number(ship.amt) >= 0;
+    return { baseUsd: base, subtotal: valid ? amount(itemInCur, cur) : money(base),
+      shipping: amount(ship.amt, cur), total: valid ? amount(Number(itemInCur) + Number(ship.amt), cur) : '',
+      totalCurrency: valid ? cur : '', totalValue: valid ? Number(itemInCur) + Number(ship.amt) : null };
+  }
+  var pricePanel = null, priceValues = null;
+  function renderPriceSummary() {
+    if (!els.delivery || !state.option) return;
+    if (!pricePanel) {
+      pricePanel = document.createElement('section'); pricePanel.className = 'gpdp-order-summary';
+      pricePanel.setAttribute('aria-label', 'Estimated order price breakdown');
+      var heading = document.createElement('h2'); heading.textContent = 'Your order estimate'; pricePanel.appendChild(heading);
+      var rows = document.createElement('dl'); priceValues = {};
+      [['items', 'Items'], ['shipping', 'Selected delivery'], ['total', 'Estimated total']].forEach(function (entry) {
+        var row = document.createElement('div'); row.className = 'gpdp-order-summary__row gpdp-order-summary__' + entry[0];
+        var term = document.createElement('dt'); term.textContent = entry[1];
+        var value = document.createElement('dd'); value.textContent = '—'; priceValues[entry[0]] = { term: term, value: value };
+        row.appendChild(term); row.appendChild(value); rows.appendChild(row);
+      });
+      pricePanel.appendChild(rows);
+      var note = document.createElement('p'); note.className = 'gpdp-order-summary__note'; note.textContent =
+        'Estimated product and carrier rates. Taxes or import duties may apply. Your payable total is reviewed at checkout.';
+      pricePanel.appendChild(note); els.delivery.insertAdjacentElement('afterend', pricePanel);
+    }
+    var p = orderAmounts(); if (!p) { pricePanel.hidden = true; return; }
+    pricePanel.hidden = false;
+    priceValues.items.term.textContent = 'Items (' + qty() + ' × ' + money(state.option.usd) + ')';
+    priceValues.items.value.textContent = p.subtotal;
+    priceValues.shipping.value.textContent = p.shipping;
+    priceValues.total.value.textContent = p.total || (state.ship ? 'Conversion pending · shown at checkout' : 'Select a shipping method');
+    pricePanel.classList.toggle('is-ready', !!p.total);
+    var target = wantedCurrency();
+    var approx = p.total && p.totalCurrency !== target && fxUsd(p.baseUsd, target);
+    // The final amount stays in the carrier's quotation currency; payment is converted only in checkout.
+    if (p.total && target && target !== p.totalCurrency) {
+      var converted = null;
+      try { converted = window.SMMarket && window.SMMarket.fx && window.SMMarket.fx.convert(p.totalValue, p.totalCurrency, target); } catch (e) {}
+      if (converted !== null && Number.isFinite(Number(converted))) priceValues.total.value.textContent += ' (≈ ' + amount(converted, target) + ')';
+    }
+  }
   function market() { try { return JSON.parse(localStorage.getItem('sm_market') || '{}') || {}; } catch (e) { return {}; } }
   function wanted() { return String(market().country || '').toUpperCase(); }
   function wantedCurrency() { return String(market().currency || '').toUpperCase(); }
@@ -125,17 +184,23 @@
 
   /* ---- options, price, WhatsApp text ---- */
   function updateWa() {
-    var o = state.option, msg = 'Assalam o Alaikum! I want to order:\n' + P.name + (o ? '\nOption: ' + o.name : '') + '\nQuantity: ' + qty() +
-      (state.country ? '\nDeliver to: ' + countryName(state.country) : '') + (o && o.usd ? '\nPrice shown: ' + money(o.usd) : '') + '\n' + P.url;
+    var o = state.option, p = orderAmounts();
+    var msg = 'Assalam o Alaikum! I want to order:\n' + P.name +
+      (o ? '\nOption: ' + o.name : '') + '\nQuantity: ' + qty() +
+      (state.country ? '\nDeliver to: ' + countryName(state.country) : '') +
+      (o && o.usd ? '\nUnit price estimate: ' + money(o.usd) : '') +
+      (state.ship ? '\nSelected carrier: ' + state.ship.name + '\nShipping estimate: ' + amount(state.ship.amt, state.ship.cur) : '\nShipping: awaiting carrier selection') +
+      (p && p.total ? '\nEstimated items + shipping: ' + p.total : '') + '\n' + P.url +
+      '\nPlease confirm stock, final carrier rates, duties and payable total.';
     els.wa.href = 'https://wa.me/' + (P.wa || '966510451995') + '?text=' + encodeURIComponent(msg);
   }
   function choose(o) {
-    state.option = o;
-    setOrderable(true);   // an exact option is chosen: the unpaid request can be saved now; the delivery check below only updates its message
+    state.option = o; state.ship = null; state.shipMethods = [];
+    setOrderable(false);
     [].forEach.call(els.opts.querySelectorAll('[data-vid]'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-vid') === o.vid ? 'true' : 'false'); });
     els.price.textContent = o.usd ? money(o.usd) : 'Price confirmed at checkout';
     if (o.image) { var n = state.images.indexOf(o.image); if (n < 0) { state.images.push(o.image); buildGallery(state.images); n = state.images.indexOf(o.image); } showImage(n); }
-    updateWa(); checkDelivery();
+    renderPriceSummary(); updateWa(); checkDelivery();
   }
   function renderOptions(list) {
     els.opts.innerHTML = '';
@@ -151,83 +216,134 @@
     els.opts.appendChild(wrap); els.opts.hidden = false;
   }
 
-  /* ---- delivery check: the store's own quote (POST /wp-json/gdcs/v1/live/freight), the same one the cart and checkout use.
-     It knows which supplier warehouse holds stock (for example a US warehouse with domestic carriers). ---- */
+  /* ---- Live CJ carrier picker. A supplier quote is NOT a payment authorization. ---- */
   var dTimer = 0, dSeq = 0;
   function setOrderable(yes) {
-    // These actions only save an unpaid request. They do not capture funds or promise fulfillment.
-    var can=!!(state.option&&state.option.vid);
-    els.add.disabled=!can;els.buy.disabled=!can;
+    var can = !!(yes && state.option && state.option.vid && state.ship);
+    els.add.disabled = !can; els.buy.disabled = !can;
+  }
+  function selectMethod(method) {
+    if (!method) return;
+    state.preferredCarrier = method.name;
+    state.ship = {
+      key: method.key, name: method.name, amt: method.cost, cur: method.currency,
+      days: method.days, label: method.name + ' · ' + amount(method.cost, method.currency) +
+        (method.days ? ' (' + method.days + ' days estimated)' : '')
+    };
+    [].forEach.call(els.delivery.querySelectorAll('input[name="gpdp-shipping-method"]'), function (input) {
+      input.checked = input.value === method.key;
+      var label = input.closest('.gpdp-ship-method');
+      if (label) label.classList.toggle('is-selected', input.checked);
+    });
+    renderPriceSummary(); updateWa(); setOrderable(true);
+  }
+  function renderMethods(methods, destination, note) {
+    state.shipMethods = methods; state.ship = null;
+    els.delivery.hidden = false;
+    els.delivery.className = 'gpdp-delivery is-ok gpdp-delivery--methods';
+    els.delivery.replaceChildren();
+    var heading = document.createElement('div'); heading.className = 'gpdp-ship-heading';
+    var title = document.createElement('h2'); title.textContent = 'Choose your delivery'; heading.appendChild(title);
+    var meta = document.createElement('span'); meta.className = 'gpdp-ship-destination';
+    meta.textContent = 'Delivering to ' + countryName(destination); heading.appendChild(meta);
+    els.delivery.appendChild(heading);
+    var list = document.createElement('div'); list.className = 'gpdp-shipping-methods';
+    list.setAttribute('role', 'radiogroup'); list.setAttribute('aria-label', 'Delivery carrier');
+    methods.forEach(function (method, index) {
+      var label = document.createElement('label'); label.className = 'gpdp-ship-method';
+      var radio = document.createElement('input'); radio.type = 'radio'; radio.name = 'gpdp-shipping-method'; radio.value = method.key;
+      var content = document.createElement('span'); content.className = 'gpdp-ship-method__content';
+      var carrier = document.createElement('strong'); carrier.textContent = method.name; content.appendChild(carrier);
+      var info = document.createElement('small');
+      info.textContent = (method.days ? method.days + ' days estimated' : 'Delivery time at checkout') +
+        (index === 0 ? ' · Lowest quoted price' : '');
+      content.appendChild(info);
+      var price = document.createElement('b'); price.className = 'gpdp-ship-method__price'; price.textContent = amount(method.cost, method.currency);
+      radio.addEventListener('change', function () { if (radio.checked) selectMethod(method); });
+      label.appendChild(radio); label.appendChild(content); label.appendChild(price); list.appendChild(label);
+    });
+    els.delivery.appendChild(list);
+    var foot = document.createElement('small'); foot.className = 'gpdp-ship-foot';
+    foot.textContent = note + ' · Carrier delivery windows are estimates. Confirmed before payment.';
+    els.delivery.appendChild(foot);
+    var selected = methods.filter(function (m) { return m.name === state.preferredCarrier; })[0] || methods[0];
+    selectMethod(selected);
+  }
+  function shippingWarning(message) {
+    state.ship = null; state.shipMethods = []; els.delivery.hidden = false;
+    els.delivery.className = 'gpdp-delivery is-warn'; els.delivery.textContent = message;
+    renderPriceSummary(); updateWa(); setOrderable(false);
+  }
+  function normaliseWp(quotes, currency) {
+    return quotes.filter(function (q) { return q && (q.service || q.name) && Number.isFinite(Number(q.cost)) && Number(q.cost) >= 0; })
+      .map(function (q, i) { return {
+        key: 'wp:' + i, name: String(q.service || q.name), cost: Number(q.cost),
+        days: String(q.estimate || q.days || ''), currency: String(currency || 'USD').toUpperCase()
+      }; }).sort(function (x, y) { return x.cost - y.cost; });
   }
   function checkDelivery() {
     clearTimeout(dTimer);
-    state.ship = null;   // a new option or quantity needs a new carrier quote
+    var seq = ++dSeq;
+    state.ship = null; state.shipMethods = [];
+    renderPriceSummary(); updateWa(); setOrderable(false);
+    if (!state.option) return;
+    els.delivery.hidden = false; els.delivery.className = 'gpdp-delivery is-loading';
+    els.delivery.textContent = 'Finding available delivery options for your selected product and quantity…';
     dTimer = setTimeout(function () {
-      var o = state.option, seq = ++dSeq;
-      if (!o) return;
-      els.delivery.hidden = false; els.delivery.className = 'gpdp-delivery is-loading'; els.delivery.textContent = 'Checking delivery to your destination…';
-      var slowShip = setTimeout(function () { if (seq === dSeq && !state.ship) workerShip(o, seq); }, 7000);   // store freight slow: supplier quote
+      var o = state.option, cc = state.country || wanted() || 'PK', supplierPending = null;
+      var slowShip = setTimeout(function () {
+        if (seq === dSeq && !state.ship) supplierPending = workerShip(o, seq);
+      }, 5000);
       context().then(function () {
-        var cc = state.country;
-        return api('/wp-json/gdcs/v1/live/freight', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-GDCS-CSRF': state.csrf },
-          body: JSON.stringify({ pid: P.pid, vid: o.vid, quantity: qty() }) }).then(function (r) { return { r: r, cc: cc }; });
-      }).then(function (x) {
+        if (seq !== dSeq) return null;
+        cc = state.country || wanted() || cc;
+        return api('/wp-json/gdcs/v1/live/freight', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'X-GDCS-CSRF': state.csrf },
+          body: JSON.stringify({ pid: P.pid, vid: o.vid, quantity: qty() })
+        });
+      }).then(function (r) {
         clearTimeout(slowShip);
-        if (seq !== dSeq) return;
-        var r = x.r, cc = x.cc, where = cc ? countryName(cc) : 'your destination';
-        if (!r.ok) {
-          workerShip(o, seq).then(function (shown) {
-            if (shown || seq !== dSeq) return;
-            els.delivery.className = 'gpdp-delivery is-warn';
-            els.delivery.textContent = (r.j && r.j.message ? String(r.j.message).replace(/<[^>]+>/g, '') : 'Delivery could not be checked right now.') + ' You can still ask us on WhatsApp.';
-            setOrderable(false);
-            say('Shipping is not verified yet: it is confirmed with you after you order, before the parcel ships.', 'warn');
-          });
+        if (seq !== dSeq || !r) return;
+        var methods = r.ok ? normaliseWp((r.j && r.j.quotes) || [], r.j.currency) : [];
+        if (methods.length) {
+          var warehouse = r.j && r.j.origin && r.j.origins ?
+            ((r.j.origins.filter(function (z) { return z.code === r.j.origin; })[0] || {}).name || '') : '';
+          renderMethods(methods, cc, warehouse ? 'Shipping from ' + warehouse : 'Live supplier warehouse quote');
           return;
         }
-        var q = (r.j.quotes || []).filter(function (z) { return z && z.service; });
-        if (!q.length) {
-          els.delivery.className = 'gpdp-delivery is-warn';
-          els.delivery.textContent = 'This option cannot be delivered to ' + where + ' from the supplier\'s warehouses right now. Choose another option, change your destination at the top of the page, or ask us on WhatsApp.';
-          setOrderable(false); say('No verified carrier quote for this variation and destination. Add to Cart to request a final quote.', 'warn'); return;
-        }
-        q.sort(function (a, b) { return (a.cost - b.cost) || (parseInt(a.estimate, 10) - parseInt(b.estimate, 10)); });
-        var best = q[0], cur = r.j.currency || 'USD', fmt = function (v) { return cur === 'USD' ? money(v) : (cur + ' ' + Number(v).toFixed(r.j.digits == null ? 2 : r.j.digits)); };
-        state.ship = { label: String(best.service || best.name || best.method || 'Cheapest carrier') + ' ' + fmt(best.cost) + (best.estimate ? ' (' + best.estimate + ' days)' : ''), amt: Number(best.cost) || 0, cur: cur };   // carried into the cart line
-        var from = r.j.origin && r.j.origins ? (r.j.origins.filter(function (z) { return z.code === r.j.origin; })[0] || {}).name : '';
-        els.delivery.className = 'gpdp-delivery is-ok';
-        els.delivery.textContent = 'Delivers to ' + where + (from ? ' from the supplier\'s ' + from.replace(/\s*\([A-Z]{2}\)$/, '') + ' warehouse' : '') + ': ' + q.length + ' method' + (q.length > 1 ? 's' : '') +
-          ', shipping from ' + fmt(best.cost) + (best.estimate ? ' (' + best.estimate + ' days, carrier estimate)' : '') + '. The exact shipping charge is shown at checkout before you pay.';
-        setOrderable(true);
+        workerShip(o, seq).then(function (ok) {
+          if (!ok && seq === dSeq) shippingWarning(
+            'No carrier quote is available for this option and destination. Change the option or destination, or request help on WhatsApp.');
+        });
       }).catch(function () {
         clearTimeout(slowShip);
         if (seq !== dSeq) return;
-        workerShip(o, seq).then(function (shown) {
-          if (shown || seq !== dSeq) return;
-          els.delivery.className = 'gpdp-delivery is-warn'; els.delivery.textContent = 'No carrier rate is available right now. Shipping is confirmed with you after you order, before the parcel ships.';
-          setOrderable(false);
+        workerShip(o, seq).then(function (ok) {
+          if (!ok && seq === dSeq) shippingWarning('Shipping rates are currently unavailable. Please request a quotation on WhatsApp.');
         });
       });
     }, 250);
   }
-  /* Supplier carrier quote straight from the CJ Worker (US$, the same service the global shop uses), when the store's freight check is
-     slow (7 s) or fails. Returns true when a quote was shown. The store's own answer, if it arrives later, replaces it. */
   function workerShip(o, seq) {
-    var C = window.SM_CONFIG || {}, W = String(C.cjShippingWorker || C.cjImageWorker || 'https://sastamilaga-cj-shipping.usamaestonia.workers.dev').replace(/\/$/, '');
+    var C = window.SM_CONFIG || {};
+    var W = String(C.cjShippingWorker || C.cjImageWorker ||
+      'https://sastamilaga-cj-shipping.usamaestonia.workers.dev').replace(/\/$/, '');
     var cc = state.country || wanted() || 'PK';
-    return fetch(W + '/api/cj/shipping', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ country: cc, items: [{ pid: P.pid, sku: o.sku || P.sku, qty: qty(), vid: o.vid }] }) })
-      .then(function (r) { return r.json().then(function (j) { return r.ok ? j : null; }); })
-      .then(function (d) {
-        if (seq !== dSeq || state.ship) return !!state.ship;
-        var m = ((d && d.methods) || []).filter(function (x) { return x && Number(x.price) > 0; }).sort(function (a, b) { return a.price - b.price; });
-        if (!m.length) return false;
-        var best = m[0];
-        state.ship = { label: String(best.name || 'Cheapest carrier') + ' ' + money(best.price) + (best.days ? ' (' + best.days + ' days)' : ''), amt: Number(best.price), cur: 'USD' };
-        els.delivery.className = 'gpdp-delivery is-ok';
-        els.delivery.textContent = 'Delivers to ' + countryName(cc) + ': ' + m.length + ' method' + (m.length > 1 ? 's' : '') + ', shipping from ' + money(best.price) + (best.days ? ' (' + best.days + ' days, carrier estimate)' : '') + '. The shipping charge is added at checkout.';
-        setOrderable(true);
-        return true;
-      }).catch(function () { return false; });
+    return fetch(W + '/api/cj/shipping', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ country: cc, items: [{ pid: P.pid, sku: o.sku || P.sku, qty: qty(), vid: o.vid }] })
+    }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      if (seq !== dSeq) return false;
+      var methods = ((d && d.methods) || []).filter(function (m) {
+        return m && m.name && Number.isFinite(Number(m.price)) && Number(m.price) >= 0;
+      }).map(function (m, i) {
+        return { key: 'cj:' + i, name: String(m.name), cost: Number(m.price),
+          days: String(m.days || ''), currency: 'USD' };
+      }).sort(function (a, b) { return a.cost - b.cost; });
+      if (!methods.length) return false;
+      renderMethods(methods, cc, 'CJ supplier freight quotation');
+      return true;
+    }).catch(function () { return false; });
   }
 
   /* ---- the real cart ---- */
@@ -250,6 +366,7 @@
      Pakistan where offered; every order is recorded in Formspree first). */
   function toCart(buyNow) {
     if (state.busy || !state.option) return;
+    if (!state.ship) { say('Choose an available shipping method before adding this product to your cart, or request a quotation on WhatsApp.', 'warn'); return; }
     state.busy = true; els.add.setAttribute('aria-busy', 'true'); els.buy.setAttribute('aria-busy', 'true');
     storeReady().then(function (store) {
       var o = state.option;
@@ -279,7 +396,8 @@
   }, true);
   root.addEventListener('click', function (e) { var s = e.target.closest && e.target.closest('[data-step]'); if (!s) return; els.qty.value = qty() + parseInt(s.getAttribute('data-step'), 10); qty(); updateWa(); checkDelivery(); });
   els.qty.addEventListener('change', function () { qty(); updateWa(); checkDelivery(); });
-  window.addEventListener('sm:market', function () { context().then(load); });
+  window.addEventListener('sm:market', function () { state.preferredCarrier = ''; context().then(load); });
+  window.addEventListener('sm:fx-rates', function () { renderPriceSummary(); updateWa(); });
 
   /* ---- load ---- */
   /* Supplier options straight from the CJ Worker (the same live variant list the global shop uses). Shown when WordPress is slow (over
