@@ -40,8 +40,19 @@
   }
 
   function init() {
-    var panel = document.querySelector('main .pdp .buy-panel');
-    if (!panel || panel.querySelector('[data-sm-product-share]')) return;
+    var pdp = document.querySelector('main .pdp');
+    var panel = pdp && pdp.querySelector('.buy-panel');
+    var shareHost = pdp && pdp.querySelector('.pdp-side .pdp-share');
+    // pdp-static.js builds the right column asynchronously and fires sm:pdp-ready.
+    // Do not create a second share card inside the purchase panel while it is loading.
+    if (!panel || !shareHost) return;
+    var existing = pdp.querySelector('[data-sm-product-share]');
+    if (existing) {
+      // Also migrate a widget inserted by an earlier layout version, without
+      // re-registering click handlers or duplicating 14 network share targets.
+      if (existing.parentElement !== shareHost) shareHost.replaceChildren(existing);
+      return;
+    }
     var h = panel.querySelector('h1');
     if (!h) return;
     var title = (h.textContent || '').trim().slice(0, 200) || 'Sasta Milaga product';
@@ -136,11 +147,14 @@
     foot.className = 'smps-footnote';
     foot.textContent = 'Instagram, TikTok and unsupported apps use your device share menu or a copied link.';
     outer.appendChild(head); outer.appendChild(grid); outer.appendChild(status); outer.appendChild(foot);
-    var wa = panel.querySelector('.sm-wa-btn');
-    if (wa) wa.insertAdjacentElement('afterend', outer);
-    else panel.appendChild(outer);
+    // Replace the legacy four plain share pills with the complete share grid.
+    // Keep the outer .pdp-share card as the only visible container.
+    shareHost.replaceChildren(outer);
   }
 
+  // Both local PDP and CJ edge PDP acquire their .pdp-share host from
+  // pdp-static.js; DOMContentLoaded alone can fire before the host exists.
+  document.addEventListener('sm:pdp-ready', init);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, {once:true});
   else init();
 })();

@@ -3,15 +3,26 @@
    No changes to checkout, cart, pricing, product content or shared site chrome. */
 body.sm-page-static section.pdp .buy-panel { top: 0px !important; }
 
-.sm-page-static .smps-panel {
-  margin: 16px 0 14px;
-  padding: clamp(14px,2vw,20px);
-  border: 1px solid #d9e9df;
-  border-radius: 18px;
-  background: linear-gradient(145deg,#f7fbf8 0%,#fff 70%);
-  box-shadow: 0 10px 26px -23px rgba(9,62,31,.35);
-  min-width: 0;
-  color: #123d26;
+/* Integrate the existing 14-option social widget into the one right-side
+   .pdp-share card. Avoid a second bordered panel, duplicated heading and
+   extra vertical space below the price / cart actions. */
+.sm-page-static .pdp-side .pdp-share {
+  background:linear-gradient(145deg,#f7fbf8 0%,#fff 75%);
+  border:1px solid #d9e9df;
+  border-radius:20px;
+  padding:clamp(14px,2vw,22px);
+  min-width:0;
+}
+.sm-page-static .pdp-share > .smps-panel {
+  display:block;
+  margin:0;
+  padding:0;
+  min-width:0;
+  border:0;
+  border-radius:0;
+  background:none;
+  box-shadow:none;
+  color:#123d26;
 }
 .sm-page-static .smps-heading { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; margin:0 0 14px; }
 .sm-page-static .smps-heading h2 { font:800 clamp(.96rem,1.25vw,1.1rem)/1.25 system-ui,sans-serif; color:#0b3b20; margin:0; letter-spacing:-.012em; }
@@ -45,6 +56,6 @@ body.sm-page-static section.pdp .buy-panel { top: 0px !important; }
 .sm-page-static .smps-footnote { margin:8px 0 0; font:400 .68rem/1.45 system-ui,sans-serif; color:#61766b; }
 @media (max-width:330px) {
   .sm-page-static .smps-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
-  .sm-page-static .smps-panel { padding:12px; }
+  .sm-page-static .pdp-side .pdp-share { padding:12px; }
 }
 @media (prefers-reduced-motion:reduce) { .sm-page-static .smps-option { transition:none; } }
