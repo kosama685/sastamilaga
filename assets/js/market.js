@@ -394,7 +394,7 @@
     var queued = false, again = function () { if (queued) return; queued = true; requestAnimationFrame(function () { queued = false; paintHeader(); convertIn(document); convertTagged(document); localiseText(document.body); destinationHome(); }); };
     localiseText(document.body); destinationHome();
     if (document.querySelector('.gdcs-converted-price[data-currency]')) getRates().then(again).catch(function () {});
-    new MutationObserver(function (m) { for (var i = 0; i < m.length; i++) if (m[i].addedNodes.length) { again(); break; } }).observe(document.body, { childList: true, subtree: true });
+    new MutationObserver(function (m) { if (state.country === 'PK' && state.currency === 'PKR') return; for (var i = 0; i < m.length; i++) if (m[i].addedNodes.length) { again(); break; } }).observe(document.body, { childList: true, subtree: true });
     window.addEventListener('load', again); document.addEventListener('sasta:rendered', again);
     // Keep long shopping sessions current, without changing source cart totals.
     if (typeof setInterval === 'function') setInterval(function () {
@@ -410,7 +410,19 @@
     var dl = document.getElementById('smx-countries');
     if (dl) {
       var pop = ['Saudi Arabia', 'United Arab Emirates', 'Serbia', 'Turkey', 'Schengen (Europe)', 'United Kingdom', 'Malaysia', 'Azerbaijan', 'Qatar', 'Thailand'];
-      dl.innerHTML = pop.concat(COUNTRIES.map(function (x) { return x.n; }).filter(function (n) { return pop.indexOf(n) < 0; })).map(function (n) { return '<option value="' + esc(n) + '"></option>'; }).join('');
+      // Keep the most-used destinations immediately available; hydrate the other options on first use.
+      // Previously 240+ option nodes were inserted during every initial homepage visit.
+      var hydrated = false;
+      function fillCountryOptions() {
+        if (hydrated) return;
+        hydrated = true;
+        dl.innerHTML = pop.concat(COUNTRIES.map(function (x) { return x.n; }).filter(function (n) { return pop.indexOf(n) < 0; })).map(function (n) { return '<option value="' + esc(n) + '"></option>'; }).join('');
+      }
+      var countryInput = document.querySelector('input[list="smx-countries"]');
+      if (countryInput) {
+        countryInput.addEventListener('focus', fillCountryOptions, { once: true });
+        countryInput.addEventListener('input', fillCountryOptions, { once: true });
+      } else fillCountryOptions();
     }
     if (saved) { if (state.auto && applyAutoLang(state.lang)) return; note(); } else autoDetect();
   }
