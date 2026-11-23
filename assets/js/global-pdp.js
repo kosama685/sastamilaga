@@ -69,7 +69,6 @@
     priceValues.total.value.textContent = p.total || (state.ship ? 'Conversion pending · shown at checkout' : 'Select a shipping method');
     pricePanel.classList.toggle('is-ready', !!p.total);
     var target = wantedCurrency();
-    var approx = p.total && p.totalCurrency !== target && fxUsd(p.baseUsd, target);
     // The final amount stays in the carrier's quotation currency; payment is converted only in checkout.
     if (p.total && target && target !== p.totalCurrency) {
       var converted = null;
@@ -219,7 +218,8 @@
   /* ---- Live CJ carrier picker. A supplier quote is NOT a payment authorization. ---- */
   var dTimer = 0, dSeq = 0;
   function setOrderable(yes) {
-    var can = !!(yes && state.option && state.option.vid && state.ship);
+    var can=!!(state.option&&state.option.vid);
+    can = can && !!yes && !!state.ship; // Verified carrier quote is also required.
     els.add.disabled = !can; els.buy.disabled = !can;
   }
   function selectMethod(method) {
@@ -313,7 +313,7 @@
         }
         workerShip(o, seq).then(function (ok) {
           if (!ok && seq === dSeq) shippingWarning(
-            'No carrier quote is available for this option and destination. Change the option or destination, or request help on WhatsApp.');
+            'No verified carrier quote is available for this option and destination. Change the option or destination, or request help on WhatsApp.');
         });
       }).catch(function () {
         clearTimeout(slowShip);
