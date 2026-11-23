@@ -1,0 +1,42 @@
+name: CJ product shipping choices and landed total
+on:
+  pull_request:
+    paths:
+      - assets/js/global-pdp.js
+      - assets/js/global.js
+      - assets/js/woo-bridge.js
+      - assets/css/global-pdp.css
+      - assets/templates/global-pdp.html
+      - app.js
+      - tools/cj-shipping-product-ux.test.mjs
+      - .github/workflows/cj-shipping-product-ux.yml
+  push:
+    branches: [main]
+    paths:
+      - assets/js/global-pdp.js
+      - assets/js/global.js
+      - assets/js/woo-bridge.js
+      - assets/css/global-pdp.css
+      - assets/templates/global-pdp.html
+      - app.js
+      - tools/cj-shipping-product-ux.test.mjs
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Static JavaScript syntax
+        run: |
+          node --check assets/js/global-pdp.js
+          node --check assets/js/woo-bridge.js
+          node --check assets/js/global.js
+          node --check app.js
+      - name: CJ carrier and price regression tests
+        run: node --test tools/cj-shipping-product-ux.test.mjs
