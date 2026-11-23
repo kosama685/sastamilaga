@@ -1856,6 +1856,9 @@ function cartInCur(rates, cur) {
   return v;
 }
 async function payAmount() {
+  // Do not take online payment for a global parcel without its selected carrier quote.
+  // A product-only amount would undercharge shipping and mislead the buyer.
+  if (gLines().some(x => !x.ship || !Number.isFinite(Number(x.shipAmt)) || Number(x.shipAmt) < 0)) throw new Error('shipping');
   const cur = paypalCurrency(), { totalPkr } = checkoutTotals();
   const r = await fetch('https://open.er-api.com/v6/latest/PKR').then(x => x.json());
   const rate = r && r.rates && r.rates[cur]; if (!rate) throw new Error('rate');
