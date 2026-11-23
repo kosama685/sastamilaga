@@ -1,0 +1,44 @@
+{
+  "checks": [
+    {
+      "name": "original-incognito",
+      "status": 200,
+      "final": "https://sastamilaga.com/global-shop/p/1386583701764313088/mori-girl-s-moving-butterfly-hairpin-headdress/",
+      "title": "Mori Girl's Moving Butterfly Hairpin Headdress",
+      "cookiesBefore": [],
+      "id": "1386583701764313088",
+      "reload": 200
+    },
+    {
+      "name": "shared-incognito",
+      "status": 200,
+      "final": "https://sastamilaga.com/global-shop/p/1386583701764313088/mori-girl-s-moving-butterfly-hairpin-headdress/",
+      "title": "Mori Girl's Moving Butterfly Hairpin Headdress",
+      "cookiesBefore": [],
+      "id": "1386583701764313088"
+    },
+    {
+      "name": "javascript-disabled",
+      "status": 200,
+      "final": "https://sastamilaga.com/global-shop/p/1386583701764313088/mori-girl-s-moving-butterfly-hairpin-headdress/",
+      "title": "Mori Girl's Moving Butterfly Hairpin Headdress",
+      "cookiesBefore": [],
+      "id": "1386583701764313088"
+    },
+    {
+      "name": "lowercase-uuid",
+      "status": 200,
+      "final": "https://sastamilaga.com/global-shop/p/0AF026C6-B83F-4FC8-85B5-CD638A556EF7/rainbow-contrast-color-thick-long-sleeved-cotton-coat-women-s-jacket/",
+      "title": "Rainbow contrast color thick long-sleeved cotton coat women's jacket",
+      "cookiesBefore": [],
+      "id": "0AF026C6-B83F-4FC8-85B5-CD638A556EF7"
+    },
+    {
+      "name": "copied-canonical-new-context",
+      "status": 200,
+      "title": "Mori Girl's Moving Butterfly Hairpin Headdress",
+      "final": "https://sastamilaga.com/global-shop/p/1386583701764313088/mori-girl-s-moving-butterfly-hairpin-headdress/"
+    }
+  ],
+  "passed": true
+}
