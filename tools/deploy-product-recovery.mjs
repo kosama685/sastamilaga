@@ -29,6 +29,7 @@ for(const route of routes)await put(route,name);
 try{
  const probes=[
   ['/global/p/headband-and-hair-band-and-hairpin/1386583701764313088','1386583701764313088'],
+  ['/global/p/garden-tools/1992883421086261249','1992883421086261249'],
   ['/global/p/coats/0af026c6-b83f-4fc8-85b5-cd638a556ef7','0AF026C6-B83F-4FC8-85B5-CD638A556EF7'],
   ['/product/2111897917664645122/catalog-product/','2111897917664645122'],
   ['/global-shop/p/1386583701764313088/mori-girl-s-moving-butterfly-hairpin-headdress/','1386583701764313088']

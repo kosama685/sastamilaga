@@ -46,3 +46,14 @@ test('unknown and malformed legacy links remain genuine 404, not homepage redire
   assert.equal(r.status,404);assert.equal(r.headers.get('Location'),null);
  }
 });
+test('a cached catalog error retries once using a distinct key and never caches errors',async()=>{
+ let calls=0;
+ const f=async(url,init)=>{
+  assert.equal(init.cf.cacheTtlByStatus['300-599'],-1);
+  if(calls++===0)return new Response('Temporary gateway error',{status:503});
+  assert.ok(String(url).endsWith('?catalog_recovery=20261123'));
+  return Response.json({items:{[id]:['CJ1','Smart Watch','Watches','smart-watches','']}});
+ };
+ const r=await recover(new Request('https://sastamilaga.com/global/p/smart-watches/'+id),{},f);
+ assert.equal(r.status,301);assert.equal(calls,2);
+});

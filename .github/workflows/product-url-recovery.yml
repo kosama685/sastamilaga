@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - workers/product-recovery/**
+      - workers/global-pdp/worker.js
       - tools/deploy-product-recovery.mjs
       - .github/workflows/product-url-recovery.yml
 permissions:

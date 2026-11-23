@@ -26,9 +26,19 @@ export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;',
 const jsonSafe = o => JSON.stringify(o).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026');
 
 async function getJSON(fetcher, url, ttl) {
-  const r = await fetcher(url, {cf: {cacheTtl: ttl, cacheEverything: true}});
-  if (!r.ok) throw Object.assign(new Error('upstream ' + r.status), {status: r.status});
-  return r.json();
+  let last;
+  for(let attempt=0;attempt<2;attempt++){
+    // A failed upstream response must never be cached as catalog data. The
+    // second key also escapes error entries cached by the previous policy.
+    const source=attempt?url.replace(PAGES,SITE)+'?catalog_recovery=20261123':url;
+    try{
+      const r=await fetcher(source,{signal:AbortSignal.timeout(8000),cf:{cacheEverything:true,cacheTtlByStatus:{'200-299':ttl,'300-599':-1}}});
+      if(r.ok)return await r.json();
+      last=Object.assign(new Error('upstream '+r.status),{status:r.status});
+      await r.body?.cancel();
+    }catch(e){last=e;}
+  }
+  throw last;
 }
 async function getText(fetcher, url, ttl) {
   const r = await fetcher(url, {cf: {cacheTtl: ttl, cacheEverything: true}});
