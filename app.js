@@ -707,6 +707,8 @@ function bindEvents() {
    ============================================================ */
 function renderNotFound() {
   setSEO({ title: 'Page not found', description: 'This page does not exist. Try the shop, the global shop or search.', url: SITE_URL, robots: 'noindex, follow' });
+  // Preserve the accessible, SEO-safe 404 customer rescue generated from the canonical partial.
+  if (document.documentElement.hasAttribute('data-nf') && document.getElementById('sm-recovery')) return;
   renderApp(`<section class="sm-page">${pageHead('Page not found', 'We could not find that page. It may have moved, or the address may be mistyped.')}
     <p class="sm-page-actions"><a class="sm-btn" href="${APP_BASE}">Home</a> <a class="sm-btn sm-btn--ghost" href="${APP_BASE}shop/">Shop</a> <a class="sm-btn sm-btn--ghost" href="${APP_BASE}global/">Global shop</a> <a class="sm-btn sm-btn--ghost" href="${APP_BASE}search/">Search</a></p></section>`);
 }
