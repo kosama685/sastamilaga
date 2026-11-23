@@ -117,10 +117,10 @@
      Static pages already include chrome.js; load it without rebuilding 20k product files. */
   if (document.querySelector('main .pdp .buy-panel')) {
     var shareCss = document.createElement('link');
-    shareCss.rel = 'stylesheet'; shareCss.href = prefix + 'assets/css/product-share.css?v=20261122-1';
+    shareCss.rel = 'stylesheet'; shareCss.href = prefix + 'assets/css/product-share.css?v=20261123-side-card';
     document.head.appendChild(shareCss);
     var shareJs = document.createElement('script');
-    shareJs.src = prefix + 'assets/js/product-share.js?v=20261122-1';
+    shareJs.src = prefix + 'assets/js/product-share.js?v=20261123-side-card';
     shareJs.defer = true; document.head.appendChild(shareJs);
   }
   /* Reusable video button for static local product pages. */
