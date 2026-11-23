@@ -169,11 +169,19 @@ jobs:
           set -euo pipefail
           for attempt in $(seq 1 18); do
             found=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?per_page=100" --jq '[.artifacts[] | select(.name == "github-pages" and .expired == false)] | length')
-            if [ "$found" -ge 1 ]; then
-              echo "Pages artifact metadata registered (attempt $attempt)"
-              exit 0
+            if [ "$found" -eq 1 ]; then
+              echo "One Pages artifact registered (attempt $attempt); allowing internal deployment API to synchronize"
+              # The public Artifacts API can see uploads before deploy-pages' API.
+              # Avoid a zero-artifact race (seen 2026-11-23), without creating duplicates by re-running the same workflow run.
+              sleep 30
+              confirmed=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?per_page=100" --jq '[.artifacts[] | select(.name == "github-pages" and .expired == false)] | length')
+              if [ "$confirmed" -eq 1 ]; then exit 0; fi
             fi
-            echo "Pages artifact metadata is not visible yet ($attempt/18)"
+            if [ "$found" -gt 1 ]; then
+              echo "::error::Multiple github-pages artifacts in the same workflow run. Start a fresh run, do not rerun this attempt."
+              exit 1
+            fi
+            echo "Pages artifact metadata not yet ready ($attempt/18); found=$found"
             sleep 5
           done
           echo "::error::The uploaded Pages artifact was not registered in time"
