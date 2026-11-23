@@ -248,6 +248,34 @@ End of comment */
 	</style>
 <link rel="stylesheet" href="assets/theme/live-tv-hub.css">
 <link rel="stylesheet" href="styles.css">
+<style id="sm-recovery-style">
+.sm-recovery{box-sizing:border-box;max-width:1100px;margin:clamp(25px,5vw,70px) auto;padding:clamp(22px,5vw,50px);border:1px solid #dce7df;border-radius:26px;background:linear-gradient(137deg,#f5fbf7 0%,#fff 64%);box-shadow:0 16px 52px -36px rgba(11,59,32,.3);color:#173c2b;font-family:inherit}
+.sm-recovery *, .sm-recovery *::before,.sm-recovery *::after{box-sizing:border-box}
+.sm-recovery__label{font-size:.78rem;font-weight:800;letter-spacing:.15em;color:#527364}
+.sm-recovery__code{margin-top:12px;font-size:clamp(3.7rem,9vw,6rem);line-height:1;font-weight:900;letter-spacing:-.07em;color:#0f7a3b}
+.sm-recovery h1{margin:12px 0 12px;font-size:clamp(1.65rem,3.9vw,2.6rem);line-height:1.18;color:#0b3b20;letter-spacing:-.025em}
+.sm-recovery__lead{max-width:690px;margin:0 0 28px;color:#52665a;font-size:1.05rem;line-height:1.65}
+.sm-recovery__search{max-width:750px;margin:0;padding:0;background:transparent}
+.sm-recovery__search label{display:block;margin-bottom:10px;font-weight:750;font-size:.94rem;color:#173c2b}
+.sm-recovery__searchrow{display:flex;gap:10px}
+.sm-recovery__searchrow input{min-width:0;flex:1;min-height:51px;padding:12px 16px;border:1px solid #a8c1b1;border-radius:13px;background:#fff;color:#172b20;font:inherit;font-size:1rem;box-shadow:none}
+.sm-recovery__searchrow button{min-height:51px;padding:12px 19px;border:0;border-radius:13px;background:#0f7a3b;color:#fff;font:inherit;font-size:.98rem;font-weight:800;cursor:pointer}
+.sm-recovery__searchrow button:hover{background:#0b5e2e}
+.sm-recovery :is(a,button,input):focus-visible{outline:3px solid #ff9800;outline-offset:3px}
+.sm-recovery__search>p{font-size:.82rem;color:#61736a;margin:8px 0 0}
+.sm-recovery__suggestion{margin:14px 0 0;font-size:.92rem;color:#436152}
+.sm-recovery__suggestion a{color:#0b6230;text-decoration:underline;font-weight:700}
+.sm-recovery__choices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:32px 0 22px}
+.sm-recovery__choice{display:flex;flex-direction:column;gap:7px;padding:20px 17px;border:1px solid #dce8e0;border-radius:16px;background:#fff;color:#173c2b!important;text-decoration:none!important;box-shadow:0 5px 20px -16px rgba(11,59,32,.35)}
+.sm-recovery__choice:hover{border-color:#0f7a3b;background:#f2faf4;transform:translateY(-1px)}
+.sm-recovery__choice strong{font-size:1.02rem;line-height:1.3}
+.sm-recovery__choice span{font-size:.86rem;color:#61736a;line-height:1.4}
+.sm-recovery__bottom{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:15px;border-top:1px solid #dce8e0;font-size:.92rem;color:#62766a}
+.sm-recovery__bottom a{color:#0b6331;font-weight:700}
+@media(max-width:780px){.sm-recovery__choices{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.sm-recovery{margin:18px 10px;padding:24px 18px;border-radius:20px}.sm-recovery__choices{grid-template-columns:1fr 1fr;gap:9px}.sm-recovery__choice{padding:16px 12px}.sm-recovery__searchrow{flex-direction:column}.sm-recovery__searchrow button{width:100%}}
+@media(prefers-reduced-motion:reduce){.sm-recovery *{transition:none!important;transform:none!important}}
+</style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": ["Organization", "OnlineStore"], "@id": "https://sastamilaga.com/#organization", "name": "Sasta Milaga", "url": "https://sastamilaga.com/", "logo": "https://sastamilaga.com/assets/brand/logo.png", "sameAs": ["https://sastamilaga.com/"], "contactPoint": {"@type": "ContactPoint", "telephone": "+966510451995", "contactType": "customer service", "availableLanguage": ["en", "ur", "ar"]}}, {"@type": "WebSite", "@id": "https://sastamilaga.com/#website", "url": "https://sastamilaga.com/", "name": "Sasta Milaga", "publisher": {"@id": "https://sastamilaga.com/#organization"}, "potentialAction": {"@type": "SearchAction", "target": "https://sastamilaga.com/#/search?q={search_term_string}", "query-input": "required name=search_term_string"}}]}</script>
 <script type="application/ld+json" id="ld-dynamic"></script>
 </head>
@@ -336,7 +364,25 @@ End of comment */
 </header>
 
 <main class="wp-block-group sm-main is-layout-flow wp-block-group-is-layout-flow" id="main"><div id="home-view" hidden></div>
-<div id="app" class="sm-app"><section class="sm-page"><header class="sm-page-head"><h1>Page not found</h1><p>We could not find that page. It may have moved, or the address may be mistyped.</p></header></section></div>
+<div id="app" class="sm-app"><section class="sm-recovery" id="sm-recovery" aria-labelledby="sm-recovery-heading">
+  <div class="sm-recovery__label">SASTA MILAGA · CUSTOMER CARE</div>
+  <div class="sm-recovery__code" aria-hidden="true">404</div>
+  <h1 id="sm-recovery-heading">Let's find what you're looking for.</h1>
+  <p class="sm-recovery__lead">This address may have changed. Your shopping journey doesn't have to end here. Search the store, explore our services or contact our support team.</p>
+  <form id="sm-recovery-search" class="sm-recovery__search" action="/search/" method="get" role="search">
+    <label for="sm-recovery-query">Search for products or services</label>
+    <div class="sm-recovery__searchrow"><input id="sm-recovery-query" name="q" type="search" maxlength="100" autocomplete="off" placeholder="Product, category or service" aria-describedby="sm-recovery-searchhelp" required><button type="submit">Search Sasta Milaga <span aria-hidden="true">→</span></button></div>
+    <p id="sm-recovery-searchhelp">Search will open the store results. Only verified listings can be purchased.</p>
+  </form>
+  <p id="sm-recovery-suggestion" class="sm-recovery__suggestion" hidden></p>
+  <nav class="sm-recovery__choices" aria-label="Find your way around Sasta Milaga">
+    <a href="/" class="sm-recovery__choice"><strong>🏠 Home</strong><span>Start from the homepage</span></a>
+    <a href="/shop/" class="sm-recovery__choice"><strong>🛍️ Shop products</strong><span>Explore local shopping</span></a>
+    <a href="/global-shop/" class="sm-recovery__choice"><strong>🌎 Global shop</strong><span>Browse the international catalogue</span></a>
+    <a href="/help/" class="sm-recovery__choice"><strong>💬 Help centre</strong><span>Find order and support answers</span></a>
+  </nav>
+  <div class="sm-recovery__bottom"><span>Need assistance?</span> <a href="/contact/">Contact customer care</a><span class="sm-recovery__sep" aria-hidden="true">·</span><a href="/privacy/">Privacy policy</a><span class="sm-recovery__sep" aria-hidden="true">·</span><a href="/track/">Track your order</a></div>
+</section></div>
 <div id="view-livetv" class="sm-app" hidden></div></main>
 
 <div class="wp-block-template-part">	<footer class="smf">
@@ -1532,5 +1578,31 @@ if(window.smtpQ){var q=window.smtpQ;window.smtpQ=null;window.smtpOpen(q);}
 <script src="assets/js/global.js?v=cj-live-20261115" defer></script>
 <script src="assets/js/pages.js" defer></script>
 <script src="assets/js/checkout.js" defer></script>
+<script id="sm-recovery-runtime">
+(function(){
+  var p=location.pathname.replace(/\/+$/,'').toLowerCase();
+  var aliases={
+    '/privacy-policy':'/privacy/','/terms-conditions':'/terms/','/returns-refunds':'/returns/','/shipping-delivery':'/shipping/','/track-order':'/track/',
+    '/sell-with-us':'/seller/','/rewards-program':'/earn-points/','/refer-and-earn':'/earn-points/',
+    '/ur/privacy-policy':'/ur/privacy/','/ur/terms-conditions':'/ur/terms/','/ur/returns-refunds':'/ur/returns/','/ur/shipping-delivery':'/ur/shipping/','/ur/sell-with-us':'/seller/'
+  };
+  // Client rescue is secondary only: exact legacy pages are permanently redirected at Cloudflare.
+  if(Object.prototype.hasOwnProperty.call(aliases,p)){location.replace(aliases[p]);return;}
+  function init(){
+    var form=document.getElementById('sm-recovery-search'),input=document.getElementById('sm-recovery-query'),note=document.getElementById('sm-recovery-suggestion');
+    if(!form||!input)return;
+    var seg=p.split('/').filter(Boolean).pop()||'';
+    var term=seg.replace(/\.(?:html?|php)$/,'').replace(/[-_]+/g,' ').replace(/\b(?:product|category|page)\b/g,' ').replace(/\s+/g,' ').trim().slice(0,70);
+    if(term.length>=3 && /[a-z]/i.test(term) && !/^[0-9a-f]{8}\s[0-9a-f\s]{18,}$/i.test(term)){
+      input.value=term;
+      if(note){var a=document.createElement('a');a.href='/#/search?q='+encodeURIComponent(term);a.textContent='Search for “'+term+'”';note.textContent='Looking for something similar? ';note.appendChild(a);note.hidden=false;}
+    }
+    form.addEventListener('submit',function(e){
+      var q=input.value.trim();if(!q)return;e.preventDefault();location.href='/#/search?q='+encodeURIComponent(q);
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
 </body>
 </html>
