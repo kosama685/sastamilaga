@@ -16,7 +16,7 @@ assert.ok(market.includes('if (state.country === \'PK\' && state.currency === \'
 assert.equal(home.split('<h1').length-1,1,'Homepage must have one semantic H1');
 assert.ok(home.includes('id="sm-shopping-answer"'),'Missing answer-first shopping content');
 assert.ok(home.includes('How do local and global Sasta Milaga orders work?'),'Missing answer heading');
-assert.ok(market.includes('lastSweep = Date.now()'),'Market DOM sweep throttle missing');
+assert.ok(market.includes('mutationTimer = setTimeout'),'Background mutation throttle missing');
 assert.ok(text('assets/theme/live-tv-hub.css').includes('.sltv-hero :is(h1,h2)'),'Live TV heading style lost');
 assert.ok(market.includes("countryInput.addEventListener('focus', fillCountryOptions"),'Country options must hydrate only upon form use');
 const worker=text('workers/faq-static/worker.js');
