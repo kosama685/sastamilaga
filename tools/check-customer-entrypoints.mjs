@@ -32,4 +32,14 @@ for(const [from,to] of checks){
   }catch(error){failed++;console.error(from,error.message)}
 }
 try{const response=await fetch('https://sastamilaga.com/privacy/',{signal:AbortSignal.timeout(16000)});const html=await response.text();const pass=response.status===200&&/Privacy policy/i.test(html);console.log(JSON.stringify({page:'/privacy/',status:response.status,pass}));if(!pass)failed++;}catch(error){failed++;console.error('privacy target',error.message)}
+
+try{
+  const unknown='/__customer_recovery_nonexistent_url_20261123';
+  const response=await fetch('https://sastamilaga.com'+unknown,{redirect:'manual',signal:AbortSignal.timeout(16000)});
+  const body=await response.text();
+  const pass=response.status===404 && body.includes('id="sm-recovery"') && body.includes('id="sm-recovery-search"');
+  console.log(JSON.stringify({page:unknown,status:response.status,hasSearchRescue:body.includes('id="sm-recovery-search"'),pass}));
+  if(!pass)failed++;
+}catch(error){failed++;console.error('404 visitor fallback',error.message)}
+
 if(failed){console.error(failed+' customer entrypoints failed; inspect edge and origin routing.');process.exitCode=1;}
