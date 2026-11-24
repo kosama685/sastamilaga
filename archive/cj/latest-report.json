@@ -1,0 +1,12 @@
+{
+  "checked_at_utc": "2026-11-24T09:59:06.031Z",
+  "source_total_rows": 451812,
+  "baseline_preserved_rows": 451812,
+  "imported_new_records": 0,
+  "category_files_written": 0,
+  "pending_rowid_gap": 0,
+  "website_changes": 0,
+  "public_links_created": 0,
+  "product_pages_published": 0,
+  "status": "caught_up_to_source_rowid"
+}
