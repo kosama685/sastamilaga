@@ -11,7 +11,7 @@ export const REGIONS = [
   { k: 'sg',   name: 'Singapore',               flag: 'sg', n: '6580138554',    t: '+65 8013 8554' },
   { k: 'cn',   name: 'China',                   flag: 'cn', n: '8619563055191', t: '+86 195 6305 5191' },
   { k: 'af',   name: 'Botswana / Africa',       flag: 'bw', n: '26772228229',   t: '+267 72 228 229' },
-  { k: 'in',   name: 'India',                   flag: 'in', n: '918128425068',  t: '+91 81284 25068' },
+  { k: 'in',   name: 'India',                   flag: 'in', n: '919906995859',  t: '+91 99069 95859' },
   { k: 'pk',   name: 'Pakistan',                flag: 'pk', n: '923343582295',  t: '+92 334 358 2295' },
   { k: 'gulf', name: 'Gulf',                    flag: 'sa', n: '966510451995',  t: '+966 51 045 1995' },
   { k: 'eg',   name: 'Egypt',                   flag: 'eg', n: '201028377512',  t: '+20 10 28377512' },
@@ -24,7 +24,7 @@ const MSG = encodeURIComponent('Hello Sasta Milaga! I would like to enquire abou
 
 export function waDirectory(variant) {
   const id = `smwa-h-${variant}`;
-  const cards = REGIONS.map(r => `<li class="smwa__card" data-region="${r.k}"><img class="smwa__flag" src="https://flagcdn.com/w40/${r.flag}.png" srcset="https://flagcdn.com/w80/${r.flag}.png 2x" width="30" height="20" alt="" loading="lazy" decoding="async"><div class="smwa__txt"><strong>${r.name}</strong><a class="smwa__num" href="tel:+${r.n}" dir="ltr">${PH}<span>${r.t}</span></a></div><a class="smwa__btn" href="https://wa.me/${ORDER_WA}?text=${MSG}" target="_blank" rel="noopener" aria-label="Ask Sasta Milaga about an order to ${r.name} on WhatsApp +923343582295">${WA}<span>Message on WhatsApp</span>${ARROW}</a></li>`).join('');
+  const cards = REGIONS.map(r => `<li class="smwa__card" data-region="${r.k}"><img class="smwa__flag" src="https://flagcdn.com/w40/${r.flag}.png" srcset="https://flagcdn.com/w80/${r.flag}.png 2x" width="30" height="20" alt="" loading="lazy" decoding="async"><div class="smwa__txt"><strong>${r.name}</strong><a class="smwa__num" href="tel:+${r.n}" dir="ltr">${PH}<span>${r.t}</span></a></div><a class="smwa__btn" href="https://wa.me/${r.k === 'in' ? r.n : ORDER_WA}?text=${MSG}" target="_blank" rel="noopener" aria-label="Ask Sasta Milaga about an order to ${r.name} on WhatsApp +${r.k === 'in' ? r.n : ORDER_WA}">${WA}<span>Message on WhatsApp</span>${ARROW}</a></li>`).join('');
   const head = `<div class="smwa__head"><span class="smwa__badge">${WA.replace('width="18" height="18"', 'width="30" height="30"')}</span><div><h2 id="${id}">Phone and WhatsApp <em>worldwide</em></h2><p>Order enquiries from any country: WhatsApp +92 334 358 2295. Regional telephone numbers remain available below. Delivery and payment options are confirmed for each destination before an order is accepted.</p><a class="smwa__btn" href="https://wa.me/${ORDER_WA}?text=${MSG}" target="_blank" rel="noopener" aria-label="WhatsApp worldwide order enquiries at +923343582295">${WA}<span>WhatsApp orders worldwide: +92 334 358 2295</span>${ARROW}</a></div></div>`;
   return variant === 'footer'
     ? `<section id="sasta-regional-footer" class="smwa smwa--footer" aria-labelledby="${id}" data-no-swap><div class="smh-wrap smwa__in">${head}<ul class="smwa__grid" role="list">${cards}</ul></div></section>`

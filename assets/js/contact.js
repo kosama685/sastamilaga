@@ -16,10 +16,10 @@
     sg:   { n: '6580138554',    t: '+65 8013 8554' },
     cn:   { n: '8619563055191', t: '+86 195 6305 5191' },
     af:   { n: '26772228229',   t: '+267 72 228 229' },
-    in:   { n: '918128425068',  t: '+91 81284 25068' },
+    in:   { n: '919906995859',  t: '+91 99069 95859' },
     eg:   { n: '201028377512',  t: '+20 10 28377512' }
   };
-  var OLD = ['923000000000', '923343582295'];   // placeholder numbers that must never be shown
+  var OLD = ['923000000000', '923343582295', '918128425068'];   // placeholder numbers that must never be shown
   function set(k, list) { list.split(' ').forEach(function (c) { MAP[c] = k; }); }
   var MAP = {};
   set('pk', 'PK'); set('gulf', 'SA AE QA KW BH OM'); set('au', 'AU NZ'); set('us', 'US CA'); set('uk', 'GB'); set('hr', 'HR'); set('it', 'IT');
@@ -41,10 +41,10 @@
     var out = String(s), i, o;
     for (i = 0; i < ALLK.length; i++) { o = ALLK[i]; if (o === k) continue; out = out.split(LINES[o].n).join(LINES[k].n).split(LINES[o].t).join(LINES[k].t); }
     OLD.forEach(function (x) { out = out.split(x).join(LINES[k].n); });
-    out = out.split('+92 334 358 2295').join(LINES[k].t);
+    out = out.split('+92 334 358 2295').join(LINES[k].t).split('+91 81284 25068').join(LINES[k].t);
     return out;
   }
-  function hasNumber(s) { for (var i = 0; i < ALLK.length; i++) if (s.indexOf(LINES[ALLK[i]].t) >= 0) return true; return s.indexOf('+92 334 358 2295') >= 0; }
+  function hasNumber(s) { for (var i = 0; i < ALLK.length; i++) if (s.indexOf(LINES[ALLK[i]].t) >= 0) return true; return s.indexOf('+92 334 358 2295') >= 0 || s.indexOf('+91 81284 25068') >= 0; }
   function fix(root) {
     var k = key(), i, el, n, tel = new RegExp('^tel:\\+?(' + ALLK.map(function (x) { return LINES[x].n; }).join('|') + '|923343582295)');
     var links = root.querySelectorAll('a[href*="wa.me/"],a[href*="api.whatsapp.com"],a[href^="tel:"]');
