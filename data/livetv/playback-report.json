@@ -1,15 +1,15 @@
 {
-  "at": "2026-11-24T10:15:50.810Z",
+  "at": "2026-11-24T22:41:10.860Z",
   "origin": "https://sastamilaga.com",
-  "channels": 39999,
-  "uniqueSources": 27876,
-  "testedThisRun": 99,
-  "checked": 27876,
+  "channels": 40002,
+  "uniqueSources": 27912,
+  "testedThisRun": 36,
+  "checked": 27912,
   "remaining": 0,
   "statuses": {
-    "ok": 6593,
+    "ok": 6591,
     "dead": 3015,
-    "needs-player": 9892,
+    "needs-player": 9897,
     "unchecked": 0,
     "no-source": 20499
   },
