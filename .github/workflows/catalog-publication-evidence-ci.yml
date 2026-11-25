@@ -1,0 +1,30 @@
+name: Catalog publication evidence and sitemap regression
+on:
+  pull_request:
+    paths:
+      - 'tools/catalog-publication-policy*'
+      - 'tools/catalog-publication-evidence*'
+      - 'tools/migrations/20261125-catalog-publication-evidence.sql'
+      - 'scripts/sitemap-audit.js'
+      - '.github/workflows/catalog-publication-evidence-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Verify policy and local SQLite migration
+        run: node --test tools/catalog-publication-policy.test.mjs tools/catalog-publication-evidence.test.mjs
+      - name: Verify sitemap head parsing fixtures
+        run: |
+          npm install --no-save --ignore-scripts --no-audit --no-fund saxes@6.0.0
+          node --check scripts/sitemap-audit.js
+          node scripts/sitemap-audit.js --self-test

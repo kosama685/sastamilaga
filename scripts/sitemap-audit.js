@@ -30,7 +30,7 @@ async function retrieve(url,agent=USER_AGENT){
   if(sizeHeader>MAX_BYTES)throw Error('excessive Content-Length');
   const bytes=Buffer.from(await response.arrayBuffer());
   if(bytes.length>MAX_BYTES)throw Error('sitemap exceeds 50 MB');
-  return {status:response.status,contentType:response.headers.get('content-type')||'',bytes:bytes.length,text:bytes.toString('utf8'),url:response.url};
+  return {status:response.status,contentType:response.headers.get('content-type')||'',bytes:bytes.length,text:bytes.toString('utf8'),url:response.url,xRobotsTag:response.headers.get('x-robots-tag')||'',sitemapSource:response.headers.get('x-sasta-sitemap-source')||''};
 }
 function parseXML(xml){
   const parser=new SaxesParser({xmlns:true});
@@ -61,8 +61,9 @@ async function visit(url,depth=0){
   all.set(absolute,row);
   try{
     const r=await retrieve(absolute);
-    Object.assign(row,{status:r.status,contentType:r.contentType,bytes:r.bytes});
+    Object.assign(row,{status:r.status,contentType:r.contentType,bytes:r.bytes,finalURL:r.url,sitemapSource:r.sitemapSource});
     if(r.status!==200)throw Error('HTTP '+r.status);
+    if(r.url!==absolute)throw Error('sitemap redirected: '+r.url);
     if(!/\b(xml|text\/plain)\b/i.test(r.contentType))throw Error('non-XML content-type: '+r.contentType);
     const x=parseXML(r.text);
     row.root=x.root;row.locs=x.locs.length;
@@ -85,16 +86,48 @@ async function visit(url,depth=0){
     }
   }catch(e){row.error=String(e.message||e);errors.push({url:absolute,error:row.error,status:row.status})}
 }
+// Parse head tags independent of attribute order; ignore comments and script text.
+function headSignals(html){
+  const head=html.match(/<head\b[^>]*>([\s\S]*?)<\/head\s*>/i)?.[1]||'';
+  const clean=head.replace(/<!--[\s\S]*?-->|<script\b[^>]*>[\s\S]*?<\/script\s*>|<style\b[^>]*>[\s\S]*?<\/style\s*>/gi,'');
+  const canonical=[],robots=[];
+  for(const m of clean.matchAll(/<(link|meta)\b([^>]*?)>/gi)){
+    const attrs={};
+    for(const a of m[2].matchAll(/([^\s=/"'<>]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>]+))/g)) attrs[a[1].toLowerCase()]=a[2]??a[3]??a[4];
+    if(m[1].toLowerCase()==='link' && (attrs.rel||'').toLowerCase().split(/\s+/).includes('canonical'))canonical.push(attrs.href||'');
+    if(m[1].toLowerCase()==='meta' && /^(robots|googlebot)$/i.test(attrs.name||''))robots.push(attrs.content||'');
+  }
+  return {canonical,robots};
+}
+function destinationErrors(url,r){
+  const h=headSignals(r.text);
+  const failures=[];
+  if(r.status!==200)failures.push('HTTP '+r.status);
+  if(r.url!==url)failures.push('redirected to '+r.url);
+  if(!/text\/html/i.test(r.contentType))failures.push('not HTML');
+  if(h.canonical.length!==1||h.canonical[0]!==url)failures.push('missing, conflicting or non-self canonical');
+  if(/(?:^|[\s,:;])(noindex|none)(?:$|[\s,;])/i.test([...h.robots,r.xRobotsTag||''].join(', ')))failures.push('noindex directive in meta or HTTP header');
+  return {h,failures};
+}
+if(args.includes('--self-test')){
+  const assert=(await import('node:assert/strict')).default;
+  const u=SITE.href;
+  const good={status:200,url:u,contentType:'text/html',text:'<head><link href="'+u+'" rel="canonical"><meta content="index, follow" name="robots"></head>',xRobotsTag:''};
+  assert.deepEqual(destinationErrors(u,good).failures,[]);
+  assert.ok(destinationErrors(u,{...good,xRobotsTag:'googlebot: noindex'}).failures.length);
+  assert.ok(destinationErrors(u,{...good,url:u+'redirect/'}).failures.length);
+  assert.ok(destinationErrors(u,{...good,text:good.text.replace('</head>','<link rel="canonical" href="https://example.org/"></head>')}).failures.length);
+  assert.ok(destinationErrors(u,{...good,text:good.text.replace('</head>','<meta name="googlebot" content="none"></head>')}).failures.length);
+  console.log('PASS: head order, header noindex, redirects, conflicting canonical and Googlebot directives');
+  process.exit(0);
+}
 async function verifyDestination(url){
-  const check={url,http:null,canonical:null,robots:null,ok:false};
+  const check={url,http:null,finalURL:null,canonical:null,robots:null,xRobotsTag:null,ok:false};
   try{
     const r=await retrieve(url);
-    check.http=r.status;
-    if(!/text\/html/i.test(r.contentType))throw Error('not HTML');
-    check.canonical=r.text.match(/<link\s+[^>]*rel=['"]canonical['"][^>]*href=['"]([^'"]+)/i)?.[1]||null;
-    check.robots=r.text.match(/<meta\s+[^>]*name=['"]robots['"][^>]*content=['"]([^'"]+)/i)?.[1]||'';
-    check.ok=r.status===200&&check.canonical===url&&!/noindex/i.test(check.robots);
-    if(!check.ok)throw Error('HTTP/canonical/noindex failed');
+    const {h,failures}=destinationErrors(url,r);
+    Object.assign(check,{http:r.status,finalURL:r.url,canonical:h.canonical,robots:h.robots,xRobotsTag:r.xRobotsTag,ok:failures.length===0});
+    if(!check.ok)throw Error(failures.join('; '));
   }catch(e){check.error=String(e.message||e);errors.push({url,error:check.error,status:check.http})}
   return check;
 }
@@ -118,7 +151,9 @@ for(const p of ['/sitemap.xml','/sitemap_index.xml','/sitemap-global-qualified.x
   }catch(e){head.push({path:p,error:String(e)});errors.push({url:p,error:String(e)})}
 }
 const duplicates=[...duplicateCounts].filter(([,n])=>n>1).map(([url,count])=>({url,count}));
-const report={generatedAt:new Date().toISOString(),source:'Independent GitHub runner',note:'UA string does not prove authentic Googlebot identity; only authenticated Search Console or Cloudflare verified bot logs can do that',roots:ROOTS,sitemapChecks:[...all.values()],count:{sitemapFiles:all.size,uniqueURLs:sitemapUrls.size,duplicateURLs:duplicates.length,failedChecks:errors.length,sampledPages:destination.length,passingSampledPages:destination.filter(x=>x.ok).length},duplicates:duplicates.slice(0,100),destination,robots,googlebotUaHeads:head,errors};
+const qualified=all.get(new URL('/sitemap-global-qualified.xml',SITE).href);
+const qualifiedStatus=!qualified||qualified.error?'UNVERIFIED':qualified.locs===0?'EMPTY_HOLD_NOT_PUBLICATION_COMPLETE':'NONEMPTY_REQUIRES_DESTINATION_VERIFICATION';
+const report={qualifiedStatus,qualifiedSitemapSource:qualified?.sitemapSource||null,generatedAt:new Date().toISOString(),source:'Independent GitHub runner',note:'UA string does not prove authentic Googlebot identity; only authenticated Search Console or Cloudflare verified bot logs can do that',roots:ROOTS,sitemapChecks:[...all.values()],count:{sitemapFiles:all.size,uniqueURLs:sitemapUrls.size,duplicateURLs:duplicates.length,failedChecks:errors.length,sampledPages:destination.length,passingSampledPages:destination.filter(x=>x.ok).length},duplicates:duplicates.slice(0,100),destination,robots,googlebotUaHeads:head,errors};
 fs.mkdirSync(path.dirname(REPORT),{recursive:true});
 fs.writeFileSync(REPORT,JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify(report.count));

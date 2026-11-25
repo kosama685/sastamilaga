@@ -1,0 +1,959 @@
+{
+  "observedDate": "2026-11-25",
+  "source": "Repository locale registry and file listing; no live rendering or translation-content validation",
+  "configuredLocales": 104,
+  "localeRows": [
+    {
+      "code": "en",
+      "dir": "ltr",
+      "declaredStatus": "live",
+      "humanReviewed": true,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ur",
+      "dir": "rtl",
+      "declaredStatus": "live",
+      "humanReviewed": true,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ar",
+      "dir": "rtl",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": true,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "hi",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": true,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "bn",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": true,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "pa",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": true,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ps",
+      "dir": "rtl",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": true,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "sd",
+      "dir": "rtl",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": true,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "fa",
+      "dir": "rtl",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": true,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "tr",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": true,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "fr",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": true,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "de",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": true,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "es",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": true,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "pt",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": true,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "it",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ru",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": true,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "zh",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": true,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ja",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ko",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "id",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": true,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ms",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "th",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "vi",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "nl",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "pl",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "sv",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "da",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "no",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "fi",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "el",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "he",
+      "dir": "rtl",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "uk",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "cs",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "sk",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "hu",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ro",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "bg",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "hr",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "sr",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "sl",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "lt",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "lv",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "et",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "sq",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "mk",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "bs",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "mt",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "is",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ga",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "cy",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ca",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "eu",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "gl",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "af",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "sw",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "am",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ha",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "yo",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ig",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "zu",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "xh",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "so",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "mg",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ne",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "si",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ta",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "te",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "kn",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ml",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "mr",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "gu",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "or",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "as",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "my",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "km",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "lo",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "mn",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ka",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "hy",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "az",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "kk",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "uz",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ky",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "tg",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "tk",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ku",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ckb",
+      "dir": "rtl",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "yi",
+      "dir": "rtl",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "fil",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "jv",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "su",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ceb",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "mi",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "sm",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "lb",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "be",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": true,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "fy",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "eo",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ny",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "sn",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "st",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "rw",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "lg",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    },
+    {
+      "code": "ti",
+      "dir": "ltr",
+      "declaredStatus": "not started",
+      "humanReviewed": false,
+      "machineFilePresent": false,
+      "machineFlag": false,
+      "liveVerification": "NOT_TESTED"
+    }
+  ],
+  "unmappedJsonFiles": [
+    "ast.json",
+    "ba.json",
+    "br.json",
+    "ff.json",
+    "ht.json",
+    "ilo.json",
+    "index.json",
+    "ln.json",
+    "oc.json",
+    "ss.json",
+    "tl.json",
+    "tn.json",
+    "wo.json"
+  ],
+  "publicationChanges": 0
+}
