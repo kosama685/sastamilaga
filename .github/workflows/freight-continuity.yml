@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - 'tools/catalog-freight-continuity*'
+      - 'tools/catalog-category-window*'
+      - 'tools/migrations/20261125-cj-category-index-candidate.sql'
       - 'tools/migrations/20261125-catalog-sync-health.sql'
       - '.github/workflows/freight-continuity.yml'
   workflow_dispatch:
@@ -17,4 +19,4 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
-      - run: node --test tools/catalog-freight-continuity-worker.test.mjs
+      - run: node --test tools/catalog-freight-continuity-worker.test.mjs tools/catalog-category-window.test.mjs
