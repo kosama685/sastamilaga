@@ -1291,8 +1291,8 @@ function filteredResults() {
   const sort         = (($('#sortBy') || {}).value) || 'relevant';
 
   if (q)           arr = arr.filter(p => p._search.includes(q));
-  if (min)         arr = arr.filter(p => price(p) >= min);
-  if (max)         arr = arr.filter(p => price(p) <= max);
+  if (($('#minP')||{}).value !== '' && ($('#minP')||{}).value != null) arr=arr.filter(p=>price(p)>0&&price(p)>=min);
+  if (($('#maxP')||{}).value !== '' && ($('#maxP')||{}).value != null) arr=arr.filter(p=>price(p)>0&&price(p)<=max);
   if (store)       arr = arr.filter(p => p.store === store);
   if (stockOnly)   arr = arr.filter(p => p.in || num(p.stock) > 0);
   if (videoOnly)   arr = arr.filter(p => (p.vids || []).length > 0);
