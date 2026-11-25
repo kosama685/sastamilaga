@@ -38,8 +38,8 @@ async function mount({root,review,cart,valid,begin,finish,uncertain,customer,con
  const buttons=document.createElement('div');buttons.style.cssText='display:grid;gap:10px;margin-top:12px';
  let active=false,attempt=null,created=null,finished=false;
  function ready(){return valid()&&Date.now()<q.expiresAt&&root.isConnected;}
- function start(){if(active||finished||!ready()||!begin())return false;active=true;attempt=g.crypto.randomUUID();created=null;status.textContent='Opening secure payment…';return true;}
- function cancel(){if(finished)return;if(created||attempt&&active&&orderStarted){hold();return;}active=false;attempt=null;finish(false);status.textContent='Payment cancelled. No new payment was started.';}
+ function start(){if(active||finished||!ready())return false;const id=g.crypto.randomUUID();if(!begin(id))return false;active=true;attempt=id;created=null;status.textContent='Opening secure payment…';return true;}
+ function cancel(){if(finished||!active)return;if(created||attempt&&active&&orderStarted){hold();return;}active=false;attempt=null;finish(false);status.textContent='Payment cancelled. No new payment was started.';}
  let orderStarted=false;
  function hold(){if(finished)return;active=false;finished=true;status.textContent='Payment status needs verification. Do not pay again. Contact support with your order reference.';uncertain(created?.reference||attempt);}
  async function create(method){
@@ -56,7 +56,7 @@ async function mount({root,review,cart,valid,begin,finish,uncertain,customer,con
   finished=true;active=false;status.textContent='Payment verified. Order reference: '+created.reference;
   finish(true,created.reference);
  }
- function fail(){if(orderStarted)hold();else{active=false;attempt=null;finish(false);status.textContent='Payment is unavailable. Choose another eligible method.';}}
+ function fail(){if(finished||!active)return;if(orderStarted)hold();else{active=false;attempt=null;finish(false);status.textContent='Payment is unavailable. Choose another eligible method.';}}
  function add(node){buttons.appendChild(node);}
  async function apple(){
   if(!g.ApplePaySession?.canMakePayments?.()||!g.ApplePaySession.supportsVersion(4))return;
