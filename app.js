@@ -1776,6 +1776,7 @@ function renderCheckout() {
               <button type="button" class="sm-pay__btn sm-pay__btn--pp" data-pay="Login"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10.5" width="16" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg><span>Pay with PayPal</span></button>
               <button type="button" class="sm-pay__btn sm-pay__btn--card" data-pay="Billing"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/></svg><span>Pay by debit or credit card</span></button>
             </div>
+            <div id="smDigitalWallets" hidden></div>
             <ul class="sm-pay__facts" role="list">
               <li>Your order is saved first, so nothing is lost if you close the page.</li>
               <li>PayPal opens in the next step. Card details are typed on PayPal's secure page; we never see or store them.</li>
@@ -1934,12 +1935,70 @@ let preparedPayment = null, orderSubmitting = false;
 function paymentReady() {
   return preparedPayment && Date.now() - preparedPayment.checkedAt < 15*60000 && preparedPayment.fingerprint === paymentFingerprint();
 }
+const WALLET_PENDING_KEY = 'sm_wallet_pending_v1';
+let walletModulePromise = null;
+function walletPending() { try { return sessionStorage.getItem(WALLET_PENDING_KEY) || ''; } catch { return ''; } }
+function clearWalletPending() { try { sessionStorage.removeItem(WALLET_PENDING_KEY); } catch {} }
+function walletHoldMessage(panel,amt) {
+  panel.querySelectorAll('[data-pay]').forEach(b=>{b.disabled=true;});
+  const form=document.getElementById('checkoutForm');
+  const place=form?.querySelector('#smPlaceOrder');if(place)place.disabled=true;
+  amt.textContent='A wallet payment attempt requires verification. Do not submit another payment. Contact support with reference '+walletPending()+'.';
+}
+function loadDigitalWallets() {
+  if(window.SMDigitalWallets)return Promise.resolve(window.SMDigitalWallets);
+  if(!walletModulePromise){walletModulePromise=new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=APP_BASE+'assets/js/digital-wallets.js?v=20261125-wallet-v6';script.async=true;script.onload=()=>window.SMDigitalWallets?resolve(window.SMDigitalWallets):reject(Error('Wallet adapter unavailable'));script.onerror=()=>{script.remove();reject(Error('Wallet adapter unavailable'));};document.head.appendChild(script);});walletModulePromise.catch(()=>{walletModulePromise=null;});}
+  return walletModulePromise;
+}
+async function mountDigitalWallets(form,review,my){
+  const cfg=window.SM_CONFIG||{},root=document.getElementById('smDigitalWallets');
+  if(cfg.walletCheckoutEnabled!==true||!cfg.walletClientId||!root)return;
+  const valid=()=>my===_payReq&&document.getElementById('checkoutForm')===form&&form.elements.payment_method.value==='PayPal / Card'&&preparedPayment===review&&paymentReady();
+  const cart={local:checkoutTotals().lines.map(x=>({id:x.p.id,qty:x.qty})),global:review.globalRows.map(x=>({pid:x.id,vid:x.vkey,qty:x.qty,carrier:x.shipCarrier}))};
+  let controls=[],before=[],customerSnapshot=null;
+  try{
+    const api=await loadDigitalWallets();
+    if(!valid())return;
+    await api.mount({root,review,cart,valid,config:cfg,
+      customer:()=>customerSnapshot,
+      begin:(attemptId)=>{
+        if(!valid()||orderSubmitting||walletPending()||!form.reportValidity())return false;
+        customerSnapshot=Object.fromEntries(['full_name','phone','email','address','city','near_place','notes'].map(k=>[k,String(form.elements[k]?.value||'')]));
+        try{sessionStorage.setItem(WALLET_PENDING_KEY,attemptId);}catch{return false;}
+        orderSubmitting=true;
+        controls=[...form.querySelectorAll('input,textarea,select,button')];before=controls.map(b=>b.disabled);controls.forEach(b=>{b.disabled=true;});
+        return true;
+      },
+      finish:(paid,reference)=>{
+        if(paid){
+          // The service confirms exact capture and durable merchant order storage before this callback.
+          // Do not route through the old thank-you page (which fires legacy purchase analytics).
+          if(paymentReady()){setCart([]);if(window.SMGCart)window.SMGCart.clear();}
+          clearWalletPending();
+          root.replaceChildren();root.hidden=false;
+          const msg=document.createElement('p');msg.setAttribute('role','status');msg.textContent='Payment verified. Order reference: '+reference;root.appendChild(msg);
+          const amt=document.getElementById('smPayAmt');if(amt)amt.textContent='Payment completed. Do not submit another payment.';
+          form.querySelectorAll('[data-pay],#smPlaceOrder,.sm-co-tile').forEach(b=>{b.disabled=true;});
+          return;
+        }
+        clearWalletPending();orderSubmitting=false;controls.forEach((b,i)=>{b.disabled=before[i];});syncPay();
+      },
+      uncertain:(reference)=>{
+        try{sessionStorage.setItem(WALLET_PENDING_KEY,String(reference||walletPending()));}catch{}
+        root.hidden=true;
+        walletHoldMessage(document.getElementById('smPay'),document.getElementById('smPayAmt'));
+      }
+    });
+  }catch{/* Optional integration must never disable the existing hosted PayPal path. */}
+}
 let _payReq = 0;
 function syncPay() {
-  const form = document.getElementById('checkoutForm'); if (!form) return;
+  const form = document.getElementById('checkoutForm'); if (!form || orderSubmitting) return;
   const on = form.elements.payment_method.value === 'PayPal / Card';
   const panel = document.getElementById('smPay'), place = document.getElementById('smPlaceOrder'), amt = document.getElementById('smPayAmt');
   panel.hidden = !on;
+  const wallets=document.getElementById('smDigitalWallets');if(wallets){wallets.hidden=true;wallets.replaceChildren();}
+  if(walletPending()){walletHoldMessage(panel,amt);return;}
   // "PayPal" (Worker checkout in assets/js/checkout.js, when configured) manages the submit button itself.
   if (on || form.elements.payment_method.value !== 'PayPal') place.hidden = on;
   const my = ++_payReq;
@@ -1959,6 +2018,7 @@ function syncPay() {
       const review = document.createElement('small'); review.style.display='block'; review.textContent='Review the destination, carrier and amount before continuing. Taxes or import duties may apply.'; amt.appendChild(review);
     }
     panel.querySelectorAll('[data-pay]').forEach(b => { b.disabled = false; });
+    void mountDigitalWallets(form,a,my);
   }).catch(err => {
     if (my !== _payReq || document.getElementById('checkoutForm') !== form) return;
     amt.textContent = err?.message === 'shipping' ? (err.detail || 'Delivery could not be verified.') : err?.message === 'cart_changed' ? 'Your cart or destination changed. Refresh the payment total.' : 'Could not verify the exchange rate or payment total.';
@@ -1992,7 +2052,7 @@ document.addEventListener('click', e => {
 window.placeOrder = function (e, landing, trigger) {
   e.preventDefault();
   const form = document.getElementById('checkoutForm');
-  if (!form || orderSubmitting || !form.reportValidity()) return;
+  if (!form || orderSubmitting || walletPending() || !form.reportValidity()) return;
   const wantsPayPal = form.elements.payment_method.value === 'PayPal / Card' || !!landing;
   if (wantsPayPal && !paymentReady()) { toast('Review the refreshed delivery and payment total before continuing.'); syncPay(); return; }
   const payment = wantsPayPal ? preparedPayment : null;
