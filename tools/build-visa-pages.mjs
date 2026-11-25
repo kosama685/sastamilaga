@@ -105,6 +105,7 @@ const ctaBand = (text, label = 'Check my documents on WhatsApp') => `<section cl
 /* ---- country page ---- */
 function regionBlock(c) {
   const n = c.name;
+  if (c.code === 'KE') return {title: 'Kenya eTA and immigration permissions', paras: ['For ordinary short visits, check eligibility and apply through the official Kenya eTA portal. An eTA authorises travel; immigration officers determine the permitted stay on arrival.', 'Work, study and longer-term residence require the appropriate permits or passes; an eTA alone is not permission to work or study.'], link: ['https://immigration.go.ke/work-permits-and-passes/', 'Kenya Directorate of Immigration Services: permits and passes']};
   if (SCHENGEN.has(c.code)) return {title: `${n} and the Schengen visa`, paras: [`${n} is part of the Schengen area. A short-stay Schengen visa (type C) issued by ${n} is valid for travel across all Schengen countries for up to 90 days in any 180-day period.`, `Apply to ${n}'s consulate or its official visa centre if ${n} is your main destination (where you spend the most days), or your first point of entry when stays are equal. Travel medical insurance with at least €30,000 cover for the whole Schengen area is mandatory.`, `Stays longer than 90 days, for work, study or family, need a national (type D) visa or residence permit from ${n} itself.`], link: okLink(SCHENGEN_INFO) ? [SCHENGEN_INFO, 'European Commission: Schengen area'] : null};
   if (GCC.has(c.code)) return {title: `How visas work in ${n}`, paras: [`${n} is a Gulf Cooperation Council (GCC) country. Visit visas are often issued electronically, through the official portal, airlines, hotels or a sponsor.`, `Work and long-term residence are sponsor-based: an employer or family sponsor applies, you complete a GCC-approved medical test (booked through the Wafid system, formerly GAMCA), and you receive a residence permit after arrival.`, ...(c.code === 'SA' ? ['Umrah and Hajj have their own procedures. Umrah visas and permits are arranged through the official Nusuk platform or an approved travel provider.'] : [])], link: c.code === 'SA' && okLink(NUSUK) ? [NUSUK, 'Nusuk (official Umrah platform)'] : null};
   if (['GB', 'IE', 'US', 'CA', 'AU', 'NZ'].includes(c.code)) return {title: `How visas work in ${n}`, paras: [`${n} runs its visa system online: you create an account on the official government portal, apply and pay there, then give fingerprints and a photo at an official visa application centre${c.code === 'US' ? ' and attend an interview at the US embassy or consulate' : ''}.`, `Decisions rest on strong, consistent evidence: funds that match your income, a clear purpose, and ties that bring you back. Previous travel and previous refusals matter.`]};
@@ -113,6 +114,7 @@ function regionBlock(c) {
 }
 function workText(c) {
   const n = c.name;
+  if (c.code === 'KE') return 'Employment in Kenya requires the applicable work permit. Check the employment permit class and submit the required documents through the official eFNS portal. Verify the employer and the permit before working.';
   if (GCC.has(c.code)) return `An employer in ${n} sponsors your work visa and residence permit. Expect a signed contract, attested degrees, a police certificate and a GCC-approved medical test.`;
   if (c.code === 'GB') return 'Most UK work visas, such as the Skilled Worker visa, need a job offer from an employer licensed by the Home Office to sponsor workers, who issues a Certificate of Sponsorship.';
   if (c.code === 'US') return 'Most US work visas start with a petition filed by the employer with USCIS (for example H-1B or L-1); you then apply for the visa at the embassy. Some categories have annual caps.';
@@ -122,6 +124,7 @@ function workText(c) {
   return `To work in ${n} you normally need a job offer and an employer-arranged work permit, followed by a work visa. Check the official rules and verify the employer.`;
 }
 function studyText(c) {
+  if (c.code === 'KE') return 'Students admitted to an institution in Kenya must check and obtain the appropriate student pass. Apply through eFNS using the current official student-pass checklist.';
   if (c.code === 'GB') return 'UK student visas need an unconditional offer and a Confirmation of Acceptance for Studies (CAS) from a licensed sponsor, plus proof of funds and English level.';
   if (c.code === 'US') return 'US study starts with an I-20 from a SEVP-certified school, payment of the SEVIS fee and an F-1 visa interview.';
   if (c.code === 'CA') return 'A Canadian study permit needs a letter of acceptance from a designated learning institution, proof of funds and any provincial documents currently required.';
@@ -132,9 +135,16 @@ function countryPage(c, all) {
   const rel = `visa/${c.slug}/`, n = c.name, st = c.st;
   const portal = okLink(PORTALS[c.code]) ? PORTALS[c.code] : null;
   const progs = INVESTMENT[c.code] || [];
-  const rb = regionBlock(c);
-  const answer = `Pakistani passport holders ${st.sentence} for ${n}, according to the last published data (${DATA_MONTH}). Rules change: confirm with ${portal ? 'the official portal' : `the embassy of ${n}`} before you travel.`;
-  const visitSteps = [
+  const rb = regionBlock(c), ke = c.code === 'KE';
+  const answer = ke ? 'Ordinary Pakistani passport holders visiting Kenya generally need an approved electronic travel authorisation (eTA) before departure, unless an official exemption applies. Check your circumstances on the official eligibility portal. An eTA does not guarantee admission.' : `Pakistani passport holders ${st.sentence} for ${n}, according to the last published data (${DATA_MONTH}). Rules change: confirm with ${portal ? 'the official portal' : `the embassy of ${n}`} before you travel.`;
+  const visitSteps = ke ? [
+    ['Check eTA eligibility', 'Use the official Kenya eTA eligibility information to check your passport, purpose and any exemption.'],
+    ['Check your passport', 'The official checklist requires at least six months of validity from planned arrival and at least one blank page.'],
+    ['Prepare the online application', 'Gather your photo, contact details, itinerary, accommodation and purpose-specific supporting documents.'],
+    ['Submit on the official portal', 'Complete the online form and pay using a supported payment method. Check the current amount on the official portal.'],
+    ['Wait for the decision', 'Do not treat a submitted application as approved. Check the official status and any requests for additional documents.'],
+    ['Check your approved eTA before travel', 'Confirm the details and validity. The immigration officer determines the permitted stay on arrival.']
+  ] : [
     [st.first, st.key === 'evisa' ? `Use ${n}'s official e-Visa portal only. Third-party sites charge extra and some are scams.` : st.key === 'voa' ? `Carry the documents below; officers decide at the border and may refuse entry.` : st.key === 'free' ? `Check passport validity, onward ticket, funds and any registration rules for ${n}.` : st.key === 'none' ? `The last published data lists Pakistani passports as not admitted. Do not book until you have confirmed the current position officially.` : `Find the embassy, consulate or official visa centre that handles applications from Pakistan and book the earliest suitable date.`],
     ['Check your passport', 'At least six months of validity beyond your trip and blank pages are commonly required.'],
     ['Prepare the documents', `Follow the checklist below; every document should support the same purpose, budget and return plan.`],
@@ -142,7 +152,7 @@ function countryPage(c, all) {
     ['Biometrics or interview', 'Bring originals and answer consistently with your documents.'],
     ['Check the visa and travel', 'Verify names, dates, entries and allowed stay before you fly.']
   ];
-  const visitDocs = [...GUIDES['visit-visa'].docs.slice(0, 7), ...(SCHENGEN.has(c.code) ? [`Travel medical insurance with at least €30,000 cover, valid across the Schengen area`] : ['Travel insurance for the whole stay (recommended, mandatory in some countries)']), 'Polio vaccination certificate, required for travellers leaving Pakistan'];
+  const visitDocs = ke ? ['Passport valid for at least six months after planned arrival, with at least one blank page','Passport-type photo or selfie','Email address, telephone and contact information','Arrival and departure itinerary','Accommodation booking or host information','Supported payment method','Purpose-specific evidence when requested, such as business or family invitation and vaccination documentation'] : [...GUIDES['visit-visa'].docs.slice(0, 7), ...(SCHENGEN.has(c.code) ? [`Travel medical insurance with at least €30,000 cover, valid across the Schengen area`] : ['Travel insurance for the whole stay (recommended, mandatory in some countries)']), 'Polio vaccination certificate, required for travellers leaving Pakistan'];
   const kindsKnown = new Set(progs.map(p => p.kind));
   const cards = TYPES.map(t => {
     let note = t.blurb;
@@ -156,8 +166,8 @@ function countryPage(c, all) {
   const neighbours = all.filter(x => x.region === c.region && x.code !== c.code).slice(0, 12);
   const faq = [
     [`Do Pakistanis need a visa for ${n}?`, answer],
-    [`How do I apply for a ${n} visit visa from Pakistan?`, `${visitSteps[0][0]}, check your passport, prepare bank statements, an employment or business letter, bookings and travel insurance, then submit ${portal ? 'online on the official portal' : 'at the embassy or official visa centre'} and attend biometrics or an interview if asked.`],
-    [`Can I get a ${n} work visa from Pakistan?`, workText(c) + ' Pakistani workers also need protector clearance from the Bureau of Emigration & Overseas Employment before departure.'],
+    [`How do I apply for a ${n} visit visa from Pakistan?`, ke ? 'Check eligibility, prepare the official eTA checklist, apply online and wait for approval before travel. Extra documents may depend on your reason for visiting.' : `${visitSteps[0][0]}, check your passport, prepare bank statements, an employment or business letter, bookings and travel insurance, then submit ${portal ? 'online on the official portal' : 'at the embassy or official visa centre'} and attend biometrics or an interview if asked.`],
+    [`Can I get a ${n} work visa from Pakistan?`, workText(c) + (ke ? ' Check the current Pakistani protector-clearance requirements with the Bureau of Emigration & Overseas Employment before departure.' : ' Pakistani workers also need protector clearance from the Bureau of Emigration & Overseas Employment before departure.')],
     [`Does ${n} offer residence or citizenship by investment?`, progs.length ? `Known routes: ${progs.map(p => `${p.name} (${p.status === 'closed' ? 'closed' : p.status === 'open' ? 'running at our last review' : 'check current status'})`).join('; ')}. Programmes change often; confirm with the official authority.` : `We are not aware of an investment programme for ${n}. Residence usually follows work, study or family routes.`],
     [`How long does a ${n} visa take?`, `Processing time depends on the visa type, the season and your documents. Apply as early as allowed and check the current estimate ${portal ? 'on the official portal' : 'with the embassy'}.`],
     ['Can Sasta Milaga guarantee my visa?', 'No. Visa decisions belong to the embassy or immigration authority. We help you prepare a complete, consistent application and check your documents first.']
@@ -174,7 +184,7 @@ function countryPage(c, all) {
  <aside class="sv-status sv-status--${tone}" aria-label="Entry status">
   <span class="sv-status__k">Pakistani passport</span>
   <strong>${esc(st.label)}</strong>
-  <span class="sv-status__d">Last published status, ${esc(DATA_MONTH)}</span>
+  <span class="sv-status__d">Last published status, ${esc(DATA_MONTH)}${ke ? ' · Official eTA guidance checked 25 November 2026' : ''}</span>
   <a href="#source">How we know this</a>
  </aside>
 </header>
@@ -183,21 +193,21 @@ function countryPage(c, all) {
 <section class="sv-card"><h2>${ic('globe')} ${esc(rb.title)}</h2>${rb.paras.map(p => `<p>${esc(p)}</p>`).join('')}${rb.link ? `<p><a href="${esc(rb.link[0])}" target="_blank" rel="noopener">${esc(rb.link[1])}</a></p>` : ''}</section>
 <section class="sv-card" id="visit"><h2>${ic('plane')} ${esc(n)} visit visa: step by step</h2>${steps(visitSteps)}</section>
 <section class="sv-grid2">
- <div class="sv-card"><h2>${ic('check')} Documents checklist for a ${esc(n)} visit visa</h2>${checklist(visitDocs)}<p class="sv-small">The embassy may ask for more. Full guide: <a href="/visa/guides/visit-visa/">visit visa guide</a>.</p></div>
- <div class="sv-card sv-tips"><h2>${ic('warn')} Avoid refusal</h2>${checklist(GUIDES['visit-visa'].tips)}</div>
+ <div class="sv-card"><h2>${ic('check')} Documents checklist for a ${esc(n)} visit visa</h2>${checklist(visitDocs)}<p class="sv-small">${ke ? 'Check the current <a href="https://etakenya.go.ke/form/apply/how-to-apply" target="_blank" rel="noopener">official Kenya eTA checklist</a> for your purpose of travel. General guidance:' : 'The embassy may ask for more. Full guide:'} <a href="/visa/guides/visit-visa/">visit visa guide</a>.</p></div>
+ <div class="sv-card sv-tips"><h2>${ic('warn')} Avoid refusal</h2>${checklist(ke ? ['Use the official application portal and keep your reference.','Enter accurate passport, itinerary and contact details.','Submit genuine supporting documents and respond to official requests.','Confirm approval and travel eligibility before departing.'] : GUIDES['visit-visa'].tips)}</div>
 </section>
 <section class="sv-grid2">
- <div class="sv-card" id="work"><h2>${ic('tool')} ${esc(n)} work visa</h2><p>${esc(workText(c))}</p><p>From Pakistan, register and obtain protector clearance with the Bureau of Emigration & Overseas Employment before departure, ideally through a licensed Overseas Employment Promoter.${okLink(PK_BEOE) ? ` <a href="${PK_BEOE}" target="_blank" rel="noopener">Bureau of Emigration</a>` : ''}</p><p><a href="/visa/guides/work-visa/">Work visa guide, step by step</a></p></div>
- <div class="sv-card" id="study"><h2>${ic('cap')} ${esc(n)} study visa</h2><p>${esc(studyText(c))}</p><p><a href="/visa/guides/study-visa/">Student visa guide, step by step</a></p></div>
+ <div class="sv-card" id="work"><h2>${ic('tool')} ${esc(n)} work visa</h2><p>${esc(workText(c))}</p><p>${ke ? 'Apply through <a href="https://fns.immigration.go.ke/" target="_blank" rel="noopener">official eFNS</a>. Check current Pakistani protector-clearance requirements with the Bureau of Emigration & Overseas Employment before departure.' : 'From Pakistan, register and obtain protector clearance with the Bureau of Emigration & Overseas Employment before departure, ideally through a licensed Overseas Employment Promoter.'}${okLink(PK_BEOE) ? ` <a href="${PK_BEOE}" target="_blank" rel="noopener">Bureau of Emigration</a>` : ''}</p><p><a href="/visa/guides/work-visa/">Work visa guide, step by step</a></p></div>
+ <div class="sv-card" id="study"><h2>${ic('cap')} ${esc(n)} study visa</h2><p>${esc(studyText(c))}${ke ? ' <a href="https://immigration.go.ke/students-pass/" target="_blank" rel="noopener">Official student-pass requirements</a>.' : ''}</p><p><a href="/visa/guides/study-visa/">Student visa guide, step by step</a></p></div>
 </section>
 <section class="sv-card" id="investment"><h2>${ic('key')} ${esc(n)} residence and citizenship by investment</h2>${progHtml}<p class="sv-small">Investment programmes open, change and close often. We do not publish amounts; always confirm the current rules and costs with the official authority and a licensed adviser.</p></section>
 <section class="sv-card"><h2>${ic('home')} Family, business and transit visas for ${esc(n)}</h2><ul class="sv-links"><li><a href="/visa/guides/family-visa/">Joining family in ${esc(n)}: family visa guide</a></li><li><a href="/visa/guides/business-visa/">Meetings and conferences: business visa guide</a></li><li><a href="/visa/guides/transit-visa/">Changing flights: transit visa guide</a></li><li><a href="/visa/guides/permanent-residence/">Settling long term: permanent residence guide</a></li></ul></section>
 ${faqHtml(faq)}
 ${neighbours.length ? `<section class="sv-card"><h2>${ic('globe')} More ${esc(c.region)} visa guides</h2><ul class="sv-chips">${neighbours.map(x => `<li><a href="/visa/${x.slug}/">${flag(x.code)} ${esc(x.name)}</a></li>`).join('')}</ul></section>` : ''}
-<section class="sv-source" id="source"><h2>Sources and how to use this page</h2><p>Entry status for Pakistani passports comes from the public <a href="${esc(DATA.sourceUrl)}" target="_blank" rel="noopener">passport-index dataset</a> (MIT licence), last updated ${esc(DATA_MONTH)}. Visa rules change without notice, so treat it as a starting point and confirm with ${portal ? `the <a href="${esc(portal)}" target="_blank" rel="noopener">official portal</a> or ` : ''}the embassy of ${esc(n)} before booking. Guidance on this page was reviewed ${esc(MONTH(TODAY))}. Sasta Milaga is not a government agency and cannot guarantee any visa.</p></section>
+<section class="sv-source" id="source"><h2>Sources and how to use this page</h2><p>Entry status for Pakistani passports comes from the public <a href="${esc(DATA.sourceUrl)}" target="_blank" rel="noopener">passport-index dataset</a> (MIT licence), last updated ${esc(DATA_MONTH)}. Visa rules change without notice, so treat it as a starting point and confirm with ${portal ? `the <a href="${esc(portal)}" target="_blank" rel="noopener">official portal</a> or ` : ''}the embassy of ${esc(n)} before booking. ${ke ? 'Short-visit eTA, employment permit and student-pass guidance checked against the linked official sources on 25 November 2026. The historical dataset is not the authority for current eligibility. Other visa categories still require individual confirmation.' : `Guidance on this page was reviewed ${esc(MONTH(TODAY))}.`} Sasta Milaga is not a government agency and cannot guarantee any visa.</p></section>
 ${ctaBand(`Assalam o Alaikum! Please check visa requirements for me.\nDestination: ${n}\nPassport: Pakistan\n${SITE}/${rel}`)}`;
   const title = `${n} Visa for Pakistanis: Visit, Work, Study & Investment Guide | Sasta Milaga`;
-  const desc = `${n} visa for Pakistani passport holders: ${st.label.toLowerCase()} (last published ${DATA_MONTH}). Step-by-step visit, work, study, family and investment routes, documents checklist and FAQ.`;
+  const desc = ke ? 'Kenya visa guide for Pakistani passport holders: check eTA eligibility, the official application checklist, work permits and student passes before travel.' : `${n} visa for Pakistani passport holders: ${st.label.toLowerCase()} (last published ${DATA_MONTH}). Step-by-step visit, work, study, family and investment routes, documents checklist and FAQ.`;
   const graph = [{'@type': 'WebPage', '@id': `${SITE}/${rel}#webpage`, url: `${SITE}/${rel}`, name: title, description: desc, inLanguage: 'en', dateModified: TODAY, about: {'@type': 'Country', name: n}}, crumbLd([['Home', '/'], ['Visa', '/visa/'], [`${n} visa`, '/' + rel]]), faqLd(faq)];
   return {rel, html: shell({rel, title, desc, body, graph})};
 }
