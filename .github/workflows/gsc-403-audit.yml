@@ -4,6 +4,7 @@ on:
     paths:
       - 'reports/gsc-403-2026-11-16.txt'
       - 'tools/audit-gsc-403.mjs'
+      - 'tools/gsc-public-probe-policy*'
       - 'tools/test-gsc-403-fixture.mjs'
       - '.github/workflows/gsc-403-audit.yml'
       - 'robots.txt'
@@ -14,6 +15,7 @@ on:
     paths:
       - 'reports/gsc-403-2026-11-16.txt'
       - 'tools/audit-gsc-403.mjs'
+      - 'tools/gsc-public-probe-policy*'
       - 'tools/test-gsc-403-fixture.mjs'
       - '.github/workflows/gsc-403-audit.yml'
       - 'robots.txt'
@@ -27,30 +29,30 @@ concurrency:
   cancel-in-progress: true
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: '22'
+          node-version: '24'
       - run: node --check tools/audit-gsc-403.mjs
       - run: node --check tools/build-robots-worker.mjs
       - run: node tools/build-robots-worker.mjs
-      - run: node --test tools/test-gsc-403-fixture.mjs
+      - run: node --test tools/test-gsc-403-fixture.mjs tools/gsc-public-probe-policy.test.mjs
   probe:
     needs: validate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     env:
       SM_GSC_PROBE_LIMIT: ${{ github.event_name == 'pull_request' && '25' || '0' }}
       SM_GSC_COMPARE_BROWSER: '20'
-      SM_GSC_CONCURRENCY: '2'
+      SM_GSC_CONCURRENCY: '1'
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: '22'
+          node-version: '24'
       - name: Read-only public URL probes (no cart mutations)
         run: node tools/audit-gsc-403.mjs
       - name: Preserve full results even when some URLs fail
