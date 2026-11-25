@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-24T22:41:01.624Z",
+  "at": "2026-11-25T08:58:32.571Z",
   "sources": [
     {
       "name": "categories",
@@ -14,40 +14,34 @@
       "records": 250
     },
     {
-      "name": "languages",
-      "url": "https://iptv-org.github.io/api/languages.json",
-      "status": "ok",
-      "records": 7893
-    },
-    {
       "name": "regions",
       "url": "https://iptv-org.github.io/api/regions.json",
       "status": "ok",
       "records": 42
     },
     {
-      "name": "channels",
-      "url": "https://iptv-org.github.io/api/channels.json",
+      "name": "languages",
+      "url": "https://iptv-org.github.io/api/languages.json",
       "status": "ok",
-      "records": 31887
+      "records": 7893
     },
     {
       "name": "streams",
       "url": "https://iptv-org.github.io/api/streams.json",
       "status": "ok",
-      "records": 19263
+      "records": 19293
     },
     {
-      "name": "guides",
-      "url": "https://iptv-org.github.io/api/guides.json",
+      "name": "channels",
+      "url": "https://iptv-org.github.io/api/channels.json",
       "status": "ok",
-      "records": 180680
+      "records": 31894
     },
     {
       "name": "feeds",
       "url": "https://iptv-org.github.io/api/feeds.json",
       "status": "ok",
-      "records": 45459
+      "records": 45466
     },
     {
       "name": "nexusHealth",
@@ -62,16 +56,10 @@
       "records": 1
     },
     {
-      "name": "nexusStreams",
-      "url": "https://dearbulut.github.io/iptv/api/v1/streams.json",
+      "name": "guides",
+      "url": "https://iptv-org.github.io/api/guides.json",
       "status": "ok",
-      "records": 15994
-    },
-    {
-      "name": "nexusCategories",
-      "url": "https://dearbulut.github.io/iptv/api/v1/categories.json",
-      "status": "ok",
-      "records": 31
+      "records": 180680
     },
     {
       "name": "nexusCountries",
@@ -80,22 +68,34 @@
       "records": 250
     },
     {
+      "name": "nexusCategories",
+      "url": "https://dearbulut.github.io/iptv/api/v1/categories.json",
+      "status": "ok",
+      "records": 31
+    },
+    {
       "name": "nexusLanguages",
       "url": "https://dearbulut.github.io/iptv/api/v1/languages.json",
       "status": "ok",
       "records": 7893
     },
     {
-      "name": "nexusBest",
-      "url": "https://dearbulut.github.io/iptv/playlists/best.m3u",
+      "name": "nexusStreams",
+      "url": "https://dearbulut.github.io/iptv/api/v1/streams.json",
       "status": "ok",
-      "records": 10420
+      "records": 15994
     },
     {
       "name": "nexusPlaylist",
       "url": "https://dearbulut.github.io/iptv/playlists/index.m3u",
       "status": "ok",
       "records": 15994
+    },
+    {
+      "name": "nexusBest",
+      "url": "https://dearbulut.github.io/iptv/playlists/best.m3u",
+      "status": "ok",
+      "records": 10420
     },
     {
       "name": "nexusChannels",
@@ -137,9 +137,9 @@
     }
   ],
   "missingMetadataIds": [],
-  "metadataRecords": 31887,
-  "streamRows": 35257,
-  "streamRowsRetained": 35251,
+  "metadataRecords": 31894,
+  "streamRows": 35287,
+  "streamRowsRetained": 35281,
   "invalidStreamRows": 3,
   "quarantined": [
     {
@@ -1639,7 +1639,7 @@
       "reason": "Adult channel requires an age-controlled surface"
     }
   ],
-  "noSourceChannels": 20499,
-  "channels": 40002,
-  "uniqueURLs": 27912
+  "noSourceChannels": 20483,
+  "channels": 40057,
+  "uniqueURLs": 28012
 }
