@@ -136,7 +136,7 @@ function countryPage(c, all) {
   const portal = okLink(PORTALS[c.code]) ? PORTALS[c.code] : null;
   const progs = INVESTMENT[c.code] || [];
   const rb = regionBlock(c), ke = c.code === 'KE';
-  const answer = ke ? 'Ordinary Pakistani passport holders visiting Kenya generally need an approved electronic travel authorisation (eTA) before departure, unless an official exemption applies. Check your circumstances on the official eligibility portal. An eTA does not guarantee admission.' : `Pakistani passport holders ${st.sentence} for ${n}, according to the last published data (${DATA_MONTH}). Rules change: confirm with ${portal ? 'the official portal' : `the embassy of ${n}`} before you travel.`;
+  const answer = ke ? 'Ordinary Pakistani passport holders visiting Kenya generally need an approved electronic travel authorisation (eTA) before departure, unless an official exemption applies. Check your circumstances on the official eligibility portal. Admission remains subject to immigration checks.' : `Pakistani passport holders ${st.sentence} for ${n}, according to the last published data (${DATA_MONTH}). Rules change: confirm with ${portal ? 'the official portal' : `the embassy of ${n}`} before you travel.`;
   const visitSteps = ke ? [
     ['Check eTA eligibility', 'Use the official Kenya eTA eligibility information to check your passport, purpose and any exemption.'],
     ['Check your passport', 'The official checklist requires at least six months of validity from planned arrival and at least one blank page.'],
