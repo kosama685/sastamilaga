@@ -5,6 +5,7 @@ on:
       - 'tools/sync-facet-freight*'
       - 'tools/catalog-sidebar.browser.mjs'
       - 'tools/catalog-public-smoke.mjs'
+      - 'tools/legacy-global-category-redirect*'
       - 'assets/js/global.js'
       - 'assets/js/catalog-facets.js'
       - '.github/workflows/catalog-continuity.yml'
@@ -19,14 +20,14 @@ concurrency:
 jobs:
   validate:
     if: github.event_name != 'schedule'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
-      - run: node --test tools/sync-facet-freight.test.mjs tools/catalog-facets.test.mjs tools/global-static-facets.test.mjs
+      - run: node --test tools/sync-facet-freight.test.mjs tools/catalog-facets.test.mjs tools/global-static-facets.test.mjs tools/legacy-global-category-redirect.test.mjs
       - name: Real browser fixture
         run: |
           npm install --prefix "$RUNNER_TEMP/catalog-qa" --no-audit --no-fund playwright@1.56.1 axe-core@4.10.3
@@ -44,7 +45,7 @@ jobs:
           retention-days: 14
   sync:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
