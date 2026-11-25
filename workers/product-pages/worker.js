@@ -124,8 +124,8 @@ async function productPage(cat, pid, given, env, cfg, ctx) {
   const msg = `Assalam o Alaikum! I want to order this global item:\n${name}\nCJ ID: ${id}\nSKU: ${sku}\nEstimated price: ${price}\n${canonical}`;
   const wa = `https://wa.me/${cfg.wa}?text=${encodeURIComponent(msg)}`;
   const ld = { '@context': 'https://schema.org', '@graph': [
-    { '@type': 'Product', '@id': canonical + '#product', name, sku, mpn: id, image: [img], category: c.n, url: canonical, brand: { '@type': 'Brand', name: 'Sasta Milaga' },
-      ...(video ? { subjectOf: { '@type': 'VideoObject', name, description: `${name} product video`, thumbnailUrl: img, contentUrl: video, uploadDate: m.snapshot } } : {}) },
+    { '@type': 'Product', '@id': canonical + '#product', name, sku, image: [img], category: c.n, url: canonical // Supplier snapshot has no verified manufacturer or video publication date.
+       },
     { '@type': 'BreadcrumbList', itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: `${cfg.self}/` },
       { '@type': 'ListItem', position: 2, name: 'Global shop', item: `${cfg.self}/c/global/index.html` },
@@ -152,7 +152,7 @@ async function productPage(cat, pid, given, env, cfg, ctx) {
 <section class="pdp" aria-label="Product detail"><div>
 <div class="gallery-panel"><div class="gallery-main">${video ? `<video controls playsinline preload="none" poster="${esc(img)}" src="${esc(video)}"></video>` : `<img src="${esc(img)}" alt="${esc(name)}" width="800" height="800" fetchpriority="high" decoding="async">`}</div></div>
 <div class="detail-panel"><h2>Product details</h2><p>${esc(uniqueDesc(r, c))}</p><p class="product-meta">Reference: <code>${esc(maskSku(sku))}</code> · Category: <a href="${S}/c/global/${cat}.html">${esc(c.n)}</a> (${esc(c.g)})</p></div></div>
-<aside class="buy-panel" aria-label="Order options"><span class="eyebrow">${esc(c.n)}</span><h1>${esc(name)}</h1><p class="product-meta">Global item · delivered worldwide</p>
+<aside class="buy-panel" aria-label="Order options"><span class="eyebrow">${esc(c.n)}</span><h1>${esc(name)}</h1><p class="product-meta">Global item · check destination eligibility</p>
 <div style="margin:12px 0"><span class="big-price">${esc(price)}</span> <small class="sm-est">estimated, US dollars</small></div>
 <div class="sm-gactions"><a class="primary-btn sm-buynow" href="${esc(spa)}" style="text-align:center;justify-content:center">Choose options and add to cart</a></div>
 <a class="sm-wa-btn" href="${esc(wa)}" target="_blank" rel="noopener" style="display:flex;justify-content:center;text-align:center;text-decoration:none">Order on WhatsApp</a>
