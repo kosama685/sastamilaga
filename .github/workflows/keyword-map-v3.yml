@@ -1,0 +1,31 @@
+name: Keyword V3 source integrity
+on:
+  pull_request:
+    paths:
+      - 'tools/generate_product_keywords_v3.py'
+      - 'tools/test_generate_product_keywords_v3.py'
+      - '.github/workflows/keyword-map-v3.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - run: python3 -m unittest discover -s tools -p test_generate_product_keywords_v3.py -v
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - run: node tools/verify-legacy-category-production.mjs
+      - run: |
+          python3 tools/export-global-keyword-inventory.py
+          python3 tools/generate_product_keywords_v2.py artifacts/global-keywords/page-keyword-inventory.csv --output artifacts/keyword-map-v2.zip
+          python3 tools/generate_product_keywords_v3.py artifacts/keyword-map-v2.zip --output artifacts/keyword-map-v3.zip
+          python3 -c 'import json,zipfile; a=json.load(zipfile.ZipFile("artifacts/keyword-map-v2.zip").open("manifest.json")); b=json.load(zipfile.ZipFile("artifacts/keyword-map-v3.zip").open("manifest.json")); assert a["total_rows"] == b["total_rows"]; print("V2/V3 parity",b["total_rows"])'
+      - uses: actions/upload-artifact@v7
+        with:
+          name: keyword-map-v3
+          path: artifacts/keyword-map-v3.zip
+          retention-days: 30
