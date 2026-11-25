@@ -1,0 +1,1 @@
+CREATE TABLE catalog_sync_health (job TEXT PRIMARY KEY NOT NULL, observed_at INTEGER NOT NULL CHECK(observed_at>0), status TEXT NOT NULL CHECK(status IN ('OK','ERROR')), report_json TEXT NOT NULL CHECK(json_valid(report_json)));
