@@ -10,6 +10,9 @@ on:
       - app.js
       - tools/cj-shipping-product-ux.test.mjs
       - tools/checkout-delivery-recovery.test.mjs
+      - tools/digital-wallets.test.mjs
+      - assets/js/digital-wallets.js
+      - assets/js/config.js
       - .github/workflows/cj-shipping-product-ux.yml
   push:
     branches: [main]
@@ -22,6 +25,9 @@ on:
       - app.js
       - tools/cj-shipping-product-ux.test.mjs
       - tools/checkout-delivery-recovery.test.mjs
+      - tools/digital-wallets.test.mjs
+      - assets/js/digital-wallets.js
+      - assets/js/config.js
   workflow_dispatch:
 permissions:
   contents: read
@@ -40,5 +46,6 @@ jobs:
           node --check assets/js/woo-bridge.js
           node --check assets/js/global.js
           node --check app.js
+          node --check assets/js/digital-wallets.js
       - name: CJ carrier and price regression tests
-        run: node --test tools/cj-shipping-product-ux.test.mjs tools/checkout-delivery-recovery.test.mjs
+        run: node --test tools/cj-shipping-product-ux.test.mjs tools/checkout-delivery-recovery.test.mjs tools/digital-wallets.test.mjs
