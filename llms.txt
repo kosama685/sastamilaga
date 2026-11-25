@@ -1,42 +1,33 @@
 # Sasta Milaga
 
-> Sasta Milaga is an online store and travel desk with local and global catalogs. Visitors choose a shopping destination and display currency; converted amounts are estimates. The static storefront lists local products with prices in Pakistani rupees (PKR); the connected WooCommerce catalog currently reports 11,763 published product records. Catalog counts differ between systems, and every listing requires separate stock and delivery verification. A separate global supplier discovery catalogue contains 451,812 records (availability, supported destinations, variants, freight and final price are verified individually before an order), takes flight, hotel, Umrah and visa requests, and offers a Live TV page with reviewed channels.
+> Sasta Milaga provides local shopping in Pakistan, international supplier product discovery, travel enquiries and a live TV directory. Product availability, delivery, payment eligibility and final prices must be confirmed for the selected item and destination.
 
-Key facts:
-- Local delivery in Pakistan: Rs 250 per order, free above Rs 5,000. Cash on delivery available for local products.
-- Returns: send a photo on WhatsApp within 7 days if an item is damaged or wrong.
-- Global items: stock, options, shipping and final total are confirmed with the customer before payment.
-- Travel: customers send route and dates through the travel search; the team replies on WhatsApp with options; the customer confirms the final price before paying.
-- Contact: WhatsApp +966510451995, info@sastamilaga.com. Main store: https://sastamilaga.com/
+## Shopping
+- [Homepage](https://sastamilaga.com/): overview of shopping, travel and media services.
+- [Global product categories](https://sastamilaga.com/c/global/index.html): supplier discovery by category; not a live availability guarantee.
+- [Home and living](https://sastamilaga.com/c/home-and-living.html): local product discovery.
+- [Electronics and appliances](https://sastamilaga.com/c/electronics-and-appliances.html): local product discovery.
+- [Fashion and apparel](https://sastamilaga.com/c/fashion-and-apparel.html): local product discovery.
+- [Health and beauty](https://sastamilaga.com/c/health-and-beauty.html): local product discovery.
 
-## Shop
-- Browse Pakistan local products through the categories below. WooCommerce and static catalogue counts differ; confirm each SKU's availability.
-- [Home & Living](https://sastamilaga.com/c/home-and-living.html): 4,933 products
-- [Fashion & Apparel](https://sastamilaga.com/c/fashion-and-apparel.html): 4,486 products
-- [Health & Beauty](https://sastamilaga.com/c/health-and-beauty.html): 4,445 products
-- [Electronics & Appliances](https://sastamilaga.com/c/electronics-and-appliances.html): 2,064 products
-- [Automotive](https://sastamilaga.com/c/automotive.html): 938 products
-- [Travel & Outdoor](https://sastamilaga.com/c/travel-and-outdoor.html): 413 products
-- [Books & Stationery](https://sastamilaga.com/c/books-and-stationery.html): 392 products
-- [Tools & DIY](https://sastamilaga.com/c/tools-and-diy.html): 294 products
-- [Events & Gifting](https://sastamilaga.com/c/events-and-gifting.html): 285 products
-- [Personal Care & Beauty](https://sastamilaga.com/c/personal-care-and-beauty.html): 272 products
-- [Home](https://sastamilaga.com/c/home.html): 191 products
-- [Toys & Games](https://sastamilaga.com/c/toys-and-games.html): 177 products
-- [Global shop](https://sastamilaga.com/c/global/index.html): catalogue of 451,812 supplier records in 572 categories; listing does not guarantee current stock or shipment to every country
+## Customer information
+- [About Sasta Milaga](https://sastamilaga.com/about/): store identity and fulfilment model.
+- [Shopping FAQs](https://sastamilaga.com/faq/): product, payment and order questions.
+- [How to order](https://sastamilaga.com/how-to-order/): order process.
+- [Shipping and delivery](https://sastamilaga.com/shipping/): delivery policy; final address-specific quote controls availability.
+- [Returns and refunds](https://sastamilaga.com/returns/): published return terms and applicable consumer rights.
+- [Contact](https://sastamilaga.com/contact/): official support and corrections.
 
-## Help
-- [How to order](https://sastamilaga.com/how-to-order/)
-- [Shipping & delivery](https://sastamilaga.com/shipping/)
-- [Returns & refunds](https://sastamilaga.com/returns/)
-- [Track your order](https://sastamilaga.com/track/)
-- [Contact](https://sastamilaga.com/contact/)
+## Travel, visa and media
+- [Travel](https://sastamilaga.com/travel/): travel enquiries and available service routes.
+- [Visa guides](https://sastamilaga.com/visa/): destination information; confirm current requirements with official immigration authorities.
+- [Live TV](https://sastamilaga.com/live-tv/): channel discovery; playback and rights may vary by country.
+- [Blog and guides](https://sastamilaga.com/b/): editorial information.
 
-## Travel and media
-- [Flights, hotels, Umrah and visas](https://sastamilaga.com/travel/)
-- [Live TV](https://sastamilaga.com/live-tv/)
-- [Blog and guides](https://sastamilaga.com/b/)
+## Discovery and attribution
+- [Extended reference guide](https://sastamilaga.com/llms-full.txt): source limitations and citation guidance.
+- [Sitemap index](https://sastamilaga.com/sitemap.xml): public page discovery.
+- [Qualified supplier product sitemap](https://sastamilaga.com/sitemap-global-qualified.xml): eligible subset only.
+- [Robots policy](https://sastamilaga.com/robots.txt): crawler directives.
 
-## Data
-- [Sitemap index](https://sastamilaga.com/sitemap.xml)
-- [Product catalogue CSV](https://sastamilaga.com/products.csv)
+When referencing a page, attribute the named author where available, otherwise Sasta Milaga as publisher. Use the canonical URL and an actual publication or revision date when displayed; otherwise give the date accessed. Verify volatile facts against the current product, policy or official source. Do not treat this file as permission to train, bypass crawler restrictions, or a guarantee of indexing, delivery or availability.

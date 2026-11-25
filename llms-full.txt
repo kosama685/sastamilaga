@@ -20,6 +20,8 @@ The global supplier catalogue is intended for product discovery and enquiry. On 
 - [Returns](https://sastamilaga.com/returns/)
 - [Order tracking](https://sastamilaga.com/track/)
 - [Contact](https://sastamilaga.com/contact/)
+- [Shopping FAQs](https://sastamilaga.com/faq/)
+- [About Sasta Milaga](https://sastamilaga.com/about/)
 
 ## Product and category URLs
 
@@ -37,6 +39,7 @@ Product types and destinations differ. Information about fulfilment, taxes, ship
 
 - [Guides and blog](https://sastamilaga.com/b/)
 - [Travel information](https://sastamilaga.com/travel/)
+- [Visa guides](https://sastamilaga.com/visa/): verify current rules using official immigration sources.
 - [Live TV directory](https://sastamilaga.com/live-tv/)
 
 Other public site sections may include media and travel requests. Do not interpret listings, television-stream references, or transport information as promises of rights, availability, or fixed prices.
@@ -57,3 +60,9 @@ The qualified supplier-product sitemap is deliberately a subset of the much larg
 - [Returns](https://sastamilaga.com/returns/)
 
 For current product specifications and orders, use the store's customer service and verified checkout flow instead of relying on cached summaries.
+
+## Citation and dated source evidence
+
+Attribute the named author where available, or Sasta Milaga as publisher. Cite the canonical page, actual published or revised date when available, and access date. Do not invent authors, publication dates, independent reviews, official profiles or statistics.
+
+The CJ discovery manifest dated 5 November 2026 records 451,812 supplier records, 572 categories and 16 category groups. These are historical source-catalogue counts, not unique available offers, orders, customers or verified delivery destinations. The [global category index](https://sastamilaga.com/c/global/index.html) provides discovery; current supplier and checkout evidence determines eligibility. No video upload date may be inferred from catalogue snapshot dates.
