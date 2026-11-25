@@ -9,6 +9,7 @@ on:
       - assets/templates/global-pdp.html
       - app.js
       - tools/cj-shipping-product-ux.test.mjs
+      - tools/checkout-delivery-recovery.test.mjs
       - .github/workflows/cj-shipping-product-ux.yml
   push:
     branches: [main]
@@ -20,6 +21,7 @@ on:
       - assets/templates/global-pdp.html
       - app.js
       - tools/cj-shipping-product-ux.test.mjs
+      - tools/checkout-delivery-recovery.test.mjs
   workflow_dispatch:
 permissions:
   contents: read
@@ -39,4 +41,4 @@ jobs:
           node --check assets/js/global.js
           node --check app.js
       - name: CJ carrier and price regression tests
-        run: node --test tools/cj-shipping-product-ux.test.mjs
+        run: node --test tools/cj-shipping-product-ux.test.mjs tools/checkout-delivery-recovery.test.mjs
