@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {classify,SKIP,redirectReview} from './gsc-public-probe-policy.mjs';
+const root='https://sastamilaga.com';
+for(const p of ['/?ADD-TO-CART=1','/?%61dd-to-cart=1','/?%2561dd-to-cart=1','/?remove_item[]=1','/ur/checkout/','/de/%63heckout/','/wp-admin/','/wp-json/wc/v3/products','/api/orders','/?action=delete','/?unknown=1','/x/*','/x/#/checkout','/p/x.jpg'])test('exclude '+p,()=>assert.ok(SKIP.has(classify(root+p))));
+for(const p of ['/','/product/watch/','/shop/?orderby=price','/ur/?post_type=product&p=63','/product/watch/?attribute_colour=Blue'])test('allow '+p,()=>assert.ok(!SKIP.has(classify(root+p))));
+test('wrong host, scheme and credentials',()=>{for(const u of ['http://sastamilaga.com/','https://sastamilaga.com.evil.test/','https://user@sastamilaga.com/'])assert.ok(SKIP.has(classify(u)))});
+test('redirects require editorial equivalence review',()=>{assert.equal(redirectReview(root+'/ur/product/x/',root+'/p/x.html','en'),'REDIRECT_LANGUAGE_REVIEW');assert.equal(redirectReview(root+'/visa/turkey/',root+'/visa/'),'REDIRECT_BROAD_TARGET_REVIEW');assert.equal(redirectReview(root+'/product/x/',root+'/p/x.html'),'REDIRECT_EQUIVALENCE_REVIEW')});
