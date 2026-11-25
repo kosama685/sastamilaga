@@ -138,38 +138,96 @@
       <ul class="sm-cats sm-cats--global" role="list">${cats.map(c => `<li><a class="sm-cat" href="#/global/c/${c.s}"><span class="sm-cat__img"><img src="${esc(c.img)}" alt="${esc(c.n)}" width="300" height="300" loading="lazy" onerror="this.src=window.fallbackImg"></span><span class="sm-cat__name">${esc(c.n)}</span><span class="sm-cat__count">${c.c.toLocaleString()} products</span></a></li>`).join('')}</ul></section>`);
   }
   async function category(cs, qs) {
-    const m = await manifest(); const c = m.cats.find(x => x.s === cs); if (!c) return home();
+    const routeToken=searchToken;
+    const m = await manifest(); if(routeToken!==searchToken)return; const c = m.cats.find(x => x.s === cs); if (!c) return home();
     const g = m.groups.find(x => x.n === c.g);
     setSEO({ title: `${c.n} – buy online with destination-dependent delivery`, description: `Shop ${c.c.toLocaleString()} ${c.n} products from the Sasta Milaga global shop. Estimated prices from ${USD.format(c.lo * MARGIN)}; final price confirmed before payment.`, url: `${A.SITE_URL}/c/global/${cs}.html` });
     renderApp(`<section class="sm-page sm-page--wide">${pageHead(c.n, `${c.c.toLocaleString()} products${c.v ? ` · ${c.v.toLocaleString()} with video` : ''}.`, ['<a href="#/global">Global shop</a>', g ? `<a href="#/global/g/${g.s}">${esc(g.n)}</a>` : ''].filter(Boolean))}
       ${globalNote()}
       <div class="sm-global-live-layout"><aside class="sm-gfilters sm-global-live-sidebar" role="search" aria-label="Filter supplier products">
         <h2 class="sm-global-live-sidebar__title">Refine results</h2>
-        <p class="sm-global-live-sidebar__hint">Browse the full category by name, estimated price and available media.</p>
+        <p class="sm-global-live-sidebar__hint">Browse the full category by name, estimated price and available media. Delivery and stock filters use fresh evidence only.</p>
         <label><span>Search in ${esc(c.n)}</span><input id="gq" type="search" placeholder="Name or SKU"></label>
         <label><span>Min estimate (USD)</span><input id="gmin" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Any"></label>
         <label><span>Max estimate (USD)</span><input id="gmax" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Any"></label>
         <label><span>Sort by</span><select id="gsort"><option value="">Recommended</option><option value="low">Lowest price</option><option value="high">Highest price</option><option value="az">Name A–Z</option></select></label>
         <label class="sm-gcheck"><input id="gvid" type="checkbox"> Video-labelled listings</label>
+        <label><span>Delivery country (ISO code)</span><input id="gcountry" maxlength="2" autocomplete="country" placeholder="PK, GB, US"></label>
+        <label class="sm-gcheck"><input id="gdelivery" type="checkbox"> Delivery option checked (1 item)</label>
+        <label class="sm-gcheck"><input id="gstock" type="checkbox"> Warehouse stock checked</label>
+        <label><span>Verified brand</span><select id="gbrand"><option value="">All / unknown</option></select></label>
+        <label><span>Verified model</span><select id="gmodel"><option value="">All / unknown</option></select></label>
+        <p id="gevidence" role="status" aria-live="polite">Checking evidence availability…</p>
+        <button type="button" class="ghost-btn" id="gretry">Refresh stock &amp; delivery evidence</button>
         <button type="button" class="ghost-btn" id="gclear">Clear all filters</button></aside><div class="sm-global-live-results">
-      <p id="gcount" class="sm-gcount" role="status" aria-live="polite">Loading products…</p><div id="ggrid" class="products-row"></div>
+      <div id="gactive" class="chip-cloud" role="group" aria-label="Active filters"></div><p id="gcount" class="sm-gcount" role="status" aria-live="polite">Loading products…</p><div id="ggrid" class="products-row"></div>
       <div class="load-more-wrap"><button type="button" class="ghost-btn" id="gmore" hidden>Load more products</button></div></div></div></section>`);
-    let rows;
-    try { rows = await shard(cs); } catch (e) { document.getElementById('gcount').textContent = 'This category could not be loaded. Check your connection and reload the page.'; return; }
-    let limit = 60;
-    const q0 = new URLSearchParams(qs || '').get('q') || ''; const gq = document.getElementById('gq'); gq.value = q0;
-    const draw = () => {
-      const q = gq.value.trim().toLowerCase(), minField = document.getElementById('gmin').value, maxField = document.getElementById('gmax').value, min = minField === '' ? NaN : Number(minField), max = maxField === '' ? NaN : Number(maxField), vid = document.getElementById('gvid').checked, sort = document.getElementById('gsort').value;
-      let list = rows.filter(r => (!q || r[2].toLowerCase().includes(q) || r[1].toLowerCase().includes(q)) && (Number.isNaN(min) || (r[3] > 0 && r[3] * MARGIN >= min)) && (Number.isNaN(max) || (r[3] > 0 && r[3] * MARGIN <= max)) && (!vid || r[6]));
-      if (sort === 'low') list = list.slice().sort((a, b) => a[3] - b[3]); else if (sort === 'high') list = list.slice().sort((a, b) => b[4] - a[4]); else if (sort === 'az') list = list.slice().sort((a, b) => a[2].localeCompare(b[2]));
-      document.getElementById('gcount').textContent = `${list.length.toLocaleString()} matching products`;
-      document.getElementById('ggrid').innerHTML = list.slice(0, limit).map(r => card(cs, r)).join('');
-      document.getElementById('gmore').hidden = list.length <= limit;
-    };
-    ['gq', 'gmin', 'gmax', 'gsort', 'gvid'].forEach(id => document.getElementById(id).addEventListener('input', () => { limit = 60; draw(); }));
-    document.getElementById('gclear').onclick = () => { gq.value = ''; document.getElementById('gmin').value = ''; document.getElementById('gmax').value = ''; document.getElementById('gsort').value = ''; document.getElementById('gvid').checked = false; limit = 60; draw(); };
-    document.getElementById('gmore').onclick = () => { limit += 60; draw(); };
-    draw();
+    let rows, facets;
+    const root=document.getElementById('ggrid');
+    const alive=()=>routeToken===searchToken&&root&&root.isConnected&&document.getElementById('ggrid')===root;
+    const el=id=>document.getElementById(id);
+    try{
+      if(!window.SMCatalogFacets)await loadScript(new URL('assets/js/catalog-facets.js?v=20261125-evidence',document.baseURI).href);
+      facets=window.SMCatalogFacets;
+      if(!facets)throw Error('filter module');
+      rows=await shard(cs);
+    }catch(e){if(alive())el('gcount').textContent='This category could not be loaded. Check your connection and reload the page.';return;}
+    if(!alive())return;
+    const products=rows.map(r=>({id:String(r[0]),sku:String(r[1]||''),title:String(r[2]||''),price:Number(r[3])>0?Number(r[3])*MARGIN:NaN,video:!!r[6],row:r}));
+    const fields={q:'gq',min:'gmin',max:'gmax',sort:'gsort',video:'gvid',country:'gcountry',delivery:'gdelivery',stock:'gstock',brand:'gbrand',model:'gmodel'};
+    const raw=()=>Object.fromEntries(Object.entries(fields).map(([k,id])=>[k,el(id).type==='checkbox'?el(id).checked:el(id).value]));
+    let limit=60,evidence=new Map(),requestId=0,abort=null,expiryTimer=null,loading=false,failed=false;
+    const q0=new URLSearchParams(qs||'');el('gq').value=(q0.get('q')||'').slice(0,160);for(const k of ['min','max'])if(q0.has(k))el(fields[k]).value=q0.get(k);if(['low','high','az'].includes(q0.get('sort')))el('gsort').value=q0.get('sort');el('gvid').checked=q0.get('video')==='1';
+    const country0=String(q0.get('country')||window.SMMarket?.state()?.country||'').toUpperCase();el('gcountry').value=/^[A-Z]{2}$/.test(country0)?country0:'';
+    function write(next){
+      for(const [k,id] of Object.entries(fields)){const x=el(id);if(x.type==='checkbox')x.checked=next[k]===true;else x.value=next[k]??'';}
+    }
+    function options(key){
+      const x=el(fields[key]),previous=x.value;const names=new Map();
+      for(const p of products){const a=facets.attributes(evidence.get(p.id));if(a[key])names.set(a[key],a[key]);}
+      x.replaceChildren(new Option('All / unknown',''));
+      for(const n of [...names.keys()].sort((a,b)=>a.localeCompare(b)))x.appendChild(new Option(n,n));
+      // Keep a selected option if its evidence expires or a refresh fails. Never silently broaden a strict filter.
+      if(previous&&!names.has(previous))x.appendChild(new Option(previous+' (evidence unavailable)',previous));
+      x.value=previous;
+    }
+    function draw(){
+      if(!alive())return;
+      const f=raw(),selection=facets.select(products,f,evidence);
+      const list=selection.items,chipRoot=el('gactive');chipRoot.replaceChildren();
+      for(const chip of facets.chips(f)){
+        const b=document.createElement('button');b.type='button';b.className='ghost-btn';b.textContent=chip.label+' ×';b.setAttribute('aria-label','Remove '+chip.label);b.onclick=()=>{write(facets.clear(raw(),chip.key));limit=60;if(chip.key==='country')void refresh();else draw();};chipRoot.appendChild(b);
+      }
+      el('gcount').textContent=selection.error||((loading||failed)&&(f.delivery||f.stock||f.brand||f.model)?'Evidence is unavailable or loading. Strict results are not confirmed.':list.length.toLocaleString()+' of '+products.length.toLocaleString()+' snapshot products match');
+      root.innerHTML=list.slice(0,limit).map(p=>card(cs,p.row)).join('');
+      el('gmore').hidden=list.length<=limit;
+      if(!list.length&&!selection.error&&!loading)root.textContent=failed?'No matching verified evidence. Retry or remove evidence filters.':'No matching products. Try fewer filters.';
+    }
+    async function refresh(){
+      if(!alive())return;
+      const my=++requestId;abort?.abort();clearTimeout(expiryTimer);abort=new AbortController();
+      evidence=new Map();failed=false;loading=false;const country=String(el('gcountry').value).trim().toUpperCase();el('gcountry').value=country;
+      options('brand');options('model');
+      if(!/^[A-Z]{2}$/.test(country)){el('gevidence').textContent='Select a two-letter delivery country to check evidence.';draw();return;}
+      loading=true;el('gevidence').textContent='Loading recent evidence for '+country+'…';draw();
+      try{
+        const result=await facets.loadEvidence({category:cs,country,signal:abort.signal,endpoint:new URL('/api/catalog-facets/v1',A.LIVE_URL).href});
+        if(!alive()||my!==requestId)return;
+        evidence=result;loading=false;
+        const ids=new Set(products.map(p=>p.id));const checked=[...evidence.keys()].filter(id=>ids.has(id)).length;
+        el('gevidence').textContent=checked+' of '+products.length+' snapshot products have recent evidence for at least one attribute. Missing evidence is unknown. Recheck your exact option and address before ordering.';
+        function scheduleExpiry(){if(!alive()||my!==requestId)return;let soon=Infinity;for(const x of evidence.values())for(const t of [x.attributeUntil,x.stockUntil,x.deliveryUntil,x.bothUntil])if(Number.isSafeInteger(t)&&t>Date.now())soon=Math.min(soon,t);if(Number.isFinite(soon))expiryTimer=setTimeout(()=>{if(alive()&&my===requestId){options('brand');options('model');draw();el('gevidence').textContent='Some evidence may have expired. Refresh to check current data.';scheduleExpiry();}},Math.min(2147483647,Math.max(1,soon-Date.now()+5)));}scheduleExpiry();
+      }catch(e){if(!alive()||my!==requestId)return;failed=true;loading=false;evidence=new Map();el('gevidence').textContent='Evidence service unavailable. Unchecked products remain visible unless a strict filter is selected.';}
+      options('brand');options('model');draw();
+    }
+    for(const [key,id] of Object.entries(fields)){
+      const event=key==='country'?'change':'input';
+      el(id).addEventListener(event,()=>{limit=60;if(key==='country')void refresh();else draw();});
+    }
+    el('gclear').onclick=()=>{write({});limit=60;void refresh();};
+    el('gretry').onclick=()=>{limit=60;void refresh();};
+    el('gmore').onclick=()=>{limit+=60;draw();};
+    draw();void refresh();
   }
   async function product(cs, id) {
     const m = await manifest(); const c = m.cats.find(x => x.s === cs);

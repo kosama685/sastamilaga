@@ -48,15 +48,23 @@
     var el = function (id) { return document.getElementById(id); };
     var ids = ['sm-gf-q', 'sm-gf-min', 'sm-gf-max', 'sm-gf-sort', 'sm-gf-video'];
     var count = el('sm-gf-count');
+    var chips=document.createElement('div');chips.className='chip-cloud';chips.setAttribute('role','group');chips.setAttribute('aria-label','Active preview filters');aside.appendChild(chips);
+    var full=document.createElement('a');full.className='ghost-btn';full.textContent='Filter the full category by country, stock, brand and model';aside.appendChild(full);
+    var scope=document.createElement('p');scope.textContent='This preview filters displayed listings only; open the full category for delivery and verified attributes.';aside.appendChild(scope);
+    var category=(location.pathname.match(/\/c\/global\/([a-z0-9-]+)\.html$/)||[])[1];if(!category)full.hidden=true;
     function draw() {
       var opts = { q: el(ids[0]).value, min: el(ids[1]).value,
         max: el(ids[2]).value, sort: el(ids[3]).value, video: el(ids[4]).checked };
-      var list = filterCards(cards, opts);
+      var invalid=(opts.min!==''&&(!Number.isFinite(Number(opts.min))||Number(opts.min)<0))||(opts.max!==''&&(!Number.isFinite(Number(opts.max))||Number(opts.max)<0))||(opts.min!==''&&opts.max!==''&&Number(opts.min)>Number(opts.max));
+      var list = invalid?[]:filterCards(cards, opts);
+      chips.replaceChildren();
+      [['q','Search',ids[0]],['min','Min USD',ids[1]],['max','Max USD',ids[2]],['sort','Sort',ids[3]],['video','Video-labelled',ids[4]]].forEach(function(f){var val=opts[f[0]];if(!val||val==='original')return;var b=document.createElement('button');b.type='button';b.className='ghost-btn';b.textContent=f[1]+(val===true?'':': '+val)+' ×';b.setAttribute('aria-label','Remove '+f[1]);b.onclick=function(){var x=el(f[2]);if(x.type==='checkbox')x.checked=false;else x.value=f[0]==='sort'?'original':'';draw();};chips.appendChild(b);});
+      if(category){var params=new URLSearchParams();['q','min','max','sort'].forEach(function(k){if(opts[k]&&opts[k]!=='original')params.set(k,opts[k]);});if(opts.video)params.set('video','1');full.href='../../#/global/c/'+category+(params.toString()?'?'+params:'');}
       var found = new Set(list);
       cards.forEach(function (p) { p.node.hidden = !found.has(p); });
       var ordered = opts.sort === 'original' ? cards.filter(function (p) { return found.has(p); }) : list;
       ordered.forEach(function (p) { grid.appendChild(p.node); });
-      count.textContent = list.length + ' of ' + cards.length + ' displayed listings match these filters';
+      count.textContent = invalid?'Enter a valid price range.':list.length + ' of ' + cards.length + ' displayed listings match these filters';
       el('sm-gf-empty').hidden = list.length > 0;
     }
     ids.forEach(function (id) { el(id).addEventListener('input', draw); });

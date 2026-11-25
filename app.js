@@ -1139,7 +1139,7 @@ function renderListing(type, val, qs) {
       '<div class="hero-content">',
         `<span class="eyebrow">${type === 'tag' ? 'Tag page' : type === 'category' ? 'Category page' : 'Results'}</span>`,
         `<h1>${esc(title)}</h1>`,
-        `<p>${esc(subtitle)}. Filter by price, brand, stock and layout.</p>`,
+        `<p>${esc(subtitle)}. Filter by price, store, recorded stock and layout.</p>`,
         type === 'shop' ? catalogueSwitch('local') : '',
         leafChips,
       '</div>',
@@ -1150,7 +1150,7 @@ function renderListing(type, val, qs) {
     '<section class="section listing-shell">',
       '<aside class="filter-panel" aria-label="Product filters">',
         '<h2 style="margin:0 0 8px;font-size:1.3rem">Filters</h2>',
-        '<p style="color:var(--muted2);margin:0 0 14px;font-size:.82rem">Filter by price, tags, brand, stock &amp; video.</p>',
+        '<p style="color:var(--muted2);margin:0 0 14px;font-size:.82rem">Filter by price, tags, store, recorded stock &amp; video.</p>',
 
         '<div class="filter-group">',
           '<label for="filterQ">Search inside results</label>',
@@ -1183,15 +1183,16 @@ function renderListing(type, val, qs) {
         '</div>',
 
         '<div class="filter-group">',
-          '<label for="storeFilter">Store / Brand</label>',
+          '<label for="storeFilter">Store (not manufacturer brand)</label>',
           '<select id="storeFilter" aria-label="Filter by store"><option value="">All Stores</option></select>',
         '</div>',
 
         '<div class="filter-group">',
-          '<label><input id="stockOnly" type="checkbox" style="width:auto;margin-right:6px"> In stock only</label>',
+          '<label><input id="stockOnly" type="checkbox" style="width:auto;margin-right:6px"> Recorded in stock only (not a live stock check)</label>',
           '<label style="margin-top:8px;display:block"><input id="videoOnly" type="checkbox" style="width:auto;margin-right:6px"> Video available</label>',
         '</div>',
 
+        '<p class="product-meta">Local catalogue delivery is subject to destination and order confirmation. Use the global shop for international supplier delivery checks.</p>',
         '<button class="primary-btn" id="applyFilters" style="width:100%;margin-top:16px">Apply Filters</button>',
         '<button class="ghost-btn" id="clearFilters" style="width:100%;margin-top:8px">Clear All</button>',
       '</aside>',
@@ -1204,6 +1205,7 @@ function renderListing(type, val, qs) {
             '<button class="ghost-btn" data-view="list" aria-label="List view">≡ List</button>',
           '</div>',
         '</div>',
+        '<div id="localActiveFilters" class="chip-cloud" role="group" aria-label="Active local filters"></div>',
         '<div id="resultGrid" class="products-row"></div>',
         '<div class="load-more-wrap"><button class="ghost-btn" id="loadMore">Load more products ↓</button></div>',
       '</div>',
@@ -1289,8 +1291,8 @@ function filteredResults() {
   const sort         = (($('#sortBy') || {}).value) || 'relevant';
 
   if (q)           arr = arr.filter(p => p._search.includes(q));
-  if (min)         arr = arr.filter(p => price(p) >= min);
-  if (max)         arr = arr.filter(p => price(p) <= max);
+  if (($('#minP')||{}).value !== '' && ($('#minP')||{}).value != null) arr=arr.filter(p=>price(p)>0&&price(p)>=min);
+  if (($('#maxP')||{}).value !== '' && ($('#maxP')||{}).value != null) arr=arr.filter(p=>price(p)>0&&price(p)<=max);
   if (store)       arr = arr.filter(p => p.store === store);
   if (stockOnly)   arr = arr.filter(p => p.in || num(p.stock) > 0);
   if (videoOnly)   arr = arr.filter(p => (p.vids || []).length > 0);
@@ -1307,12 +1309,22 @@ function filteredResults() {
   return arr;
 }
 
+function drawLocalFilterChips(){
+  const host=$('#localActiveFilters');if(!host)return;host.replaceChildren();
+  const defs=[['filterQ','Search'],['minP','Min PKR'],['maxP','Max PKR'],['sortBy','Sort'],['storeFilter','Store'],['stockOnly','Recorded stock'],['videoOnly','Video']];
+  function chip(label,reset){const b=document.createElement('button');b.type='button';b.className='ghost-btn';b.textContent=label+' ×';b.setAttribute('aria-label','Remove '+label);b.onclick=()=>{reset();state.limit=60;drawResults();};host.appendChild(b);}
+  for(const [id,label] of defs){const x=$('#'+id);if(!x)continue;const value=x.type==='checkbox'?x.checked:x.value;if(!value||value==='relevant')continue;chip(label+(value===true?'':': '+value),()=>{if(x.type==='checkbox')x.checked=false;else if(x.tagName==='SELECT')x.selectedIndex=0;else x.value='';});}
+  for(const b of $('[data-filter-tag].active'))chip('Tag: '+b.dataset.filterTag,()=>{b.classList.remove('active');b.style.background='';b.style.borderColor='';});
+}
 function drawResults() {
-  const arr         = filteredResults();
+  drawLocalFilterChips();
+  const minField=($('#minP')||{}).value||'',maxField=($('#maxP')||{}).value||'';
+  const invalid=(minField!==''&&(!Number.isFinite(Number(minField))||Number(minField)<0))||(maxField!==''&&(!Number.isFinite(Number(maxField))||Number(maxField)<0))||(minField!==''&&maxField!==''&&Number(minField)>Number(maxField));
+  const arr         = invalid?[]:filteredResults();
   const countEl     = $('#resultCount');
   const gridEl      = $('#resultGrid');
   const loadMoreEl  = $('#loadMore');
-  if (countEl) countEl.textContent = `${arr.length.toLocaleString()} matching products`;
+  if (countEl) countEl.textContent = invalid?'Enter a valid price range.':`${arr.length.toLocaleString()} matching products`;
   const shown = arr.slice(0, state.limit);
   if (gridEl) {
     gridEl.className = state.view === 'list' ? 'product-list' : 'products-row';

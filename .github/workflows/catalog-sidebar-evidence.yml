@@ -1,0 +1,28 @@
+name: Catalog sidebar evidence QA
+on:
+  pull_request:
+    paths:
+      - 'assets/js/catalog-facets.js'
+      - 'assets/js/global.js'
+      - 'assets/js/global-static-facets.js'
+      - 'tools/catalog-facet*'
+      - 'tools/migrations/20261125-catalog-facet-evidence.sql'
+      - '.github/workflows/catalog-sidebar-evidence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - run: |
+          node --check assets/js/catalog-facets.js
+          node --check assets/js/global.js
+          node --check assets/js/global-static-facets.js
+          node --check tools/catalog-facet-evidence-worker.mjs
+          node --test tools/catalog-facets.test.mjs tools/global-static-facets.test.mjs
