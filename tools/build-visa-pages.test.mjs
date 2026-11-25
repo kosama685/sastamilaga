@@ -85,3 +85,16 @@ test('sitemap-visa.xml lists every page and is referenced from sitemap.xml; /vis
   for (const c of COUNTRIES) assert.ok(hub.includes(`href="/visa/${c.slug}/"`), 'hub misses ' + c.slug);
   assert.ok(hub.indexOf('sv-hub') > hub.indexOf('id="app"'), 'directory sits after #app so the app does not replace it');
 });
+
+
+test('Kenya uses official eTA and permit evidence, not generic embassy steps',()=>{
+ const h=page('kenya');
+ for(const u of ['https://etakenya.go.ke/form/apply/how-to-apply','https://immigration.go.ke/work-permits-and-passes/','https://fns.immigration.go.ke/','https://immigration.go.ke/students-pass/'])assert.ok(h.includes(u),u);
+ assert.match(h,/Ordinary Pakistani passport holders visiting Kenya generally need an approved electronic travel authorisation/);
+ assert.match(h,/six months of validity from planned arrival/);
+ assert.match(h,/Other visa categories still require individual confirmation/);
+ assert.doesNotMatch(h,/Biometrics or interview|book the earliest suitable date|usually a language test/);
+ const graph=JSON.parse(h.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])['@graph'];
+ const a=graph.find(x=>x['@type']==='FAQPage').mainEntity[0].acceptedAnswer.text;assert.match(a,/official exemption/);assert.match(a,/Admission remains subject to immigration checks/);
+ const normalize=v=>v.replace(/"dateModified":"\d{4}-\d{2}-\d{2}"/g,'"dateModified":"DATE"');assert.equal(normalize(rd('visa/kenya/index.html')),normalize(h));
+});
