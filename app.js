@@ -1667,7 +1667,7 @@ const gFmt = n => (window.SMGCart ? window.SMGCart.fmt(n) : '$' + Number(n).toFi
 const gSub = () => gLines().reduce((s, x) => s + x.unit * x.qty, 0);
 function globalBlock(G) {
   if (!G.length) return '';
-  return `<section class="sm-gco" style="grid-column:1/-1" aria-label="Global items"><h3 style="margin:0 0 4px">Global items (prepaid)</h3><p class="product-meta" style="margin:0 0 10px">Shipped from our supplier. The carrier you chose on the product page is shown for each item.</p>${G.map(x => `<div class="cart-line"><img src="${esc(x.img)}" alt="${esc(x.name)}" width="64" height="64" onerror="this.src=window.fallbackImg"><div><b>${esc(x.name)}</b><p style="color:var(--muted);margin:4px 0">${x.vname ? esc(x.vname) + ' · ' : ''}Qty ${x.qty} · ${gFmt(x.unit * x.qty)}${x.ship ? '<br>Shipping: ' + esc(x.ship) : '<br>Shipping: confirmed on WhatsApp'}</p></div></div>`).join('')}</section>`;
+  return `<section class="sm-gco" style="grid-column:1/-1" aria-label="Global items"><h3 style="margin:0 0 4px">Global items (prepaid)</h3><p class="product-meta" style="margin:0 0 10px">Shipped from our supplier. Checkout refreshes available carrier quotes for the selected destination before online payment.</p><label style="display:block;margin-bottom:10px"><span>Delivery country (two-letter code, e.g. PK, SA, GB, US)</span><input name="delivery_country" aria-label="Delivery country code" autocomplete="country" maxlength="2" pattern="[A-Za-z]{2}" required value="${esc(checkoutMarketCountry())}"></label>${G.map(x => `<div class="cart-line"><img src="${esc(x.img)}" alt="${esc(x.name)}" width="64" height="64" onerror="this.src=window.fallbackImg"><div><b>${esc(x.name)}</b><p style="color:var(--muted);margin:4px 0">${x.vname ? esc(x.vname) + ' · ' : ''}Qty ${x.qty} · ${gFmt(x.unit * x.qty)}${x.ship ? '<br>Shipping: ' + esc(x.ship) : '<br>Shipping: confirmed on WhatsApp'}</p></div></div>`).join('')}</section>`;
 }
 function summaryBox(sub, onCheckout, G = []) {
   if (G.length) {
@@ -1759,7 +1759,7 @@ function renderCheckout() {
           ${globalBlock(G)}
         </section>
         <section class="sm-co-step" aria-labelledby="co-s2"><header><span class="sm-co-n">2</span><div><h2 id="co-s2">Delivery</h2><p>How your order reaches you</p></div></header>
-          <div class="sm-co-ship">${ico('<path d="M3 6h11v10H3zM14 9h4l3 3v4h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/>')}<div><b>${G.length && !rows.length ? 'Global items ship from our supplier' : 'Standard delivery in Pakistan'}</b><small>${G.length && !rows.length ? 'The carrier you chose on the product page is added to your payment; delivery time is confirmed on WhatsApp.' : `Free over ${PKR.format(freeFrom)}, otherwise ${PKR.format(fee)}. Delivery time is confirmed on WhatsApp.`}</small></div><b class="sm-co-ship__p">${G.length && !rows.length ? 'Carrier price' : (sub > freeFrom ? 'Free' : PKR.format(fee))}</b></div>
+          <div class="sm-co-ship">${ico('<path d="M3 6h11v10H3zM14 9h4l3 3v4h-7z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/>')}<div><b>${G.length && !rows.length ? 'Global items ship from our supplier' : 'Standard delivery in Pakistan'}</b><small>${G.length && !rows.length ? 'Your current carrier and full payable amount are shown in the payment panel. Delivery time is an estimate.' : `Free over ${PKR.format(freeFrom)}, otherwise ${PKR.format(fee)}. Delivery time is confirmed on WhatsApp.`}</small></div><b class="sm-co-ship__p">${G.length && !rows.length ? 'Carrier price' : (sub > freeFrom ? 'Free' : PKR.format(fee))}</b></div>
         </section>
         <section class="sm-co-step" aria-labelledby="co-s3"><header><span class="sm-co-n">3</span><div><h2 id="co-s3">Payment method</h2><p>Select a payment method</p></div></header>
           <div class="sm-co-tiles" role="radiogroup" aria-label="Payment method">${tiles.map((x, i) => `<button type="button" class="sm-co-tile" role="radio" aria-checked="${i ? 'false' : 'true'}" data-pm="${esc(x.v)}">${x.i}<span>${esc(x.t)}</span></button>`).join('')}</div>
@@ -1848,24 +1848,91 @@ function checkoutTotals() {
   return { lines, sub, delivery: dl, totalPkr: sub + dl, count: lines.length + gl.length };
 }
 /* Cart total in the payment currency: local items are priced in PKR, global items in US dollars, and each global item's chosen carrier in the currency it was quoted in. rates = units of each currency per 1 PKR. */
-function cartInCur(rates, cur) {
-  const { totalPkr } = checkoutTotals(), G = gLines(); let v = totalPkr * rates[cur];
+function cartInCur(rates, cur, G = gLines(), totalPkr = checkoutTotals().totalPkr) {
+  let v = totalPkr * rates[cur];
   if (G.length) {
     if (!rates.USD) throw new Error('rate');
-    v += gSub() * rates[cur] / rates.USD;
+    v += G.reduce((sum, x) => sum + Number(x.unit) * Number(x.qty), 0) * rates[cur] / rates.USD;
     G.forEach(x => { const sc = x.shipCur || 'USD'; if (x.shipAmt) { if (!rates[sc]) throw new Error('rate'); v += x.shipAmt * rates[cur] / rates[sc]; } });
   }
   return v;
 }
+function checkoutMarketCountry() {
+  try { const c = String(window.SMMarket?.state()?.country || JSON.parse(localStorage.getItem('sm_market') || '{}').country || 'PK').toUpperCase(); return /^[A-Z]{2}$/.test(c) ? c : ''; } catch (_) { return ''; }
+}
+function checkoutCountry() {
+  const field = document.getElementById('checkoutForm')?.elements.delivery_country;
+  return String(field ? field.value : checkoutMarketCountry()).trim().toUpperCase();
+}
+function paymentFingerprint() {
+  return JSON.stringify({local: checkoutTotals().lines.map(x => [x.p.id, x.qty, price(x.p)]), global: gLines(), country: checkoutCountry(), currency: paypalCurrency()});
+}
+function shippingFailure(detail) {
+  const e = new Error('shipping'); e.detail = detail; return e;
+}
+async function checkoutJSON(url, options) {
+  const r = await fetch(url, {...options, signal: AbortSignal.timeout(20000)});
+  if (!r.ok) throw Error('quote_http_' + r.status);
+  return r.json();
+}
+// Resolve a real variant before requesting freight. Never let the freight API fall back to its first variant.
+async function recoverCheckoutFreight(rows, country) {
+  if (!rows.length) return [];
+  if (!/^[A-Z]{2}$/.test(country)) throw shippingFailure('Enter your delivery country code first.');
+  if (rows.length > 20) throw shippingFailure('For more than 20 global item lines, please request a combined delivery quotation.');
+  const worker = String((window.SM_CONFIG || {}).cjShippingWorker || '').replace(/\/$/, '');
+  if (!/^https:\/\//.test(worker)) throw shippingFailure('The supplier shipping service is not configured.');
+  const result = [];
+  const variantsByProduct = new Map();
+  for (const row of rows) {
+    const id = String(row.id || ''), selected = String(row.vkey || '').trim(), quantity = Number(row.qty);
+    if (!/^[A-Za-z0-9-]{8,64}$/.test(id) || !selected || !Number.isInteger(quantity) || quantity < 1 || quantity > 99 || !Number.isFinite(Number(row.unit)) || Number(row.unit) <= 0)
+      throw shippingFailure('Select the exact available variation and quantity for ' + String(row.name || 'this item') + ' on its product page, then update the cart.');
+    try {
+      if (!variantsByProduct.has(id)) {
+        const product = await checkoutJSON(worker + '/api/cj/product?pid=' + encodeURIComponent(id));
+        if (String(product.pid || '') !== id || product.currency !== 'USD' || !Array.isArray(product.variants)) throw Error('product_identity');
+        variantsByProduct.set(id, product.variants);
+      }
+      const variants = variantsByProduct.get(id);
+      const exact = variants.filter(v => String(v.vid || '') === selected);
+      const matches = exact.length ? exact : variants.filter(v => String(v.sku || '') === selected);
+      if (matches.length !== 1 || !/^[A-Za-z0-9-]{8,64}$/.test(String(matches[0].vid || ''))) throw shippingFailure('The saved variation for ' + String(row.name || 'this item') + ' is no longer recognized. Select its exact option again.');
+      const variant = matches[0];
+      const quote = await checkoutJSON(worker + '/api/cj/shipping', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({country,items:[{pid:id,vid:variant.vid,sku:variant.sku,qty:quantity}]})});
+      if (quote.country !== country || quote.currency !== 'USD' || quote.unavailable?.length || !Array.isArray(quote.methods)) throw Error('destination_mismatch');
+      const methods = quote.methods.filter(m => m && typeof m.name === 'string' && m.name.trim() && typeof m.price === 'number' && Number.isFinite(m.price) && m.price >= 0).sort((a,b)=>a.price-b.price);
+      if (!methods.length) throw Error('no_rates');
+      const old = String(row.ship || '');
+      const preferred = methods.find(m => old === m.name || old.startsWith(m.name + ' · ') || old.startsWith(m.name + ' — '));
+      const choice = preferred || methods[0];
+      const shipAmt = Math.round(choice.price * 100) / 100;
+      result.push({...row, vkey:String(variant.vid), sku:String(variant.sku || row.sku || ''), qty:quantity, ship:choice.name + ' · USD ' + shipAmt.toFixed(2), shipAmt, shipCur:'USD', shipCountry:country, shipQty:quantity, shipCarrier:choice.name, shipSelection:preferred?'retained':'lowest_available'});
+    } catch (e) {
+      if (e.message === 'shipping') throw e;
+      throw shippingFailure('No delivery quote could be verified for ' + String(row.name || 'this item') + ' to ' + country + '. Check the destination or request a quotation.');
+    }
+  }
+  return result;
+}
 async function payAmount() {
-  // Do not take online payment for a global parcel without its selected carrier quote.
-  // A product-only amount would undercharge shipping and mislead the buyer.
-  if (gLines().some(x => !x.ship || !Number.isFinite(Number(x.shipAmt)) || Number(x.shipAmt) < 0)) throw new Error('shipping');
-  const cur = paypalCurrency(), { totalPkr } = checkoutTotals();
-  const r = await fetch('https://open.er-api.com/v6/latest/PKR').then(x => x.json());
-  const rate = r && r.rates && r.rates[cur]; if (!rate) throw new Error('rate');
-  const dec = PAYPAL_NO_DECIMALS.includes(cur) ? 0 : 2;
-  return { cur, rate, amount: Math.max(dec ? 0.01 : 1, Math.round(cartInCur(r.rates, cur) * 10 ** dec) / 10 ** dec).toFixed(dec), totalPkr };
+  const fingerprint = paymentFingerprint(), country = checkoutCountry(), cur = paypalCurrency(), { totalPkr } = checkoutTotals();
+  const globalRows = gLines();
+  if (globalRows.length && totalPkr > 0 && country !== 'PK') throw shippingFailure('Local Pakistan items cannot be included in an international online payment. Request a combined quotation.');
+  const G = await recoverCheckoutFreight(globalRows, country);
+  if (G.some(x => !x.ship || !Number.isFinite(x.shipAmt) || x.shipAmt < 0)) throw new Error('shipping');
+  const r = await checkoutJSON('https://open.er-api.com/v6/latest/PKR');
+  const rate = r?.rates?.[cur];
+  const rateAt = Number(r?.time_last_update_unix) * 1000;
+  if (r?.result !== 'success' || !Number.isFinite(rate) || rate <= 0 || !Number.isFinite(rateAt) || Date.now()-rateAt > 72*3600000 || rateAt > Date.now()+3600000) throw Error('rate');
+  const total = cartInCur(r.rates, cur, G, totalPkr), dec = PAYPAL_NO_DECIMALS.includes(cur) ? 0 : 2;
+  if (!Number.isFinite(total) || total <= 0) throw Error('rate');
+  if (fingerprint !== paymentFingerprint()) throw Error('cart_changed');
+  return {cur, rate, amount:Math.max(dec ? 0.01 : 1, Math.round(total * 10 ** dec) / 10 ** dec).toFixed(dec), totalPkr, globalRows:G, country, fingerprint, checkedAt:Date.now()};
+}
+let preparedPayment = null, orderSubmitting = false;
+function paymentReady() {
+  return preparedPayment && Date.now() - preparedPayment.checkedAt < 15*60000 && preparedPayment.fingerprint === paymentFingerprint();
 }
 let _payReq = 0;
 function syncPay() {
@@ -1875,18 +1942,32 @@ function syncPay() {
   panel.hidden = !on;
   // "PayPal" (Worker checkout in assets/js/checkout.js, when configured) manages the submit button itself.
   if (on || form.elements.payment_method.value !== 'PayPal') place.hidden = on;
-  if (!on) return;
   const my = ++_payReq;
+  preparedPayment = null;
+  if (!on || orderSubmitting) return;
   if (!checkoutTotals().count) { amt.textContent = 'Your cart is empty. Add products before paying.'; panel.querySelectorAll('[data-pay]').forEach(b => { b.disabled = true; }); return; }
   panel.querySelectorAll('[data-pay]').forEach(b => { b.disabled = true; });
-  amt.textContent = 'Getting today\'s exchange rate…';
+  amt.textContent = gLines().length ? 'Checking delivery options and the payable total…' : 'Getting today\'s exchange rate…';
   payAmount().then(a => {
-    if (my !== _payReq) return;
-    amt.innerHTML = `You pay <b>${esc(a.cur)} ${esc(Number(a.amount).toLocaleString('en', { minimumFractionDigits: a.cur === 'JPY' || a.cur === 'HUF' || a.cur === 'TWD' ? 0 : 2 }))}</b> <small>(${gLines().length ? 'global items, chosen shipping' + (a.totalPkr ? ' and ' + PKR.format(a.totalPkr) + ' of local items' : '') : PKR.format(a.totalPkr) + ' including delivery'}, at today's rate of 1 PKR = ${esc(String(a.rate))} ${esc(a.cur)}${a.cur === 'USD' && (JSON.parse(localStorage.getItem('sm_market') || '{}').currency || 'PKR') !== 'USD' ? '. PayPal cannot charge ' + esc(JSON.parse(localStorage.getItem('sm_market') || '{}').currency || 'PKR') + ', so US$ is used' : ''})</small>`;
+    if (my !== _payReq || document.getElementById('checkoutForm') !== form) return;
+    preparedPayment = a;
+    amt.replaceChildren();
+    const total = document.createElement('strong'); total.textContent = 'You pay ' + a.cur + ' ' + a.amount; amt.appendChild(total);
+    if (a.globalRows.length) {
+      const detail = document.createElement('span'); detail.style.display = 'block'; detail.textContent = 'Delivery to ' + a.country + ' · product and shipping included'; amt.appendChild(detail);
+      a.globalRows.forEach(x => { const line = document.createElement('small'); line.style.display = 'block'; line.textContent = x.name + ' × ' + x.qty + ': ' + x.ship + (x.shipSelection === 'lowest_available' ? ' (lowest available carrier)' : ' (selected carrier)'); amt.appendChild(line); });
+      const review = document.createElement('small'); review.style.display='block'; review.textContent='Review the destination, carrier and amount before continuing. Taxes or import duties may apply.'; amt.appendChild(review);
+    }
     panel.querySelectorAll('[data-pay]').forEach(b => { b.disabled = false; });
-  }).catch(err => { if (my === _payReq) amt.textContent = err && err.message === 'shipping' ? 'Please select delivery for every global item on its product page before online payment.' : 'Could not get today\'s exchange rate. Check your connection and reselect PayPal.'; });
+  }).catch(err => {
+    if (my !== _payReq || document.getElementById('checkoutForm') !== form) return;
+    amt.textContent = err?.message === 'shipping' ? (err.detail || 'Delivery could not be verified.') : err?.message === 'cart_changed' ? 'Your cart or destination changed. Refresh the payment total.' : 'Could not verify the exchange rate or payment total.';
+    const retry=document.createElement('button'); retry.type='button'; retry.className='ghost-btn'; retry.textContent='Refresh delivery & total'; retry.addEventListener('click',syncPay); amt.append(' ',retry);
+  });
 }
-document.addEventListener('change', e => { if (e.target.matches && e.target.matches('#checkoutForm select[name="payment_method"]')) syncPay(); });
+document.addEventListener('change', e => { if (e.target.matches && e.target.matches('#checkoutForm select[name="payment_method"], #checkoutForm input[name="delivery_country"]')) syncPay(); });
+window.addEventListener('sm:market', () => { const field = document.getElementById('checkoutForm')?.elements.delivery_country; if(field) field.value = checkoutMarketCountry(); syncPay(); });
+document.addEventListener('sm:cart-changed', () => { if (document.getElementById('checkoutForm') && !orderSubmitting) syncPay(); });
 /* Window-capture handlers for the checkout buttons: on the store's own domain a site-wide script swallows these clicks at document level
    ("static cart has not been synchronized"), so the order buttons are handled first (window comes before document in the event path). */
 window.addEventListener('click', e => {
@@ -1911,6 +1992,10 @@ document.addEventListener('click', e => {
 window.placeOrder = function (e, landing, trigger) {
   e.preventDefault();
   const form = document.getElementById('checkoutForm');
+  if (!form || orderSubmitting || !form.reportValidity()) return;
+  const wantsPayPal = form.elements.payment_method.value === 'PayPal / Card' || !!landing;
+  if (wantsPayPal && !paymentReady()) { toast('Review the refreshed delivery and payment total before continuing.'); syncPay(); return; }
+  const payment = wantsPayPal ? preparedPayment : null;
   if (!checkoutTotals().count) { toast('Your cart is empty. Add products first.'); return; }
   const data = new FormData(form);
   
@@ -1922,6 +2007,10 @@ window.placeOrder = function (e, landing, trigger) {
   
   const btn = trigger || form.querySelector('button[type="submit"]');
   const originalText = btn.innerText;
+  const controls = [...form.querySelectorAll('[data-pay], #smPlaceOrder')];
+  const oldDisabled = controls.map(b => b.disabled);
+  orderSubmitting = true;
+  controls.forEach(b => { b.disabled = true; });
   btn.disabled = true;
   btn.innerText = trigger ? 'Saving your order…' : 'Processing...';
 
@@ -1931,7 +2020,7 @@ window.placeOrder = function (e, landing, trigger) {
   const lines = getCart().map(x => ({ p: products.find(p => p.id === x.id), qty: x.qty })).filter(x => x.p);
   const sub = lines.reduce((a, x) => a + price(x.p) * x.qty, 0);
   const delivery = !lines.length ? 0 : (sub > (C.freeDeliveryFrom || 5000) ? 0 : (C.deliveryFee || 250));
-  const totalPkr = sub + delivery, GL = gLines();
+  const totalPkr = sub + delivery, GL = payment ? payment.globalRows : gLines();
   data.set('order_id', orderId);
   data.set('order_items', lines.map(x => `${x.qty} x ${x.p.n} (SKU ${x.p.sku || x.p.id}) @ ${PKR.format(price(x.p))} = ${PKR.format(price(x.p) * x.qty)}\n${pageUrl(x.p)}`).join('\n\n'));
   if (GL.length) { data.set('global_items', GL.map(x => `${x.qty} x ${x.name}${x.vname ? ' [' + x.vname + ']' : ''} (SKU ${x.sku}) est. USD ${(x.unit * x.qty).toFixed(2)}; shipping: ${x.ship || 'to be confirmed'}\n${x.url || ''}`).join('\n\n')); data.set('global_estimate_usd', gSub().toFixed(2)); }
@@ -1942,14 +2031,14 @@ window.placeOrder = function (e, landing, trigger) {
   if (payPal) data.set('payment_method', 'PayPal / Card');
 
   // PayPal / card: charge in the visitor's chosen currency when PayPal supports it, otherwise USD.
-  const payCur = paypalCurrency();
-  const rateP = payPal ? fetch('https://open.er-api.com/v6/latest/PKR').then(r => r.json()).then(j => j.rates) : Promise.resolve(null);
-  rateP.then(rates => {
-    let usd = null, rate = rates && rates[payCur];
+  const payCur = payment ? payment.cur : paypalCurrency();
+  Promise.resolve().then(() => {
+    let usd = null, rate = payment?.rate;
     if (payPal) {
-      if (!rate) throw new Error('rate');
-      const dec = PAYPAL_NO_DECIMALS.includes(payCur) ? 0 : 2;
-      usd = Math.max(dec ? 0.01 : 1, Math.round(cartInCur(rates, payCur) * 10 ** dec) / 10 ** dec).toFixed(dec);
+      if (!payment || !paymentReady() || !rate) throw new Error('shipping');
+      usd = payment.amount;
+      if (GL.length) data.set('delivery_country', payment.country);
+      data.set('payment_amount', usd);
       data.set('payment_status', `Awaiting PayPal payment of ${payCur} ${usd} (1 PKR = ${rate} ${payCur}). Confirm receipt in PayPal before dispatch.`);
       data.set('payment_currency', payCur);
     }
@@ -2001,8 +2090,10 @@ window.placeOrder = function (e, landing, trigger) {
     toast(error && error.message === 'shipping' ? 'Shipping must be selected for every global product before online payment. Return to the product page, choose a carrier, and update the cart.' : error && error.message === 'rate' ? 'Could not get today\'s exchange rate for PayPal. Try again.' : 'Your order could not be sent. Check your connection and try again.');
   })
   .finally(() => {
-    btn.disabled = false;
+    orderSubmitting = false;
+    controls.forEach((b, i) => { b.disabled = oldDisabled[i]; });
     btn.innerText = originalText;
+    if (wantsPayPal && !paymentReady()) syncPay();
   });
 };
 
