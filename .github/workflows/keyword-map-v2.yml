@@ -1,0 +1,35 @@
+name: Keyword map v2 and redirect release QA
+on:
+  pull_request:
+    paths:
+      - 'tools/generate_product_keywords_v2.py'
+      - 'tools/test_generate_product_keywords_v2.py'
+      - 'tools/verify-legacy-category-production.mjs'
+      - '.github/workflows/keyword-map-v2.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - run: python3 -m unittest discover -s tools -p test_generate_product_keywords_v2.py -v
+      - name: Verify deployed canonical redirect
+        run: node tools/verify-legacy-category-production.mjs
+      - name: Regenerate full inventory
+        if: always()
+        run: |
+          python3 tools/export-global-keyword-inventory.py
+          python3 tools/generate_product_keywords_v2.py artifacts/global-keywords/page-keyword-inventory.csv --output artifacts/keyword-map-v2.zip
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: keyword-map-v2
+          path: artifacts/keyword-map-v2.zip
+          if-no-files-found: error
+          retention-days: 30
