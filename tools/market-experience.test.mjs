@@ -33,6 +33,7 @@ for(const [country,currency,name] of [['SA','SAR','Saudi Arabia'],['AE','AED','U
  test(`${country}/${currency}: destination copy and eligible catalog`,()=>{
   const {document:d,window:w}=boot(country,currency);
   assert.match(d.querySelector('[data-market-copy="title"]').textContent,new RegExp(name));
+  assert.match(d.querySelector('[data-market-copy="title"]').textContent,/Online shopping/i);
   assert.doesNotMatch(d.querySelector('.smh-top__trust').textContent,/Pakistan store/);
   const local=country==='PK';
   assert.equal(d.querySelector('.smh-search__cat').hidden,!local);
@@ -57,7 +58,7 @@ test('same page can return from Saudi Arabia to Pakistan without stale copy or l
  Object.assign(w.SMMarket.state(),{country:'PK',currency:'PKR'});
  d.dispatchEvent(new w.Event('sasta:rendered'));
  callbacks.splice(0).forEach(f=>f());
- assert.match(d.querySelector('[data-market-copy="title"]').textContent,/Shopping for Pakistan/);
+ assert.match(d.querySelector('[data-market-copy="title"]').textContent,/Online shopping for Pakistan/);
  assert.match(d.querySelector('[data-market-copy="payment"]').textContent,/Cash on delivery/);
  assert.equal(d.querySelector('[data-fill="stack"] a').getAttribute('href'),'p/local.html');
  assert.equal(d.querySelector('[data-fill="cats"]').hidden,false);
@@ -86,4 +87,17 @@ test('every supported international destination avoids Pakistan-store and COD pr
   const view=w.SMMarket.experience(country,currency);
   if(country!=='PK')for(const key of ['title','trust','lead','order','payment','cta'])assert.doesNotMatch(view[key],/Pakistan|cash on delivery/i,country+': '+key);
  }
+});
+
+test('homepage shopping topic, metadata, canonical and internal navigation agree',()=>{
+ const {document:d}=parseHTML(html);
+ const title=d.querySelector('title').textContent,desc=d.querySelector('meta[name="description"]').getAttribute('content');
+ assert.match(title,/Online Shopping/i);assert.match(desc,/Online shopping/i);
+ assert.equal(d.querySelectorAll('h1').length,1);assert.match(d.querySelector('h1').textContent,/Online shopping/i);
+ assert.ok([...d.querySelectorAll('h2')].some(x=>/online shopping/i.test(x.textContent)));
+ for(const property of ['og:title','twitter:title']){const x=d.querySelector('meta[property="'+property+'"],meta[name="'+property+'"]');assert.equal(x.getAttribute('content'),title)}
+ for(const property of ['og:description','twitter:description']){const x=d.querySelector('meta[property="'+property+'"],meta[name="'+property+'"]');assert.equal(x.getAttribute('content'),desc)}
+ assert.equal(d.querySelector('link[rel="canonical"]').getAttribute('href'),'https://sastamilaga.com/');
+ assert.ok(d.querySelector('a[href="c/global/index.html"]'));assert.ok(d.querySelector('a[href="shop/"]'));
+ assert.doesNotMatch(d.body.textContent,/Worldwide on global items/);
 });

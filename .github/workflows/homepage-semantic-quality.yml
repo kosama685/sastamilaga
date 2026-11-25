@@ -1,0 +1,24 @@
+name: Homepage semantic quality
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'assets/js/market.js'
+      - 'tools/market-experience.test.mjs'
+      - '.github/workflows/homepage-semantic-quality.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - run: node --check assets/js/market.js
+      - run: |
+          npm install --prefix "$RUNNER_TEMP/sasta-dom" linkedom@0.18.15 --no-audit --no-fund
+          SM_DOM_MODULE="$RUNNER_TEMP/sasta-dom/node_modules/linkedom" node --test tools/market-experience.test.mjs
