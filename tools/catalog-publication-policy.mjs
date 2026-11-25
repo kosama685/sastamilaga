@@ -13,7 +13,11 @@ export function evaluatePublication(record, context){
   require(validText(r.contentRevision)&&r.contentRevision===c.contentRevision,"content_revision_mismatch");
   // Expected canonical must come from the independently verified URL registry.
   // Accept only canonical HTTPS paths on the storefront, never arbitrary origins.
-  const canonical=typeof r.canonicalUrl==="string"&&/^https:\/\/sastamilaga\.com\/[A-Za-z0-9/_%-]+$/.test(r.canonicalUrl)&&!r.canonicalUrl.slice(24).includes("//")&&!/%(?:2e|2f|5c|00)/i.test(r.canonicalUrl)&&!/%(?![0-9a-f]{2})/i.test(r.canonicalUrl)&&r.canonicalUrl===c.canonicalUrl;
+  let canonical=false;
+  try{
+    const u=new URL(r.canonicalUrl);
+    canonical=typeof r.canonicalUrl==="string"&&u.origin==="https://sastamilaga.com"&&!u.username&&!u.password&&!u.search&&!u.hash&&u.pathname!=="/"&&!u.pathname.includes("//")&&!/%(?:2e|2f|5c|00)/i.test(u.pathname)&&!/%(?![0-9a-f]{2})/i.test(u.pathname)&&u.href===r.canonicalUrl&&r.canonicalUrl===c.canonicalUrl;
+  }catch{}
   require(canonical,"canonical_mismatch");
   require(fresh(r.evidenceUpdatedAt,r.evidenceExpiresAt),"evidence_missing_or_expired");
   require(validText(r.evidenceRef),"evidence_reference_missing");
