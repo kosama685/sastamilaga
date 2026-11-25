@@ -1940,6 +1940,8 @@ let walletModulePromise = null;
 function walletPending() { try { return sessionStorage.getItem(WALLET_PENDING_KEY) || ''; } catch { return ''; } }
 function clearWalletPending() { try { sessionStorage.removeItem(WALLET_PENDING_KEY); } catch {} }
 function walletHoldMessage(panel,amt) {
+  if(!panel||!amt)return;
+  panel.hidden=false;
   panel.querySelectorAll('[data-pay]').forEach(b=>{b.disabled=true;});
   const form=document.getElementById('checkoutForm');
   const place=form?.querySelector('#smPlaceOrder');if(place)place.disabled=true;
@@ -1975,6 +1977,7 @@ async function mountDigitalWallets(form,review,my){
           // Do not route through the old thank-you page (which fires legacy purchase analytics).
           if(paymentReady()){setCart([]);if(window.SMGCart)window.SMGCart.clear();}
           clearWalletPending();
+          form.dataset.walletCompleted='1';orderSubmitting=false;
           root.replaceChildren();root.hidden=false;
           const msg=document.createElement('p');msg.setAttribute('role','status');msg.textContent='Payment verified. Order reference: '+reference;root.appendChild(msg);
           const amt=document.getElementById('smPayAmt');if(amt)amt.textContent='Payment completed. Do not submit another payment.';
@@ -1993,7 +1996,7 @@ async function mountDigitalWallets(form,review,my){
 }
 let _payReq = 0;
 function syncPay() {
-  const form = document.getElementById('checkoutForm'); if (!form || orderSubmitting) return;
+  const form = document.getElementById('checkoutForm'); if (!form || orderSubmitting || form.dataset.walletCompleted) return;
   const on = form.elements.payment_method.value === 'PayPal / Card';
   const panel = document.getElementById('smPay'), place = document.getElementById('smPlaceOrder'), amt = document.getElementById('smPayAmt');
   panel.hidden = !on;
@@ -2028,6 +2031,7 @@ function syncPay() {
 document.addEventListener('change', e => { if (e.target.matches && e.target.matches('#checkoutForm select[name="payment_method"], #checkoutForm input[name="delivery_country"]')) syncPay(); });
 window.addEventListener('sm:market', () => { const field = document.getElementById('checkoutForm')?.elements.delivery_country; if(field) field.value = checkoutMarketCountry(); syncPay(); });
 document.addEventListener('sm:cart-changed', () => { if (document.getElementById('checkoutForm') && !orderSubmitting) syncPay(); });
+document.addEventListener('sasta:rendered',()=>{if(walletPending()&&document.getElementById('checkoutForm'))walletHoldMessage(document.getElementById('smPay'),document.getElementById('smPayAmt'));});
 /* Window-capture handlers for the checkout buttons: on the store's own domain a site-wide script swallows these clicks at document level
    ("static cart has not been synchronized"), so the order buttons are handled first (window comes before document in the event path). */
 window.addEventListener('click', e => {
@@ -2052,7 +2056,7 @@ document.addEventListener('click', e => {
 window.placeOrder = function (e, landing, trigger) {
   e.preventDefault();
   const form = document.getElementById('checkoutForm');
-  if (!form || orderSubmitting || walletPending() || !form.reportValidity()) return;
+  if (!form || orderSubmitting || form.dataset.walletCompleted || walletPending() || !form.reportValidity()) return;
   const wantsPayPal = form.elements.payment_method.value === 'PayPal / Card' || !!landing;
   if (wantsPayPal && !paymentReady()) { toast('Review the refreshed delivery and payment total before continuing.'); syncPay(); return; }
   const payment = wantsPayPal ? preparedPayment : null;
