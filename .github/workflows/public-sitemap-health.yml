@@ -27,7 +27,9 @@ jobs:
       - name: Install strict XML streaming parser
         run: npm install --no-save --ignore-scripts --no-audit --no-fund saxes@6.0.0
       - name: Validate sitemap audit source
-        run: node --check scripts/sitemap-audit.js
+        run: |
+          node --check scripts/sitemap-audit.js
+          node scripts/sitemap-audit.js --self-test
       - name: Fetch sitemaps and sample landing pages
         id: audit
         run: node scripts/sitemap-audit.js --out reports/sitemaps/live-verification-$(date -u +%F).json
