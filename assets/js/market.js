@@ -233,9 +233,9 @@
     var name = cname(country), local = country === 'PK';
     return {
       local: local,
-      title: 'Shopping for ' + name + '. Find your next favourite.',
+      title: 'Online shopping for ' + name + ': explore products.',
       trust: 'Shopping for ' + name + ' · ' + (currency === 'PKR' ? 'prices' : 'estimated prices') + ' in ' + currency,
-      lead: local ? 'Explore local and global products. Local items offer cash on delivery. Review delivery charges and payment options before you order.' : 'Explore global fashion, beauty, electronics and home essentials with estimated prices in ' + currency + '. Shipping availability and charges are confirmed for your address before you order.',
+      lead: local ? 'Explore local and global products. Cash on delivery is available for eligible local items. Review delivery charges and payment options before you order.' : 'Explore global fashion, beauty, electronics and home essentials with estimated prices in ' + currency + '. Shipping availability and charges are confirmed for your address before you order.',
       returns: 'Check eligibility and time limits in our returns policy.',
       order: local ? 'Local orders use cash on delivery where available. Global orders use an available prepaid method.' : 'Enter your delivery address and review available shipping and prepaid payment options before placing your order.',
       delivery: 'Delivery charges depend on your products and address. Check shipping availability and the final total before ordering.',
