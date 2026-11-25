@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-25",
+  "kind": "local_synthetic_sqlite_benchmark",
+  "repetitions": 25,
+  "approvedFraction": 0.5,
+  "query": "SELECT p.cj_product_id,p.name FROM cj_product_enrichment e JOIN catalog_products_cj p ON p.cj_product_id=e.cj_product_id WHERE e.seo_approved=1 ORDER BY e.cj_product_id LIMIT 20",
+  "candidate": "CREATE INDEX idx_cj_approved_product_order ON cj_product_enrichment(cj_product_id) WHERE seo_approved=1",
+  "rows": [
+    {
+      "rows": 1000,
+      "baselineP50ms": 0.2153,
+      "baselineP95ms": 0.297,
+      "candidateP50ms": 0.0158,
+      "candidateP95ms": 0.0385
+    },
+    {
+      "rows": 10000,
+      "baselineP50ms": 2.0024,
+      "baselineP95ms": 2.4727,
+      "candidateP50ms": 0.0178,
+      "candidateP95ms": 0.0192
+    },
+    {
+      "rows": 100000,
+      "baselineP50ms": 23.2018,
+      "baselineP95ms": 24.8376,
+      "candidateP50ms": 0.0184,
+      "candidateP95ms": 0.0775
+    },
+    {
+      "rows": 451812,
+      "baselineP50ms": 111.2171,
+      "baselineP95ms": 116.6025,
+      "candidateP50ms": 0.0183,
+      "candidateP95ms": 0.1263
+    }
+  ],
+  "baselinePlan": [
+    "SEARCH e USING INDEX idx_cj_product_enrichment_approved (seo_approved=?)",
+    "SEARCH p USING INDEX sqlite_autoindex_catalog_products_cj_1 (cj_product_id=?)",
+    "USE TEMP B-TREE FOR ORDER BY"
+  ],
+  "candidatePlan": [
+    "SCAN e USING COVERING INDEX idx_cj_approved_product_order",
+    "SEARCH p USING INDEX sqlite_autoindex_catalog_products_cj_1 (cj_product_id=?)"
+  ],
+  "limitations": [
+    "Synthetic in-memory SQLite, not Cloudflare production or staging",
+    "No Worker, concurrency, cost or write amplification measurement",
+    "No production schema changed"
+  ]
+}
