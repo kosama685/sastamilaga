@@ -13,6 +13,11 @@ window.SM_CONFIG = {
   /* URL of the deployed PayPal Worker (workers/paypal), e.g. 'https://sastamilaga-paypal.<account>.workers.dev'.
      PayPal stays hidden until both paypalClientId and paypalWorker are set. */
   paypalWorker: '',
+  // Native wallets require an approved account and the independently verified same-origin wallet order service.
+  // This flag is deliberately off; do not enable until the documented service and sandbox/live gates pass.
+  walletCheckoutEnabled: false,
+  walletClientId: '', // Public REST client ID only; never a client secret.
+  walletEnvironment: 'sandbox',
   /* URL of the deployed CJ shipping Worker (workers/cj-shipping), e.g. 'https://sastamilaga-cj-shipping.<account>.workers.dev'.
      When set, global product pages show live supplier shipping prices. The CJ key stays in Cloudflare. */
   cjShippingWorker: 'https://sastamilaga-cj-shipping.usamaestonia.workers.dev',
