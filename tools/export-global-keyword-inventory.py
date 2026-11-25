@@ -85,6 +85,36 @@ with (OUT/"page-keyword-inventory.csv").open("w",encoding="utf-8-sig",newline=""
  for p in (ROOT/"data/cj/c").glob("*.js"):
   if p.stem not in seen_categories:errors.append([str(p),"unregistered shard: reconcile, do not silently omit"])
  if n!=manifest["total"]:errors.append(["CJ manifest",f"expected {manifest['total']} rows, parsed {n}"])
+ # Account for all CSV source records independently; never sum overlapping local exports as unique.
+ for p in sorted((ROOT/"products-csv").glob("*.csv")):
+  try:
+   with p.open(encoding="utf-8-sig",newline="",errors="strict") as src:
+    reader=csv.DictReader(src)
+    if not reader.fieldnames:raise ValueError("missing CSV header")
+    for i,row in enumerate(reader,2):
+     fields={str(k).strip().lower():v for k,v in row.items() if k is not None}
+     def field(*keys):return next((clean(fields.get(k)) for k in keys if clean(fields.get(k))),"")
+     ident=field("sku","variant sku","id","item id","handle") or "row-"+str(i)
+     title=field("name","title","product title")
+     category=field("categories","product category","type","google_product_category")
+     link=field("link","url","product url","permalink")
+     link=link if link.startswith(BASE+"/") else ""
+     write(w,"LOCAL_OR_FEED_SOURCE_RECORD",p.name+"|"+ident+"|"+str(i),str(p.relative_to(ROOT)),link,"","und","",title,"","commercial",category,"","SOURCE_ROW_RECONCILIATION_REQUIRED")
+     if not title:counts["source_rows_missing_title"]+=1
+  except Exception as e:errors.append([str(p),str(e)[:250]])
+ # Parse the JSON portion of the TV snapshot without executing any JavaScript.
+ try:
+  p=ROOT/"data/livetv/channels.js";raw=p.read_text(encoding="utf-8-sig")
+  marker="window.SM_LIVETV=";offset=raw.index(marker)+len(marker)
+  db,_=json.JSONDecoder().raw_decode(raw[offset:].lstrip())
+  for i,c in enumerate(db["items"]):
+   ident=str(c.get("id") or "row-"+str(i));name=clean(c.get("name"))
+   country=clean(c.get("cc") or c.get("country"));lang=clean(c.get("language"))
+   write(w,"TV_CHANNEL_RECORD",ident,str(p.relative_to(ROOT)),"",BASE+"/live-tv/?channel="+urllib.parse.quote(ident,safe=""),lang,country,name,name+" TV schedule" if name else "","watch / informational",clean(c.get("category") or c.get("cat")),BASE+"/live-tv/","PLAYBACK_RIGHTS_AND_EPG_UNVERIFIED")
+  dr=json.loads((ROOT/"data/livetv/discovery-report.json").read_text())
+  if len(db["items"])!=dr["channels"]:errors.append(["TV snapshot","discovery count drift"])
+ except Exception as e:errors.append(["TV snapshot",str(e)[:250]])
+
 with (OUT/"language-country-coverage.csv").open("w",encoding="utf-8-sig",newline="") as f:
  w=csv.writer(f);w.writerow(["dimension","code","source_status","observations","release_status"])
  langs=json.loads((ROOT/"data/i18n/languages.json").read_text())
@@ -93,7 +123,7 @@ with (OUT/"language-country-coverage.csv").open("w",encoding="utf-8-sig",newline
  for k,v in sorted(countries["results"].items()):w.writerow(["destination",k,"historical sample only",v.get("methods"),"VERIFY_VARIANT_MARKET_ADDRESS"])
 counts["language_registry"]=len(langs);counts["destination_registry"]=len(countries["results"])
 # Unlisted database/feed records and dynamic routes need a separate authenticated export and reconciliation.
-report={"counts":dict(counts),"unique_url_sources":len(urls),"cj_manifest_expected":manifest["total"],"cj_rows_parsed":n,"unique_cj_id_sku":len(ids),"errors":errors,"limitations":["Repository snapshot, not a live crawl or D1/CJ full reconciliation","Sitemap URL presence does not prove indexability","Dynamic TV shows, WordPress-only posts, upstream missing supplier records and locale/market combinations need separate evidence exports","Candidates are unmeasured; no invented volume, approval or live availability","Source paths and candidate permalinks require validation before publication"]}
+report={"counts":dict(counts),"unique_url_sources":len(urls),"cj_manifest_expected":manifest["total"],"cj_rows_parsed":n,"unique_cj_id_sku":len(ids),"errors":errors,"limitations":["Repository snapshot, not a live crawl or D1/CJ full reconciliation","Sitemap URL presence does not prove indexability","Dynamic TV programmes/EPG, WordPress-only posts, upstream missing supplier records and locale/market combinations need separate evidence exports","Candidates are unmeasured; no invented volume, approval or live availability","Source paths and candidate permalinks require validation before publication"]}
 (OUT/"coverage.json").write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print(json.dumps(report,ensure_ascii=False)[:12000])
 if errors:sys.exit(1)
