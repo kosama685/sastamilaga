@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {DatabaseSync} from 'node:sqlite';
+import {readFileSync} from 'node:fs';
+import {candidate,categoryMap,UPSERT} from './sync-facet-freight.mjs';
+const cats=categoryMap({cats:[{n:'Smart Watches',s:'smart-watches'}]});
+const now=1000000,r={source:'cj_api',quantity:1,zip_code:'',country_code:'PK',product_id:'p',variant_id:'v',categories:'Smart Watches',identity_count:1,fetched_at:900,expires_at:1200,rates_json:'[{"carrier":"test","amountUsd":0}]'};
+test('valid exact freight never approves stock',()=>{const p=candidate(r,cats,now);assert.equal(p[6],'UNKNOWN');assert.equal(p[7],'QUOTED');assert.equal(p[11],1200000)});
+for(const patch of [{source:'unknown'},{quantity:2},{zip_code:'12345'},{country_code:'pk'},{variant_id:''},{identity_count:2},{expires_at:1000},{fetched_at:1001},{expires_at:9000000000000},{rates_json:'[]'},{rates_json:'[{"carrier":"x","amountUsd":null}]'},{rates_json:'[{"carrier":"x","amountUsd":-1}]'},{categories:'missing'}])test('hold '+JSON.stringify(patch),()=>assert.equal(candidate({...r,...patch},cats,now),null));
+test('ambiguous category mapping held',()=>assert.equal(candidate(r,categoryMap({cats:[{n:'Smart Watches',s:'a'},{n:'Smart Watches',s:'b'}]}),now),null));
+test('upsert never overwrites stock or extends older quote',()=>{const db=new DatabaseSync(':memory:');db.exec(readFileSync(new URL('./migrations/20261125-catalog-facet-evidence.sql',import.meta.url),'utf8'));const stmt=db.prepare(UPSERT);const p=candidate(r,cats,now);p[6]='WAREHOUSE_POSITIVE';p[12]='independent stock fixture';stmt.run(...p);const next=candidate({...r,fetched_at:950,expires_at:1250},cats,now);stmt.run(...next);stmt.run(...p);const x=db.prepare('SELECT * FROM catalog_facet_variant_market').get();assert.equal(x.stock_state,'WAREHOUSE_POSITIVE');assert.equal(x.stock_evidence_ref,'independent stock fixture');assert.equal(x.delivery_expires_at,1250000);});
