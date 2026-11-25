@@ -177,7 +177,7 @@
     const fields={q:'gq',min:'gmin',max:'gmax',sort:'gsort',video:'gvid',country:'gcountry',delivery:'gdelivery',stock:'gstock',brand:'gbrand',model:'gmodel'};
     const raw=()=>Object.fromEntries(Object.entries(fields).map(([k,id])=>[k,el(id).type==='checkbox'?el(id).checked:el(id).value]));
     let limit=60,evidence=new Map(),requestId=0,abort=null,expiryTimer=null,loading=false,failed=false;
-    const q0=new URLSearchParams(qs||'');el('gq').value=q0.get('q')||'';
+    const q0=new URLSearchParams(qs||'');el('gq').value=(q0.get('q')||'').slice(0,160);for(const k of ['min','max'])if(q0.has(k))el(fields[k]).value=q0.get(k);if(['low','high','az'].includes(q0.get('sort')))el('gsort').value=q0.get('sort');el('gvid').checked=q0.get('video')==='1';
     const country0=String(q0.get('country')||window.SMMarket?.state()?.country||'').toUpperCase();el('gcountry').value=/^[A-Z]{2}$/.test(country0)?country0:'';
     function write(next){
       for(const [k,id] of Object.entries(fields)){const x=el(id);if(x.type==='checkbox')x.checked=next[k]===true;else x.value=next[k]??'';}
@@ -211,13 +211,12 @@
       if(!/^[A-Z]{2}$/.test(country)){el('gevidence').textContent='Select a two-letter delivery country to check evidence.';draw();return;}
       loading=true;el('gevidence').textContent='Loading recent evidence for '+country+'…';draw();
       try{
-        const result=await facets.loadEvidence({category:cs,country,signal:abort.signal,endpoint:A.LIVE_URL+'/api/catalog-facets/v1'});
+        const result=await facets.loadEvidence({category:cs,country,signal:abort.signal,endpoint:new URL('/api/catalog-facets/v1',A.LIVE_URL).href});
         if(!alive()||my!==requestId)return;
         evidence=result;loading=false;
         const ids=new Set(products.map(p=>p.id));const checked=[...evidence.keys()].filter(id=>ids.has(id)).length;
         el('gevidence').textContent=checked+' of '+products.length+' snapshot products have recent evidence for at least one attribute. Missing evidence is unknown. Recheck your exact option and address before ordering.';
-        const times=[...evidence.values()].flatMap(x=>[x.attributeUntil,x.stockUntil,x.deliveryUntil,x.bothUntil]).filter(t=>Number.isSafeInteger(t)&&t>Date.now());
-        if(times.length){const delay=Math.min(2147483647,Math.max(1,Math.min(...times)-Date.now()+5));expiryTimer=setTimeout(()=>{if(alive()){options('brand');options('model');draw();el('gevidence').textContent='Some evidence may have expired. Refresh to check current data.';}},delay);}
+        function scheduleExpiry(){if(!alive()||my!==requestId)return;let soon=Infinity;for(const x of evidence.values())for(const t of [x.attributeUntil,x.stockUntil,x.deliveryUntil,x.bothUntil])if(Number.isSafeInteger(t)&&t>Date.now())soon=Math.min(soon,t);if(Number.isFinite(soon))expiryTimer=setTimeout(()=>{if(alive()&&my===requestId){options('brand');options('model');draw();el('gevidence').textContent='Some evidence may have expired. Refresh to check current data.';scheduleExpiry();}},Math.min(2147483647,Math.max(1,soon-Date.now()+5)));}scheduleExpiry();
       }catch(e){if(!alive()||my!==requestId)return;failed=true;loading=false;evidence=new Map();el('gevidence').textContent='Evidence service unavailable. Unchecked products remain visible unless a strict filter is selected.';}
       options('brand');options('model');draw();
     }
@@ -225,7 +224,7 @@
       const event=key==='country'?'change':'input';
       el(id).addEventListener(event,()=>{limit=60;if(key==='country')void refresh();else draw();});
     }
-    el('gclear').onclick=()=>{write({country:el('gcountry').value});limit=60;draw();};
+    el('gclear').onclick=()=>{write({});limit=60;void refresh();};
     el('gretry').onclick=()=>{limit=60;void refresh();};
     el('gmore').onclick=()=>{limit+=60;draw();};
     draw();void refresh();
