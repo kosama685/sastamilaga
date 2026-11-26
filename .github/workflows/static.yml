@@ -43,6 +43,23 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: '20'
+      - name: Repair exact exported product-ID title suffixes and stage only validated title edits
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s tools -p test_repair_product_titles.py -v
+          python3 tools/repair_product_titles.py --write --report "$RUNNER_TEMP/product-title-repair.csv"
+          python3 tools/repair_product_titles.py --check --report "$RUNNER_TEMP/product-title-remaining.csv"
+          git diff --name-only | python3 -c 'import sys,re; p=[x.strip() for x in sys.stdin if x.strip()]; assert all(re.fullmatch(r"p/[^/]+\.html",x) for x in p); print("validated title-only pages",len(p))'
+          git add -u -- p/
+      - name: Preserve product title audit reports
+        uses: actions/upload-artifact@v7
+        with:
+          name: production-title-integrity-report
+          path: |
+            ${{ runner.temp }}/product-title-repair.csv
+            ${{ runner.temp }}/product-title-remaining.csv
+          retention-days: 30
       - name: Syntax check of the site scripts (a broken script must never be deployed)
         run: |
           for f in app.js assets/js/*.js; do node --check "$f" || exit 1; done
@@ -117,7 +134,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "Verified global category SEO, public storefront shells and CJ lookup unchanged."
           else
-            git commit -m "data: persist checked supplier categories and public shop/search shells [skip ci]"
+            git commit -m "data: persist validated product titles, supplier categories and public shop/search shells [skip ci]"
             # User merges and other Pages jobs can advance main while we build.
             # Never force-push or overwrite newer changes. Rebase only our
             # deterministic generated artifact commit; auto-stash uncommitted build files
