@@ -38,7 +38,7 @@ test('changes to options and quantity requote shipping and update landed-price e
 
 test('the selected CJ carrier is preserved in the real cart and payment calculation', () => {
   assert.match(product, /shipAmt: state\.ship \? state\.ship\.amt/);
-  assert.match(product, /if \(!state\.ship\)/);
+  assert.match(product, /if \(!state\.ship \|\| !quoteCurrent\(state\.ship\)\)/);
   assert.match(bridge, /shipAmt: Number\(row\.shipAmt\)/);
   assert.match(bridge, /if \(same && \(same\.ship \|\| item\.ship\)\) return/);
   assert.match(cart, /a carrier quote applies/i);
@@ -50,7 +50,7 @@ test('the selected CJ carrier is preserved in the real cart and payment calculat
 
 test('product page includes cache-busted shipping widget assets', () => {
   assert.match(template, /global-pdp\.css\?v=20261123-shipping/);
-  assert.match(template, /global-pdp\.js\?v=20261123-shipping/);
+  assert.match(template, /global-pdp\.js\?v=20261126-scoped-shipping/);
 });
 
 test('CJ real example: one US$3.30 item plus 3 quoted carriers', () => {

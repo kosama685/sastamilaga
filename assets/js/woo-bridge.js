@@ -57,7 +57,7 @@
     var item = {
       id: clean(row.id, 64), sku: clean(row.sku, 80), name: clean(row.name, 240) || 'Global item', img: /^https:\/\//i.test(row.img || '') ? clean(row.img, 500) : '',
       vkey: clean(row.vkey, 120), vname: clean(row.vname, 160), unit: Math.round(unit * 100) / 100, qty: qtyOk(row.qty), opt: clean(row.opt, 120),
-      ship: clean(row.ship, 160), shipAmt: Number(row.shipAmt) > 0 ? Number(row.shipAmt) : 0, shipCur: clean(row.shipCur || 'USD', 3), url: clean(row.url, 500), cs: clean(row.cs, 80)
+      ship: clean(row.ship, 160), shipAmt: Number(row.shipAmt) > 0 ? Number(row.shipAmt) : 0, shipCur: clean(row.shipCur || 'USD', 3), shipCountry: clean(row.shipCountry,2), shipZip: clean(row.shipZip,12), shipQty: Number(row.shipQty)||0, shipExpiresAt: Number(row.shipExpiresAt)||0, url: clean(row.url, 500), cs: clean(row.cs, 80)
     };
     var key = [item.id, item.opt, item.vkey].join('|'), rows = read('sm_gcart');
     var same = rows.filter(function (x) { return [x.id, x.opt || '', x.vkey || ''].join('|') === key; })[0];

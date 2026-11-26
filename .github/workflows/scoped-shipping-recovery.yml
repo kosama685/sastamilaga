@@ -1,0 +1,34 @@
+name: Exact destination shipping recovery
+on:
+  pull_request:
+    paths:
+      - 'assets/js/global-pdp.js'
+      - 'assets/templates/global-pdp.html'
+      - 'tools/scoped-shipping-recovery.test.mjs'
+      - 'tools/cj-shipping-product-ux.test.mjs'
+      - '.github/workflows/scoped-shipping-recovery.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - run: node --check assets/js/global-pdp.js
+      - run: node --test tools/scoped-shipping-recovery.test.mjs tools/cj-shipping-product-ux.test.mjs tools/github-only-commerce.test.mjs
+      - name: Bounded production shipping diagnostic (one known variant, no order)
+        run: |
+          node --input-type=module <<'JS'
+          const u=new URL('https://sastamilaga.com/api/cj/shipping');
+          for(const [k,v] of Object.entries({pid:'BF76AEC9-F4A7-4D2D-BC89-46F1CB8EC7C6',vid:'1A93436A-C7DD-437B-AC31-4351E1DED664',country:'PK',quantity:'1'}))u.searchParams.set(k,v);
+          try {
+            const r=await fetch(u,{signal:AbortSignal.timeout(25000),redirect:'error'});const j=await r.json();
+            console.log(JSON.stringify({status:r.status,error:j.error||null,source:j.source||null,country:j.country||null,methods:Array.isArray(j.rates)?j.rates.length:null,checkedAt:j.checkedAt||null}));
+            if(r.ok && j.rates?.length) { if(j.pid!==u.searchParams.get('pid')||j.vid!==u.searchParams.get('vid')||j.country!=='PK'||j.quantity!==1||j.currency!=='USD'||j.liveQuoteWithinTTL!==true)throw new Error('production scope mismatch'); }
+          } catch(e) { if(e.message==='production scope mismatch')throw e; console.log('Public diagnostic unavailable: '+e.name); }
+          JS

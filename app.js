@@ -1679,7 +1679,7 @@ const gFmt = n => (window.SMGCart ? window.SMGCart.fmt(n) : '$' + Number(n).toFi
 const gSub = () => gLines().reduce((s, x) => s + x.unit * x.qty, 0);
 function globalBlock(G) {
   if (!G.length) return '';
-  return `<section class="sm-gco" style="grid-column:1/-1" aria-label="Global items"><h3 style="margin:0 0 4px">Global items (prepaid)</h3><p class="product-meta" style="margin:0 0 10px">Shipped from our supplier. Checkout refreshes available carrier quotes for the selected destination before online payment.</p><label style="display:block;margin-bottom:10px"><span>Delivery country (two-letter code, e.g. PK, SA, GB, US)</span><input name="delivery_country" aria-label="Delivery country code" autocomplete="country" maxlength="2" pattern="[A-Za-z]{2}" required value="${esc(checkoutMarketCountry())}"></label>${G.map(x => `<div class="cart-line"><img src="${esc(x.img)}" alt="${esc(x.name)}" width="64" height="64" onerror="this.src=window.fallbackImg"><div><b>${esc(x.name)}</b><p style="color:var(--muted);margin:4px 0">${x.vname ? esc(x.vname) + ' · ' : ''}Qty ${x.qty} · ${gFmt(x.unit * x.qty)}${x.ship ? '<br>Shipping: ' + esc(x.ship) : '<br>Shipping: confirmed on WhatsApp'}</p></div></div>`).join('')}</section>`;
+  return `<section class="sm-gco" style="grid-column:1/-1" aria-label="Global items"><h3 style="margin:0 0 4px">Global items (prepaid)</h3><p class="product-meta" style="margin:0 0 10px">Shipped from our supplier. Checkout refreshes available carrier quotes for the selected destination before online payment.</p><label style="display:block;margin-bottom:10px"><span>Delivery country (two-letter code, e.g. PK, SA, GB, US)</span><input name="delivery_country" aria-label="Delivery country code" autocomplete="country" maxlength="2" pattern="[A-Za-z]{2}" required value="${esc(checkoutInitialCountry(G))}"></label><label style="display:block;margin-bottom:10px"><span>Delivery postcode (if applicable)</span><input name="delivery_postcode" aria-label="Delivery postcode" autocomplete="postal-code" maxlength="12" value="${esc(checkoutInitialPostcode(G))}"></label>${G.map(x => `<div class="cart-line"><img src="${esc(x.img)}" alt="${esc(x.name)}" width="64" height="64" onerror="this.src=window.fallbackImg"><div><b>${esc(x.name)}</b><p style="color:var(--muted);margin:4px 0">${x.vname ? esc(x.vname) + ' · ' : ''}Qty ${x.qty} · ${gFmt(x.unit * x.qty)}${x.ship ? '<br>Shipping: ' + esc(x.ship) : '<br>Shipping: confirmed on WhatsApp'}</p></div></div>`).join('')}</section>`;
 }
 function summaryBox(sub, onCheckout, G = []) {
   if (G.length) {
@@ -1873,12 +1873,15 @@ function cartInCur(rates, cur, G = gLines(), totalPkr = checkoutTotals().totalPk
 function checkoutMarketCountry() {
   try { const c = String(window.SMMarket?.state()?.country || JSON.parse(localStorage.getItem('sm_market') || '{}').country || 'PK').toUpperCase(); return /^[A-Z]{2}$/.test(c) ? c : ''; } catch (_) { return ''; }
 }
+function checkoutInitialCountry(rows) { const codes=[...new Set(rows.map(x=>x.shipCountry).filter(Boolean))];return codes.length===1?codes[0]:checkoutMarketCountry(); }
+function checkoutInitialPostcode(rows) { const z=[...new Set(rows.map(x=>x.shipZip||''))];return z.length===1?z[0]:''; }
+function checkoutPostcode() { return String(document.getElementById('checkoutForm')?.elements.delivery_postcode?.value||'').trim(); }
 function checkoutCountry() {
   const field = document.getElementById('checkoutForm')?.elements.delivery_country;
   return String(field ? field.value : checkoutMarketCountry()).trim().toUpperCase();
 }
 function paymentFingerprint() {
-  return JSON.stringify({local: checkoutTotals().lines.map(x => [x.p.id, x.qty, price(x.p)]), global: gLines(), country: checkoutCountry(), currency: paypalCurrency()});
+  return JSON.stringify({local: checkoutTotals().lines.map(x => [x.p.id, x.qty, price(x.p)]), global: gLines(), country: checkoutCountry(), postcode:checkoutPostcode(), currency: paypalCurrency()});
 }
 function shippingFailure(detail) {
   const e = new Error('shipping'); e.detail = detail; return e;
@@ -1889,22 +1892,21 @@ async function checkoutJSON(url, options) {
   return r.json();
 }
 // Resolve a real variant before requesting freight. Never let the freight API fall back to its first variant.
-async function recoverCheckoutFreight(rows, country) {
+async function recoverCheckoutFreight(rows, country, postcode='') {
   if (!rows.length) return [];
-  if (!/^[A-Z]{2}$/.test(country)) throw shippingFailure('Enter your delivery country code first.');
+  if (!/^[A-Z]{2}$/.test(country)||!/^[A-Za-z0-9 -]{0,12}$/.test(postcode)) throw shippingFailure('Check delivery country and postcode first.');
   if (rows.length > 20) throw shippingFailure('For more than 20 global item lines, please request a combined delivery quotation.');
-  const worker = String((window.SM_CONFIG || {}).cjShippingWorker || '').replace(/\/$/, '');
-  if (!/^https:\/\//.test(worker)) throw shippingFailure('The supplier shipping service is not configured.');
+  const worker = 'https://sastamilaga.com';
   const result = [];
   const variantsByProduct = new Map();
   for (const row of rows) {
     const id = String(row.id || ''), selected = String(row.vkey || '').trim(), quantity = Number(row.qty);
-    if (!/^[A-Za-z0-9-]{8,64}$/.test(id) || !selected || !Number.isInteger(quantity) || quantity < 1 || quantity > 99 || !Number.isFinite(Number(row.unit)) || Number(row.unit) <= 0)
+    if (!/^[A-Za-z0-9-]{8,64}$/.test(id) || !selected || !Number.isInteger(quantity) || quantity < 1 || quantity > 20 || !Number.isFinite(Number(row.unit)) || Number(row.unit) <= 0)
       throw shippingFailure('Select the exact available variation and quantity for ' + String(row.name || 'this item') + ' on its product page, then update the cart.');
     try {
       if (!variantsByProduct.has(id)) {
-        const product = await checkoutJSON(worker + '/api/cj/product?pid=' + encodeURIComponent(id));
-        if (String(product.pid || '') !== id || product.currency !== 'USD' || !Array.isArray(product.variants)) throw Error('product_identity');
+        const product = await checkoutJSON(worker + '/api/cj/variants?pid=' + encodeURIComponent(id));
+        if (String(product.pid || '').toUpperCase() !== id.toUpperCase() || product.stale!==false || !Array.isArray(product.variants)) throw Error('product_identity');
         variantsByProduct.set(id, product.variants);
       }
       const variants = variantsByProduct.get(id);
@@ -1912,15 +1914,17 @@ async function recoverCheckoutFreight(rows, country) {
       const matches = exact.length ? exact : variants.filter(v => String(v.sku || '') === selected);
       if (matches.length !== 1 || !/^[A-Za-z0-9-]{8,64}$/.test(String(matches[0].vid || ''))) throw shippingFailure('The saved variation for ' + String(row.name || 'this item') + ' is no longer recognized. Select its exact option again.');
       const variant = matches[0];
-      const quote = await checkoutJSON(worker + '/api/cj/shipping', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({country,items:[{pid:id,vid:variant.vid,sku:variant.sku,qty:quantity}]})});
-      if (quote.country !== country || quote.currency !== 'USD' || quote.unavailable?.length || !Array.isArray(quote.methods)) throw Error('destination_mismatch');
-      const methods = quote.methods.filter(m => m && typeof m.name === 'string' && m.name.trim() && typeof m.price === 'number' && Number.isFinite(m.price) && m.price >= 0).sort((a,b)=>a.price-b.price);
+      const qs=new URLSearchParams({pid:id,vid:String(variant.vid),country,quantity:String(quantity),zip:postcode});
+      const quote=await checkoutJSON(worker+'/api/cj/shipping?'+qs.toString(),{method:'GET',cache:'no-store',credentials:'omit'});
+      const checked=typeof quote.checkedAt==='number'?quote.checkedAt*1000:NaN;
+      if (String(quote.pid).toUpperCase()!==id.toUpperCase()||quote.vid!==String(variant.vid)||quote.country!==country||quote.quantity!==quantity||String(quote.zip||'')!==postcode||quote.currency!=='USD'||quote.liveQuoteWithinTTL!==true||!['cache','cj_api'].includes(quote.source)||!Number.isSafeInteger(checked)||checked>Date.now()||checked+7200000<=Date.now()||!Array.isArray(quote.rates))throw Error('scope_mismatch');
+      const methods=quote.rates.filter(m=>m&&typeof m.carrier==='string'&&m.carrier.trim()&&typeof m.shippingUsd==='number'&&Number.isFinite(m.shippingUsd)&&m.shippingUsd>=0).map(m=>({name:m.carrier,price:m.shippingUsd})).sort((a,b)=>a.price-b.price);
       if (!methods.length) throw Error('no_rates');
       const old = String(row.ship || '');
       const preferred = methods.find(m => old === m.name || old.startsWith(m.name + ' · ') || old.startsWith(m.name + ' — '));
       const choice = preferred || methods[0];
       const shipAmt = Math.round(choice.price * 100) / 100;
-      result.push({...row, vkey:String(variant.vid), sku:String(variant.sku || row.sku || ''), qty:quantity, ship:choice.name + ' · USD ' + shipAmt.toFixed(2), shipAmt, shipCur:'USD', shipCountry:country, shipQty:quantity, shipCarrier:choice.name, shipSelection:preferred?'retained':'lowest_available'});
+      result.push({...row, vkey:String(variant.vid), sku:String(variant.sku || row.sku || ''), qty:quantity, ship:choice.name + ' · USD ' + shipAmt.toFixed(2), shipAmt, shipCur:'USD', shipCountry:country, shipZip:postcode, shipQty:quantity, shipExpiresAt:checked+7200000, shipCarrier:choice.name, shipSelection:preferred?'retained':'lowest_available'});
     } catch (e) {
       if (e.message === 'shipping') throw e;
       throw shippingFailure('No delivery quote could be verified for ' + String(row.name || 'this item') + ' to ' + country + '. Check the destination or request a quotation.');
@@ -1932,7 +1936,7 @@ async function payAmount() {
   const fingerprint = paymentFingerprint(), country = checkoutCountry(), cur = paypalCurrency(), { totalPkr } = checkoutTotals();
   const globalRows = gLines();
   if (globalRows.length && totalPkr > 0 && country !== 'PK') throw shippingFailure('Local Pakistan items cannot be included in an international online payment. Request a combined quotation.');
-  const G = await recoverCheckoutFreight(globalRows, country);
+  const G = await recoverCheckoutFreight(globalRows, country, checkoutPostcode());
   if (G.some(x => !x.ship || !Number.isFinite(x.shipAmt) || x.shipAmt < 0)) throw new Error('shipping');
   const r = await checkoutJSON('https://open.er-api.com/v6/latest/PKR');
   const rate = r?.rates?.[cur];
@@ -1945,7 +1949,7 @@ async function payAmount() {
 }
 let preparedPayment = null, orderSubmitting = false;
 function paymentReady() {
-  return preparedPayment && Date.now() - preparedPayment.checkedAt < 15*60000 && preparedPayment.fingerprint === paymentFingerprint();
+  return preparedPayment && Date.now() - preparedPayment.checkedAt < 15*60000 && preparedPayment.fingerprint === paymentFingerprint() && (preparedPayment.globalRows||[]).every(x=>Number(x.shipExpiresAt)>Date.now());
 }
 const WALLET_PENDING_KEY = 'sm_wallet_pending_v1';
 let walletModulePromise = null;
@@ -2040,7 +2044,7 @@ function syncPay() {
     const retry=document.createElement('button'); retry.type='button'; retry.className='ghost-btn'; retry.textContent='Refresh delivery & total'; retry.addEventListener('click',syncPay); amt.append(' ',retry);
   });
 }
-document.addEventListener('change', e => { if (e.target.matches && e.target.matches('#checkoutForm select[name="payment_method"], #checkoutForm input[name="delivery_country"]')) syncPay(); });
+document.addEventListener('change', e => { if (e.target.matches && e.target.matches('#checkoutForm select[name="payment_method"], #checkoutForm input[name="delivery_country"], #checkoutForm input[name="delivery_postcode"]')) syncPay(); });
 window.addEventListener('sm:market', () => { const field = document.getElementById('checkoutForm')?.elements.delivery_country; if(field) field.value = checkoutMarketCountry(); syncPay(); });
 document.addEventListener('sm:cart-changed', () => { if (document.getElementById('checkoutForm') && !orderSubmitting) syncPay(); });
 document.addEventListener('sasta:rendered',()=>{if(walletPending()&&document.getElementById('checkoutForm'))walletHoldMessage(document.getElementById('smPay'),document.getElementById('smPayAmt'));});
