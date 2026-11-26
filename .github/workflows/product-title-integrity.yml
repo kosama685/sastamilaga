@@ -1,0 +1,31 @@
+name: Product title integrity and repair preview
+on:
+  pull_request:
+    paths:
+      - 'p/**'
+      - 'tools/repair_product_titles.py'
+      - 'tools/test_repair_product_titles.py'
+      - '.github/workflows/product-title-integrity.yml'
+      - '.github/workflows/static.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - run: python3 -m unittest discover -s tools -p test_repair_product_titles.py -v
+      - name: Full catalog title-only dry-run and write verification
+        run: |
+          python3 tools/repair_product_titles.py --write --report "$RUNNER_TEMP/product-title-repair.csv"
+          python3 tools/repair_product_titles.py --check --report "$RUNNER_TEMP/product-title-remaining.csv"
+          git diff --name-only | python3 -c 'import sys,re; p=[x.strip() for x in sys.stdin if x.strip()]; assert p and all(re.fullmatch(r"p/[^/]+\.html",x) for x in p); print("changed_product_pages",len(p))'
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: title-integrity-report
+          path: |
+            ${{ runner.temp }}/product-title-repair.csv
+            ${{ runner.temp }}/product-title-remaining.csv
