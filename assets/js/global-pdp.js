@@ -393,6 +393,7 @@
         id: String(P.pid), sku: String(o.sku || P.sku || P.pid), name: String(P.name || 'Global supplier product'), img: o.image || P.image || '',
         vkey: String(o.vid || ''), vname: String(o.name || o.sku || ''), unit: Number(o.usd), qty: qty(),
         ship: state.ship ? state.ship.label : '', shipAmt: state.ship ? state.ship.amt : 0, shipCur: state.ship ? state.ship.cur : 'USD',
+        shipCountry:cartShip.scope.country, shipZip:cartShip.scope.zip, shipQty:cartShip.scope.quantity, shipExpiresAt:cartShip.expiresAt,
         url: location.href.split('#')[0]
       });
       if (!res.ok) throw new Error(res.message);
