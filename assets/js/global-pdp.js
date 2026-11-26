@@ -17,6 +17,10 @@
   // Header links to /cart/ and /checkout/ (WordPress paths on sastamilaga.com) are sent to the static cart by assets/js/woo-bridge.js.
   var COUNTRY_NAMES = {}; try { COUNTRY_NAMES = new Intl.DisplayNames(['en'], { type: 'region' }); } catch (e) { COUNTRY_NAMES = null; }
   function countryName(cc) { try { return (COUNTRY_NAMES && COUNTRY_NAMES.of(cc)) || cc; } catch (e) { return cc; } }
+  // ISO 3166-1 alpha-2 registry. Membership is not shipping eligibility.
+  var ISO_COUNTRIES = new Set('AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW'.split(' '));
+  function normalizeCountry(value) { var c=String(value||'').trim().toUpperCase(); return ISO_COUNTRIES.has(c)?c:''; }
+  function destination() { return normalizeCountry(state.deliveryCountry || wanted() || state.country); }
   function money(usd) { return 'US$' + Number(usd).toFixed(2); }
   function amount(n, cur) {
     if (!Number.isFinite(Number(n))) return 'Unavailable';
@@ -35,7 +39,7 @@
   function orderAmounts() {
     if (!state.option || !(Number(state.option.usd) > 0)) return null;
     var base = Number(state.option.usd) * qty(), ship = state.ship;
-    if (!ship) return { baseUsd: base, subtotal: money(base), shipping: 'Choose delivery', total: '', totalCurrency: '' };
+    if (!ship) return { baseUsd: base, subtotal: money(base), shipping: state.quoteStatus === 'unavailable' ? 'Quote required' : 'Choose delivery', total: '', totalCurrency: '' };
     var cur = String(ship.cur || 'USD').toUpperCase(), itemInCur = fxUsd(base, cur);
     var valid = Number.isFinite(Number(itemInCur)) && itemInCur !== null && Number.isFinite(Number(ship.amt)) && Number(ship.amt) >= 0;
     return { baseUsd: base, subtotal: valid ? amount(itemInCur, cur) : money(base),
@@ -66,7 +70,7 @@
     priceValues.items.term.textContent = 'Items (' + qty() + ' × ' + money(state.option.usd) + ')';
     priceValues.items.value.textContent = p.subtotal;
     priceValues.shipping.value.textContent = p.shipping;
-    priceValues.total.value.textContent = p.total || (state.ship ? 'Conversion pending · shown at checkout' : 'Select a shipping method');
+    priceValues.total.value.textContent = p.total || (state.ship ? 'Conversion pending · shown at checkout' : (state.quoteStatus === 'unavailable' ? 'Shipping confirmation pending' : 'Select a shipping method'));
     pricePanel.classList.toggle('is-ready', !!p.total);
     var target = wantedCurrency();
     // The final amount stays in the carrier's quotation currency; payment is converted only in checkout.
@@ -186,9 +190,9 @@
     var o = state.option, p = orderAmounts();
     var msg = 'Assalam o Alaikum! I want to order:\n' + P.name +
       (o ? '\nOption: ' + o.name : '') + '\nQuantity: ' + qty() +
-      (state.country ? '\nDeliver to: ' + countryName(state.country) : '') +
+      (destination() ? '\nDeliver to: ' + countryName(destination()) : '\nDestination: not selected') + (state.postcode ? '\nPostcode: ' + state.postcode : '') + (o ? '\nVariant reference: ' + o.vid + '\nSKU: ' + o.sku : '') +
       (o && o.usd ? '\nUnit price estimate: ' + money(o.usd) : '') +
-      (state.ship ? '\nSelected carrier: ' + state.ship.name + '\nShipping estimate: ' + amount(state.ship.amt, state.ship.cur) : '\nShipping: awaiting carrier selection') +
+      (state.ship ? '\nSelected carrier: ' + state.ship.name + '\nShipping estimate: ' + amount(state.ship.amt, state.ship.cur) : '\nShipping: quote required; no payment authorised') +
       (p && p.total ? '\nEstimated items + shipping: ' + p.total : '') + '\n' + P.url +
       '\nPlease confirm stock, final carrier rates, duties and payable total.';
     els.wa.href = 'https://wa.me/' + (P.wa || '966510451995') + '?text=' + encodeURIComponent(msg);
@@ -216,18 +220,18 @@
   }
 
   /* ---- Live CJ carrier picker. A supplier quote is NOT a payment authorization. ---- */
-  var dTimer = 0, dSeq = 0;
+  var dTimer = 0, dSeq = 0, dAbort = null, expiryTimer = 0;
   function setOrderable(yes) {
     var can=!!(state.option&&state.option.vid);
-    can = can && !!yes && !!state.ship; // Verified carrier quote is also required.
+    can = can && !!yes && !!state.ship && quoteCurrent(state.ship); // Verified carrier quote is also required.
     els.add.disabled = !can; els.buy.disabled = !can;
   }
   function selectMethod(method) {
-    if (!method) return;
+    if (!method || !quoteCurrent(method)) { shippingWarning('The carrier quotation expired or the selection changed. Refresh delivery.'); return; }
     state.preferredCarrier = method.name;
     state.ship = {
       key: method.key, name: method.name, amt: method.cost, cur: method.currency,
-      days: method.days, label: method.name + ' · ' + amount(method.cost, method.currency) +
+      days: method.days, scope: method.scope, expiresAt: method.expiresAt, label: method.name + ' · ' + amount(method.cost, method.currency) +
         (method.days ? ' (' + method.days + ' days estimated)' : '')
     };
     [].forEach.call(els.delivery.querySelectorAll('input[name="gpdp-shipping-method"]'), function (input) {
@@ -235,6 +239,7 @@
       var label = input.closest('.gpdp-ship-method');
       if (label) label.classList.toggle('is-selected', input.checked);
     });
+    clearTimeout(expiryTimer); expiryTimer=setTimeout(function(){ shippingWarning('The carrier quotation expired. Refresh delivery to obtain current rates.'); },Math.max(0,state.ship.expiresAt-Date.now()));
     renderPriceSummary(); updateWa(); setOrderable(true);
   }
   function renderMethods(methods, destination, note) {
@@ -270,8 +275,11 @@
     selectMethod(selected);
   }
   function shippingWarning(message) {
-    state.ship = null; state.shipMethods = []; els.delivery.hidden = false;
+    clearTimeout(expiryTimer); state.quoteStatus='unavailable'; state.ship = null; state.shipMethods = []; els.delivery.hidden = false;
     els.delivery.className = 'gpdp-delivery is-warn'; els.delivery.textContent = message;
+    var actions=document.createElement('div'); actions.style.cssText='display:flex;gap:10px;flex-wrap:wrap;margin-top:10px';
+    var retry=document.createElement('button');retry.type='button';retry.className='gpdp-opt';retry.textContent='Retry delivery quote';retry.addEventListener('click',checkDelivery);actions.appendChild(retry);
+    var request=document.createElement('a');request.textContent='Request shipping confirmation';request.className='gpdp-opt';request.target='_blank';request.rel='noopener';updateWa();request.href=els.wa.href;actions.appendChild(request);els.delivery.appendChild(actions);
     renderPriceSummary(); updateWa(); setOrderable(false);
   }
   function normaliseWp(quotes, currency) {
@@ -281,70 +289,79 @@
         days: String(q.estimate || q.days || ''), currency: String(currency || 'USD').toUpperCase()
       }; }).sort(function (x, y) { return x.cost - y.cost; });
   }
+  function quoteScope(o,cc,quantity,zip) { return {pid:String(P.pid).toUpperCase(),vid:String(o.vid),country:cc,quantity:quantity,zip:zip}; }
+  function scopeKey(x) { return JSON.stringify([x.pid,x.vid,x.country,x.quantity,x.zip]); }
+  function quoteCurrent(method) {
+    return !!(method && method.scope && state.option && Number.isFinite(method.expiresAt) && method.expiresAt>Date.now() &&
+      scopeKey(method.scope)===scopeKey(quoteScope(state.option,destination(),qty(),state.postcode||'')));
+  }
+  function parseScopedQuote(d,scope,now) {
+    if(!d||d.currency!=='USD'||d.liveQuoteWithinTTL!==true||!['cache','cj_api'].includes(d.source)||
+      String(d.pid).toUpperCase()!==scope.pid||d.vid!==scope.vid||d.country!==scope.country||
+      d.quantity!==scope.quantity||String(d.zip||'')!==scope.zip||!Array.isArray(d.rates))return [];
+    var checked=Number(d.checkedAt)*1000;
+    if(!Number.isSafeInteger(checked)||checked<=0||checked>now||checked+7200000<=now)return [];
+    return d.rates.filter(function(r){return r&&typeof r.carrier==='string'&&r.carrier.trim()&&typeof r.shippingUsd==='number'&&Number.isFinite(r.shippingUsd)&&r.shippingUsd>=0;})
+      .map(function(r,i){return {key:'cj:'+i,name:r.carrier,cost:r.shippingUsd,days:String(r.eta||''),currency:'USD',scope:scope,expiresAt:checked+7200000};})
+      .sort(function(a,b){return a.cost-b.cost;});
+  }
+  function quoteError(code,status) {
+    if(code==='daily_budget')return 'Live carrier checks have reached their daily service limit. Request shipping confirmation or try again later.';
+    if(status===429||code==='qps_wait')return 'The carrier service is busy. Retry delivery shortly or request confirmation.';
+    if(code==='variant_not_found_for_product')return 'This option could not be verified. Select an available option again.';
+    if(code==='invalid_shipping_request')return 'Check the selected destination, postcode and quantity.';
+    if(code==='postcode_required')return 'Enter your delivery postcode and retry.';
+    if(code==='no_cj_method')return 'No carrier returned a rate for this exact option and address. Request shipping confirmation.';
+    return 'No verified carrier quote is available right now. Retry, change the destination or request shipping confirmation. No payment is due.';
+  }
   function checkDelivery() {
-    clearTimeout(dTimer);
-    var seq = ++dSeq;
-    state.ship = null; state.shipMethods = [];
-    renderPriceSummary(); updateWa(); setOrderable(false);
-    if (!state.option) return;
-    els.delivery.hidden = false; els.delivery.className = 'gpdp-delivery is-loading';
-    els.delivery.textContent = 'Finding available delivery options for your selected product and quantity…';
-    dTimer = setTimeout(function () {
-      var o = state.option, cc = state.country || wanted() || 'PK', supplierPending = null;
-      var slowShip = setTimeout(function () {
-        if (seq === dSeq && !state.ship) supplierPending = workerShip(o, seq);
-      }, 5000);
-      context().then(function () {
-        if (seq !== dSeq) return null;
-        cc = state.country || wanted() || cc;
-        return api('/wp-json/gdcs/v1/live/freight', {
-          method: 'POST', headers: { 'Content-Type': 'application/json', 'X-GDCS-CSRF': state.csrf },
-          body: JSON.stringify({ pid: P.pid, vid: o.vid, quantity: qty() })
-        });
-      }).then(function (r) {
-        clearTimeout(slowShip);
-        if (seq !== dSeq || !r) return;
-        var methods = r.ok ? normaliseWp((r.j && r.j.quotes) || [], r.j.currency) : [];
-        if (methods.length) {
-          var warehouse = r.j && r.j.origin && r.j.origins ?
-            ((r.j.origins.filter(function (z) { return z.code === r.j.origin; })[0] || {}).name || '') : '';
-          renderMethods(methods, cc, warehouse ? 'Shipping from ' + warehouse : 'Live supplier warehouse quote');
-          return;
-        }
-        workerShip(o, seq).then(function (ok) {
-          if (!ok && seq === dSeq) shippingWarning(
-            'No verified carrier quote is available for this option and destination. Change the option or destination, or request help on WhatsApp.');
-        });
-      }).catch(function () {
-        clearTimeout(slowShip);
-        if (seq !== dSeq) return;
-        workerShip(o, seq).then(function (ok) {
-          if (!ok && seq === dSeq) shippingWarning('Shipping rates are currently unavailable. Please request a quotation on WhatsApp.');
-        });
-      });
-    }, 250);
+    clearTimeout(dTimer);clearTimeout(expiryTimer);
+    if(dAbort)dAbort.abort();
+    var seq=++dSeq;
+    state.ship=null;state.shipMethods=[];state.quoteStatus='loading';
+    renderPriceSummary();updateWa();setOrderable(false);
+    if(!state.option)return;
+    var cc=destination(),zip=String(state.postcode||'').trim();
+    if(!cc){shippingWarning('Choose your delivery country to check carrier rates.');return;}
+    if(!/^[A-Za-z0-9 -]{0,12}$/.test(zip)){shippingWarning('Enter a valid delivery postcode (up to 12 letters, digits or spaces).');return;}
+    var scope=quoteScope(state.option,cc,qty(),zip);
+    els.delivery.hidden=false;els.delivery.className='gpdp-delivery is-loading';
+    els.delivery.textContent='Checking live shipping for your selected option, quantity and destination…';
+    dTimer=setTimeout(function(){
+      if(seq!==dSeq)return;
+      dAbort=new AbortController();var controller=dAbort;
+      var timeout=setTimeout(function(){controller.abort();},18000);
+      workerShip(scope,seq,controller.signal).finally(function(){clearTimeout(timeout);});
+    },400);
   }
-  function workerShip(o, seq) {
-    var C = window.SM_CONFIG || {};
-    var W = String(C.cjShippingWorker || C.cjImageWorker ||
-      'https://sastamilaga-cj-shipping.usamaestonia.workers.dev').replace(/\/$/, '');
-    var cc = state.country || wanted() || 'PK';
-    return fetch(W + '/api/cj/shipping', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ country: cc, items: [{ pid: P.pid, sku: o.sku || P.sku, qty: qty(), vid: o.vid }] })
-    }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-      if (seq !== dSeq) return false;
-      var methods = ((d && d.methods) || []).filter(function (m) {
-        return m && m.name && Number.isFinite(Number(m.price)) && Number(m.price) >= 0;
-      }).map(function (m, i) {
-        return { key: 'cj:' + i, name: String(m.name), cost: Number(m.price),
-          days: String(m.days || ''), currency: 'USD' };
-      }).sort(function (a, b) { return a.cost - b.cost; });
-      if (!methods.length) return false;
-      renderMethods(methods, cc, 'CJ supplier freight quotation');
+  async function workerShip(scope,seq,signal) {
+    try {
+      // Use the same-domain D1-backed GET contract. No parallel WordPress/legacy POST requests.
+      var u=new URL('/api/cj/shipping','https://sastamilaga.com');
+      Object.keys(scope).forEach(function(k){u.searchParams.set(k,String(scope[k]));});
+      var r=await fetch(u.href,{method:'GET',credentials:'omit',cache:'no-store',signal:signal,headers:{Accept:'application/json'}});
+      var d=await r.json().catch(function(){return {};});
+      if(seq!==dSeq)return false;
+      if(!r.ok){shippingWarning(quoteError(d.error,r.status));return false;}
+      var methods=parseScopedQuote(d,scope,Date.now());
+      if(!methods.length){shippingWarning(quoteError(Array.isArray(d.rates)&&!d.rates.length?'no_cj_method':'invalid_quote',r.status));return false;}
+      state.quoteStatus='quoted';
+      renderMethods(methods,scope.country,'Verified supplier rate · checked '+new Date(Number(d.checkedAt)*1000).toLocaleString());
       return true;
-    }).catch(function () { return false; });
+    }catch(e){if(seq===dSeq)shippingWarning('Shipping service did not respond. Retry or request shipping confirmation. No payment is due.');return false;}
   }
+  // A destination-specific request control, separate from the header display currency.
+  var destWrap=document.createElement('div');destWrap.style.cssText='display:flex;gap:12px;flex-wrap:wrap;margin:12px 0';
+  var countryLabel=document.createElement('label');countryLabel.textContent='Delivery country ';
+  var countrySelect=document.createElement('select');countrySelect.setAttribute('aria-label','Delivery country');countrySelect.style.maxWidth='100%';
+  var blank=document.createElement('option');blank.value='';blank.textContent='Choose country';countrySelect.appendChild(blank);
+  Array.from(ISO_COUNTRIES).sort(function(a,b){return countryName(a).localeCompare(countryName(b));}).forEach(function(c){var option=document.createElement('option');option.value=c;option.textContent=countryName(c)+' ('+c+')';countrySelect.appendChild(option);});
+  countrySelect.value=destination();countryLabel.appendChild(countrySelect);destWrap.appendChild(countryLabel);
+  var postLabel=document.createElement('label');postLabel.textContent='Postcode (if applicable) ';
+  var post=document.createElement('input');post.type='text';post.maxLength=12;post.autocomplete='postal-code';post.setAttribute('aria-label','Delivery postcode');postLabel.appendChild(post);destWrap.appendChild(postLabel);
+  els.delivery.insertAdjacentElement('beforebegin',destWrap);
+  countrySelect.addEventListener('change',function(){state.deliveryCountry=countrySelect.value;state.preferredCarrier='';checkDelivery();});
+  post.addEventListener('input',function(){state.postcode=post.value.trim();checkDelivery();});
 
   /* ---- the real cart ---- */
   function badge(n) { if (n == null) return; document.querySelectorAll('.smh-cart__count').forEach(function (el) { el.textContent = n; el.setAttribute('data-n', n); }); }
@@ -366,9 +383,11 @@
      Pakistan where offered; every order is recorded in Formspree first). */
   function toCart(buyNow) {
     if (state.busy || !state.option) return;
-    if (!state.ship) { say('Choose an available shipping method before adding this product to your cart, or request a quotation on WhatsApp.', 'warn'); return; }
+    if (!state.ship || !quoteCurrent(state.ship)) { say('Choose an available shipping method before adding this product to your cart, or request a quotation on WhatsApp.', 'warn'); return; }
+    var cartScope=scopeKey(state.ship.scope),cartShip=state.ship;
     state.busy = true; els.add.setAttribute('aria-busy', 'true'); els.buy.setAttribute('aria-busy', 'true');
     storeReady().then(function (store) {
+      if(state.ship!==cartShip || !quoteCurrent(cartShip) || scopeKey(cartShip.scope)!==cartScope)throw new Error('Delivery selection changed; refresh shipping.');
       var o = state.option;
       var res = store.addCj({
         id: String(P.pid), sku: String(o.sku || P.sku || P.pid), name: String(P.name || 'Global supplier product'), img: o.image || P.image || '',
@@ -395,8 +414,8 @@
     e.preventDefault(); e.stopImmediatePropagation(); toCart(t.hasAttribute('data-gpdp-buy'));
   }, true);
   root.addEventListener('click', function (e) { var s = e.target.closest && e.target.closest('[data-step]'); if (!s) return; els.qty.value = qty() + parseInt(s.getAttribute('data-step'), 10); qty(); updateWa(); checkDelivery(); });
-  els.qty.addEventListener('change', function () { qty(); updateWa(); checkDelivery(); });
-  window.addEventListener('sm:market', function () { state.preferredCarrier = ''; context().then(load); });
+  els.qty.addEventListener('input', function () { checkDelivery(); });
+  window.addEventListener('sm:market', function () { state.preferredCarrier='';state.deliveryCountry='';state.country='';countrySelect.value=destination();checkDelivery(); });
   window.addEventListener('sm:fx-rates', function () { renderPriceSummary(); updateWa(); });
 
   /* ---- load ---- */
@@ -435,7 +454,7 @@
         useSupplier('Live supplier options are unavailable right now.');
         return;
       }
-      var d = r.j; state.data = d; state.country = (d.country || state.country || '').toUpperCase();
+      var d = r.j; state.data = d; state.country = (d.country || state.country || '').toUpperCase(); if(!state.deliveryCountry)countrySelect.value=destination();
       buildGallery([P.image].concat(d.images || []));
       renderDescription(d.description);
       els.dest.textContent = 'Global supplier item · quote before payment' + (state.country ? ' · delivering to ' + countryName(state.country) : '');
@@ -451,5 +470,5 @@
      in a row, 15 s and more before Add to cart enabled). The delivery check re-runs when the context (country) has been settled. */
   var ctxReady = context();
   load();
-  ctxReady.then(function () { if (state.option) checkDelivery(); }, function () {});
+  ctxReady.then(function () { if(!state.deliveryCountry)countrySelect.value=destination(); if (state.option) checkDelivery(); }, function () {});
 })();
