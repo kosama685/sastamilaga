@@ -3,7 +3,7 @@ Static public channel directory: https://sastamilaga.com/live-tv/
 Complete A-Z index: https://sastamilaga.com/live-tv/directory/
 Countries: https://sastamilaga.com/live-tv/countries/
 Categories: https://sastamilaga.com/live-tv/categories/
-40101 retained channel records; 250 countries and territories. Directory inclusion is not proof of playback. Missing guides are not invented.
+40104 retained channel records; 250 countries and territories. Directory inclusion is not proof of playback. Missing guides are not invented.
 Coverage: https://sastamilaga.com/data/livetv/discovery-report.json
 Dated health observations: https://sastamilaga.com/data/livetv/playback-report.json
 Rights-holder contact: https://sastamilaga.com/contact/
