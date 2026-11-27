@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-25T14:49:43Z",
+  "checked_at": "2026-11-27T08:43:17Z",
   "token": {
     "success": true,
     "status": "active"
@@ -150,7 +150,7 @@
       },
       {
         "id": "sasta-cj-storefront-v1",
-        "modified_on": "2026-11-15T05:38:28.055033Z",
+        "modified_on": "2026-11-27T07:17:28.640803Z",
         "created_on": "2026-11-15T03:54:56.363767Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-15"
@@ -199,10 +199,10 @@
       },
       {
         "id": "sasta-faq-static-recovery-v1",
-        "modified_on": "2026-11-23T20:19:48.186778Z",
+        "modified_on": "2026-11-27T07:17:28.550397Z",
         "created_on": "2026-11-23T20:19:48.186778Z",
         "usage_model": "standard",
-        "compatibility_date": null
+        "compatibility_date": "2026-11-15"
       },
       {
         "id": "sasta-github-blog-primary-v5",
@@ -269,7 +269,7 @@
       },
       {
         "id": "sasta-global-pdp-v6",
-        "modified_on": "2026-11-23T16:25:06.745259Z",
+        "modified_on": "2026-11-27T08:42:15.938739Z",
         "created_on": "2026-11-21T07:57:46.631339Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-01"
@@ -367,7 +367,7 @@
       },
       {
         "id": "sasta-live-tv-static-v2",
-        "modified_on": "2026-11-25T14:46:36.36459Z",
+        "modified_on": "2026-11-27T08:40:37.629756Z",
         "created_on": "2026-11-11T04:35:16.296202Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-11"
@@ -402,7 +402,7 @@
       },
       {
         "id": "sasta-product-recovery-v2",
-        "modified_on": "2026-11-23T16:24:59.105871Z",
+        "modified_on": "2026-11-27T08:41:19.235933Z",
         "created_on": "2026-11-23T16:19:37.19077Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-23"
@@ -430,7 +430,7 @@
       },
       {
         "id": "sasta-robots-policy-v1",
-        "modified_on": "2026-11-22T20:20:51.51667Z",
+        "modified_on": "2026-11-27T08:41:19.299927Z",
         "created_on": "2026-11-16T05:28:32.446362Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-16"
@@ -909,11 +909,23 @@
         "script": "sasta-faq-static-recovery-v1"
       },
       {
-        "pattern": "sastamilaga.com/product/*",
-        "script": "sasta-product-recovery-v2"
+        "pattern": "sastamilaga.com/api/catalog-facets/v1*",
+        "script": "sasta-catalog-facet-evidence-v1"
       },
       {
-        "pattern": "sastamilaga.com/assets/js/live-tv-*",
+        "pattern": "sastamilaga.com/assets/theme/live-tv-hub.css",
+        "script": "sasta-live-tv-static-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/live-tv/category/*",
+        "script": "sasta-live-tv-static-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/assets/theme/live-tv-discovery.css",
+        "script": "sasta-live-tv-static-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/live-tv",
         "script": "sasta-live-tv-static-v2"
       },
       {
@@ -925,47 +937,7 @@
         "script": "sasta-live-tv-static-v2"
       },
       {
-        "pattern": "sastamilaga.com/assets/vendor/*",
-        "script": "sasta-live-tv-static-v2"
-      },
-      {
-        "pattern": "sastamilaga.com/global-shop/p/*",
-        "script": "sasta-global-pdp-v6"
-      },
-      {
         "pattern": "sastamilaga.com/data/livetv/*",
-        "script": "sasta-live-tv-static-v2"
-      },
-      {
-        "pattern": "sastamilaga.com/global/p/*",
-        "script": "sasta-product-recovery-v2"
-      },
-      {
-        "pattern": "sastamilaga.com/api/catalog-facets/v1*",
-        "script": "sasta-catalog-facet-evidence-v1"
-      },
-      {
-        "pattern": "sastamilaga.com/assets/theme/live-tv-hub.css",
-        "script": "sasta-live-tv-static-v2"
-      },
-      {
-        "pattern": "sastamilaga.com/live-tv",
-        "script": "sasta-live-tv-static-v2"
-      },
-      {
-        "pattern": "sastamilaga.com/live-tv/*",
-        "script": "sasta-live-tv-static-v2"
-      },
-      {
-        "pattern": "sastamilaga.com/assets/images/livetv/*",
-        "script": "sasta-live-tv-static-v2"
-      },
-      {
-        "pattern": "sastamilaga.com/live-tv/category/*",
-        "script": "sastamilaga-redirects"
-      },
-      {
-        "pattern": "sastamilaga.com/app.js",
         "script": "sasta-live-tv-static-v2"
       },
       {
@@ -973,8 +945,36 @@
         "script": "sasta-live-tv-static-v2"
       },
       {
-        "pattern": "sastamilaga.com/assets/theme/live-tv-discovery.css",
+        "pattern": "sastamilaga.com/assets/vendor/*",
         "script": "sasta-live-tv-static-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/assets/images/livetv/*",
+        "script": "sasta-live-tv-static-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/live-tv/*",
+        "script": "sasta-live-tv-static-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/app.js",
+        "script": "sasta-live-tv-static-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/product/*",
+        "script": "sasta-product-recovery-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/global/p/*",
+        "script": "sasta-product-recovery-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/assets/js/live-tv-*",
+        "script": "sasta-live-tv-static-v2"
+      },
+      {
+        "pattern": "sastamilaga.com/global-shop/p/*",
+        "script": "sasta-global-pdp-v6"
       }
     ]
   },
@@ -999,7 +999,7 @@
         "name": "sastamilaga",
         "uuid": "ac28088f-6a54-4d29-8c64-821661efe88f",
         "created_at": "2026-11-07T16:43:12.023Z",
-        "file_size": 330584064,
+        "file_size": 330899456,
         "num_tables": 0
       },
       {
