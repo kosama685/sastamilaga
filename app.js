@@ -57,7 +57,15 @@ function unSlug(s)   { return String(s || '').replace(/-/g, ' '); }
 function titleCase(s){ return String(s || '').replace(/\w\S*/g, t => t.charAt(0).toUpperCase() + t.slice(1)); }
 function truncate(str, len){ return str && str.length > len ? str.slice(0, len).trim() + '…' : (str || ''); }
 
-function price(p)    { return num(p.fp || p.bp || p.sp); }
+/* 20% commission, applied only when a product has no published final price, so a row can
+   never fall back to showing the supplier's raw cost. Rounded up to the rupee, matching the
+   checkout. Keep in sync with data/shipping/couriers.json → storeRules.commissionPercent. */
+const COMMISSION_RATE = 1.20;
+function withCommission(cost) {
+  const c = num(cost);
+  return c ? Math.ceil(c * COMMISSION_RATE) : c;
+}
+function price(p)    { return p.fp ? num(p.fp) : withCommission(p.bp || p.sp); }
 function oldPrice(p) { return Math.max(num(p.sp), num(p.bp), price(p)); }
 function discount(p) { const o = oldPrice(p), f = price(p); return o > f ? Math.round((o - f) / o * 100) : 0; }
 function img(p)      { return (p && (p.img || (p.imgs && p.imgs[0]))) || fallbackImg; }

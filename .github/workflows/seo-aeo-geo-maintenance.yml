@@ -1,0 +1,103 @@
+name: SEO / AEO / GEO maintenance + daily backup
+
+# Scheduled optimisation health check for the whole storefront, plus a real,
+# zero-cost backup: an exact git snapshot tag per day (a tag IS the backup).
+#
+# Runs on GitHub's runners, so nothing depends on a local machine being awake.
+
+on:
+  schedule:
+    - cron: "30 2 * * *"      # 02:30 UTC daily = 07:30 Pakistan time
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Pages to sample in the audit"
+        required: false
+        default: "600"
+
+permissions:
+  contents: write            # needed to push the daily backup tag
+  actions: read
+
+concurrency:
+  group: seo-aeo-geo
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    name: Audit SEO, AEO and GEO
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /*
+            !products-csv
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Node 20 is enough; the audit has no dependencies on purpose.
+      - name: Run audit
+        run: node scripts/seo-aeo-geo-audit.mjs --limit=${{ github.event.inputs.limit || '600' }}
+
+      - name: Check llms.txt and sitemap entry points exist
+        run: |
+          set -e
+          for f in llms.txt sitemap.xml robots.txt index.html; do
+            if [ -f "$f" ]; then echo "ok   $f ($(wc -c < "$f") bytes)"; else echo "MISS $f"; missing=1; fi
+          done
+          [ -z "${missing:-}" ] || { echo "::warning::A discovery file is missing"; }
+
+      - name: Publish report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-aeo-geo-${{ github.run_number }}
+          path: reports/seo-aeo-geo-latest.json
+          retention-days: 90
+          if-no-files-found: warn
+
+  backup:
+    name: Daily snapshot tag
+    runs-on: ubuntu-latest
+    needs: audit
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Tag today's commit as a restore point
+        run: |
+          set -euo pipefail
+          TAG="backup-$(date -u +%Y-%m-%d)"
+          git config user.name  "sasta-backup-bot"
+          git config user.email "backup@sastamilaga.com"
+          if git ls-remote --tags origin "refs/tags/$TAG" | grep -q "$TAG"; then
+            echo "Tag $TAG already exists; nothing to do."
+            exit 0
+          fi
+          git tag -a "$TAG" -m "Automatic daily snapshot of main ($(git rev-parse --short HEAD))"
+          git push origin "refs/tags/$TAG"
+          echo "Created $TAG at $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Write restore instructions to the job summary
+        if: always()
+        run: |
+          {
+            echo "### Restore"
+            echo ""
+            echo "Every daily tag is a complete, exact snapshot. To bring the site back:"
+            echo ""
+            echo '```bash'
+            echo 'git fetch --tags'
+            echo 'git checkout -B main backup-YYYY-MM-DD'
+            echo 'git push origin main --force-with-lease'
+            echo '```'
+            echo ""
+            echo "Other permanent restore points: \`pre-static-2026-11-27\` (pre-rebuild storefront) and \`static-rebuild-2026-11-27\`."
+          } >> "$GITHUB_STEP_SUMMARY"

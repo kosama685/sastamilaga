@@ -1,0 +1,194 @@
+{
+  "version": 1,
+  "updatedAt": "2026-11-27",
+  "currency": "PKR",
+  "status": "indicative",
+  "authoritativeNote": "These are published rate-card snapshots used for on-page estimates and the checkout preview. The binding rate is the one returned by the courier API at booking time, using the account contract. Never charge a customer from this file alone; always confirm with the carrier API before capture.",
+  "sources": {
+    "postex": "https://postex.pk/pricing",
+    "tcs": "https://tcsexpress.com/rates",
+    "leopards": "https://www.leopardscourier.com/rate-calculator",
+    "mp": "https://mnpcourier.com/",
+    "trax": "https://slgtrax.com/",
+    "blueex": "https://www.blue-ex.com/cod",
+    "smsa": "https://smsa.com/en/rates",
+    "aramex": "https://www.aramex.com/us/en/shipping/rates",
+    "naqel": "https://naqelexpress.com/en/sa/"
+  },
+  "zones": {
+    "PK": {
+      "A": ["karachi", "lahore", "islamabad", "rawalpindi", "faisalabad"],
+      "B": ["multan", "peshawar", "gujranwala", "sialkot", "hyderabad", "quetta", "bahawalpur", "sargodha"],
+      "C": ["abbottabad", "sukkur", "larkana", "gujrat", "sahiwal", "rahim-yar-khan", "jhelum", "mardan"],
+      "D": []
+    },
+    "SA": {
+      "A": ["riyadh", "jeddah", "dammam", "makkah", "madinah"],
+      "B": ["taif", "abha", "tabuk", "jubail", "yanbu", "hail"],
+      "C": ["jazan", "najran", "arar", "al-baha", "qassim"],
+      "D": []
+    },
+    "AE": {
+      "A": ["dubai", "abu-dhabi", "sharjah", "ajman"],
+      "B": ["al-ain", "ras-al-khaimah", "fujairah", "umm-al-quwain"],
+      "C": ["liwa", "hatta"],
+      "D": []
+    }
+  },
+  "domesticPk": [
+    {
+      "id": "postex",
+      "name": "PostEx",
+      "codFeePercent": 1.5,
+      "codFeeMin": 0,
+      "returnFeePercent": 50,
+      "supportsCod": true,
+      "api": "https://api.postex.pk/services/integration/api/order/v3/create-order",
+      "slabs": [
+        { "maxKg": 0.5, "A": 175, "B": 195, "C": 230, "D": 300 },
+        { "maxKg": 1, "A": 210, "B": 245, "C": 290, "D": 380 },
+        { "maxKg": 2, "A": 265, "B": 320, "C": 395, "D": 520 },
+        { "maxKg": 3, "A": 320, "B": 395, "C": 490, "D": 650 },
+        { "maxKg": 5, "A": 430, "B": 540, "C": 680, "D": 900 }
+      ]
+    },
+    {
+      "id": "tcs",
+      "name": "TCS Express",
+      "codFeePercent": 2.0,
+      "codFeeMin": 0,
+      "returnFeePercent": 100,
+      "supportsCod": true,
+      "api": "https://api.tcscourier.com/prod/shipments/v1/create",
+      "slabs": [
+        { "maxKg": 0.5, "A": 195, "B": 220, "C": 260, "D": 340 },
+        { "maxKg": 1, "A": 240, "B": 275, "C": 330, "D": 430 },
+        { "maxKg": 2, "A": 300, "B": 355, "C": 435, "D": 580 },
+        { "maxKg": 3, "A": 365, "B": 435, "C": 540, "D": 720 },
+        { "maxKg": 5, "A": 495, "B": 600, "C": 750, "D": 990 }
+      ]
+    },
+    {
+      "id": "leopards",
+      "name": "Leopards Courier",
+      "codFeePercent": 1.75,
+      "codFeeMin": 0,
+      "returnFeePercent": 50,
+      "supportsCod": true,
+      "api": "https://api.leopardscourier.com/api/bookPacket/format/json",
+      "slabs": [
+        { "maxKg": 0.5, "A": 165, "B": 185, "C": 220, "D": 290 },
+        { "maxKg": 1, "A": 200, "B": 235, "C": 280, "D": 370 },
+        { "maxKg": 2, "A": 255, "B": 310, "C": 380, "D": 505 },
+        { "maxKg": 3, "A": 310, "B": 380, "C": 470, "D": 630 },
+        { "maxKg": 5, "A": 415, "B": 520, "C": 660, "D": 880 }
+      ]
+    },
+    {
+      "id": "mp",
+      "name": "M&P Courier",
+      "codFeePercent": 1.5,
+      "codFeeMin": 0,
+      "returnFeePercent": 50,
+      "supportsCod": true,
+      "api": null,
+      "slabs": [
+        { "maxKg": 0.5, "A": 170, "B": 190, "C": 225, "D": 295 },
+        { "maxKg": 1, "A": 205, "B": 240, "C": 285, "D": 375 },
+        { "maxKg": 2, "A": 260, "B": 315, "C": 390, "D": 515 },
+        { "maxKg": 3, "A": 315, "B": 390, "C": 480, "D": 640 },
+        { "maxKg": 5, "A": 425, "B": 530, "C": 675, "D": 895 }
+      ]
+    },
+    {
+      "id": "trax",
+      "name": "Trax (SLG)",
+      "codFeePercent": 1.5,
+      "codFeeMin": 0,
+      "returnFeePercent": 50,
+      "supportsCod": true,
+      "api": null,
+      "slabs": [
+        { "maxKg": 0.5, "A": 180, "B": 200, "C": 240, "D": 310 },
+        { "maxKg": 1, "A": 215, "B": 250, "C": 300, "D": 390 },
+        { "maxKg": 2, "A": 275, "B": 330, "C": 405, "D": 535 },
+        { "maxKg": 3, "A": 330, "B": 405, "C": 500, "D": 660 },
+        { "maxKg": 5, "A": 445, "B": 550, "C": 700, "D": 920 }
+      ]
+    },
+    {
+      "id": "blueex",
+      "name": "Blue-EX",
+      "codFeePercent": 1.75,
+      "codFeeMin": 0,
+      "returnFeePercent": 50,
+      "supportsCod": true,
+      "api": "https://api.blue-ex.com/api/v1/orders",
+      "slabs": [
+        { "maxKg": 0.5, "A": 172, "B": 192, "C": 228, "D": 300 },
+        { "maxKg": 1, "A": 208, "B": 242, "C": 288, "D": 378 },
+        { "maxKg": 2, "A": 262, "B": 318, "C": 392, "D": 518 },
+        { "maxKg": 3, "A": 318, "B": 392, "C": 485, "D": 645 },
+        { "maxKg": 5, "A": 428, "B": 535, "C": 682, "D": 902 }
+      ]
+    }
+  ],
+  "gulf": [
+    {
+      "id": "smsa",
+      "name": "SMSA Express",
+      "country": "SA",
+      "codFeePercent": 1.5,
+      "codFeeMin": 5,
+      "supportsCod": true,
+      "api": "https://api.smsaexpress.com/api/order",
+      "slabs": [
+        { "maxKg": 0.5, "A": 23, "B": 27, "C": 33, "D": 40 },
+        { "maxKg": 1, "A": 28, "B": 33, "C": 40, "D": 48 },
+        { "maxKg": 2, "A": 36, "B": 43, "C": 52, "D": 62 },
+        { "maxKg": 5, "A": 55, "B": 66, "C": 80, "D": 95 }
+      ],
+      "currency": "SAR"
+    },
+    {
+      "id": "aramex",
+      "name": "Aramex",
+      "country": "AE",
+      "codFeePercent": 2.0,
+      "codFeeMin": 6,
+      "supportsCod": true,
+      "api": "https://ws.aramex.net/ShippingAPI.V2/Shipping/Service_1_0.svc",
+      "slabs": [
+        { "maxKg": 0.5, "A": 26, "B": 30, "C": 36, "D": 44 },
+        { "maxKg": 1, "A": 32, "B": 37, "C": 44, "D": 53 },
+        { "maxKg": 2, "A": 41, "B": 48, "C": 57, "D": 68 },
+        { "maxKg": 5, "A": 61, "B": 73, "C": 88, "D": 104 }
+      ],
+      "currency": "AED"
+    },
+    {
+      "id": "naqel",
+      "name": "Naqel Express",
+      "country": "SA",
+      "codFeePercent": 1.5,
+      "codFeeMin": 5,
+      "supportsCod": true,
+      "api": "https://www.naqelexpress.com/ws/naqelapi/",
+      "slabs": [
+        { "maxKg": 0.5, "A": 21, "B": 25, "C": 31, "D": 38 },
+        { "maxKg": 1, "A": 26, "B": 31, "C": 38, "D": 46 },
+        { "maxKg": 2, "A": 34, "B": 41, "C": 50, "D": 60 },
+        { "maxKg": 5, "A": 52, "B": 63, "C": 77, "D": 92 }
+      ],
+      "currency": "SAR"
+    }
+  ],
+  "storeRules": {
+    "freeShippingThresholdPk": 2500,
+    "flatBelowThresholdPk": 199,
+    "codMin": 199,
+    "codMax": 15000,
+    "commissionPercent": 20,
+    "note": "Store rules stay authoritative for what the customer is charged on a domestic order: free over Rs 2,500, otherwise Rs 199. The courier table above is the cost side, used to check the flat fee still covers the cheapest carrier."
+  }
+}
