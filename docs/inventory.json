@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-27T08:43:17Z",
+  "checked_at": "2026-11-27T11:04:30Z",
   "token": {
     "success": true,
     "status": "active"
@@ -367,7 +367,7 @@
       },
       {
         "id": "sasta-live-tv-static-v2",
-        "modified_on": "2026-11-27T08:40:37.629756Z",
+        "modified_on": "2026-11-27T10:53:55.443391Z",
         "created_on": "2026-11-11T04:35:16.296202Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-11"
@@ -430,7 +430,7 @@
       },
       {
         "id": "sasta-robots-policy-v1",
-        "modified_on": "2026-11-27T08:41:19.299927Z",
+        "modified_on": "2026-11-27T09:56:00.024993Z",
         "created_on": "2026-11-16T05:28:32.446362Z",
         "usage_model": "standard",
         "compatibility_date": "2026-11-16"
@@ -521,28 +521,28 @@
       },
       {
         "id": "sastamilaga-cj-shipping",
-        "modified_on": "2026-11-25T14:48:17.463169Z",
+        "modified_on": "2026-11-27T11:03:10.069432Z",
         "created_on": "2026-11-11T03:54:36.589467Z",
         "usage_model": "standard",
         "compatibility_date": "2025-07-18"
       },
       {
         "id": "sastamilaga-global-pages",
-        "modified_on": "2026-11-25T14:48:25.652036Z",
+        "modified_on": "2026-11-27T11:03:18.534649Z",
         "created_on": "2026-11-11T03:54:44.151298Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-paypal",
-        "modified_on": "2026-11-25T14:48:22.277904Z",
+        "modified_on": "2026-11-27T11:03:15.28431Z",
         "created_on": "2026-11-11T03:54:41.174076Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
       },
       {
         "id": "sastamilaga-redirects",
-        "modified_on": "2026-11-25T14:48:30.11697Z",
+        "modified_on": "2026-11-27T11:03:22.828148Z",
         "created_on": "2026-11-11T05:14:22.59741Z",
         "usage_model": "standard",
         "compatibility_date": "2026-10-01"
@@ -918,7 +918,7 @@
       },
       {
         "pattern": "sastamilaga.com/live-tv/category/*",
-        "script": "sasta-live-tv-static-v2"
+        "script": "sastamilaga-redirects"
       },
       {
         "pattern": "sastamilaga.com/assets/theme/live-tv-discovery.css",
@@ -999,7 +999,7 @@
         "name": "sastamilaga",
         "uuid": "ac28088f-6a54-4d29-8c64-821661efe88f",
         "created_at": "2026-11-07T16:43:12.023Z",
-        "file_size": 330899456,
+        "file_size": 330907648,
         "num_tables": 0
       },
       {
