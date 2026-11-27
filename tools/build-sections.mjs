@@ -111,7 +111,7 @@ function emptyDiv(h, openRe) {
   while ((x = re.exec(h))) { depth += x[0] === '</div>' ? -1 : 1; if (depth === 0) return h.slice(0, m.index) + m[0] + '</div>' + h.slice(re.lastIndex); }
   return h;
 }
-function shell({ key, keepHome = false, keepTv = false, lang = 'en', dir = 'ltr', base, title, desc, url, robots, body, isStatic, alts, locale, after = '' }) {
+function shell({ key, keepTv = false, lang = 'en', dir = 'ltr', base, title, desc, url, robots, body, isStatic, alts, locale, after = '' }) {
   let h = index
     .replace('<html lang="en" dir="ltr">', () => `<html lang="${lang}" dir="${dir}"${lang !== 'en' ? ' data-native' : ''}>`)
     .replace(/<head>/, () => `<head>\n<base href="${base}">`);
@@ -133,8 +133,7 @@ function shell({ key, keepHome = false, keepTv = false, lang = 'en', dir = 'ltr'
   // Without JavaScript (or before the app renders) the page shows its own content, not the home page.
   h = h.replace('<div id="home-view">', () => '<div id="home-view" hidden>');
   if (isStatic) h = h.replace(/<script src="assets\/data\/products-lite\.js" defer><\/script>\n?/, '');   // content pages do not need the 20 MB product data
-  if (!keepHome) h = emptyDiv(h, /<div id="home-view"[^>]*>/);
-  else if (key === 'travel') h = h.replace(/<h1 class="wp-block-heading is-style-sm-accent">([\s\S]*?)<\/h1>/, '<h2 class="wp-block-heading is-style-sm-accent">$1</h2>');   // the travel page keeps the home hero: its heading must not be a second H1      // one H1 and no repeated home content on pages that do not need it
+  h = emptyDiv(h, /<div id="home-view"[^>]*>/);
   if (!keepTv) h = emptyDiv(h, /<div id="view-livetv"[^>]*>/);
   /* `after` sits outside #app, so it stays visible when the app renders into #app (used for the visa guides directory). */
   h = h.replace('<div id="app" class="sm-app" hidden></div>', () => `<div id="app" class="sm-app"${isStatic ? ' data-static="1"' : ''}>${body}</div>${after}`);
@@ -150,6 +149,14 @@ function shell({ key, keepHome = false, keepTv = false, lang = 'en', dir = 'ltr'
 const alt1 = (en, ur) => `<link rel="alternate" hreflang="en" href="${en}">${ur ? `<link rel="alternate" hreflang="ur" href="${ur}">` : ''}<link rel="alternate" hreflang="x-default" href="${en}">`;
 let made2 = 0;
 for (const { key, title, desc } of pages) {
+  // The travel hub is authored separately. Keep its URL in the route and sitemap lists.
+  if (key === 'travel') {
+    const travel = read('travel/index.html');
+    if (!travel.includes('href="/travel/assets/css/travel.css"') || !travel.includes('class="nav-links"') || !travel.includes('class="ftr"')) {
+      throw new Error('travel/index.html is missing the standalone travel header or footer');
+    }
+    continue;
+  }
   // global/ shows the same content as the generated c/global/index.html, which stays the canonical page.
   const url = (key === 'global' || key === 'global-shop') ? `${SITE}/c/global/index.html` : `${SITE}/${key}/`, priv = PRODUCTION_PRIVATE(key);
   const rec = WP[key], pure = rec && PURE.has(key), urRec = WP['ur/' + key];
@@ -158,7 +165,7 @@ for (const { key, title, desc } of pages) {
   const body = pure ? (key === 'contact' ? wpArticle(rec).replace('</header>', () => '</header>' + waDirectory('page')) : wpArticle(rec)) : rec ? intro + `<div class="sm-page sm-page--wide"><div class="sm-prose">${rec.body}</div></div>` : intro;
   // visa/: the country and visa-type guides directory built by tools/build-visa-pages.mjs (data/visa/hub.html)
   const after = key === 'visa' && fs.existsSync(path.join(ROOT, 'data/visa/hub.html')) ? read('data/visa/hub.html') : '';
-  const h = shell({ key, keepHome: key === 'travel', keepTv: key === 'live-tv', base: '../'.repeat(key.split('/').length), title: pure ? titleTag(rec.seoTitle) : titleTag(title), desc: pure ? rec.description : desc, url, robots: priv ? 'noindex, nofollow' : 'index, follow, max-image-preview:large', body, isStatic: pure, alts: alt1(url, urRec ? `${SITE}/ur/${key}/` : ''), after });
+  const h = shell({ key, keepTv: key === 'live-tv', base: '../'.repeat(key.split('/').length), title: pure ? titleTag(rec.seoTitle) : titleTag(title), desc: pure ? rec.description : desc, url, robots: priv ? 'noindex, nofollow' : 'index, follow, max-image-preview:large', body, isStatic: pure, alts: alt1(url, urRec ? `${SITE}/ur/${key}/` : ''), after });
   fs.mkdirSync(path.join(ROOT, key), { recursive: true });
   fs.writeFileSync(path.join(ROOT, key, 'index.html'), h); made++;
 }
