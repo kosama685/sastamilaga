@@ -17,6 +17,9 @@ for (const url of urls) {
     html = fs.readFileSync(file, "utf8");
   assert.ok(html.includes('rel="canonical" href="' + url + '"'));
   assert.ok(/<h1>[^<]+<\/h1>/.test(html));
+  assert.ok(html.includes('id="sm-chrome-header" data-prefix="/"'), "Shared header: " + url);
+  assert.ok(html.includes('id="sm-chrome-footer"'), "Shared footer: " + url);
+  assert.ok(html.includes('src="/assets/js/chrome.js" defer'), "Shared chrome runtime: " + url);
   for (const m of html.matchAll(
     /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g,
   ))
