@@ -1,0 +1,39 @@
+# Sasta Milaga — static storefront. Nothing is blocked that Google needs.
+User-agent: *
+Allow: /
+Disallow: /cart/
+Disallow: /search/
+
+# Search engines and AI answer engines are explicitly welcome.
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+Sitemap: https://sastamilaga.com/sitemap.xml
+Sitemap: https://sastamilaga.com/sitemap_index.xml
