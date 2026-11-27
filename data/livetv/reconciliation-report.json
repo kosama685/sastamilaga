@@ -1,5 +1,5 @@
 {
-  "at": "2026-11-26T21:49:43.158Z",
+  "at": "2026-11-27T11:03:06.174Z",
   "sources": [
     {
       "name": "categories",
@@ -14,34 +14,34 @@
       "records": 250
     },
     {
-      "name": "languages",
-      "url": "https://iptv-org.github.io/api/languages.json",
-      "status": "ok",
-      "records": 7893
-    },
-    {
       "name": "regions",
       "url": "https://iptv-org.github.io/api/regions.json",
       "status": "ok",
       "records": 42
     },
     {
+      "name": "languages",
+      "url": "https://iptv-org.github.io/api/languages.json",
+      "status": "ok",
+      "records": 7893
+    },
+    {
       "name": "streams",
       "url": "https://iptv-org.github.io/api/streams.json",
       "status": "ok",
-      "records": 19300
+      "records": 19377
     },
     {
       "name": "channels",
       "url": "https://iptv-org.github.io/api/channels.json",
       "status": "ok",
-      "records": 31899
+      "records": 31958
     },
     {
       "name": "feeds",
       "url": "https://iptv-org.github.io/api/feeds.json",
       "status": "ok",
-      "records": 45475
+      "records": 45545
     },
     {
       "name": "nexusHealth",
@@ -74,10 +74,10 @@
       "records": 31
     },
     {
-      "name": "nexusStreams",
-      "url": "https://dearbulut.github.io/iptv/api/v1/streams.json",
+      "name": "nexusLanguages",
+      "url": "https://dearbulut.github.io/iptv/api/v1/languages.json",
       "status": "ok",
-      "records": 16044
+      "records": 7893
     },
     {
       "name": "nexusPlaylist",
@@ -92,10 +92,10 @@
       "records": 10458
     },
     {
-      "name": "nexusLanguages",
-      "url": "https://dearbulut.github.io/iptv/api/v1/languages.json",
+      "name": "nexusStreams",
+      "url": "https://dearbulut.github.io/iptv/api/v1/streams.json",
       "status": "ok",
-      "records": 7893
+      "records": 16044
     },
     {
       "name": "nexusChannels",
@@ -137,9 +137,9 @@
     }
   ],
   "missingMetadataIds": [],
-  "metadataRecords": 31899,
-  "streamRows": 35344,
-  "streamRowsRetained": 35338,
+  "metadataRecords": 31960,
+  "streamRows": 35421,
+  "streamRowsRetained": 35415,
   "invalidStreamRows": 3,
   "quarantined": [
     {
@@ -1639,7 +1639,7 @@
       "reason": "Adult channel requires an age-controlled surface"
     }
   ],
-  "noSourceChannels": 20474,
-  "channels": 40104,
-  "uniqueURLs": 28214
+  "noSourceChannels": 20509,
+  "channels": 40245,
+  "uniqueURLs": 28455
 }
