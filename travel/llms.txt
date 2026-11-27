@@ -1,0 +1,59 @@
+# Sasta Milaga Travel (TravelHub)
+
+> Travel meta-search and booking desk for flights, stays, tours, cars, Umrah, visas and eSIM,
+> serving travellers in Pakistan, Saudi Arabia and the Gulf. One visible 20% service fee on our
+> own inventory; zero markup on partner prices (Booking.com, Agoda, Viator, DiscoverCars, Airalo).
+> Every price is indicative until a supplier confirms it in writing.
+
+## Services
+- [Flights](https://sastamilaga.com/travel/flights/): Compare indicative fares from Karachi, Lahore and Islamabad to Dubai, Jeddah, Riyadh and 40+ cities, then confirm on WhatsApp with a transparent service fee. Prices are indicative until a supplier confirms.
+- [Stays](https://sastamilaga.com/travel/stays/): Compare hotel rates across Booking.com, Agoda, Trivago, Expedia and Hotels.com in one table, or ask us for a net rate with a single transparent service fee.
+- [Tours](https://sastamilaga.com/travel/tours/): Compare tours, tickets and day trips from Viator, GetYourGuide and Klook, or send us a custom itinerary request and get a written quote on WhatsApp.
+- [Cars](https://sastamilaga.com/travel/cars/): Compare car hire from DiscoverCars, Rentalcars and Kayak, or request a quote with driver, airport delivery and cross-border cover.
+- [Umrah](https://sastamilaga.com/travel/umrah/): Umrah packages with Haram-area hotels, airport transfers and Ziyarat, quoted in writing by a team that works with licensed Saudi operators. We do not issue Umrah visas.
+- [Visa](https://sastamilaga.com/travel/visa/): Official visa links, document checklists and application support for Saudi Arabia, the UAE, Turkey and Malaysia. We are not a government portal and we do not issue visas.
+- [eSIM](https://sastamilaga.com/travel/esim/): Compare travel eSIM data plans from Airalo, Holafly and Saily, or ask us for a local data plan with activation help before you fly.
+- [Group tours](https://sastamilaga.com/travel/group-tours/): Fixed-departure group tours and private groups for families, schools and companies, with per-person pricing and a written itinerary.
+
+- [Group tours](https://sastamilaga.com/travel/group-tours/): fixed departures and private groups from 10 travellers.
+- [AI trip planner](https://sastamilaga.com/travel/ai-planner/): describe a trip, get a plan and an indicative budget.
+
+## Destinations
+- [Dubai](https://sastamilaga.com/travel/destination/dubai/): The default winter escape from Pakistan: direct flights from Karachi, Lahore and Islamabad, huge hotel supply and something for every budget.
+- [Abu Dhabi](https://sastamilaga.com/travel/destination/abu-dhabi/): Quieter than Dubai, with Sheikh Zayed Grand Mosque, Yas Island and some of the best-value five-star hotels in the Gulf.
+- [Jeddah](https://sastamilaga.com/travel/destination/jeddah/): The gateway to Makkah and a destination in its own right: the Al-Balad old town, Red Sea diving and a growing Umrah hotel market.
+- [Makkah](https://sastamilaga.com/travel/destination/makkah/): Haram-area hotels, Ziyarat and the logistics of an Umrah trip, quoted with real walking distances to the Haram.
+- [Madinah](https://sastamilaga.com/travel/destination/madinah/): The Prophet's Mosque, the Quba Mosque and a calmer pace than Makkah, with hotels clustered within walking distance.
+- [Riyadh](https://sastamilaga.com/travel/destination/riyadh/): Business travel, Diriyah and the Edge of the World, with a fast-growing entertainment calendar.
+- [Istanbul](https://sastamilaga.com/travel/destination/istanbul/): Two continents, Ottoman history and the best-value city break within six hours of Pakistan.
+- [Antalya](https://sastamilaga.com/travel/destination/antalya/): Turkish Riviera resorts with all-inclusive pricing that undercuts the Gulf in summer.
+- [Bangkok](https://sastamilaga.com/travel/destination/bangkok/): The cheapest long-haul city break from Pakistan, with street food, malls and islands a short flight away.
+- [Kuala Lumpur](https://sastamilaga.com/travel/destination/kuala-lumpur/): Halal-friendly, English-speaking and affordable, with the Petronas Towers and cheap connections across Southeast Asia.
+- [Singapore](https://sastamilaga.com/travel/destination/singapore/): Compact, safe and expensive-but-worth-it, with Universal Studios and Gardens by the Bay for families.
+- [Baku](https://sastamilaga.com/travel/destination/baku/): A short, visa-friendly Caucasus break with the old city, Flame Towers and mountain day trips.
+- [Tashkent](https://sastamilaga.com/travel/destination/tashkent/): Silk Road architecture, cheap flights and Samarkand within a high-speed train ride.
+- [London](https://sastamilaga.com/travel/destination/london/): Family visits, universities and connections onward to Europe and North America.
+- [Manchester](https://sastamilaga.com/travel/destination/manchester/): The north of England's hub, with direct Pakistan flights and cheaper fares than London in shoulder season.
+- [Paris](https://sastamilaga.com/travel/destination/paris/): Schengen gateway with the Louvre, Versailles and easy rail to the rest of Europe.
+- [Cairo](https://sastamilaga.com/travel/destination/cairo/): Pyramids, the Nile and Nile cruises, at prices that undercut most long-haul destinations.
+- [Doha](https://sastamilaga.com/travel/destination/doha/): A short hop with a superb museum, Souq Waqif and excellent stopover hotels.
+- [Muscat](https://sastamilaga.com/travel/destination/muscat/): Mountains, forts and clean beaches, with a driving holiday that is easy to plan.
+- [Colombo](https://sastamilaga.com/travel/destination/colombo/): Beaches, tea country and cheap food, an easy and affordable family break.
+- [Maldives](https://sastamilaga.com/travel/destination/maldives/): Overwater villas and honeymoon packages, usually booked as flight plus resort together.
+- [New York](https://sastamilaga.com/travel/destination/new-york/): Long-haul shopping and family trips with the highest demand around Thanksgiving and New Year.
+- [Toronto](https://sastamilaga.com/travel/destination/toronto/): Visiting family, students and onward connections across Canada, busiest in summer.
+- [Sydney](https://sastamilaga.com/travel/destination/sydney/): The longest haul from Pakistan, with student travel and family visits driving demand.
+
+## Pricing facts
+- Markup: 20% on bookable and quote modes, applied server-side before display.
+- Redirect mode: no markup; the customer pays the partner and we earn a commission.
+- Formula: finalPrice = roundUp(supplierPrice x fxRate x 1.20 + fixedFee).
+- Supplier cost is never sent to the browser.
+
+## What we do not do
+- No production scraping of competitor or aggregator sites.
+- No visa issuance; official government portals only (visa.visitsaudi.com, nusuk.sa).
+- No Umrah package sales without a Ministry of Hajj and Umrah licensed operator.
+
+## Contact
+WhatsApp +966510451995, 9 AM to 9 PM Pakistan time, Monday to Saturday.

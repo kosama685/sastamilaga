@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Sasta Milaga Travel">
+  <rect width="64" height="64" rx="16" fill="#0B3B20"/>
+  <path d="M14 40l36-16-6 9-14 4 3 9-4 2-5-8-10 6z" fill="#FF8A00"/>
+  <circle cx="20" cy="22" r="3" fill="#7BE0A5"/>
+</svg>

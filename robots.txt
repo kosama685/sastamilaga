@@ -37,3 +37,6 @@ Allow: /
 
 Sitemap: https://sastamilaga.com/sitemap.xml
 Sitemap: https://sastamilaga.com/sitemap_index.xml
+
+# Travel app (flights, stays, Umrah, visas)
+Sitemap: https://sastamilaga.com/travel/sitemap.xml
