@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en" data-base="/travel">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Compare travel prices — flights, hotels, cars, tours and eSIM side by side</title>
+<meta name="description" content="Compare live prices across Google Flights, Skyscanner, Kiwi, Momondo, Booking.com, Agoda, Trivago, Expedia, DiscoverCars, Viator, GetYourGuide, Klook and more. Partner prices stay untouched; our own fares carry one visible 20% service fee.">
+<link rel="canonical" href="https://sastamilaga.com/travel/compare/">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<meta name="theme-color" content="#0B3B20">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sasta Milaga Travel">
+<meta property="og:title" content="Compare travel prices — every site, one page">
+<meta property="og:description" content="Flights, hotels, cars, tours and eSIM compared across 16 travel sites. Partner prices unchanged, one visible 20% fee on our own fares.">
+<meta property="og:url" content="https://sastamilaga.com/travel/compare/">
+<meta property="og:image" content="https://sastamilaga.com/travel/assets/img/og-travel.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Compare travel prices — every site, one page">
+<meta name="twitter:description" content="Flights, hotels, cars, tours and eSIM compared across 16 travel sites. Partner prices unchanged, one visible 20% fee on our own fares.">
+<link rel="icon" href="/travel/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/travel/assets/css/travel.css">
+<style>
+.cmp-hero{background:linear-gradient(180deg,var(--mint-soft),#fff);border-bottom:1px solid var(--line);padding:38px 0 30px}
+.cmp-hero h1{max-width:22ch}
+.cmp-hero p.lead{max-width:62ch;color:var(--ink);font-size:1.02rem}
+.cmp-badges{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0;padding:0;list-style:none}
+.cmp-badges li{background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:.8rem;color:var(--teal);box-shadow:var(--shadow-sm)}
+.cmp-crumb{font-size:.8rem;color:var(--ink);margin:0 0 10px;padding:0}
+.cmp-crumb ol{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0}
+.cmp-crumb li+li::before{content:"/";margin-right:6px;color:#9aa8a1}
+.cmp-sec{padding:34px 0;border-bottom:1px solid var(--line)}
+.cmp-sec h2{margin-bottom:6px}
+.cmp-sec p.sub{color:var(--ink);max-width:66ch;margin-bottom:18px}
+.cmp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;padding:0;margin:0;list-style:none}
+.cmp-card{border:1px solid var(--line);border-radius:var(--r-lg);background:#fff;padding:16px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow-sm);transition:box-shadow .18s,transform .18s}
+.cmp-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.cmp-card .hd{display:flex;align-items:center;gap:10px}
+.cmp-logo{width:38px;height:38px;flex:0 0 38px;border-radius:10px;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:.95rem;color:#fff;background:var(--teal)}
+.cmp-logo.b{background:#1668c9}.cmp-logo.g{background:#0f7a3b}.cmp-logo.o{background:#c96a00}.cmp-logo.r{background:#b83232}.cmp-logo.p{background:#6b3fa0}.cmp-logo.n{background:#20395c}
+.cmp-card h3{margin:0;font-size:1rem;line-height:1.2}
+.cmp-card .tag{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink)}
+.cmp-card p{margin:0;font-size:.87rem;color:var(--ink);flex:1}
+.cmp-card .price-note{font-size:.78rem;color:var(--teal);background:var(--mint);border-radius:8px;padding:6px 8px}
+.cmp-card .go{margin-top:2px;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;border-radius:10px;border:1px solid var(--green);color:var(--green-deep);font-weight:600;font-size:.88rem;padding:0 14px}
+.cmp-card .go:hover{background:var(--green);color:#fff}
+.cmp-card .go:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.cmp-model{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cmp-box{border:1px solid var(--line);border-radius:var(--r-lg);padding:18px;background:#fff}
+.cmp-box.ours{background:var(--mint-soft);border-color:#bfe3cc}
+.cmp-box h3{margin-top:0}
+.cmp-box ul{margin:0 0 14px;padding-left:1.1rem;font-size:.9rem;color:var(--ink)}
+.cmp-table{width:100%;border-collapse:collapse;font-size:.9rem}
+.cmp-table th,.cmp-table td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+.cmp-table th{background:var(--gray);font-family:var(--display);color:var(--teal)}
+.cmp-table td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cmp-table tr:last-child td{border-bottom:0;font-weight:700;color:var(--teal)}
+.cmp-table caption{caption-side:bottom;text-align:left;font-size:.78rem;color:var(--ink);padding-top:10px}
+.cmp-faq{max-width:820px}
+.cmp-faq details{border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;background:#fff}
+.cmp-faq summary{cursor:pointer;font-weight:600;font-family:var(--display);color:var(--teal);font-size:1rem}
+.cmp-faq details[open] summary{margin-bottom:8px}
+.cmp-faq p{margin:0;font-size:.92rem;color:var(--ink)}
+.cmp-cta{background:var(--teal);color:#dff0e6;padding:32px 0}
+.cmp-cta .wrap{display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between}
+.cmp-cta h2{color:#fff;margin:0 0 4px}
+.cmp-cta p{margin:0;color:#cfe6d8;max-width:56ch}
+.cmp-cta .acts{display:flex;gap:10px;flex-wrap:wrap}
+.cmp-cta .btn-ghost{border-color:#8fc4a4;color:#fff}
+.cmp-cta .btn-ghost:hover{background:#fff;color:var(--teal)}
+.cmp-search-note{font-size:.82rem;color:var(--ink);background:#fff;border:1px dashed #bfe3cc;border-radius:10px;padding:10px 12px;margin:0 0 16px}
+@media (max-width:760px){
+  .cmp-model{grid-template-columns:1fr}
+  .cmp-hero{padding:26px 0 22px}
+  .cmp-sec{padding:26px 0}
+  .cmp-cta .wrap{flex-direction:column;align-items:flex-start}
+  .cmp-table tbody,.cmp-table tr,.cmp-table td{display:block;width:100%}
+  .cmp-table tr{border:1px solid var(--line);border-radius:10px;margin-bottom:8px;padding:4px 0}
+  .cmp-table td{border:0;display:flex;justify-content:space-between;gap:12px;padding:6px 12px}
+  .cmp-table td::before{content:attr(data-label);font-weight:600;color:var(--teal);font-size:.8rem}
+  .cmp-table tr:last-child td{font-weight:700}
+}
+@media (prefers-reduced-motion:reduce){.cmp-card{transition:none}.cmp-card:hover{transform:none}}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Compare travel prices across every site","url":"https://sastamilaga.com/travel/compare/","description":"Side-by-side comparison of 16 travel sites for flights, hotels, cars, tours and eSIM, with partner prices left untouched and one visible 20% service fee on our own fares.","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"Sasta Milaga Travel","url":"https://sastamilaga.com/travel/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Travel","item":"https://sastamilaga.com/travel/"},{"@type":"ListItem","position":2,"name":"Compare prices","item":"https://sastamilaga.com/travel/compare/"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TravelAgency","name":"Sasta Milaga Travel","url":"https://sastamilaga.com/travel/","telephone":"+966510451995","description":"Travel meta-search and booking desk for flights, stays, tours, cars, Umrah, visas and eSIM, with one visible service fee.","areaServed":["PK","SA","AE","QA","KW","BH","OM"],"currenciesAccepted":"USD, SAR, AED, PKR","openingHours":"Mo-Sa 09:00-21:00"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is this a real price comparison?","acceptedAnswer":{"@type":"Answer","text":"Yes, in two honest forms. Partner rows open that partner's own live search for your exact route and dates, so the price you see there is theirs and we never restate or inflate it. Our own bookable fares come from a supplier API and are shown with one 20% service fee added, itemised on the quote."}},{"@type":"Question","name":"Why can't you show every website's price on this page?","acceptedAnswer":{"@type":"Answer","text":"Live prices are only available through each supplier's licensed API, and every one of those requires a registered account: Amadeus closed self-service on 17 July 2026, Kiwi Tequila is invite-only, Skyscanner requires around 100,000 monthly users, and Hotellook shut down in October 2025. Anything claiming to show those prices without a licence is scraping, which breaks weekly, shows stale fares and exposes the site legally. We link out instead."}},{"@type":"Question","name":"What exactly is the 20% service fee?","acceptedAnswer":{"@type":"Answer","text":"When we sell the fare ourselves, the supplier's net price plus 20% is the total you pay. A 230.00 net fare becomes 276.00 including a 46.00 service fee. It is calculated on our server, stored on the order, and printed on your quote before you pay. Partner bookings carry no fee from us at all."}},{"@type":"Question","name":"Do I pay more if I book through a partner link?","acceptedAnswer":{"@type":"Answer","text":"No. The partner charges you their own price, exactly as if you had typed their address yourself. We may earn a small commission from the partner for the referral, and that commission never increases your price."}},{"@type":"Question","name":"Do I need an account to compare?","acceptedAnswer":{"@type":"Answer","text":"No account, no email wall and no card. Compare freely, then either book on the partner site or send the trip to us on WhatsApp and we confirm the fare in writing before anything is charged."}},{"@type":"Question","name":"Which sites do you compare?","acceptedAnswer":{"@type":"Answer","text":"Flights: Google Flights, Skyscanner, Kiwi.com and Momondo. Stays: Booking.com, Agoda, Trivago, Google Hotels, Expedia and Hotels.com. Cars: DiscoverCars, Rentalcars and Kayak. Tours: Viator, GetYourGuide and Klook. eSIM: Airalo, Holafly and Saily. Every row links to that site's own live search."}}]}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="topbar"><div class="wrap">
+<span>✈ Every partner compared, one visible service fee · <b>Prices indicative until a supplier confirms</b></span>
+<ul>
+<li>WhatsApp <a href="https://wa.me/966510451995" target="_blank" rel="noopener">+966 51 045 1995</a></li>
+<li><a href="/travel/how-it-works/">How it works</a></li>
+</ul></div></div><header class="nav"><div class="wrap">
+<a class="brand" href="/travel/">
+  <span class="brand-mark">SM</span>
+  <span class="brand-txt"><strong>Travel</strong><span>Sasta Milaga</span></span>
+</a>
+<nav class="nav-links" aria-label="Travel services"><a href="/travel/flights/">Flights</a><a href="/travel/stays/">Stays</a><a href="/travel/tours/">Tours</a><a href="/travel/cars/">Cars</a><a href="/travel/umrah/">Umrah</a><a href="/travel/visa/">Visa</a><a href="/travel/esim/">eSIM</a><a href="/travel/destinations/">Destinations</a><a href="/travel/compare/" class="on" aria-current="page">Compare</a></nav>
+<a class="btn btn-primary btn-sm" href="/travel/contact/" style="flex:0 0 auto">Get a quote</a>
+</div></header>
+<main id="main">
+
+<section class="cmp-hero"><div class="wrap">
+  <nav class="cmp-crumb" aria-label="Breadcrumb"><ol><li><a href="/travel/">Travel</a></li><li aria-current="page">Compare prices</li></ol></nav>
+  <h1>Compare every travel site on one page</h1>
+  <p class="lead">Sixteen sites, five categories, no subscription and no account. Partner prices stay exactly as the partner shows them — we never restate, round up or dress them. When we sell the fare ourselves, you see one 20% service fee, itemised, before you pay.</p>
+  <ul class="cmp-badges">
+    <li>16 sites compared</li>
+    <li>0 accounts needed</li>
+    <li>Partner prices unchanged</li>
+    <li>20% fee only on our own fares</li>
+    <li>Written confirmation before payment</li>
+  </ul>
+</div></section>
+
+<section class="cmp-sec"><div class="wrap">
+  <h2>Your search, carried into every site</h2>
+  <p class="sub">Open a partner and it arrives with the route, dates and travellers you already chose. No retyping, no lost context. Arrive here from a search and your details follow automatically.</p>
+  <p class="cmp-search-note" data-cmp-note>Showing default examples (Karachi → Dubai, 2 adults, 12–18 Dec 2026). Start from <a href="/travel/flights/">the search box</a> to carry your own trip into these links.</p>
+  <ul class="cmp-grid">
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo" aria-hidden="true">G</span><div><h3>Google Flights</h3><span class="tag">Flights · metasearch</span></div></div>
+      <p>Broadest airline coverage and a calendar of nearby dates, including carriers that only sell direct.</p>
+      <span class="price-note">Price: Google's own, untouched</span>
+      <a class="go" data-tpl="https://www.google.com/travel/flights?q=Flights%20from%20{fromCity}%20to%20{toCity}%20on%20{dep}" href="https://www.google.com/travel/flights?q=Flights%20from%20Karachi%20to%20Dubai%20on%202026-12-12" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+    </li>
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo b" aria-hidden="true">S</span><div><h3>Skyscanner</h3><span class="tag">Flights · metasearch</span></div></div>
+      <p>Strong on budget combinations and "everywhere" inspiration when your dates are flexible.</p>
+      <span class="price-note">Price: Skyscanner's own, untouched</span>
+      <a class="go" data-tpl="https://www.skyscanner.net/transport/flights/{froml}/{tol}/{yymd}/?adults={pax}" href="https://www.skyscanner.net/transport/flights/khi/dxb/261212/?adults=2" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+    </li>
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo g" aria-hidden="true">K</span><div><h3>Kiwi.com</h3><span class="tag">Flights · virtual interlining</span></div></div>
+      <p>Combines airlines that do not normally connect, often the cheapest way between secondary cities.</p>
+      <span class="price-note">Price: Kiwi's own, untouched</span>
+      <a class="go" data-tpl="https://www.kiwi.com/en/search/results/{from}/{to}/{dep}/{ret}?adults={pax}" href="https://www.kiwi.com/en/search/results/KHI/DXB/2026-12-12/2026-12-18?adults=2" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+    </li>
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo n" aria-hidden="true">M</span><div><h3>Momondo</h3><span class="tag">Flights · metasearch</span></div></div>
+      <p>Sorted by total price with baggage and transfer time visible, useful for a second opinion.</p>
+      <span class="price-note">Price: Momondo's own, untouched</span>
+      <a class="go" data-tpl="https://www.momondo.com/flight-search/{from}-{to}/{dep}?sort=price_a" href="https://www.momondo.com/flight-search/KHI-DXB/2026-12-12?sort=price_a" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+    </li>
+  </ul>
+</div></section>
+
+<section class="cmp-sec"><div class="wrap">
+  <h2>Stays: compare before you commit</h2>
+  <p class="sub">Six hotel sites, same room, same nights. Cancellation terms matter more than a two-dollar difference — every link opens the property list with your dates already set.</p>
+  <ul class="cmp-grid">
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo b" aria-hidden="true">B</span><div><h3>Booking.com</h3><span class="tag">Stays · widest inventory</span></div></div>
+      <p>Deepest coverage in the Gulf, Pakistan and Turkey, with free-cancellation filters that actually work.</p>
+      <span class="price-note">Price: Booking's own, untouched</span>
+      <a class="go" data-tpl="https://www.booking.com/searchresults.html?ss={city}&amp;checkin={in}&amp;checkout={out}&amp;group_adults={pax}&amp;no_rooms=1&amp;selected_currency=USD" href="https://www.booking.com/searchresults.html?ss=Dubai&amp;checkin=2026-12-12&amp;checkout=2026-12-18&amp;group_adults=2&amp;no_rooms=1&amp;selected_currency=USD" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+    </li>
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo p" aria-hidden="true">A</span><div><h3>Agoda</h3><span class="tag">Stays · Asia strength</span></div></div>
+      <p>Usually the cheapest of the six across Southeast Asia, Japan and the Gulf on pay-now rates.</p>
+      <span class="price-note">Price: Agoda's own, untouched</span>
+      <a class="go" data-tpl="https://www.agoda.com/search?city={city}&amp;checkIn={in}&amp;checkOut={out}&amp;adults={pax}" href="https://www.agoda.com/search?city=Dubai&amp;checkIn=2026-12-12&amp;checkOut=2026-12-18&amp;adults=2" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+    </li>
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo r" aria-hidden="true">T</span><div><h3>Trivago</h3><span class="tag">Stays · aggregator</span></div></div>
+      <p>Shows which of the other sites is cheapest for the same property — a fast sanity check.</p>
+      <span class="price-note">Price: Trivago's own, untouched</span>
+      <a class="go" data-tpl="https://www.trivago.com/?aDateRange%5Barr%5D={in}&amp;aDateRange%5Bdep%5D={out}" href="https://www.trivago.com/?aDateRange%5Barr%5D=2026-12-12&amp;aDateRange%5Bdep%5D=2026-12-18" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+    </li>
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo" aria-hidden="true">G</span><div><h3>Google Hotels</h3><span class="tag">Stays · price map</span></div></div>
+      <p>Best when location beats brand: the map view prices the whole neighbourhood in one look.</p>
+      <span class="price-note">Price: Google's own, untouched</span>
+      <a class="go" data-tpl="https://www.google.com/travel/hotels?q={city}&amp;checkin={in}&amp;checkout={out}&amp;adults={pax}" href="https://www.google.com/travel/hotels?q=Dubai&amp;checkin=2026-12-12&amp;checkout=2026-12-18&amp;adults=2" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+    </li>
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo n" aria-hidden="true">E</span><div><h3>Expedia</h3><span class="tag">Stays + packages</span></div></div>
+      <p>Worth checking when you want flight and hotel bundled, because the bundle price is not the sum of parts.</p>
+      <span class="price-note">Price: Expedia's own, untouched</span>
+      <a class="go" data-tpl="https://www.expedia.com/Hotel-Search?destination={city}&amp;startDate={in}&amp;endDate={out}&amp;adults={pax}" href="https://www.expedia.com/Hotel-Search?destination=Dubai&amp;startDate=2026-12-12&amp;endDate=2026-12-18&amp;adults=2" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+    </li>
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo r" aria-hidden="true">H</span><div><h3>Hotels.com</h3><span class="tag">Stays · rewards</span></div></div>
+      <p>Same inventory as Expedia with a stamp scheme; useful if you already collect nights there.</p>
+      <span class="price-note">Price: Hotels.com's own, untouched</span>
+      <a class="go" data-tpl="https://www.hotels.com/Hotel-Search?destination={city}&amp;startDate={in}&amp;endDate={out}&amp;adults={pax}" href="https://www.hotels.com/Hotel-Search?destination=Dubai&amp;startDate=2026-12-12&amp;endDate=2026-12-18&amp;adults=2" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+    </li>
+  </ul>
+</div></section>
+
+<section class="cmp-sec"><div class="wrap">
+  <h2>Cars and tours</h2>
+  <p class="sub">Rental excess and tour cancellation policy are where the real money hides, so both are linked with your dates and pickup point already filled in.</p>
+  <ul class="cmp-grid">
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo o" aria-hidden="true">D</span><div><h3>DiscoverCars</h3><span class="tag">Cars · 3rd-party renters</span></div></div>
+      <p>Compares local renters against the big brands and shows the excess before you commit.</p>
+      <span class="price-note">Price: DiscoverCars' own, untouched</span>
+      <a class="go" data-tpl="https://www.discovercars.com/?location={city}&amp;pickupDate={in}&amp;dropoffDate={out}" href="https://www.discovercars.com/?location=Dubai&amp;pickupDate=2026-12-12&amp;dropoffDate=2026-12-18" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+    </li>
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo b" aria-hidden="true">R</span><div><h3>Rentalcars</h3><span class="tag">Cars · big brands</span></div></div>
+      <p>Hertz, Avis, Europcar and Sixt in one list, with the fuel and mileage rules spelled out.</p>
+      <span class="price-note">Price: Rentalcars' own, untouched</span>
+      <a class="go" data-tpl="https://www.rentalcars.com/SearchResults.do?location={city}&amp;dropoffLocation={city}&amp;pickUpDate={in}&amp;dropOffDate={out}" href="https://www.rentalcars.com/SearchResults.do?location=Dubai&amp;dropoffLocation=Dubai&amp;pickUpDate=2026-12-12&amp;dropOffDate=2026-12-18" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+    </li>
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo o" aria-hidden="true">K</span><div><h3>Kayak Cars</h3><span class="tag">Cars · metasearch</span></div></div>
+      <p>Fastest way to see the price spread for one pickup point across every broker.</p>
+      <span class="price-note">Price: Kayak's own, untouched</span>
+      <a class="go" data-tpl="https://www.kayak.com/cars/{city}/{in}/{out}?sort=price_a" href="https://www.kayak.com/cars/Dubai/2026-12-12/2026-12-18?sort=price_a" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+    </li>
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo g" aria-hidden="true">V</span><div><h3>Viator</h3><span class="tag">Tours · 300k+ activities</span></div></div>
+      <p>Largest activity catalogue, with free cancellation clearly flagged per option.</p>
+      <span class="price-note">Price: Viator's own, untouched</span>
+      <a class="go" data-tpl="https://www.viator.com/searchResults/all?text={city}" href="https://www.viator.com/searchResults/all?text=Dubai" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+    </li>
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo o" aria-hidden="true">G</span><div><h3>GetYourGuide</h3><span class="tag">Tours · Europe strength</span></div></div>
+      <p>Often better than Viator in Turkey, Spain and Central Europe, with instant confirmation.</p>
+      <span class="price-note">Price: GetYourGuide's own, untouched</span>
+      <a class="go" data-tpl="https://www.getyourguide.com/s/?q={city}" href="https://www.getyourguide.com/s/?q=Dubai" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+    </li>
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo r" aria-hidden="true">K</span><div><h3>Klook</h3><span class="tag">Tours · Asia + transfers</span></div></div>
+      <p>Best for airport transfers, attraction tickets and rail passes across Asia-Pacific.</p>
+      <span class="price-note">Price: Klook's own, untouched</span>
+      <a class="go" data-tpl="https://www.klook.com/en-US/search/result/?query={city}" href="https://www.klook.com/en-US/search/result/?query=Dubai" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+    </li>
+  </ul>
+</div></section>
+
+<section class="cmp-sec"><div class="wrap">
+  <h2>eSIM: three sites, one decision</h2>
+  <p class="sub">Buy before you fly or on landing — the only real variables are per-gigabyte price and whether the plan includes calls.</p>
+  <ul class="cmp-grid">
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo b" aria-hidden="true">A</span><div><h3>Airalo</h3><span class="tag">eSIM · 200+ countries</span></div></div>
+      <p>Widest country list and the simplest top-up flow once you are abroad.</p>
+      <span class="price-note">Price: Airalo's own, untouched</span>
+      <a class="go" data-tpl="https://www.airalo.com/{country}-esim" href="https://www.airalo.com/united-arab-emirates-esim" target="_blank" rel="noopener nofollow">Open plans <span aria-hidden="true">→</span></a>
+    </li>
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo g" aria-hidden="true">H</span><div><h3>Holafly</h3><span class="tag">eSIM · unlimited data</span></div></div>
+      <p>Unlimited-data plans by day count — cheaper than Airalo for a heavy one-week trip.</p>
+      <span class="price-note">Price: Holafly's own, untouched</span>
+      <a class="go" data-tpl="https://esim.holafly.com/esim-{country}/" href="https://esim.holafly.com/esim-united-arab-emirates/" target="_blank" rel="noopener nofollow">Open plans <span aria-hidden="true">→</span></a>
+    </li>
+    <li class="cmp-card">
+      <div class="hd"><span class="cmp-logo n" aria-hidden="true">S</span><div><h3>Saily</h3><span class="tag">eSIM · pay-as-you-go</span></div></div>
+      <p>Small top-ups with no expiry pressure, good for a short stopover.</p>
+      <span class="price-note">Price: Saily's own, untouched</span>
+      <a class="go" data-tpl="https://saily.com/esim-{country}/" href="https://saily.com/esim-united-arab-emirates/" target="_blank" rel="noopener nofollow">Open plans <span aria-hidden="true">→</span></a>
+    </li>
+  </ul>
+</div></section>
+
+<section class="cmp-sec"><div class="wrap">
+  <h2>Where the 20% sits — and where it does not</h2>
+  <p class="sub">Two different transactions, two different price rules. This is the whole pricing model, with no small print.</p>
+  <div class="cmp-model">
+    <div class="cmp-box">
+      <h3>Partner booking</h3>
+      <ul>
+        <li>You pay the partner's price, exactly as shown on their site.</li>
+        <li>We add nothing to it. Not a cent.</li>
+        <li>We may earn a referral commission from the partner; it never raises your price.</li>
+        <li>Cancellation, changes and refunds follow the partner's terms.</li>
+      </ul>
+    </div>
+    <div class="cmp-box ours">
+      <h3>Our own fare</h3>
+      <ul>
+        <li>Supplier net price, then one 20% service fee.</li>
+        <li>Calculated on our server, stored on the order, printed on your quote.</li>
+        <li>Re-priced before payment — if the net moved, we show you and you decide.</li>
+        <li>Support, changes and refunds handled by us, not a call centre abroad.</li>
+      </ul>
+      <table class="cmp-table">
+        <caption>Worked example in USD. Your quote uses the supplier's currency.</caption>
+        <tbody>
+          <tr><td data-label="Line">Supplier net fare</td><td class="num" data-label="Amount">230.00</td></tr>
+          <tr><td data-label="Line">Service fee (20%)</td><td class="num" data-label="Amount">46.00</td></tr>
+          <tr><td data-label="Total you pay">Total you pay</td><td class="num" data-label="Total">276.00</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div></section>
+
+<section class="cmp-sec"><div class="wrap">
+  <h2>What we will not do to get you a price</h2>
+  <p class="sub">This is deliberate, and it is why some rows say "open live search" instead of a number.</p>
+  <ul class="cmp-grid">
+    <li class="cmp-card"><div class="hd"><span class="cmp-logo r" aria-hidden="true">✕</span><div><h3>No scraping</h3></div></div><p>We do not scrape OTA pages. Scraped fares are stale within hours, break weekly, and mislead you at checkout.</p></li>
+    <li class="cmp-card"><div class="hd"><span class="cmp-logo r" aria-hidden="true">✕</span><div><h3>No invented prices</h3></div></div><p>If we did not receive a number from a supplier API, we do not print one. A link beats a guess.</p></li>
+    <li class="cmp-card"><div class="hd"><span class="cmp-logo r" aria-hidden="true">✕</span><div><h3>No hidden fee</h3></div></div><p>One fee, one place, before payment. No resort fee surprises added by us at the last step.</p></li>
+  </ul>
+</div></section>
+
+<section class="cmp-sec"><div class="wrap">
+  <h2>Questions people ask before they compare</h2>
+  <div class="cmp-faq">
+    <details open><summary>Is this a real price comparison?</summary><p>Yes, in two honest forms. Partner rows open that partner's own live search for your route and dates, so the price is theirs and we never restate or inflate it. Our own bookable fares come from a supplier API with one 20% service fee added, itemised on the quote.</p></details>
+    <details><summary>Why can't you show every website's price on this page?</summary><p>Live prices need each supplier's licensed API, and every one requires a registered account. Amadeus closed self-service on 17 July 2026, Kiwi Tequila is invite-only, Skyscanner requires around 100,000 monthly users, and Hotellook shut down in October 2025. Anything claiming otherwise is scraping — stale, fragile and a legal risk. We link out instead.</p></details>
+    <details><summary>What exactly is the 20% service fee?</summary><p>On our own fares: supplier net plus 20%. A 230.00 net fare becomes 276.00, of which 46.00 is the fee. It is computed on our server, stored on the order and shown on your quote before payment. Partner bookings carry no fee from us.</p></details>
+    <details><summary>Do I pay more if I book through a partner link?</summary><p>No. The partner charges their own price, exactly as if you had typed their address. We may earn a small commission for the referral, and it never increases what you pay.</p></details>
+    <details><summary>Do I need an account?</summary><p>No account, no email wall, no card to compare. Either finish on the partner site, or send the trip to us on WhatsApp and we confirm the fare in writing first.</p></details>
+    <details><summary>Which sites do you compare?</summary><p>Flights: Google Flights, Skyscanner, Kiwi.com, Momondo. Stays: Booking.com, Agoda, Trivago, Google Hotels, Expedia, Hotels.com. Cars: DiscoverCars, Rentalcars, Kayak. Tours: Viator, GetYourGuide, Klook. eSIM: Airalo, Holafly, Saily.</p></details>
+  </div>
+</div></section>
+
+<section class="cmp-cta"><div class="wrap">
+  <div>
+    <h2>Want one number instead of sixteen tabs?</h2>
+    <p>Send the route and dates on WhatsApp. We compare, then reply with the best total and the fee already included — usually within the hour during office time.</p>
+  </div>
+  <div class="acts">
+    <a class="btn btn-primary" href="https://wa.me/966510451995?text=Hi%2C%20please%20compare%20these%20dates%20for%20me" target="_blank" rel="noopener">WhatsApp the desk</a>
+    <a class="btn btn-ghost" href="/travel/contact/">Request a quote</a>
+  </div>
+</div></section>
+
+</main><footer class="ftr"><div class="wrap">
+<div class="ftr-grid">
+  <div>
+    <div class="brand" style="margin-bottom:12px"><span class="brand-mark">SM</span>
+      <span class="brand-txt"><strong>Travel</strong><span>Sasta Milaga</span></span></div>
+    <p>Flights, stays, tours, cars, Umrah and visas in one place. One visible service fee, partner prices without markup, and a written confirmation before anything is charged.</p>
+    <p style="margin-top:12px"><b style="color:#fff">WhatsApp:</b> <a href="https://wa.me/966510451995" target="_blank" rel="noopener">+966 51 045 1995</a><br><b style="color:#fff">Hours:</b> 9 AM to 9 PM Pakistan time, Monday to Saturday</p>
+  </div>
+  <div><h4>Services</h4><ul><li><a href="/travel/flights/">Flights</a></li><li><a href="/travel/stays/">Stays</a></li><li><a href="/travel/tours/">Tours</a></li><li><a href="/travel/cars/">Cars</a></li><li><a href="/travel/umrah/">Umrah</a></li><li><a href="/travel/visa/">Visa</a></li><li><a href="/travel/esim/">eSIM</a></li><li><a href="/travel/group-tours/">Group tours</a></li><li><a href="/travel/ai-planner/">AI trip planner</a></li><li><a href="/travel/compare/">Compare prices</a></li></ul></div>
+  <div><h4>Popular</h4><ul><li><a href="/travel/destination/dubai/">Dubai</a></li><li><a href="/travel/destination/abu-dhabi/">Abu Dhabi</a></li><li><a href="/travel/destination/jeddah/">Jeddah</a></li><li><a href="/travel/destination/makkah/">Makkah</a></li><li><a href="/travel/destination/madinah/">Madinah</a></li><li><a href="/travel/destination/riyadh/">Riyadh</a></li><li><a href="/travel/destination/istanbul/">Istanbul</a></li><li><a href="/travel/destination/antalya/">Antalya</a></li><li><a href="/travel/destinations/">All destinations</a></li><li><a href="/travel/faq/">FAQ</a></li></ul></div>
+  <div><h4>Company</h4><ul>
+    <li><a href="/travel/about/">About</a></li>
+    <li><a href="/travel/how-it-works/">How it works</a></li>
+    <li><a href="/travel/contact/">Contact</a></li>
+    <li><a href="/travel/privacy/">Privacy policy</a></li>
+    <li><a href="/travel/terms/">Terms of service</a></li>
+    <li><a href="/travel/refund-policy/">Refund policy</a></li>
+    <li><a href="https://sastamilaga.com/">Shop</a></li>
+  </ul></div>
+</div>
+<div class="ftr-bottom">
+  <span>© 2026 Sasta Milaga Travel. Prices are indicative and subject to supplier confirmation. We are not a government visa portal.</span>
+  <span>English · العربية (coming soon) · اردو (coming soon)</span>
+</div></div></footer>
+<script>
+(function(){
+  "use strict";
+  var q = new URLSearchParams(location.search);
+  var p = function(k, d){ var v = q.get(k); return v ? v : d; };
+  var from = p("from","KHI").toUpperCase(), to = p("to","DXB").toUpperCase();
+  var dep = p("dep","2026-12-12"), ret = p("ret","2026-12-18");
+  var pax = p("pax","2"), city = p("city","Dubai");
+  var cityOf = {KHI:"Karachi",LHE:"Lahore",ISB:"Islamabad",PEW:"Peshawar",MUX:"Multan",SKT:"Sialkot",
+    DXB:"Dubai",AUH:"Abu Dhabi",SHJ:"Sharjah",RUH:"Riyadh",JED:"Jeddah",DMM:"Dammam",MED:"Madinah",
+    DOH:"Doha",KWI:"Kuwait City",BAH:"Manama",MCT:"Muscat",IST:"Istanbul",SAW:"Istanbul",AYT:"Antalya",
+    LHR:"London",MAN:"Manchester",CDG:"Paris",FRA:"Frankfurt",AMS:"Amsterdam",BCN:"Barcelona",
+    BKK:"Bangkok",KUL:"Kuala Lumpur",SIN:"Singapore",CGK:"Jakarta",MNL:"Manila",DEL:"Delhi",BOM:"Mumbai",
+    DAC:"Dhaka",CMB:"Colombo",KTM:"Kathmandu",CAI:"Cairo",ADD:"Addis Ababa",NBO:"Nairobi",JNB:"Johannesburg",
+    JFK:"New York",YYZ:"Toronto",SYD:"Sydney",PEK:"Beijing",CAN:"Guangzhou",HKG:"Hong Kong",NRT:"Tokyo",ICN:"Seoul"};
+  var vals = {
+    from: from, to: to, dep: dep, ret: ret, pax: pax, city: city,
+    froml: from.toLowerCase(), tol: to.toLowerCase(),
+    fromCity: cityOf[from] || from, toCity: cityOf[to] || to,
+    in: dep, out: ret, yymd: dep.slice(2,4) + dep.slice(5,7) + dep.slice(8,10),
+    country: String(city).toLowerCase().replace(/[^a-z]+/g,"-").replace(/^-|-$/g,"")
+  };
+  Array.prototype.forEach.call(document.querySelectorAll("[data-tpl]"), function(a){
+    var tpl = a.getAttribute("data-tpl");
+    a.setAttribute("href", tpl.replace(/\{(\w+)\}/g, function(m, k){ return vals[k] != null ? encodeURIComponent(vals[k]) : m; }));
+  });
+  var note = document.querySelector("[data-cmp-note]");
+  if (note && q.get("from")) {
+    note.textContent = "Your search is loaded: " + (cityOf[from] || from) + " \u2192 " + (cityOf[to] || to) + " on " + dep + (ret ? " to " + ret : "") + ", " + pax + " traveller" + (pax === "1" ? "" : "s") + ". Every link below keeps it.";
+  }
+})();
+</script>
+</body></html>
