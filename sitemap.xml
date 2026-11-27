@@ -1,14 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<sitemap><loc>https://sastamilaga.com/sitemap-pages.xml</loc><lastmod>2026-11-09</lastmod></sitemap>
-<sitemap><loc>https://sastamilaga.com/sitemap-products-1.xml</loc><lastmod>2026-11-09</lastmod></sitemap>
-<sitemap><loc>https://sastamilaga.com/sitemap-products-2.xml</loc><lastmod>2026-11-09</lastmod></sitemap>
-<sitemap><loc>https://sastamilaga.com/sitemap-products-3.xml</loc><lastmod>2026-11-09</lastmod></sitemap>
+<sitemap><loc>https://sastamilaga.com/sitemap-pages.xml</loc><lastmod>2026-11-27</lastmod></sitemap>
+<sitemap><loc>https://sastamilaga.com/sitemap-products-1.xml</loc><lastmod>2026-11-27</lastmod></sitemap>
+<sitemap><loc>https://sastamilaga.com/sitemap-products-2.xml</loc><lastmod>2026-11-27</lastmod></sitemap>
+<sitemap><loc>https://sastamilaga.com/sitemap-products-3.xml</loc><lastmod>2026-11-27</lastmod></sitemap>
 <sitemap><loc>https://sastamilaga.com/sitemap-blog.xml</loc><lastmod>2026-11-27</lastmod></sitemap>
-<sitemap><loc>https://sastamilaga.com/sitemap-cj-global-categories.xml</loc></sitemap>
-<sitemap><loc>https://sastamilaga.com/sitemap-global-qualified.xml</loc></sitemap>
-<sitemap><loc>https://sastamilaga.com/sitemap-landing.xml</loc></sitemap>
-<sitemap><loc>https://sastamilaga.com/sitemap-campaigns.xml</loc></sitemap>
-<sitemap><loc>https://sastamilaga.com/sitemap-visa.xml</loc></sitemap>
-<sitemap><loc>https://sastamilaga.com/sitemap-livetv.xml</loc></sitemap>
+<sitemap><loc>https://sastamilaga.com/sitemap-cj-global-categories.xml</loc><lastmod>2026-11-27</lastmod></sitemap>
+<sitemap><loc>https://sastamilaga.com/sitemap-landing.xml</loc><lastmod>2026-11-27</lastmod></sitemap>
+<sitemap><loc>https://sastamilaga.com/sitemap-campaigns.xml</loc><lastmod>2026-11-27</lastmod></sitemap>
+<sitemap><loc>https://sastamilaga.com/sitemap-visa.xml</loc><lastmod>2026-11-27</lastmod></sitemap>
+<sitemap><loc>https://sastamilaga.com/sitemap-livetv.xml</loc><lastmod>2026-11-27</lastmod></sitemap>
 </sitemapindex>
