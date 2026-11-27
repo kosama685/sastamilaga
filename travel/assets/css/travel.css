@@ -230,6 +230,11 @@ ul,ol{margin:0 0 1rem;padding-left:1.2rem}
   .res-body{grid-template-columns:1fr}
   .filters{position:static}
 }
+@media(max-width:900px){
+  .nav-links{display:none}
+  .nav .wrap{min-height:64px}
+  .brand{margin-right:auto}
+}
 @media(max-width:760px){
   .searchcard{border-radius:18px}
   .sc-panel{border-radius:0 0 18px 18px;padding:16px}
