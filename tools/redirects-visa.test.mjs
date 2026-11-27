@@ -22,6 +22,24 @@ test('old WordPress visa addresses without a page, and Urdu copies, still redire
     const r = await get(p); assert.equal(r.status, 301, p); assert.equal(r.headers.get('location'), 'https://sastamilaga.com/visa/', p);
   }
 });
+test('natural country names redirect to the canonical visa guide instead of the hub', async () => {
+  const aliases = {
+    '/visa/usa': '/visa/united-states/', '/visa/us': '/visa/united-states/', '/visa/united-states-of-america': '/visa/united-states/',
+    '/visa/uae': '/visa/united-arab-emirates/', '/visa/dubai': '/visa/united-arab-emirates/',
+    '/visa/uk': '/visa/united-kingdom/', '/visa/turkey': '/visa/turkiye/', '/visa/holland': '/visa/netherlands/',
+    '/visa/burma': '/visa/myanmar/', '/visa/swaziland': '/visa/eswatini/', '/visa/czech-republic': '/visa/czechia/', '/visa/ksa': '/visa/saudi-arabia/',
+  };
+  for (const [from, to] of Object.entries(aliases)) {
+    const r = await get(from + '/');
+    assert.equal(r.status, 301, from);
+    assert.equal(r.headers.get('location'), 'https://sastamilaga.com' + to, from);
+  }
+});
+test('a country name the site has no guide for still falls back to the hub', async () => {
+  const r = await get('/visa/atlantis/');
+  assert.equal(r.status, 301);
+  assert.equal(r.headers.get('location'), 'https://sastamilaga.com/visa/');
+});
 test('the /visa/ index is still passed through from the static site', async () => {
   const r = await get('/visa/'); assert.equal(r.status, 200); assert.equal(r.headers.get('x-redirects-worker'), 'index-passthrough');
 });

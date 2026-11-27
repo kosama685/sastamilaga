@@ -28,6 +28,15 @@ const PAGES = {
   '/product/umrah-visa-from-pakistan': '/visa/saudi-arabia/', '/product/serbia-work-visa-package': '/visa/serbia/',
 };
 const URDU_PAGES = { '/privacy-policy': '/ur/privacy/', '/terms-conditions': '/ur/terms/', '/returns-refunds': '/ur/returns/', '/shipping-delivery': '/ur/shipping/', '/sell-with-us': '/seller/' };
+// Visa countries under the name people actually type or search for, pointed at the one canonical guide page.
+// Without this the generic visa rule below sends them to the hub, so the country's requirements never appear.
+const VISA_ALIASES = {
+  '/visa/usa': '/visa/united-states/', '/visa/us': '/visa/united-states/', '/visa/america': '/visa/united-states/', '/visa/united-states-of-america': '/visa/united-states/',
+  '/visa/uae': '/visa/united-arab-emirates/', '/visa/dubai': '/visa/united-arab-emirates/',
+  '/visa/uk': '/visa/united-kingdom/', '/visa/england': '/visa/united-kingdom/', '/visa/britain': '/visa/united-kingdom/',
+  '/visa/turkey': '/visa/turkiye/', '/visa/holland': '/visa/netherlands/', '/visa/burma': '/visa/myanmar/',
+  '/visa/swaziland': '/visa/eswatini/', '/visa/czech-republic': '/visa/czechia/', '/visa/ksa': '/visa/saudi-arabia/',
+};
 
 export default {
   async fetch(req, env) {
@@ -58,6 +67,7 @@ export default {
       if (/\/feed$/.test(q) || /^\/(product-tag|store)\//.test(q)) return gone();
       if (ur && q === '/') return go('/');
       if (ur && URDU_PAGES[q]) return go(URDU_PAGES[q]);
+      if (!ur && VISA_ALIASES[q]) return go(VISA_ALIASES[q]);   // natural country name -> its canonical visa guide
       if (PAGES[q]) return go(PAGES[q]);
       let m = q.match(/^\/product\/([^/]+)$/);
       if (m) {
