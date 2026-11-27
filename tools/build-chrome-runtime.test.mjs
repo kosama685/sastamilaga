@@ -14,3 +14,18 @@ test('existing local static product pages retain SEO-rendered HTML independently
  assert.match(h,/application\/ld\+json/);
  assert.match(h,/id="sm-chrome-header"/);
 });
+
+test('shared travel links use the same destinations as the storefront',()=>{
+ const home=fs.readFileSync('index.html','utf8');
+ const chrome=JSON.parse(fs.readFileSync('partials/chrome-runtime.json','utf8'));
+ const links = markup => [...markup.matchAll(/<a\b[^>]*href="([^"]+)"[^>]*>[\s\S]*?<\/a>/g)]
+  .map(([,href])=>href).filter(href=>/^(?:flights\/|travel\/|#\/travel\?tab=(?:flights|stays))$/.test(href)).sort();
+ for(const [field,selector] of [
+  ['header', /<header class="wp-block-template-part"[\s\S]*?<\/header>/],
+  ['footer', /<footer class="smf"[\s\S]*?<\/footer>/]
+ ]){
+  const expected=links(home.match(selector)[0]);
+  assert.ok(expected.includes('flights/'));
+  assert.deepEqual(links(chrome[field]),expected);
+ }
+});
