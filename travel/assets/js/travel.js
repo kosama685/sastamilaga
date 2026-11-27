@@ -325,14 +325,14 @@
       var stops = durMin > 600 ? 1 : (hash(seed + "s" + i) % 5 === 0 ? 1 : 0);
       if (q.cabin === "business" || q.cabin === "first") durMin += 0;
       var arrival = depH * 60 + depM + durMin;
-      var base = rnd(seed + "b" + i, 150, 720) + (stops ? -60 : 40);
+      var base = rnd(seed + "b" + i, 205, 780) + (stops ? -45 : 35);
       if (q.cabin === "business") base *= 2.6;
       if (q.cabin === "first") base *= 4.1;
       if (q.cabin === "premium") base *= 1.7;
       rows.push({
         provider: al.name, code: al.code, dep: depH * 60 + depM, arr: arrival % 1440,
-        dur: durMin, stops: stops, base: Math.max(90, Math.round(base)),
-        price: price(Math.max(90, Math.round(base))),
+        dur: durMin, stops: stops, base: Math.max(165, Math.round(base)),
+        price: price(Math.max(165, Math.round(base))),
         bags: al.type === "low" ? "Cabin bag only" : "1 × 23kg + cabin",
         refund: al.code === "EK" || al.code === "QR" || al.code === "SV"
       });
