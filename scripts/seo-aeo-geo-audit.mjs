@@ -61,7 +61,8 @@ function auditPage(file) {
   const h1 = count(html, /<h1[\s>]/gi);
   const imgs = count(html, /<img\s/gi);
   const altImgs = count(html, /<img[^>]+alt=/gi);
-  const links = count(html, /<a\s[^>]+href=["']\//gi);
+  // `[^>]*` not `[^>]+`: an anchor whose href is the first attribute must still count.
+  const links = count(html, /<a\s[^>]*href=["']\//gi);
   const faqBlock = /faq|frequently asked/i.test(html);
   const noindex = /noindex/i.test(robots);
 
