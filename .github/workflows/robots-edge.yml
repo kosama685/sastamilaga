@@ -1,0 +1,68 @@
+name: Deploy canonical robots.txt to Cloudflare edge
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'robots.txt'
+      - 'tools/build-robots-worker.mjs'
+      - '.github/workflows/robots-edge.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  robots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: node --check tools/build-robots-worker.mjs
+      - run: node tools/build-robots-worker.mjs
+      - name: Deploy only the robots policy Worker (no other Workers touched)
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN" && test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Cloudflare secrets missing"; exit 1; }
+          npx --yes wrangler@3 deploy .tmp/sasta-robots-policy.mjs --name sasta-robots-policy-v1 --compatibility-date 2026-11-16
+      - name: Attach only the exact canonical robots route (preserve other routes)
+        shell: bash
+        run: |
+          set -euo pipefail
+          API="https://api.cloudflare.com/client/v4"
+          H="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+          ZONE="$(curl -fsS -m 30 -H "$H" "$API/zones?name=sastamilaga.com")"
+          ZID="$(jq -r '.result[0].id // empty' <<<"$ZONE")"
+          test -n "$ZID" || { echo "::error::Canonical zone unavailable"; exit 1; }
+          ROUTES="$(curl -fsS -m 30 -H "$H" "$API/zones/$ZID/workers/routes")"
+          PATTERN='sastamilaga.com/robots.txt'
+          SCRIPT='sasta-robots-policy-v1'
+          EXISTS="$(jq -r --arg p "$PATTERN" '[.result[]? | select(.pattern==$p)][0].script // empty' <<<"$ROUTES")"
+          if [ -n "$EXISTS" ] && [ "$EXISTS" != "$SCRIPT" ]; then
+            echo "::error::Exact robots route belongs to $EXISTS; manual reconciliation required"; exit 1
+          fi
+          if [ -z "$EXISTS" ]; then
+            RESPONSE="$(curl -fsS -m 30 -X POST -H "$H" -H 'Content-Type: application/json' -d '{"pattern":"sastamilaga.com/robots.txt","script":"sasta-robots-policy-v1"}' "$API/zones/$ZID/workers/routes")"
+            jq -e '.success == true' <<<"$RESPONSE" >/dev/null || { echo "::error::Cloudflare route creation failed"; exit 1; }
+          fi
+          echo "Canonical robots route attached safely."
+      - name: Purge the one cached robots.txt URL before comparing live output
+        shell: bash
+        run: |
+          set -euo pipefail
+          API="https://api.cloudflare.com/client/v4"
+          H="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+          ZID="$(curl -fsS -m 30 -H "$H" "$API/zones?name=sastamilaga.com" | jq -r '.result[0].id // empty')"
+          test -n "$ZID" || { echo "::error::Canonical zone not found"; exit 1; }
+          RESPONSE="$(curl -fsS -m 30 -X POST -H "$H" -H 'Content-Type: application/json' -d '{"files":["https://sastamilaga.com/robots.txt"]}' "$API/zones/$ZID/purge_cache")"
+          jq -e '.success == true' <<<"$RESPONSE" >/dev/null || { echo "::error::Targeted robots purge failed"; exit 1; }
+          echo "PASS: target-specific Cloudflare cache purge succeeded."
+      - name: Verify canonical robots response matches GitHub source
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 3 --max-time 30 https://sastamilaga.com/robots.txt -o .tmp/live-robots.txt
+          diff -u robots.txt .tmp/live-robots.txt
+          echo "PASS: live Cloudflare robots.txt exactly matches GitHub repository policy"

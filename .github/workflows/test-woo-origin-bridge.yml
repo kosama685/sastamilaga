@@ -1,0 +1,54 @@
+name: Test WooCommerce Namecheap origin bridge
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - edge/sasta-woo-namecheap-bridge.mjs
+      - .github/workflows/test-woo-origin-bridge.yml
+permissions:
+  contents: read
+jobs:
+  script-and-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: {node-version: '24'}
+      - name: Verify bridge code syntax
+        run: node --check edge/sasta-woo-namecheap-bridge.mjs
+      - name: Probe isolated Worker without changing live routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://sasta-woo-namecheap-bridge-v1.usamaestonia.workers.dev'
+          for path in / /cart/ /checkout/ /wp-json/; do
+            header=$(mktemp)
+            body=$(mktemp)
+            code=$(curl -sS --max-time 22 --connect-timeout 9 --max-redirs 0 -D "$header" -o "$body" -w '%{http_code}' "$base$path") || code=000
+            origin=$(grep -i '^x-sasta-commerce-origin:' "$header" | tr -d '\r' | tail -1 || true)
+            location=$(grep -i '^location:' "$header" | tr -d '\r' | tail -1 || true)
+            echo "$path: HTTP $code ${origin:-no origin marker} ${location:-no redirect}"
+            if [ "$code" != 200 ] && [ "$code" != 503 ] && [ "$code" != 404 ]; then
+              grep -iE '^(server:|cf-ray:|content-type:|retry-after:)' "$header" | tr -d '\r' || true
+              head -c 350 "$body" | tr '\n' ' ' || true
+              echo
+            fi
+            if [ "$path" = '/' ]; then
+              test "$code" = 404
+            else
+              if [ "$code" != 200 ] && [ "$code" != 301 ] && [ "$code" != 302 ] && [ "$code" != 303 ] && [ "$code" != 307 ] && [ "$code" != 308 ] && [ "$code" != 503 ]; then
+                echo "::error::Bridge must respond with real WooCommerce or a safe 503, never a Cloudflare quota failure."
+                exit 1
+              fi
+              if [ "$code" = 503 ]; then
+                grep -qi 'x-sasta-commerce-origin: unavailable' "$header" || { echo "::error::503 did not come from the safe commerce bridge"; exit 1; }
+              fi
+              if grep -qi 'Error establishing a database connection' "$body"; then
+                echo "::error::Bridge exposed raw WordPress DB failure."
+                exit 1
+              fi
+            fi
+            rm -f "$header" "$body"
+          done

@@ -1,0 +1,43 @@
+name: Audit internal URLs and shared site chrome
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.html'
+      - 'assets/**'
+      - 'app.js'
+      - 'tools/test-checkout-contract.mjs'
+      - 'tools/test-worker-route-ownership.mjs'
+      - '.github/workflows/workers.yml'
+      - 'tools/audit-internal-urls.mjs'
+      - '.github/workflows/site-link-audit.yml'
+  pull_request:
+    paths:
+      - '**/*.html'
+      - 'app.js'
+      - 'assets/**'
+      - 'tools/audit-internal-urls.mjs'
+      - 'tools/test-checkout-contract.mjs'
+      - 'tools/test-worker-route-ownership.mjs'
+      - '.github/workflows/workers.yml'
+      - '.github/workflows/site-link-audit.yml'
+  workflow_dispatch:
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: node tools/test-checkout-contract.mjs
+      - run: node tools/test-worker-route-ownership.mjs
+      - run: node tools/audit-internal-urls.mjs --strict
+      - uses: actions/upload-artifact@v7
+        with:
+          name: site-link-audit
+          path: reports/url-audit-ci.json
+          if-no-files-found: error

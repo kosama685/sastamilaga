@@ -1,0 +1,44 @@
+[
+  {
+    "market": "serbia",
+    "source": "https://commons.wikimedia.org/wiki/File:Panorama_of_Belgrade_from_Kalemegdan_fortress.jpg",
+    "author": "Boksi",
+    "license": "CC BY-SA 3.0",
+    "bytes": 52064
+  },
+  {
+    "market": "pakistan",
+    "source": "https://commons.wikimedia.org/wiki/File:Badshahi_Mosque_2024.jpg",
+    "author": "Wikimedia Commons contributor",
+    "license": "CC0 1.0",
+    "bytes": 115284
+  },
+  {
+    "market": "saudi-arabia",
+    "source": "https://commons.wikimedia.org/wiki/File:Riyadh_Skyline.jpg",
+    "author": "B.alotaby",
+    "license": "CC BY-SA 4.0",
+    "bytes": 143414
+  },
+  {
+    "market": "germany",
+    "source": "https://unsplash.com",
+    "author": "Unsplash contributor",
+    "license": "Unsplash License",
+    "bytes": 318704
+  },
+  {
+    "market": "uk",
+    "source": "https://unsplash.com",
+    "author": "Unsplash contributor",
+    "license": "Unsplash License",
+    "bytes": 322248
+  },
+  {
+    "market": "usa",
+    "source": "https://unsplash.com",
+    "author": "Unsplash contributor",
+    "license": "Unsplash License",
+    "bytes": 255410
+  }
+]

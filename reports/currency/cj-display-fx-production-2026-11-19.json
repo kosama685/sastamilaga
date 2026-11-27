@@ -1,0 +1,81 @@
+{
+  "date": "2026-11-19",
+  "environment": "production",
+  "site": "https://sastamilaga.com",
+  "worker": "sasta-global-product-design-v6",
+  "workerRoute": "sastamilaga.com/global-shop/p/*",
+  "githubSource": "tools/global-product-uuid-and-numeric-worker.mjs",
+  "sourceCommits": [
+    "0438781350a98fa647d8d03d28dc1e239b5cc319",
+    "6aee29680699bacdbabc05e50bebdd0d7a14a0ba"
+  ],
+  "deployment": {
+    "success": true,
+    "id": "0d913dfda9254d9593a681e432e8bf0d",
+    "previous_id": "90e3f8be-c648-4756-a59f-75a51209ba98",
+    "previous_version": "7c2aca90-ad3c-475e-9bac-84757b94141d",
+    "binding": "DB preserved",
+    "routeChanges": 0
+  },
+  "verification": [
+    {
+      "test": "SAR selected for Middle tube split toe socks",
+      "http": 200,
+      "rate_usd_sar": 3.75,
+      "unitPrice": "SAR 6.19",
+      "result": "PASS"
+    },
+    {
+      "test": "Saudi shipping options and carrier totals",
+      "http": 200,
+      "shippingOptions": 7,
+      "rate_usd_sar": 3.75,
+      "examples": [
+        {
+          "carrier": "CJPacket Liquid Line",
+          "shipping": "SAR 17.89",
+          "total": "SAR 24.04"
+        },
+        {
+          "carrier": "DHL Official",
+          "shipping": "SAR 459.22",
+          "total": "SAR 465.41"
+        }
+      ],
+      "result": "PASS"
+    },
+    {
+      "test": "Switch SAR to AED",
+      "exchange_usd_sar": 3.75,
+      "exchange_usd_aed": 3.6725,
+      "example_10usd_sar": "SAR 37.50",
+      "example_10usd_aed": "AED 36.73",
+      "result": "PASS"
+    },
+    {
+      "test": "Second global product shared template",
+      "product": "Solar simulation anti-theft warning light",
+      "http": 200,
+      "unitPrice": "SAR 6.98",
+      "result": "PASS"
+    }
+  ],
+  "guardrails": {
+    "sourceCurrency": "USD",
+    "displayCurrencies": "Saved currency in sm_market",
+    "fxSource": "open.er-api.com/v6/latest/USD",
+    "cacheHours": 12,
+    "noRateBehavior": "Show unconverted USD with explicit notice",
+    "checkoutChanges": false,
+    "shippingSourceChanges": false,
+    "stockChanges": false,
+    "skuChanges": false,
+    "priceFeedChanges": false,
+    "seoSchemaChanges": false
+  },
+  "limitations": [
+    "Browser-tested shared /global-shop/p/* product template, not every vendor-specific UI template",
+    "FX display estimates are not binding prices or checkout settlement currency",
+    "Displayed supplier prices and shipping quotes remain subject to checkout confirmation"
+  ]
+}

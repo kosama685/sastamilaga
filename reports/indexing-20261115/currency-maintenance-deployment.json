@@ -1,0 +1,9 @@
+{
+  "installed": true,
+  "schedule_server_time": "17 */12 * * *",
+  "script": "/home/altugpaa/gdcs-private/indexing-20261115/currency-maintenance.php",
+  "backup": "/home/altugpaa/gdcs-private/indexing-20261115/crontab.before",
+  "source_sha256": "4253b4643fc2b4772624c64f91ee061a2bb95c4635b48cefec4acf1e11a6a524",
+  "existing_entries_preserved": true,
+  "does_not_run_wp_cron_queue": true
+}

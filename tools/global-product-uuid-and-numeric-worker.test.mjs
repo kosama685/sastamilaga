@@ -1,0 +1,144 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import worker from './global-product-uuid-and-numeric-worker.mjs';
+const BASE='https://sastamilaga.com/global-shop/p/';
+const numeric='1449637195303489536';
+const uuid='87FD613D-EEC7-474A-A408-02C9DCC6E9E2';
+const samples={
+ [numeric]:{sku:'CJJT1321500',name:'Simulation Flame Mute Aroma Diffuser Humidifier',images:'https://cf.cjdropshipping.com/e10e4ad0-e931-4b43-a087-014b287c136b.jpeg',categories:'Home Office Storage',cj_product_id:numeric},
+ [uuid]:{sku:'CJQCQCQC00732',name:'Solar simulation anti-theft warning light',images:'https://cf.cjdropshipping.com/20200515/3329770986844.jpg',categories:'Car Alarm Systems',cj_product_id:uuid}
+};
+function env(){
+ const e={DB:{prepare(sql){return {bind(id){return {async first(){if(sql.includes('FROM catalog_products_cj'))return samples[id]||null;if(sql.includes('FROM cj_product_enrichment'))return id===uuid?{seo_approved:1,description_text:'Solar-powered decorative anti-theft warning light for cars. Supplier describes red and blue LED options, SMD light source and dimensions. Confirm the live variation and shipping before purchasing.',specification_json:'{"power":"Solar"}'}:null;throw Error('unexpected SQL')}}},async all(){return {results:[]}}}}}};
+ return e;
+}
+test('numeric 19-digit supplier ID becomes a real 200 canonical detail page but remains noindex until reviewed',async()=>{
+ const url=BASE+numeric+'/simulation-flame-mute-aroma-diffuser-humidifier/';
+ const res=await worker.fetch(new Request(url),env());
+ const html=await res.text();
+ assert.equal(res.status,200);
+ assert.equal(res.headers.get('x-robots-tag'),'noindex, follow');
+ assert.match(html,/<meta name="robots" content="noindex, follow"/);
+ assert.match(html,/canonical/);
+ assert.match(html,/Simulation Flame Mute Aroma Diffuser Humidifier/);
+ assert.match(html,/Supplier-only items require confirmation of variant, availability, price and shipping/);
+});
+test('existing approved UUID URLs remain indexable unchanged',async()=>{
+ const u=BASE+uuid+'/solar-simulation-anti-theft-warning-light/';
+ const res=await worker.fetch(new Request(u),env());
+ assert.equal(res.status,200);
+ const body=await res.text();
+ assert.match(body,/index, follow/);
+ assert.equal(res.headers.get('x-robots-tag'),null);
+});
+test('slug normalization 301 preserves product ID and canonical',async()=>{
+ const res=await worker.fetch(new Request(BASE+numeric+'/wrong-slug/'),env());
+ assert.equal(res.status,301);
+ assert.equal(res.headers.get('location'),BASE+numeric+'/simulation-flame-mute-aroma-diffuser-humidifier/');
+});
+test('unknown IDs and invalid IDs are not published',async()=>{
+ assert.equal((await worker.fetch(new Request(BASE+'1111111111111111111/unknown/'),env())).status,404);
+ assert.equal((await worker.fetch(new Request(BASE+'1234/not-valid/'),env())).status,404);
+});
+test('noncommerce endpoints reject unrecognized paths',async()=>{
+ const res=await worker.fetch(new Request('https://sastamilaga.com/checkout/'),env());
+ assert.equal(res.status,404);
+});
+
+test('canonical product HTML offers verified CJ variant gallery, shipping and useful AEO links without blocked video',async()=>{
+ const res=await worker.fetch(new Request(BASE+numeric+'/simulation-flame-mute-aroma-diffuser-humidifier/'),env());
+ assert.equal(res.status,200);
+ const h=await res.text();
+ assert.match(h,/sasta-verified-gallery-v1/);
+ assert.match(h,/sm-cj-video-player-v2/);
+ assert.ok(h.includes('cjv/resolve'));
+ assert.match(h,/sm-video-modal/);
+ assert.match(h,/dialog\.showModal/);
+ assert.match(h,/player\.pause\(\)/);
+ assert.match(h,/href="\/cart\/"/);
+ assert.match(h,/href="\/my-account\/"/);
+ assert.match(res.headers.get('content-security-policy')||'',/media-src/);
+ assert.match(h,/sasta:cjvariants/);
+ assert.match(h,/cj-quote/);
+ assert.match(h,/class="pdp pdp3"/); 
+ assert.match(h,/class="gallery-panel"/);
+ assert.match(h,/class="buy-panel"/);
+ assert.match(h,/Request availability on WhatsApp/);
+ assert.ok(h.includes('https://wa.me/966510451995?text='));
+ assert.ok(h.includes(numeric),'inquiry must contain the current product ID');
+ assert.match(h,/aria-label="Shop links"/);
+ assert.match(h,/aria-label="Customer support"/);
+ assert.match(h,/class="smh-nav"/);
+ assert.match(h,/class="smh-search"/);
+ assert.match(h,/action="\/search\/" method="get"/);
+ assert.match(h,/name="q"/);
+ assert.match(h,/logo-46\.png/);
+ assert.match(res.headers.get('content-security-policy')||'',/form-action 'self'/);
+ assert.match(h,/property="og:title"/);
+ assert.match(h,/name="twitter:card"/);
+ assert.match(h,/Buying guide and product questions/);
+ assert.match(h,/BreadcrumbList/);
+ assert.match(h,/\/worldwide-shopping\//);
+ assert.doesNotMatch(h,/<video[^>]+src=/i);
+ assert.doesNotMatch(h,/"@type":"Offer"/);
+ assert.doesNotMatch(h,/VideoObject/);
+ assert.match(h,/noindex, follow/);
+});
+
+
+test('no-D1 snapshot fallback gives real existing supplier product HTTP 200, noindex, factual recovery guidance',async()=>{
+ const old=globalThis.fetch;
+ globalThis.fetch=async url=>{assert.match(String(url),/\/data\/cj\/lookup\/[0-9a-f]{3}\.json$/);return new Response(JSON.stringify({snapshot:'2026-11-05',items:{[numeric]:['CJJT1321500','Simulation Flame Mute Aroma Diffuser Humidifier','Home Office Storage','home-office-storage','https://cf.cjdropshipping.com/test.jpg']}}),{status:200,headers:{'content-type':'application/json'}})};
+ try{
+  const r=await worker.fetch(new Request(BASE+numeric+'/simulation-flame-mute-aroma-diffuser-humidifier/?utm_campaign=test'),{});
+  assert.equal(r.status,200);
+  assert.equal(r.headers.get('x-sasta-catalog-source'),'snapshot-recovery-2026-11-05');
+  assert.equal(r.headers.get('x-robots-tag'),'noindex, follow');
+  const h=await r.text();assert.match(h,/class="pdp pdp3"/);assert.match(h,/sm-cj-video-player-v2/);assert.match(h,/Supplier catalogue recovery mode/);assert.match(h,/Simulation Flame Mute Aroma Diffuser Humidifier/);
+  assert.doesNotMatch(h,/id="cj-widget"/);
+  assert.doesNotMatch(h,/<video[^>]*src=/);
+  assert.match(h,/rel="canonical"/);
+ }finally{globalThis.fetch=old}
+});
+test('D1 quota exception falls back to snapshot and nonexistent reference stays 404',async()=>{
+ const old=globalThis.fetch;
+ globalThis.fetch=async()=>new Response(JSON.stringify({snapshot:'2026-11-05',items:{[numeric]:['SKU','Simulation Flame Mute Aroma Diffuser Humidifier','Home Office Storage','home-office-storage','https://cf.cjdropshipping.com/test.jpg']}}),{status:200});
+ const envQuota={DB:{prepare(){throw Error('D1 daily rows read budget exhausted')}}};
+ try{
+  const ok=await worker.fetch(new Request(BASE+numeric+'/simulation-flame-mute-aroma-diffuser-humidifier/'),envQuota);assert.equal(ok.status,200);
+  const unknown=await worker.fetch(new Request(BASE+'1111111111111111111/nonexistent/'),envQuota);assert.equal(unknown.status,404);
+ }finally{globalThis.fetch=old}
+});
+
+test('reviewed CJ product has item-specific answers, contextual policies and wide page styling',async()=>{
+ const res=await worker.fetch(new Request(BASE+uuid+'/solar-simulation-anti-theft-warning-light/'),env());
+ const html=await res.text();
+ assert.match(html,/Questions about Solar simulation anti-theft warning light/);
+ assert.match(html,/What is Solar simulation anti-theft warning light/);
+ assert.match(html,/Can Solar simulation anti-theft warning light be shipped/);
+ assert.match(html,/smh-answers/);
+ assert.match(html,/max-width:1680px/);
+ assert.match(html,/href="\/shipping\/"/);
+ assert.match(html,/href="\/returns\/"/);
+ assert.match(html,/href="\/c\/global\/index.html"/);
+ assert.doesNotMatch(html,/"@type":"Offer"/);
+});
+test('reviewed CJ sitemap is paginated beyond 4000, with no duplicate first-page URLs',async()=>{
+ const count=8001;
+ const db={prepare(sql){return {
+   bind(n){return {async all(){assert.match(sql,/OFFSET/);return {results:[{cj_product_id:String(n+1),name:'Item '+(n+1)}]}}}},
+   async first(){assert.match(sql,/COUNT/);return {total:count}}
+ }}};
+ const e={DB:db};
+ const ix=await worker.fetch(new Request('https://sastamilaga.com/global-shop/sitemap.xml'),e);
+ assert.equal(ix.status,200);let xml=await ix.text();
+ assert.match(xml,/sitemapindex/);assert.match(xml,/sitemaps\/1.xml/);assert.match(xml,/sitemaps\/2.xml/);assert.match(xml,/sitemaps\/3.xml/);
+ const one=await worker.fetch(new Request('https://sastamilaga.com/global-shop/sitemaps/1.xml'),e);
+ const two=await worker.fetch(new Request('https://sastamilaga.com/global-shop/sitemaps/2.xml'),e);
+ const three=await worker.fetch(new Request('https://sastamilaga.com/global-shop/sitemaps/3.xml'),e);
+ assert.equal(one.status,200);assert.equal(two.status,200);assert.equal(three.status,200);
+ assert.match(await one.text(),/\/global-shop\/p\/1\/item-1\//);
+ assert.match(await two.text(),/\/global-shop\/p\/4001\/item-4001\//);
+ assert.match(await three.text(),/\/global-shop\/p\/8001\/item-8001\//);
+ assert.equal((await worker.fetch(new Request('https://sastamilaga.com/global-shop/sitemaps/4.xml'),e)).status,404);
+});

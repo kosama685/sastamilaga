@@ -1,0 +1,11 @@
+{
+  "receipts": [
+    {
+      "worker": "sasta-static-blog-reader",
+      "before_sha256": "33f3832c06370ad48ea317cc0523733e9cc28cb879b611168abacf4486bce61d",
+      "after_sha256": "6574bef31510342605ffe8e525b37c899d3fea1e4b2a226632ebbf0b09684fae",
+      "deployment_id": "37e9a5e3839f42cd9c87c71854efa806",
+      "at": "2026-11-14T22:19:21.965Z"
+    }
+  ]
+}

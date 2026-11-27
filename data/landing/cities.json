@@ -1,0 +1,18 @@
+{
+  "_note": "City landing pages are generated ONLY for entries that pass every gate in tools/build-city-pages.mjs. The list is intentionally empty: no city currently has verified fulfilment evidence and documented search demand. Do not add a city without both. No warehouses, stores, local offices or delivery promises may be invented.",
+  "_requiredFields": {
+    "country": "slug of a market in data/landing/markets.json",
+    "city": "display name",
+    "citySlug": "lowercase-hyphenated, unique within the country",
+    "lang": "locale of an existing country page, for example en-GB",
+    "fulfilmentVerified": "true only with fulfilmentEvidence",
+    "fulfilmentEvidence": {"source": "carrier quote, contract or published policy", "url": "link", "date": "YYYY-MM-DD"},
+    "searchNeedEvidence": {"source": "Search Console, Keyword Planner or another dated dataset", "date": "YYYY-MM-DD", "note": "what the data shows"},
+    "nativeReviewed": "true only after a named native reviewer signed off (required when lang is not English)",
+    "intro": "localized introduction written from verified facts",
+    "deliveryMethods": ["only methods named in the evidence"],
+    "faq": [["question", "answer based on the evidence"]],
+    "indexable": "false unless every gate passes"
+  },
+  "cities": []
+}

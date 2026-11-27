@@ -1,0 +1,38 @@
+name: Product SEO and sitemap regression
+on:
+  pull_request:
+    paths:
+      - tools/global-product-uuid-and-numeric-worker.mjs
+      - tools/global-product-uuid-and-numeric-worker.test.mjs
+      - assets/theme/pdp-v2.css
+      - assets/theme/static-bundle.css
+      - .github/workflows/product-seo-regression.yml
+  push:
+    branches: [main]
+    paths:
+      - tools/global-product-uuid-and-numeric-worker.mjs
+      - tools/global-product-uuid-and-numeric-worker.test.mjs
+      - assets/theme/pdp-v2.css
+      - assets/theme/static-bundle.css
+      - .github/workflows/product-seo-regression.yml
+permissions:
+  contents: read
+jobs:
+  product-seo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Validate CJ worker syntax and tests
+        run: |
+          node --check tools/global-product-uuid-and-numeric-worker.mjs
+          node --check tools/global-product-uuid-and-numeric-worker.test.mjs
+          node --test tools/global-product-uuid-and-numeric-worker.test.mjs
+      - name: Confirm shared product stylesheet and wide responsive viewport
+        run: |
+          grep -Fq 'max-width:1680px' assets/theme/pdp-v2.css
+          grep -Fq 'max-width:1680px' assets/theme/static-bundle.css
+          grep -Fq 'prefers-reduced-motion' assets/theme/pdp-v2.css

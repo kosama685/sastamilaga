@@ -1,0 +1,11 @@
+{
+  "snapshot": "2026-11-05",
+  "source_catalogue_rows": 451812,
+  "unique_ids": 451812,
+  "duplicates": 0,
+  "shards": 1024,
+  "bytes": 99322945,
+  "source_snapshot_date": "2026-11-05",
+  "allow_indexing": false,
+  "note": "Static D1-failure recovery lookup only. Never evidence of live stock, approved content, pricing or product eligibility."
+}

@@ -1,0 +1,24 @@
+name: Global keyword inventory export
+on:
+  pull_request:
+    paths:
+      - 'tools/export-global-keyword-inventory.py'
+      - '.github/workflows/global-keyword-inventory.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Export all tracked HTML, sitemap URLs, and CJ snapshot records
+        run: python3 tools/export-global-keyword-inventory.py
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: global-keyword-inventory
+          path: artifacts/global-keywords/
+          if-no-files-found: error
+          retention-days: 30

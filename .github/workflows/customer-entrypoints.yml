@@ -1,0 +1,31 @@
+name: Customer entrypoint and 404 experience monitor
+on:
+  schedule:
+    - cron: '43 20 * * *' # Daily 23:43 Asia/Riyadh; read-only checks
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '404.html'
+      - 'tools/check-customer-entrypoints.mjs'
+      - 'workers/redirects/worker.js'
+      - '.github/workflows/workers.yml'
+      - '.github/workflows/customer-entrypoints.yml'
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Validate customer recovery page and redirect paths
+        run: |
+          node --check tools/check-customer-entrypoints.mjs
+          node tools/check-customer-entrypoints.mjs
+      - name: Live visitor-entry verification
+        if: github.event_name != 'pull_request'
+        run: node tools/check-customer-entrypoints.mjs --live

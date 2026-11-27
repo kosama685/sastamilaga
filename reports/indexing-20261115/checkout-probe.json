@@ -1,0 +1,52 @@
+{
+  "checked_at_utc": "2026-11-14T21:50:58Z",
+  "order_submitted": false,
+  "payment_captured": false,
+  "checks": [
+    {
+      "check": "official_market_context",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/wp-json/gdcs/v1/context?light=1",
+      "csrf_present": true
+    },
+    {
+      "check": "official_market_selection",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/wp-json/gdcs/v1/context",
+      "saved": true
+    },
+    {
+      "check": "anonymous_local_item_add",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/?wc-ajax=add_to_cart",
+      "woo_fragments": true,
+      "woo_error": false
+    },
+    {
+      "check": "cart_session_persistence",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/cart/",
+      "cart_form": true,
+      "expected_product": true
+    },
+    {
+      "check": "checkout_form",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/checkout/",
+      "checkout_form": true,
+      "billing_fields": true,
+      "gateways": [
+        "cod"
+      ],
+      "paypal_markup": true,
+      "cod_markup": true,
+      "shipping_method_markup": true,
+      "noindex": true
+    },
+    {
+      "check": "anonymous_test_cart_cleanup",
+      "status": 200,
+      "final_url": "https://sastamilaga.com/cart/"
+    }
+  ]
+}

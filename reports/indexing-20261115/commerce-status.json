@@ -1,0 +1,85 @@
+{
+  "at": "2026-11-14T21:56:38+00:00",
+  "gateways": {
+    "ppcp-gateway": {
+      "enabled": true,
+      "class": "WooCommerce\\PayPalCommerce\\WcGateway\\Gateway\\PayPalGateway"
+    },
+    "cod": {
+      "enabled": true,
+      "class": "WC_Gateway_COD"
+    }
+  },
+  "supplier_quote": {
+    "product_id": 64465,
+    "destination": "SA",
+    "origin": "CN",
+    "rates": [
+      {
+        "service": "CJPacket Eub",
+        "estimate": "14-26",
+        "usd": 13.49,
+        "cost": 3731.27,
+        "currency": "PKR",
+        "quoted_at": 1794693317,
+        "mode": "variant"
+      },
+      {
+        "service": "CJPacket Liquid Line",
+        "estimate": "9-14",
+        "usd": 13.7,
+        "cost": 3789.36,
+        "currency": "PKR",
+        "quoted_at": 1794693317,
+        "mode": "variant"
+      },
+      {
+        "service": "CJPacket Eub Special Line",
+        "estimate": "10-17",
+        "usd": 15.91,
+        "cost": 4400.63,
+        "currency": "PKR",
+        "quoted_at": 1794693317,
+        "mode": "variant"
+      },
+      {
+        "service": "PostNL",
+        "estimate": "15-45",
+        "usd": 23.64,
+        "cost": 6538.72,
+        "currency": "PKR",
+        "quoted_at": 1794693317,
+        "mode": "variant"
+      },
+      {
+        "service": "CJPacket Postal",
+        "estimate": "12-50",
+        "usd": 23.7,
+        "cost": 6555.31,
+        "currency": "PKR",
+        "quoted_at": 1794693317,
+        "mode": "variant"
+      },
+      {
+        "service": "CJPacket Sensitive",
+        "estimate": "4-8",
+        "usd": 24.84,
+        "cost": 6870.63,
+        "currency": "PKR",
+        "quoted_at": 1794693317,
+        "mode": "variant"
+      },
+      {
+        "service": "DHL Official",
+        "estimate": "3-7",
+        "usd": 118.44,
+        "cost": 32759.97,
+        "currency": "PKR",
+        "quoted_at": 1794693317,
+        "mode": "variant"
+      }
+    ],
+    "rate_count": 7,
+    "fresh_api_forced": false
+  }
+}

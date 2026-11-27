@@ -1,0 +1,2855 @@
+{
+ "sample": {
+  "pid": "1830116277370114048",
+  "vid": "1830116277420445696",
+  "sku": "CJNS212553201AZ",
+  "weightG": 1440,
+  "quantity": 1
+ },
+ "observedOn": "2026-11-20",
+ "note": "Indicative CJ quote for one sample item. Not a commercial agreement, delivery guarantee, tax statement or checkout test.",
+ "results": {
+  "AD": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 38.27,
+   "fastestEtaDays": "3-5",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "AE": {
+   "http": 200,
+   "methods": 8,
+   "minShippingUsd": 19.04,
+   "fastestEtaDays": "3-5",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Eub Special Line",
+    "CJPacket Liquid Line",
+    "CJPacket Ordinary",
+    "CJPacket Sensitive",
+    "CJPacket Postal"
+   ]
+  },
+  "AF": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 59.8,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "AG": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 56.38,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "AI": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 69.42,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "AL": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 47.82,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "AM": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 55.84,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Eub",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "AO": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 59.58,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Eub",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "AR": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 35.69,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Eub",
+    "PostNL",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "AS": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 50.46,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "AT": {
+   "http": 200,
+   "methods": 14,
+   "minShippingUsd": 27.17,
+   "fastestEtaDays": "3-5",
+   "carriers": [
+    "YunExpress Ordinary",
+    "CJPacket Liquid Line",
+    "CJPacket Ordinary",
+    "CJPacket Sensitive",
+    "CJPacket Ordinary I",
+    "CJPacket Postal"
+   ]
+  },
+  "AU": {
+   "http": 200,
+   "methods": 15,
+   "minShippingUsd": 25.46,
+   "fastestEtaDays": "4-8",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Ordinary",
+    "CJPacket Liquid AU",
+    "CJPacket Super Pure Electricity",
+    "CJPacket Eub Special Line",
+    "CJPacket FJTY Eub Special Line"
+   ]
+  },
+  "AW": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 61.61,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Eub",
+    "PostNL",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "AX": {
+   "http": 200,
+   "methods": 0,
+   "minShippingUsd": null,
+   "fastestEtaDays": null,
+   "carriers": []
+  },
+  "AZ": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 43.66,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "BA": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 40.7,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "BB": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 59.58,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "BD": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 51.89,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "BE": {
+   "http": 200,
+   "methods": 16,
+   "minShippingUsd": 27.05,
+   "fastestEtaDays": "4-12",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Ordinary",
+    "CJPacket Sensitive",
+    "CJPacket Fast Ordinary",
+    "CJPacket Ordinary I",
+    "CJPacket Eub"
+   ]
+  },
+  "BF": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 57.94,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "BG": {
+   "http": 200,
+   "methods": 6,
+   "minShippingUsd": 29.67,
+   "fastestEtaDays": "7-10",
+   "carriers": [
+    "CJPacket Ordinary",
+    "CJPacket Sensitive",
+    "CJPacket Ordinary I",
+    "Qfulfillment A line",
+    "DHL Official",
+    "CJPacket Sensitive Pro"
+   ]
+  },
+  "BH": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 39.18,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Sensitive",
+    "CJPacket Liquid Line",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "BI": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 66,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "BJ": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 57.72,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "BL": {
+   "http": 200,
+   "methods": 0,
+   "minShippingUsd": null,
+   "fastestEtaDays": null,
+   "carriers": []
+  },
+  "BM": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 59.58,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "BN": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 19.71,
+   "fastestEtaDays": "2-3",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "BO": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 72.63,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "BQ": {
+   "http": 200,
+   "methods": 1,
+   "minShippingUsd": 72.63,
+   "fastestEtaDays": "20-60",
+   "carriers": [
+    "CJPacket Liquid Line"
+   ]
+  },
+  "BR": {
+   "http": 200,
+   "methods": 8,
+   "minShippingUsd": 37.6,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "CJPacket BR Sensitive",
+    "CJPacket Latin America Cream",
+    "CJPacket Eub Special Line",
+    "CJPacket Postal"
+   ]
+  },
+  "BS": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 62.8,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "BT": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 38.98,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "BW": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 59.58,
+   "fastestEtaDays": "5-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Eub",
+    "DHL Official"
+   ]
+  },
+  "BY": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 31.59,
+   "fastestEtaDays": "12-50",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line"
+   ]
+  },
+  "BZ": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 69.42,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "CA": {
+   "http": 200,
+   "methods": 16,
+   "minShippingUsd": 24.36,
+   "fastestEtaDays": "4-7",
+   "carriers": [
+    "CJPacket Ordinary",
+    "CJPacket Sensitive",
+    "CJPacket JYSP Sensitive",
+    "YunExpress Sensitive",
+    "CJPacket Eub",
+    "CJPacket Sensitive Pro+"
+   ]
+  },
+  "CC": {
+   "http": 200,
+   "methods": 1,
+   "minShippingUsd": 63.82,
+   "fastestEtaDays": "15-45",
+   "carriers": [
+    "PostNL"
+   ]
+  },
+  "CD": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 72.63,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "DHL Official"
+   ]
+  },
+  "CF": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 72.63,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "CG": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 56.38,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "CH": {
+   "http": 200,
+   "methods": 11,
+   "minShippingUsd": 32.58,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "YunExpress Ordinary",
+    "CJPacket Sensitive",
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "CJPacket Ordinary",
+    "CJPacket Fast Ordinary"
+   ]
+  },
+  "CI": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 52.96,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "CK": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 63.84,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "CL": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 30.58,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Latin America Sensitive",
+    "CJPacket Eub",
+    "DHL Official"
+   ]
+  },
+  "CM": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 54.74,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "CN": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 2.99,
+   "fastestEtaDays": "2-3",
+   "carriers": [
+    "YTO China Domestic",
+    "S.F China Domestic"
+   ]
+  },
+  "CO": {
+   "http": 200,
+   "methods": 8,
+   "minShippingUsd": 31.92,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "CJPacket Latin America Sensitive",
+    "CJPacket Ordinary",
+    "CJPacket Sensitive",
+    "CJPacket Postal"
+   ]
+  },
+  "CR": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 47.34,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "CU": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 62.8,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "CV": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 72.63,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "CW": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 64.18,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "CX": {
+   "http": 200,
+   "methods": 1,
+   "minShippingUsd": 63.82,
+   "fastestEtaDays": "15-45",
+   "carriers": [
+    "PostNL"
+   ]
+  },
+  "CY": {
+   "http": 200,
+   "methods": 10,
+   "minShippingUsd": 28.66,
+   "fastestEtaDays": "7-10",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "YunExpress Ordinary",
+    "CJPacket Sensitive",
+    "YunExpress Sensitive"
+   ]
+  },
+  "CZ": {
+   "http": 200,
+   "methods": 10,
+   "minShippingUsd": 24.56,
+   "fastestEtaDays": "4-7",
+   "carriers": [
+    "CJPacket Sensitive",
+    "CJPacket Ordinary",
+    "YunExpress Ordinary",
+    "CJPacket Liquid Line",
+    "CJPacket Ordinary I",
+    "CJPacket Sensitive Oversize Line"
+   ]
+  },
+  "DE": {
+   "http": 200,
+   "methods": 19,
+   "minShippingUsd": 21.08,
+   "fastestEtaDays": "4-7",
+   "carriers": [
+    "CJPacket Ordinary E",
+    "CJPacket Ordinary",
+    "CJPacket Sensitive",
+    "YunExpress Ordinary",
+    "CJPacket Fast Line",
+    "CJPacket Liquid Line"
+   ]
+  },
+  "DJ": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 72.63,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "DK": {
+   "http": 200,
+   "methods": 16,
+   "minShippingUsd": 29.2,
+   "fastestEtaDays": "5-11",
+   "carriers": [
+    "CJPacket Ordinary",
+    "CJPacket Liquid Line",
+    "CJPacket Sensitive",
+    "YunExpress Ordinary",
+    "CJPacket Ordinary I",
+    "YunExpress Sensitive"
+   ]
+  },
+  "DM": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 69.42,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "DO": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 61.61,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "DZ": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 59.68,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Postal",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "EC": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 65.78,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "PostNL",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "EE": {
+   "http": 200,
+   "methods": 7,
+   "minShippingUsd": 24.44,
+   "fastestEtaDays": "7-10",
+   "carriers": [
+    "CJPacket Ordinary",
+    "CJPacket Liquid Line",
+    "CJPacket Sensitive",
+    "CJPacket Postal",
+    "Qfulfillment A line",
+    "PostNL"
+   ]
+  },
+  "EG": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 20.84,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "EH": {
+   "http": 200,
+   "methods": 1,
+   "minShippingUsd": 67.62,
+   "fastestEtaDays": "15-45",
+   "carriers": [
+    "PostNL"
+   ]
+  },
+  "ER": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 66,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "ES": {
+   "http": 200,
+   "methods": 17,
+   "minShippingUsd": 21.93,
+   "fastestEtaDays": "4-8",
+   "carriers": [
+    "CJPacket Ordinary E",
+    "CJPacket Ordinary",
+    "YunExpress Ordinary",
+    "CJPacket Liquid Line",
+    "CJPacket Ordinary I",
+    "CJPacket Fast Ordinary"
+   ]
+  },
+  "ET": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 49.96,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "FI": {
+   "http": 200,
+   "methods": 13,
+   "minShippingUsd": 30.7,
+   "fastestEtaDays": "6-11",
+   "carriers": [
+    "CJPacket Ordinary",
+    "CJPacket Sensitive",
+    "YunExpress Ordinary",
+    "CJPacket Ordinary I",
+    "CJPacket Postal",
+    "PostNL"
+   ]
+  },
+  "FJ": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 85.22,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "FK": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 41.45,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "FM": {
+   "http": 200,
+   "methods": 1,
+   "minShippingUsd": 151.49,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "DHL Official"
+   ]
+  },
+  "FO": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 38.43,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "FR": {
+   "http": 200,
+   "methods": 20,
+   "minShippingUsd": 24.87,
+   "fastestEtaDays": "4-10",
+   "carriers": [
+    "CJPacket Ordinary E",
+    "CJPacket Ordinary",
+    "YunExpress Ordinary",
+    "CJPacket Eub",
+    "CJPacket Ordinary I",
+    "CJPacket Fast Ordinary"
+   ]
+  },
+  "GA": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 54.74,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "GB": {
+   "http": 200,
+   "methods": 21,
+   "minShippingUsd": 21.84,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Ordinary",
+    "CJPacket Special line",
+    "YunExpress Ordinary",
+    "CJPacket Fast Ordinary",
+    "YunExpress Sensitive",
+    "CJPacket Eub"
+   ]
+  },
+  "GD": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 66,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "GE": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 31.62,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "GF": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 64.14,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "CJPacket Eub",
+    "DHL Official"
+   ]
+  },
+  "GG": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 26.92,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "GH": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 52,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Postal",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "GI": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 40.32,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "DHL Official",
+    "CJPacket Liquid Line"
+   ]
+  },
+  "GL": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 59.51,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "DHL Official",
+    "CJPacket Liquid Line",
+    "PostNL"
+   ]
+  },
+  "GM": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 66,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "GN": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 57.5,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "GP": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 53,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "GQ": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 60.48,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "GR": {
+   "http": 200,
+   "methods": 11,
+   "minShippingUsd": 30.4,
+   "fastestEtaDays": "4-8",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Ordinary",
+    "CJPacket Sensitive",
+    "Qfulfillment A line",
+    "CJPacket Postal",
+    "CJPacket Pure Electricity"
+   ]
+  },
+  "GT": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 84.69,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "GU": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 54.1,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "GW": {
+   "http": 200,
+   "methods": 1,
+   "minShippingUsd": 151.49,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "DHL Official"
+   ]
+  },
+  "GY": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 74.96,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "HK": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 9.42,
+   "fastestEtaDays": "4-6",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Postal",
+    "S.F China Domestic"
+   ]
+  },
+  "HN": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 69.42,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "HR": {
+   "http": 200,
+   "methods": 9,
+   "minShippingUsd": 27.41,
+   "fastestEtaDays": "7-10",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Sensitive",
+    "Qfulfillment A line",
+    "YunExpress Sensitive",
+    "CJPacket Ordinary I",
+    "PostNL"
+   ]
+  },
+  "HT": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 69.42,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "HU": {
+   "http": 200,
+   "methods": 12,
+   "minShippingUsd": 26.49,
+   "fastestEtaDays": "4-6",
+   "carriers": [
+    "CJPacket Ordinary",
+    "CJPacket Liquid Line",
+    "CJPacket Sensitive",
+    "YunExpress Ordinary",
+    "CJPacket Ordinary I",
+    "CJPacket Postal"
+   ]
+  },
+  "ID": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 24.78,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "CJPacket Postal",
+    "DHL Official",
+    "PostNL"
+   ]
+  },
+  "IE": {
+   "http": 200,
+   "methods": 13,
+   "minShippingUsd": 28.31,
+   "fastestEtaDays": "6-9",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Sensitive",
+    "CJPacket Ordinary",
+    "YunExpress Ordinary",
+    "YunExpress Sensitive",
+    "PostNL"
+   ]
+  },
+  "IL": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 26.26,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Sensitive",
+    "CJPacket Liquid Line",
+    "CJPacket To Door",
+    "DHL Official"
+   ]
+  },
+  "IM": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 26.92,
+   "fastestEtaDays": "7-11",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal"
+   ]
+  },
+  "IN": {
+   "http": 200,
+   "methods": 6,
+   "minShippingUsd": 17.1,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Asia Liquid Line",
+    "CJPacket Asia Ordinary",
+    "CJPacket Postal",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "IO": {
+   "http": 200,
+   "methods": 1,
+   "minShippingUsd": 74.64,
+   "fastestEtaDays": "15-45",
+   "carriers": [
+    "PostNL"
+   ]
+  },
+  "IQ": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 64.65,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "IR": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 49.96,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "IS": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 35.74,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official",
+    "CJPacket Postal",
+    "CJPacket Eub"
+   ]
+  },
+  "IT": {
+   "http": 200,
+   "methods": 16,
+   "minShippingUsd": 21.75,
+   "fastestEtaDays": "4-8",
+   "carriers": [
+    "YunExpress Ordinary",
+    "CJPacket Ordinary",
+    "CJPacket Liquid Line",
+    "YunExpress Sensitive",
+    "CJPacket Sensitive",
+    "CJPacket Eub"
+   ]
+  },
+  "JE": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 26.92,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "JM": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 59.58,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "JO": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 49.96,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "JP": {
+   "http": 200,
+   "methods": 8,
+   "minShippingUsd": 11.37,
+   "fastestEtaDays": "2-3",
+   "carriers": [
+    "CJPacket Ordinary",
+    "CJPacket Sensitive",
+    "CJPacket Fast Ordinary",
+    "CJPacket Eub",
+    "CJPacket Postal",
+    "CJPacket Eub Special Line"
+   ]
+  },
+  "KE": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 49.96,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Postal",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "KG": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 21.47,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "KH": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 8.98,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "PostNL",
+    "DHL Official",
+    "CJPacket Postal"
+   ]
+  },
+  "KI": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 63.84,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "KM": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 54.74,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "KN": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 69.42,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official",
+    "CJPacket Postal"
+   ]
+  },
+  "KP": {
+   "http": 200,
+   "methods": 1,
+   "minShippingUsd": 214.01,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "DHL Official"
+   ]
+  },
+  "KR": {
+   "http": 200,
+   "methods": 7,
+   "minShippingUsd": 7.82,
+   "fastestEtaDays": "2-3",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Sensitive",
+    "CJPacket Liquid Line",
+    "CJPacket Eub Special Line",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "KW": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 40.42,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Sensitive",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "KY": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 66,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official",
+    "CJPacket Postal"
+   ]
+  },
+  "KZ": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 14.5,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Postal",
+    "CJPacket Eub",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "LA": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 8.26,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "LB": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 50.08,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "LC": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 59.58,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "LI": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 47.9,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line",
+    "DHL Official",
+    "CJPacket Postal"
+   ]
+  },
+  "LK": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 30.42,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "LR": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 55.84,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "LS": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 72.63,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "LT": {
+   "http": 200,
+   "methods": 8,
+   "minShippingUsd": 25.76,
+   "fastestEtaDays": "7-10",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Ordinary",
+    "CJPacket Sensitive",
+    "Qfulfillment A line",
+    "PostNL",
+    "CJPacket Postal"
+   ]
+  },
+  "LU": {
+   "http": 200,
+   "methods": 9,
+   "minShippingUsd": 32.3,
+   "fastestEtaDays": "6-9",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Sensitive",
+    "PostNL",
+    "CJPacket Ordinary",
+    "CJPacket Postal",
+    "Qfulfillment A line"
+   ]
+  },
+  "LV": {
+   "http": 200,
+   "methods": 8,
+   "minShippingUsd": 25.76,
+   "fastestEtaDays": "7-10",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Sensitive",
+    "YunExpress Sensitive",
+    "CJPacket Postal",
+    "PostNL",
+    "Qfulfillment A line"
+   ]
+  },
+  "LY": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 57.94,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "MA": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 22.56,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "MC": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 38.27,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official",
+    "CJPacket Postal"
+   ]
+  },
+  "MD": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 41.64,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "ME": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 36.59,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "DHL Official"
+   ]
+  },
+  "MF": {
+   "http": 200,
+   "methods": 1,
+   "minShippingUsd": 42.29,
+   "fastestEtaDays": "15-45",
+   "carriers": [
+    "PostNL"
+   ]
+  },
+  "MG": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 50.39,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "MH": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 50.24,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "MK": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 55.84,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "ML": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 57.94,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "MM": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 12.63,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "MN": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 8,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "DHL Official"
+   ]
+  },
+  "MO": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 13.6,
+   "fastestEtaDays": "2-3",
+   "carriers": [
+    "S.F China Domestic",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "MP": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 53.67,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "MQ": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 58.37,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "MR": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 52,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "DHL Official"
+   ]
+  },
+  "MS": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 69.42,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "MT": {
+   "http": 200,
+   "methods": 9,
+   "minShippingUsd": 46.23,
+   "fastestEtaDays": "7-10",
+   "carriers": [
+    "CJPacket Eub",
+    "PostNL",
+    "CJPacket Liquid Line",
+    "CJPacket Sensitive",
+    "Qfulfillment A line",
+    "DHL Official"
+   ]
+  },
+  "MU": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 34.3,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "MV": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 15.7,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "MW": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 56.38,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "MX": {
+   "http": 200,
+   "methods": 9,
+   "minShippingUsd": 31.3,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket MX Sensitive",
+    "CJPacket MX Ordinary",
+    "CJPacket Eub",
+    "YunExpress Ordinary",
+    "CJPacket Latin America Sensitive",
+    "CJPacket Liquid Line"
+   ]
+  },
+  "MY": {
+   "http": 200,
+   "methods": 9,
+   "minShippingUsd": 10.83,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Asia Liquid Line",
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "CJPacket Postal",
+    "CJPacket Asia Ordinary",
+    "CJPacket Eub Special Line"
+   ]
+  },
+  "MZ": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 48.8,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "NA": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 61.14,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "NC": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 84.66,
+   "fastestEtaDays": "15-45",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line"
+   ]
+  },
+  "NE": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 54.74,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "NF": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 63.82,
+   "fastestEtaDays": "15-45",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line"
+   ]
+  },
+  "NG": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 56.38,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Postal",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "NI": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 66,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "NL": {
+   "http": 200,
+   "methods": 16,
+   "minShippingUsd": 24.45,
+   "fastestEtaDays": "4-6",
+   "carriers": [
+    "CJPacket Ordinary E",
+    "YunExpress Ordinary",
+    "CJPacket Ordinary",
+    "CJPacket Sensitive",
+    "CJPacket Ordinary I",
+    "CJPacket Fast Ordinary"
+   ]
+  },
+  "NO": {
+   "http": 200,
+   "methods": 10,
+   "minShippingUsd": 27.72,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Ordinary",
+    "CJPacket Sensitive",
+    "CJPacket Eub",
+    "YunExpress Ordinary",
+    "CJPacket Eub Special Line"
+   ]
+  },
+  "NP": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 40.46,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "NR": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 138.4,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "NU": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 63.84,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "NZ": {
+   "http": 200,
+   "methods": 10,
+   "minShippingUsd": 25.5,
+   "fastestEtaDays": "4-9",
+   "carriers": [
+    "CJPacket Sensitive",
+    "CJPacket Ordinary",
+    "CJPacket Liquid Line",
+    "CJPacket Special line",
+    "CJPacket Eub",
+    "CJPacket Postal"
+   ]
+  },
+  "OM": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 21.09,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "PA": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 49.11,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "PE": {
+   "http": 200,
+   "methods": 6,
+   "minShippingUsd": 39.28,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Latin America Sensitive",
+    "CJPacket Postal",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "PF": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 70.26,
+   "fastestEtaDays": "12-50",
+   "carriers": [
+    "CJPacket Eub",
+    "PostNL",
+    "CJPacket Liquid Line"
+   ]
+  },
+  "PG": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 39.5,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "PH": {
+   "http": 200,
+   "methods": 8,
+   "minShippingUsd": 12.82,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Asia Ordinary",
+    "CJPacket Asia Sensitive",
+    "CJPacket Asia Liquid Line",
+    "CJPacket Liquid Line",
+    "CJPacket Postal"
+   ]
+  },
+  "PK": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 13.14,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Asia Liquid Line",
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "PL": {
+   "http": 200,
+   "methods": 15,
+   "minShippingUsd": 20.21,
+   "fastestEtaDays": "4-9",
+   "carriers": [
+    "CJPacket Ordinary",
+    "CJPacket Liquid Line",
+    "YunExpress Ordinary",
+    "CJPacket Sensitive",
+    "CJPacket Ordinary I",
+    "CJPacket Eub"
+   ]
+  },
+  "PM": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 59.5,
+   "fastestEtaDays": "15-45",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL"
+   ]
+  },
+  "PN": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 73.84,
+   "fastestEtaDays": "15-45",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line"
+   ]
+  },
+  "PR": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 47.7,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "PS": {
+   "http": 200,
+   "methods": 0,
+   "minShippingUsd": null,
+   "fastestEtaDays": null,
+   "carriers": []
+  },
+  "PT": {
+   "http": 200,
+   "methods": 15,
+   "minShippingUsd": 26.91,
+   "fastestEtaDays": "4-9",
+   "carriers": [
+    "CJPacket Ordinary",
+    "CJPacket Eub",
+    "YunExpress Ordinary",
+    "CJPacket Ordinary I",
+    "CJPacket Sensitive",
+    "YunExpress Sensitive"
+   ]
+  },
+  "PW": {
+   "http": 200,
+   "methods": 1,
+   "minShippingUsd": 151.49,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "DHL Official"
+   ]
+  },
+  "PY": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 72.4,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "QA": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 44.52,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Sensitive",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "RE": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 39.95,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "RO": {
+   "http": 200,
+   "methods": 10,
+   "minShippingUsd": 28.88,
+   "fastestEtaDays": "4-9",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Ordinary",
+    "CJPacket Sensitive",
+    "YunExpress Ordinary",
+    "CJPacket Eub",
+    "CJPacket Ordinary I"
+   ]
+  },
+  "RS": {
+   "http": 200,
+   "methods": 6,
+   "minShippingUsd": 31.64,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Sensitive Pro",
+    "CJPacket Eub",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "RU": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 30.6,
+   "fastestEtaDays": "8-12",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Eub Special Line",
+    "PostNL"
+   ]
+  },
+  "RW": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 56.38,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "SA": {
+   "http": 200,
+   "methods": 7,
+   "minShippingUsd": 29.92,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "CJPacket Eub Special Line",
+    "CJPacket Postal",
+    "CJPacket Sensitive",
+    "PostNL"
+   ]
+  },
+  "SB": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 53.85,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "SC": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 46.54,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "SD": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 57.5,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "SE": {
+   "http": 200,
+   "methods": 15,
+   "minShippingUsd": 23.27,
+   "fastestEtaDays": "6-11",
+   "carriers": [
+    "CJPacket Ordinary",
+    "YunExpress Ordinary",
+    "CJPacket Eub Special Line",
+    "CJPacket Eub",
+    "CJPacket Sensitive",
+    "CJPacket Liquid Line"
+   ]
+  },
+  "SG": {
+   "http": 200,
+   "methods": 6,
+   "minShippingUsd": 11.99,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Asia Ordinary",
+    "CJPacket Asia Sensitive",
+    "CJPacket Asia Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "SH": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 62.49,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "SI": {
+   "http": 200,
+   "methods": 10,
+   "minShippingUsd": 27.64,
+   "fastestEtaDays": "7-10",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "YunExpress Ordinary",
+    "CJPacket Sensitive",
+    "CJPacket Ordinary I",
+    "YunExpress Sensitive",
+    "Qfulfillment A line"
+   ]
+  },
+  "SJ": {
+   "http": 200,
+   "methods": 0,
+   "minShippingUsd": null,
+   "fastestEtaDays": null,
+   "carriers": []
+  },
+  "SK": {
+   "http": 200,
+   "methods": 11,
+   "minShippingUsd": 28.7,
+   "fastestEtaDays": "7-10",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Ordinary",
+    "CJPacket Sensitive",
+    "YunExpress Ordinary",
+    "CJPacket Ordinary I",
+    "CJPacket Postal"
+   ]
+  },
+  "SL": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 72.63,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "SM": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 59.51,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "DHL Official",
+    "CJPacket Liquid Line"
+   ]
+  },
+  "SN": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 53.18,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "SO": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 72.63,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "SR": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 72.63,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "SS": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 83.08,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "DHL Official"
+   ]
+  },
+  "ST": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 72.63,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "SV": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 66,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "SX": {
+   "http": 200,
+   "methods": 1,
+   "minShippingUsd": 72.63,
+   "fastestEtaDays": "20-60",
+   "carriers": [
+    "CJPacket Liquid Line"
+   ]
+  },
+  "SY": {
+   "http": 200,
+   "methods": 1,
+   "minShippingUsd": 267.66,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "DHL Official"
+   ]
+  },
+  "SZ": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 56.82,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "TC": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 72.63,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "TD": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 69.21,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "TF": {
+   "http": 200,
+   "methods": 1,
+   "minShippingUsd": 42.29,
+   "fastestEtaDays": "15-45",
+   "carriers": [
+    "PostNL"
+   ]
+  },
+  "TG": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 57.94,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "TH": {
+   "http": 200,
+   "methods": 6,
+   "minShippingUsd": 7.1,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Asia Liquid Line",
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "CJPacket Postal",
+    "DHL Official",
+    "PostNL"
+   ]
+  },
+  "TJ": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 50.08,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "TK": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 63.84,
+   "fastestEtaDays": "15-45",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line"
+   ]
+  },
+  "TL": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 150.88,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "TM": {
+   "http": 200,
+   "methods": 0,
+   "minShippingUsd": null,
+   "fastestEtaDays": null,
+   "carriers": []
+  },
+  "TN": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 44.62,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "TO": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 63.84,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "TR": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 24.51,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "TT": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 52,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "TV": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 63.84,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "TW": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 23.36,
+   "fastestEtaDays": "2-3",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "S.F China Domestic",
+    "DHL Official",
+    "PostNL"
+   ]
+  },
+  "TZ": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 53.18,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Eub",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "UA": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 31.22,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "UG": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 49.96,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "UM": {
+   "http": 200,
+   "methods": 0,
+   "minShippingUsd": null,
+   "fastestEtaDays": null,
+   "carriers": []
+  },
+  "US": {
+   "http": 200,
+   "methods": 29,
+   "minShippingUsd": 29.22,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "LuWei Ordinary US",
+    "CJPacket Ordinary",
+    "YunExpress Ordinary",
+    "CJPacket Sensitive",
+    "CJPacket Eub",
+    "YunExpress Sensitive"
+   ]
+  },
+  "UY": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 57.59,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "DHL Official"
+   ]
+  },
+  "UZ": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 30.15,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "VA": {
+   "http": 200,
+   "methods": 1,
+   "minShippingUsd": 59.51,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "DHL Official"
+   ]
+  },
+  "VC": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 69.42,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "VE": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 62.8,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "VG": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 59.58,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "VI": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 53.67,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "VN": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 5.15,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Asia Liquid Line",
+    "CJPacket Eub",
+    "DHL Official",
+    "PostNL"
+   ]
+  },
+  "VU": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 63.84,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "WF": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 63.84,
+   "fastestEtaDays": "15-45",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line"
+   ]
+  },
+  "WS": {
+   "http": 200,
+   "methods": 3,
+   "minShippingUsd": 63.84,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "CJPacket Liquid Line",
+    "DHL Official"
+   ]
+  },
+  "XK": {
+   "http": 200,
+   "methods": 0,
+   "minShippingUsd": null,
+   "fastestEtaDays": null,
+   "carriers": []
+  },
+  "YE": {
+   "http": 200,
+   "methods": 1,
+   "minShippingUsd": 267.66,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "DHL Official"
+   ]
+  },
+  "YT": {
+   "http": 200,
+   "methods": 2,
+   "minShippingUsd": 41.96,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "PostNL",
+    "DHL Official"
+   ]
+  },
+  "ZA": {
+   "http": 200,
+   "methods": 7,
+   "minShippingUsd": 29.6,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Eub",
+    "CJPacket Liquid Line",
+    "CJPacket Ordinary",
+    "CJPacket Sensitive",
+    "CJPacket Postal",
+    "PostNL"
+   ]
+  },
+  "ZM": {
+   "http": 200,
+   "methods": 5,
+   "minShippingUsd": 53.18,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "PostNL",
+    "CJPacket Eub",
+    "CJPacket Postal",
+    "DHL Official"
+   ]
+  },
+  "ZW": {
+   "http": 200,
+   "methods": 4,
+   "minShippingUsd": 34.84,
+   "fastestEtaDays": "3-7",
+   "carriers": [
+    "CJPacket Liquid Line",
+    "CJPacket Eub",
+    "PostNL",
+    "DHL Official"
+   ]
+  }
+ }
+}

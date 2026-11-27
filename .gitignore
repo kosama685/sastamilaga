@@ -1,1 +1,11 @@
-build/
+
+.wrangler/
+workers/*/.wrangler/
+workers/*/node_modules/
+.dev.vars
+/edge/cj-assets.mjs
+
+
+reports/large/
+
+/artifacts/

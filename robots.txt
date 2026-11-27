@@ -1,42 +1,29 @@
-# Sasta Milaga — static storefront. Nothing is blocked that Google needs.
+# Sasta Milaga — canonical crawl policy
+# The GitHub Pages mirror uses https://sastamilaga.com as canonical.
+# robots.txt controls crawling, NOT security, login, or guaranteed indexing.
 User-agent: *
 Allow: /
+Disallow: /wp-admin/
+Disallow: /wp-login.php
+Allow: /wp-admin/admin-ajax.php
 Disallow: /cart/
-Disallow: /search/
-
-# Search engines and AI answer engines are explicitly welcome.
-User-agent: Googlebot
-Allow: /
-
-User-agent: Googlebot-Image
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: GPTBot
-Allow: /
-
-User-agent: OAI-SearchBot
-Allow: /
-
-User-agent: ChatGPT-User
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-User-agent: Applebot-Extended
-Allow: /
+Disallow: /checkout/
+Disallow: /my-account/
+Disallow: /ur/cart/
+Disallow: /ur/checkout/
+Disallow: /ur/my-account/
+Disallow: /*?add-to-cart=
+Disallow: /*&add-to-cart=
+Disallow: /*?sm_buy_now=
+Disallow: /*&sm_buy_now=
+Disallow: /*?wc-ajax=
+Disallow: /*&wc-ajax=
+Disallow: /wc-api/
+Disallow: /backup/
+Disallow: /private/
+Disallow: /staging/
+Disallow: /test/
+Disallow: /.git/
 
 Sitemap: https://sastamilaga.com/sitemap.xml
-Sitemap: https://sastamilaga.com/sitemap_index.xml
-
-# Travel app (flights, stays, Umrah, visas)
-Sitemap: https://sastamilaga.com/travel/sitemap.xml
+Sitemap: https://sastamilaga.com/sitemap-livetv.xml

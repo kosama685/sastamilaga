@@ -1,0 +1,138 @@
+name: Travel booking settings (WordPress)
+# Sends the travel API keys and switches from GitHub to WordPress
+# (wordpress/mu-plugins/sm-flight-booking.php → POST /wp-json/sm-travel/v1/admin/settings, administrators only).
+# Keys are stored encrypted on the server; this log and the job summary only show yes/no flags and check results.
+# See docs/travel-booking.md.
+#
+# Repository secrets (Settings → Secrets and variables → Actions):
+#   WORDPRESS_URL, WORDPRESS_USERNAME, WORDPRESS_APP_PASSWORD   administrator application password (used by the blog workflows)
+#   DUFFEL_TEST_TOKEN        duffel_test_…  (Duffel dashboard, test mode)
+#   DUFFEL_LIVE_TOKEN        duffel_live_…  (a newly rotated live token)
+#   TRAVELPAYOUTS_API_TOKEN  Travelpayouts → Profile → API token (market prices)
+#   TRAVELPAYOUTS_APP_ID     Travelpayouts partner ID / marker (numeric; used in the Aviasales partner links)
+#   TRAVEL_MARKUP_PERCENT    markup on the airline base fare, e.g. 20 (a repository variable with the same name also works)
+#
+# Two ways to run it:
+#   • Actions → "Travel booking settings (WordPress)" → Run workflow: status only, or keys + switches.
+#   • Push to a branch named travel-sync/<anything> that changes this file: syncs the keys and markup only
+#     (switches untouched) and runs the read-only checks.
+on:
+  workflow_dispatch:
+    inputs:
+      status_only:
+        description: 'Only read the current status (change nothing)'
+        type: boolean
+        default: true
+      environment:
+        description: 'Duffel environment for public search'
+        type: choice
+        options: [test, live]
+        default: live
+      send_tokens:
+        description: 'Send the Duffel and Travelpayouts secrets'
+        type: boolean
+        default: false
+      production_approved:
+        description: 'Live use approved by the owner'
+        type: boolean
+        default: false
+      flights_search:
+        description: 'Show live Duffel airline fares on /travel/'
+        type: boolean
+        default: false
+      market_prices:
+        description: 'Show recent Aviasales market prices next to live fares'
+        type: boolean
+        default: true
+      online_booking:
+        description: 'Let customers book and pay online (needs both confirmations below)'
+        type: boolean
+        default: false
+      ack_balance:
+        description: 'I confirm the Duffel balance is funded'
+        type: boolean
+        default: false
+      ack_paypal:
+        description: 'I confirm PayPal approved this account for airline tickets'
+        type: boolean
+        default: false
+  push:
+    branches: ['travel-sync/**']
+    paths: ['.github/workflows/travel-booking-settings.yml']
+permissions:
+  contents: read
+concurrency:
+  group: travel-booking-settings
+  cancel-in-progress: false
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7   # only docs/ (the runbook); the job itself just calls the WordPress API
+        with:
+          sparse-checkout: docs
+          persist-credentials: false
+      - name: Apply or read travel booking settings
+        env:
+          WP_URL: ${{ secrets.WORDPRESS_URL }}
+          WP_USER: ${{ secrets.WORDPRESS_USERNAME }}
+          WP_PASS: ${{ secrets.WORDPRESS_APP_PASSWORD }}
+          DUFFEL_TEST_TOKEN: ${{ secrets.DUFFEL_TEST_TOKEN }}
+          DUFFEL_LIVE_TOKEN: ${{ secrets.DUFFEL_LIVE_TOKEN }}
+          TP_TOKEN: ${{ secrets.TRAVELPAYOUTS_API_TOKEN }}
+          TP_APP_ID: ${{ secrets.TRAVELPAYOUTS_APP_ID }}
+          MARKUP_RAW: ${{ vars.TRAVEL_MARKUP_PERCENT || secrets.TRAVEL_MARKUP_PERCENT }}
+          EVENT: ${{ github.event_name }}
+          STATUS_ONLY: ${{ inputs.status_only }}
+          IN_ENV: ${{ inputs.environment }}
+          SEND_TOKENS: ${{ inputs.send_tokens }}
+          IN_APPROVED: ${{ inputs.production_approved }}
+          IN_SEARCH: ${{ inputs.flights_search }}
+          IN_MARKET: ${{ inputs.market_prices }}
+          IN_BOOKING: ${{ inputs.online_booking }}
+          IN_ACK_BALANCE: ${{ inputs.ack_balance }}
+          IN_ACK_PAYPAL: ${{ inputs.ack_paypal }}
+        run: |
+          set -euo pipefail
+          for v in WP_URL WP_USER WP_PASS; do
+            if [ -z "${!v}" ]; then echo "::error::Repository secret for $v is not set"; exit 1; fi
+          done
+          base="${WP_URL%/}/wp-json/sm-travel/v1"
+          add_secrets() {   # $1 = JSON body; adds whichever secrets are set
+            local b="$1"
+            if [ -n "$DUFFEL_TEST_TOKEN" ]; then b=$(jq --arg t "$DUFFEL_TEST_TOKEN" '. + {duffel_test_token:$t}' <<<"$b"); else echo "::notice::DUFFEL_TEST_TOKEN not set (skipped)" >&2; fi
+            if [ -n "$DUFFEL_LIVE_TOKEN" ]; then b=$(jq --arg t "$DUFFEL_LIVE_TOKEN" '. + {duffel_live_token:$t}' <<<"$b"); else echo "::notice::DUFFEL_LIVE_TOKEN not set (skipped)" >&2; fi
+            if [ -n "$TP_TOKEN" ]; then b=$(jq --arg t "$TP_TOKEN" '. + {travelpayouts_token:$t}' <<<"$b"); else echo "::notice::TRAVELPAYOUTS_API_TOKEN not set (skipped)" >&2; fi
+            if [ -n "$TP_APP_ID" ]; then b=$(jq --arg t "$(printf '%s' "$TP_APP_ID" | tr -d '[:space:]')" '. + {travelpayouts_app_id:$t}' <<<"$b"); fi
+            local m; m=$(printf '%s' "${MARKUP_RAW:-}" | tr -cd '0-9.')
+            if [ -n "$m" ]; then b=$(jq --argjson m "$m" '. + {markup_percent:$m}' <<<"$b"); fi
+            printf '%s' "$b"
+          }
+          post() { curl -sS --retry 3 --retry-delay 20 --retry-all-errors --max-time 120 -o resp.json -w '%{http_code}' -u "$WP_USER:$WP_PASS" -H 'Content-Type: application/json' --data-binary @- "$base/admin/settings"; }
+          if [ "$EVENT" = "push" ]; then
+            echo "Push to a travel-sync branch: syncing keys and markup only (switches untouched)."
+            code=$(add_secrets '{"check":true}' | post)
+          elif [ "$STATUS_ONLY" = "true" ]; then
+            code=$(curl -sS --retry 3 --retry-delay 20 --retry-all-errors --max-time 120 -o resp.json -w '%{http_code}' -u "$WP_USER:$WP_PASS" "$base/admin/status")
+          else
+            body=$(jq -n --arg env "$IN_ENV" --argjson pa "$IN_APPROVED" --argjson fs "$IN_SEARCH" --argjson mp "$IN_MARKET" --argjson ob "$IN_BOOKING" \
+                         --argjson ab "$IN_ACK_BALANCE" --argjson ap "$IN_ACK_PAYPAL" \
+                         '{check:true, environment:$env, production_approved:$pa, flights_search:$fs, market_prices:$mp, online_booking:$ob, ack_balance:$ab, ack_paypal:$ap}')
+            if [ "$SEND_TOKENS" = "true" ]; then body=$(add_secrets "$body"); fi
+            code=$(printf '%s' "$body" | post)
+          fi
+          echo "HTTP $code"
+          jq 'del(.last_test)' resp.json 2>/dev/null || head -c 400 resp.json
+          if [ "$code" != "200" ]; then
+            echo "::error::WordPress answered $code. 401/403: the user behind WORDPRESS_APP_PASSWORD must be an administrator. 404: sm-flight-booking.php is not installed. 5xx/000: the site was unavailable; run again later."
+            exit 1
+          fi
+          if [ "$(jq -r '.live_token_changed // "n/a"' resp.json)" = "false" ]; then
+            echo "::warning::DUFFEL_LIVE_TOKEN is the same token that was already stored (flagged as previously shared). Create a new live token in Duffel and update the secret."
+          fi
+          {
+            echo "### Travel booking status"
+            echo
+            jq -r 'del(.last_test) | to_entries[] | "- **\(.key)**: \(.value)"' resp.json
+          } >> "$GITHUB_STEP_SUMMARY"

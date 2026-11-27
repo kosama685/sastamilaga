@@ -1,0 +1,42 @@
+name: Diagnose local and CJ product APIs (read only)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [.github/workflows/diagnose-cj-local-commerce.yml]
+permissions: {contents: read}
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check live CJ variations, public catalog, WooCommerce cart and checkout responses
+        shell: bash
+        run: |
+          set -uo pipefail
+          urls=(
+            'https://sastamilaga.com/'
+            'https://sastamilaga.com/shop/'
+            'https://sastamilaga.com/api/cj/product?pid=1988880782439141377'
+            'https://sastamilaga.com/api/cj/variants?pid=1988880782439141377'
+            'https://sastamilaga-cj-shipping.usamaestonia.workers.dev/api/cj/product?pid=1988880782439141377'
+            'https://sastamilaga.com/wp-json/wc/store/v1/cart'
+            'https://sastamilaga.com/wp-json/gdcs/v1/context?light=1'
+            'https://sastamilaga.com/cart/'
+            'https://sastamilaga.com/checkout/'
+            'https://sastamilaga.com/data/wp/product-ids.json'
+          )
+          for url in "${urls[@]}"; do
+            h=$(mktemp);b=$(mktemp)
+            r=$(curl -sS --max-time 12 --connect-timeout 5 --max-redirs 0 -H 'Accept: application/json, text/html;q=0.8' -D "$h" -o "$b" -w '%{http_code}' "$url") || r=000
+            type=$(grep -im1 '^content-type:' "$h" | cut -c1-130 | tr -d '\r' || true)
+            location=$(grep -im1 '^location:' "$h" | cut -c1-160 | tr -d '\r' || true)
+            length=$(wc -c < "$b")
+            if grep -qi 'Error establishing a database connection' "$b"; then diag='database_error'; elif grep -Eqi 'Error 1027|workers free plan|exceeded' "$b"; then diag='worker_quota'; elif grep -Eqi 'Too Many Requests|rate limit' "$b"; then diag='rate_limited'; elif grep -qi 'Sasta Milaga' "$b"; then diag='html_brand'; else diag='other'; fi
+            echo "url=$url http=$r bytes=$length type=${type:-n/a} location=${location:-none} class=$diag"
+            if [ "$r" = 429 ]; then
+              echo "429 headers: $(grep -iE '^(server:|cf-ray:|retry-after:|x-|cache-control:)' "$h" | tr -d '\r' | head -6 | tr '\n' ' ' || true)"
+              echo "429 body: $(head -c 80 "$b" | tr '\n' ' ' | tr -cd '[:print:]' || true)"
+            fi
+            rm -f "$h" "$b"
+          done

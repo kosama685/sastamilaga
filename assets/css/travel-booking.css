@@ -1,0 +1,171 @@
+/* Sasta Milaga travel booking sheets (assets/js/travel-booking.js). Tokens follow the travel search (sm-global-travel). */
+.smtb{--g:#0F7A3B;--deep:#0B5E2E;--forest:#0B3B20;--orange:#FF8A00;--mint:#EAF6EE;--soft:#F4FBF6;--ink:#1E1E1E;--muted:#55605B;--line:#E2E8E4;--err:#B3261E;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--r:14px;--ease:cubic-bezier(.2,.9,.25,1.15);
+  width:min(680px,calc(100vw - 32px));max-height:min(92vh,980px);padding:0;border:0;border-radius:20px;background:#fff;color:var(--ink);
+  box-shadow:0 1px 2px rgba(11,59,32,.06),0 12px 28px rgba(11,59,32,.12),0 40px 90px rgba(11,59,32,.18);overflow:hidden;font:inherit;line-height:1.55}
+.smtb[open]{animation:smtb-in .32s var(--ease) both}
+.smtb::backdrop{background:rgba(11,59,32,.42);backdrop-filter:blur(3px)}
+@keyframes smtb-in{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.smtb[open]{animation:none}}
+html.smtb-lock{overflow:hidden}
+.smtb__panel{display:flex;flex-direction:column;max-height:inherit}
+.smtb__head{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);padding:var(--s4) var(--s5);border-bottom:1px solid var(--line);
+  background:radial-gradient(120% 140% at 0% 0%,rgba(15,122,59,.10),transparent 55%),radial-gradient(90% 120% at 100% 0%,rgba(255,138,0,.10),transparent 60%),#fff}
+.smtb__head h2{margin:0;font-size:clamp(1.15rem,2.4vw,1.4rem);letter-spacing:-.02em;line-height:1.2;color:var(--forest)}
+.smtb__x{flex:none;width:40px;height:40px;border:1px solid var(--line);border-radius:50%;background:#fff;color:var(--forest);font-size:24px;line-height:1;cursor:pointer;transition:transform .2s var(--ease),opacity .2s}
+.smtb__x:hover{transform:rotate(90deg)}
+.smtb__x:active{transform:rotate(90deg) scale(.92)}
+.smtb__body{padding:var(--s5);overflow:auto;overscroll-behavior:contain}
+.smtb-form{display:grid;gap:var(--s4)}
+.smtb-trip{display:grid;gap:2px;padding:var(--s3) var(--s4);border-radius:var(--r);background:var(--soft);border:1px solid var(--mint)}
+.smtb-trip strong{color:var(--forest);font-size:1.02rem}
+.smtb-trip span{color:var(--muted);font-size:.93rem}
+.smtb-trip__fare{color:var(--deep)!important;font-weight:600}
+.smtb-lead{margin:0;color:var(--ink)}
+.smtb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--s3) var(--s4)}
+.smtb-f{display:grid;gap:var(--s1);min-width:0}
+.smtb-grid>.sm-vf-fill,.smtb-form>.sm-vf-fill{grid-column:1/-1;justify-self:start}   /* voice-fill.js banner: its own full row */
+.smtb-f__l{font-weight:600;font-size:.9rem;color:var(--forest)}
+.smtb-f__h{color:var(--muted);font-size:.8rem;line-height:1.35}
+.smtb-f input,.smtb-f select,.smtb-f textarea{width:100%;min-height:46px;padding:10px 12px;border:1px solid #cfd8d2;border-radius:10px;background:#fff;color:var(--ink);font:inherit;font-size:16px;box-sizing:border-box}
+.smtb-f textarea{min-height:64px;resize:vertical}
+.smtb-f input:hover,.smtb-f select:hover,.smtb-f textarea:hover{border-color:#9db5a6}
+.smtb-f input:focus-visible,.smtb-f select:focus-visible,.smtb-f textarea:focus-visible{outline:3px solid rgba(15,122,59,.28);outline-offset:1px;border-color:var(--g)}
+.smtb-check{display:flex;gap:var(--s2);align-items:flex-start;font-size:.9rem;color:var(--muted);cursor:pointer}
+.smtb-check input{flex:none;width:20px;height:20px;margin:2px 0 0;accent-color:var(--g)}
+.smtb-check a{color:var(--deep);font-weight:600}
+.smtb-check a:hover{color:var(--forest)}
+.smtb-check a:focus-visible{outline:2px solid var(--g);outline-offset:2px;border-radius:3px}
+.smtb-hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
+.smtb-status{margin:0;min-height:1.2em;font-weight:600;color:var(--deep)}
+.smtb-status.is-error{color:var(--err)}
+.smtb-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3)}
+.smtb-note{color:var(--muted);font-size:.85rem}
+.smtb-btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);min-height:48px;padding:0 22px;border:0;border-radius:999px;font:inherit;font-weight:700;text-decoration:none;cursor:pointer;
+  transition:transform .18s var(--ease),opacity .18s}
+.smtb-btn:hover{transform:translateY(-1px)}
+.smtb-btn:active{transform:translateY(1px) scale(.98)}
+.smtb-btn:focus-visible{outline:3px solid rgba(255,138,0,.55);outline-offset:2px}
+.smtb-btn[disabled]{opacity:.65;cursor:progress;transform:none}
+.smtb-btn--go{background:var(--g);color:#fff;box-shadow:0 6px 18px rgba(15,122,59,.28),0 1px 2px rgba(11,59,32,.2)}
+.smtb-btn--wa{background:#25D366;color:#073B1B;box-shadow:0 6px 18px rgba(37,211,102,.28)}
+.smtb-btn--ghost{background:#fff;color:var(--forest);border:1px solid var(--line)}
+.smtb-btn.is-busy{opacity:.8}
+.smtb-loading{margin:var(--s5) 0;text-align:center;color:var(--muted);font-weight:600}
+.smtb-loading::before{content:"";display:block;width:34px;height:34px;margin:0 auto var(--s3);border:3px solid var(--mint);border-top-color:var(--g);border-radius:50%;animation:smtb-spin .8s linear infinite}
+@keyframes smtb-spin{to{transform:rotate(360deg)}}
+.smtb-done{display:grid;gap:var(--s3);justify-items:start}
+.smtb-done p{margin:0}
+.smtb-done__mark{display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--mint);color:var(--g);font-size:28px;font-weight:800;box-shadow:0 0 0 8px rgba(15,122,59,.06)}
+.smtb-done__ref{font-size:1.1rem}
+.smtb-done__ref strong{color:var(--forest);font-size:1.25rem;letter-spacing:.02em}
+.smtb-steps{margin:0;padding-left:1.3em;display:grid;gap:var(--s2)}
+.smtb-steps li::marker{color:var(--g);font-weight:800}
+.smtb-itin{display:grid;gap:var(--s3)}
+.smtb-slice{padding:var(--s3) var(--s4);border:1px solid var(--line);border-radius:var(--r);background:#fff;box-shadow:0 1px 2px rgba(11,59,32,.04),0 8px 22px rgba(11,59,32,.05)}
+.smtb-slice__h{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2);margin:0 0 var(--s1)}
+.smtb-slice__h strong{color:var(--forest)}
+.smtb-slice__h span:last-child{color:var(--muted);font-size:.88rem}
+.smtb-slice ul{margin:0;padding-left:1.1em;color:var(--muted);font-size:.9rem}
+.smtb-tag{padding:2px 9px;border-radius:999px;background:var(--mint);color:var(--deep);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.smtb-price{display:grid;gap:2px;padding:var(--s4);border-radius:var(--r);color:#fff;
+  background:radial-gradient(120% 160% at 100% 0%,rgba(255,138,0,.35),transparent 55%),radial-gradient(100% 140% at 0% 100%,rgba(15,122,59,.65),transparent 60%),var(--forest);box-shadow:0 10px 30px rgba(11,59,32,.25)}
+.smtb-price span{opacity:.85;font-size:.88rem}
+.smtb-price strong{font-size:clamp(1.6rem,4vw,2rem);letter-spacing:-.03em;line-height:1.1}
+.smtb-price small{opacity:.8}
+.smtb-rules{margin:var(--s2) 0 0;padding-left:1.1em;font-size:.88rem;opacity:.95}
+.smtb-pax{margin:0;padding:var(--s4);border:1px solid var(--line);border-radius:var(--r)}
+.smtb-pax legend{padding:0 var(--s2);font-weight:700;color:var(--forest)}
+/* fare cards in the search results (travel.js) */
+.sm-fare-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sm-fare-ask{border:1px solid #cfd8d2;border-radius:8px;background:#fff;color:#0B3B20;padding:9px 12px;font:700 12px inherit;cursor:pointer;transition:transform .18s cubic-bezier(.2,.9,.25,1.15)}
+.sm-fare-ask:hover,.sm-fare-actions .sm-fare-book:hover{transform:translateY(-1px)}
+.sm-fare-ask:active,.sm-fare-actions .sm-fare-book:active{transform:scale(.97)}
+.sm-fare-ask:focus-visible,.sm-fare-actions .sm-fare-book:focus-visible{outline:3px solid rgba(255,138,0,.5);outline-offset:2px}
+.sm-fare-actions .sm-fare-book{font-size:12px}
+/* compare panel (live Duffel fares + recent Aviasales prices), rendered inside the page's results section */
+.smc{--g:#0F7A3B;--deep:#0B5E2E;--forest:#0B3B20;--orange:#FF8A00;--mint:#EAF6EE;--soft:#F4FBF6;--ink:#1E1E1E;--muted:#55605B;--line:#E2E8E4;--ease:cubic-bezier(.2,.9,.25,1.15);
+  display:grid;gap:16px;color:var(--ink);line-height:1.5;grid-column:1/-1;width:100%;min-width:0}   /* the results list is a card grid: span it */
+.sm-flight-results:has(.smc) .sm-travel-eyebrow{color:#0B5E2E;opacity:1}
+.smc-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.smc-tile{position:relative;display:grid;gap:4px;padding:16px 18px;border-radius:16px;border:1px solid var(--line);background:#fff;overflow:hidden;
+  box-shadow:0 1px 2px rgba(11,59,32,.05),0 10px 26px rgba(11,59,32,.07)}
+.smc-tile--live{background:radial-gradient(120% 140% at 100% 0%,rgba(15,122,59,.10),transparent 60%),#fff;border-color:rgba(15,122,59,.28)}
+.smc-tile--market{background:radial-gradient(120% 140% at 100% 0%,rgba(255,138,0,.10),transparent 60%),#fff}
+.smc-tile__k{display:flex;align-items:center;gap:8px;font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.smc-dot{width:9px;height:9px;border-radius:50%;background:var(--g);box-shadow:0 0 0 4px rgba(15,122,59,.14)}
+.smc-tile--market .smc-dot{background:var(--orange);box-shadow:0 0 0 4px rgba(255,138,0,.16)}
+.smc-tile__price{font-size:clamp(1.4rem,3.2vw,1.85rem);letter-spacing:-.03em;line-height:1.15;color:var(--forest)}
+.smc-tile__sub{color:var(--muted);font-size:.88rem}
+.smc-tile__btn{justify-self:start;margin-top:6px;min-height:42px;font-size:.92rem}
+.smc-chips{display:flex;flex-wrap:wrap;gap:8px}
+.smc-chips[hidden],.smc [hidden]{display:none!important}
+.smc-chip{min-height:38px;padding:0 16px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--forest);font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:transform .18s var(--ease)}
+.smc-chip:hover{transform:translateY(-1px)}
+.smc-chip:active{transform:scale(.97)}
+.smc-chip:focus-visible{outline:3px solid rgba(15,122,59,.3);outline-offset:2px}
+.smc-chip[aria-pressed="true"]{background:var(--forest);border-color:var(--forest);color:#fff}
+.smc-days{display:grid;gap:6px}
+.smc-days[hidden]{display:none}
+.smc-days__t{margin:0;color:var(--muted);font-size:.85rem}
+.smc-days__row{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.smc-day{flex:0 0 auto;display:grid;gap:1px;justify-items:center;min-width:86px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:#fff;font:inherit;cursor:pointer;scroll-snap-align:center;transition:transform .18s var(--ease)}
+.smc-day span{font-size:.75rem;color:var(--muted)}
+.smc-day b{font-size:.95rem;color:var(--forest)}
+.smc-day small{font-size:.68rem;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:.04em}
+.smc-day:hover{transform:translateY(-2px)}
+.smc-day:active{transform:scale(.97)}
+.smc-day:focus-visible{outline:3px solid rgba(15,122,59,.3);outline-offset:2px}
+.smc-day.is-low{border-color:rgba(15,122,59,.45);background:var(--soft)}
+.smc-day.is-on{border-color:var(--forest);box-shadow:inset 0 0 0 1px var(--forest)}
+.smc-list{display:grid;gap:18px}
+.smc-group{display:grid;gap:10px}
+.smc-group__h{margin:0;font-size:.95rem;color:var(--forest);letter-spacing:-.01em}
+.smc-card{display:grid;gap:10px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 1px 2px rgba(11,59,32,.04),0 8px 22px rgba(11,59,32,.06)}
+.smc-card--live{border-left:4px solid var(--g)}
+.smc-card--market{border-left:4px solid var(--orange)}
+.smc-card__top{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.smc-card__air{font-weight:700;color:var(--ink)}
+.smc-badge{padding:3px 10px;border-radius:999px;font-size:.72rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+.smc-badge--live{background:var(--mint);color:var(--deep)}
+.smc-badge--market{background:#FFF1DF;color:#8A4B00}
+.smc-legs{display:grid;gap:6px}
+.smc-leg{display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;gap:4px 10px}
+.smc-leg__t{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;width:34px}
+.smc-leg__line{height:2px;min-width:24px;background:repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 10px)}
+.smc-leg small,.smc-legs>small{grid-column:2/-1;color:var(--muted);font-size:.84rem}
+.smc-card__bottom{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px}
+.smc-price{display:grid}
+.smc-price strong{font-size:1.4rem;letter-spacing:-.02em;color:var(--forest);line-height:1.1}
+.smc-price small{color:var(--muted);font-size:.8rem}
+.smc-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.smc-btn{min-height:42px;padding:0 18px;font-size:.92rem}
+.smc-link{font-weight:700;color:#8A4B00;text-decoration:none;padding:8px 4px;border-radius:6px}
+.smc-link:hover{text-decoration:underline}
+.smc-link:active{opacity:.7}
+.smc-link:focus-visible{outline:3px solid rgba(255,138,0,.45);outline-offset:2px}
+.smc-empty{margin:0;padding:12px 14px;border-radius:12px;background:var(--soft);color:var(--muted)}
+.smc-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-radius:16px;
+  background:radial-gradient(120% 160% at 100% 0%,rgba(255,138,0,.18),transparent 55%),var(--soft);border:1px solid var(--mint)}
+.smc-foot strong{color:var(--forest)}
+.smc-foot p{margin:2px 0 0;color:var(--muted);font-size:.9rem;max-width:56ch}
+.smc-card--skel{min-height:96px;gap:8px;animation:smc-pulse 1.2s ease-in-out infinite}
+.smc-card--skel span{display:block;height:12px;border-radius:6px;background:var(--mint)}
+.smc-card--skel span:nth-child(1){width:40%}.smc-card--skel span:nth-child(2){width:75%}.smc-card--skel span:nth-child(3){width:25%}
+@keyframes smc-pulse{50%{opacity:.55}}
+@media (prefers-reduced-motion:reduce){.smc-card--skel{animation:none}}
+@media (max-width:640px){
+  .smc-leg{grid-template-columns:auto 1fr auto}
+  .smc-leg__line{display:none}
+  .smc-card__bottom{align-items:stretch;flex-direction:column}
+  .smc-actions .smc-btn{flex:1 1 auto}
+  .smc-foot .smtb-btn{flex:1 1 100%}
+}
+@media (max-width:640px){
+  .smtb{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;border-radius:0}
+  .smtb__panel{height:100%}
+  .smtb__head{padding:var(--s3) var(--s4)}
+  .smtb__body{padding:var(--s4);flex:1}
+  .smtb-actions .smtb-btn{flex:1 1 100%}
+  @keyframes smtb-in{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:none}}
+}

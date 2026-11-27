@@ -1,0 +1,43 @@
+name: AI reference integrity and public availability
+on:
+  pull_request:
+    paths:
+      - 'llms*.txt'
+      - 'index.html'
+      - 'about/index.html'
+      - 'shipping/index.html'
+      - 'data/wp/policy-shipping.html'
+      - 'data/wp/pages.json'
+      - 'workers/product-pages/worker.js'
+      - 'tools/ai-reference-integrity.test.mjs'
+      - '.github/workflows/ai-reference-integrity.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'llms*.txt'
+      - 'tools/ai-reference-integrity.test.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - run: node --test tools/ai-reference-integrity.test.mjs
+      - run: node tools/validate-ai-site-index.mjs
+      - run: node --check workers/product-pages/worker.js
+      - name: Public reference file smoke
+        run: |
+          for p in llms.txt llms-full.txt; do
+            f=$(mktemp)
+            status=$(curl -sS --max-time 25 -L -o "$f" -w '%{http_code}' "https://sastamilaga.com/$p") || status=000
+            printf '%s status=%s bytes=%s\n' "$p" "$status" "$(wc -c < "$f")"
+            test "$status" = 200
+            grep -q '^# Sasta Milaga' "$f"
+            rm "$f"
+          done

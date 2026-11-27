@@ -1,0 +1,112 @@
+name: Namecheap origin database outage diagnostics
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [.github/workflows/namecheap-origin-db-diagnostics.yml]
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - name: Determine configured origin privately
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN"
+          payload=$(curl --fail --silent --show-error --max-time 15 \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            'https://api.cloudflare.com/client/v4/zones?name=sastamilaga.com')
+          zone=$(jq -r '.result[0].id // empty' <<<"$payload")
+          test -n "$zone"
+          dns=$(curl --fail --silent --show-error --max-time 15 \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/zones/$zone/dns_records?type=A&name=origin.sastamilaga.com")
+          ip=$(jq -r '.result[0].content // empty' <<<"$dns")
+          test -n "$ip"
+          # Never accept a GitHub Pages CDN IP as proof the Namecheap database is healthy.
+          case "$ip" in 185.199.108.153|185.199.109.153|185.199.110.153|185.199.111.153)
+            echo "::error::Resolved GitHub Pages, not Namecheap; abort incorrect origin diagnosis."
+            exit 1 ;;
+          esac
+          # Mask origin and never echo or upload DNS records.
+          echo "::add-mask::$ip"
+          echo "SASTA_ORIGIN_IP=$ip" >> "$GITHUB_ENV"
+      - name: Differentiate public-origin database failures from static-serving failures
+        shell: bash
+        run: |
+          set -euo pipefail
+          for probe in 'homepage|/' 'wp-static|/wp-includes/js/wp-emoji-release.min.js' 'public-robots|/robots.txt'; do
+            name=${probe%%|*}
+            path=${probe#*|}
+            body=$(mktemp)
+            status=$(curl -ksS --max-time 15 --connect-timeout 7 \
+              --resolve "sastamilaga.com:443:$SASTA_ORIGIN_IP" \
+              -o "$body" -w '%{http_code}' "https://sastamilaga.com$path") || status=000
+            database_failure=false
+            if grep -qiE 'Error establishing a database connection|<title>Database Error</title>' "$body"; then
+              database_failure=true
+            fi
+            echo "Namecheap direct $name: HTTP $status; database-error-body=$database_failure"
+            rm -f "$body"
+          done
+      - name: Read-only diagnostic of WordPress cart and supplier APIs
+        shell: bash
+        run: |
+          set -uo pipefail
+          # No POST, no checkout submission, no customer cookies or secrets.
+          urls=(
+            'https://sastamilaga.com/api/cj/variants?pid=1988880782439141377'
+            'https://sastamilaga.com/api/cj/health'
+            'https://sastamilaga.com/wp-json/wc/store/v1/cart'
+            'https://sastamilaga.com/wp-json/gdcs/v1/context?light=1'
+            'https://sastamilaga.com/cart/'
+            'https://sasta-woo-namecheap-bridge-v1.usamaestonia.workers.dev/cart/'
+            'https://sastamilaga-cj-shipping.usamaestonia.workers.dev/api/cj/health'
+          )
+          for url in "${urls[@]}"; do
+            headers=$(mktemp); body=$(mktemp)
+            code=$(curl -sS --max-time 12 --connect-timeout 5 --max-redirs 0 -H 'Accept: application/json,text/html;q=0.8' -D "$headers" -o "$body" -w '%{http_code}' "$url") || code=000
+            kind=other
+            if grep -Eqi 'error code: 1027|Error 1027' "$body";then kind=worker_quota_1027
+            elif grep -qi 'Error establishing a database connection' "$body";then kind=mysql_connection_error
+            elif grep -qi 'Secure checkout is temporarily unavailable' "$body";then kind=safe_maintenance
+            elif grep -qi 'WooCommerce origin temporarily unavailable' "$body";then kind=unavailable_origin
+            elif grep -q '"variants"' "$body";then kind=supplier_json
+            elif grep -q '"items_count"' "$body";then kind=woo_cart_json
+            elif grep -q '"key"' "$body";then kind=health_json
+            fi
+            origin=$(grep -im1 '^x-sasta-commerce-origin:' "$headers" | tr -d '\r' || true)
+            echo "public_probe url=$url http=$code state=$kind ${origin:-no_bridge_marker}"
+            rm -f "$headers" "$body"
+          done
+          # Direct same-host TLS connection to retained Namecheap IP, bypassing Workers.
+          for path in /wp-json/wc/store/v1/cart /wp-json/gdcs/v1/context?light=1 /cart/; do
+            h=$(mktemp); b=$(mktemp)
+            status=$(curl -ksS --max-time 12 --connect-timeout 5 --resolve "sastamilaga.com:443:$SASTA_ORIGIN_IP" --max-redirs 0 -D "$h" -o "$b" -w '%{http_code}' "https://sastamilaga.com$path") || status=000
+            state=other
+            if grep -qi 'Error establishing a database connection' "$b";then state=mysql_connection_error;fi
+            if grep -qi 'database error' "$b";then state=db_error;fi
+            contenttype=$(grep -im1 '^content-type:' "$h" | tr -d '\r' | cut -c1-80 || true)
+            if [[ "$path" == /wp-json/wc/store/* ]] && jq -e '(.items | type == "array") and (.items_count | type == "number")' "$b" >/dev/null 2>&1; then
+              state=verified_woocommerce_cart_json
+              if grep -qi '^nonce:' "$h";then state=verified_woocommerce_cart_json_with_nonce;fi
+            fi
+            if [[ "$path" == /wp-json/gdcs/* ]] && jq -e '(.csrf | type == "string") and (.csrf | length > 0)' "$b" >/dev/null 2>&1; then
+              state=verified_gdcs_session_csrf
+            fi
+            if [[ "$path" == /cart/* ]] && grep -Eqi 'woocommerce|wc-block-cart|wp-block-woocommerce' "$b";then state=verified_wordpress_cart_html;fi
+            echo "direct_namecheap path=$path http=$status type=${contenttype:-unknown} state=$state"
+            rm -f "$h" "$b"
+          done
+      - name: Compare independent static availability
+        shell: bash
+        run: |
+          status=$(curl -L --silent --show-error --max-time 18 -o /dev/null \
+            -w '%{http_code}' https://kosama685.github.io/sastamilaga/) || status=000
+          echo "Independent GitHub Pages: HTTP $status"
+          [ "$status" = 200 ]

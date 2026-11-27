@@ -1,0 +1,75 @@
+name: GitHub-primary storefront and WooCommerce health guard
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - tools/github-primary-route-audit.mjs
+      - .github/workflows/cloudflare-1027-availability-guard.yml
+permissions:
+  contents: read
+concurrency:
+  group: sasta-github-primary-availability
+  cancel-in-progress: false
+jobs:
+  public-storefront:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: {node-version: '24'}
+      - name: Check DNS, GitHub primary and isolated Namecheap commerce routes
+        run: |
+          node --check tools/github-primary-route-audit.mjs
+          node tools/github-primary-route-audit.mjs
+      - name: Probe live storefront on canonical HTTPS domain
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in / /shop/ /robots.txt /sitemap.xml /assets/theme/static-bundle.css; do
+            h=$(mktemp); b=$(mktemp)
+            code=$(curl -sS --max-time 27 --connect-timeout 10 --max-redirs 0 -D "$h" -o "$b" -w '%{http_code}' "https://sastamilaga.com$path") || code=000
+            echo "$path HTTP $code"
+            if [ "$code" != 200 ] || grep -qi '^location:' "$h"; then
+              echo "::error::Public Github-primary page unavailable: $path HTTP $code"
+              exit 1
+            fi
+            case "$path" in
+              /|/shop/) grep -qi 'Sasta Milaga' "$b" ;;
+              /robots.txt) grep -qi 'User-agent:' "$b" ;;
+              /sitemap.xml) grep -q '<sitemapindex\|<urlset' "$b" ;;
+              /assets/theme/static-bundle.css) test "$(wc -c < "$b")" -gt 2000 ;;
+            esac || { echo "::error::Invalid static response for $path"; exit 1; }
+            rm -f "$h" "$b"
+          done
+  private-commerce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout and WooCommerce must be real, never a static imitation
+        shell: bash
+        run: |
+          failed=0
+          for path in /cart/ /checkout/ /my-account/ /wp-json/; do
+            b=$(mktemp); h=$(mktemp)
+            code=$(curl -sS --max-time 22 --connect-timeout 8 --max-redirs 0 -D "$h" -o "$b" -w '%{http_code}' "https://sastamilaga.com$path") || code=000
+            marker=$(grep -i '^x-sasta-commerce-origin:' "$h" | tr -d '\r' | tail -1 || true)
+            echo "$path HTTP $code ${marker:-no backend marker}"
+            if [ "$code" = 200 ] && grep -qi 'x-sasta-commerce-origin: namecheap' "$h"; then
+              echo "PASS: Namecheap origin served $path"
+            elif [ "$code" = 301 ] || [ "$code" = 302 ] || [ "$code" = 303 ]; then
+              location=$(grep -i '^location:' "$h" | tr -d '\r' | tail -1 || true)
+              if [[ "$location" != *'sastamilaga.com/'* ]]; then echo "::error::Unexpected external redirect"; failed=1; fi
+            else
+              echo "::error::Commerce service unavailable or unverified at $path HTTP $code"
+              failed=1
+            fi
+            rm -f "$b" "$h"
+          done
+          # This is a GET-only health check. It never places an order or asserts payment success.
+          exit "$failed"

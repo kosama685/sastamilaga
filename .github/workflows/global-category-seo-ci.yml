@@ -1,0 +1,90 @@
+name: Verify global category SEO rollout
+on:
+  pull_request:
+    paths:
+      - tools/enhance-global-category-seo.mjs
+      - tools/verify-global-schema-links.mjs
+      - tools/global-static-facets.test.mjs
+      - assets/js/global-static-facets.js
+      - assets/js/global.js
+      - styles.css
+      - assets/css/global-static-facets.css
+      - .github/workflows/static.yml
+      - .github/workflows/global-category-seo-ci.yml
+  push:
+    branches: [main]
+    paths:
+      - tools/enhance-global-category-seo.mjs
+      - .github/workflows/global-category-seo-ci.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Syntax validation
+        run: node --check tools/enhance-global-category-seo.mjs
+      - name: Validate SPA supplier sidebar and no deceptive video schema
+        run: |
+          node --check assets/js/global.js
+          grep -q 'sm-global-live-layout' assets/js/global.js
+          grep -q 'id="gmin"' assets/js/global.js
+          grep -q 'sm-global-live-layout' styles.css
+          ! grep -q "brand: { '@type': 'Brand', name: 'Sasta Milaga' }" assets/js/global.js
+          ! grep -q "subjectOf: { '@type': 'VideoObject'" assets/js/global.js
+
+      - name: Validate filter behavior and price-safety cases
+        run: |
+          node --check assets/js/global-static-facets.js
+          node --test tools/global-static-facets.test.mjs
+      - name: Validate every global category and expected change without writing
+        run: node tools/enhance-global-category-seo.mjs --check
+      - name: Apply generated changes to CI workspace
+        run: node tools/enhance-global-category-seo.mjs
+      - name: Verify repeatability and no accidental additional changes
+        run: node tools/enhance-global-category-seo.mjs
+      - name: Verify all 572 categories have accurate ItemList URLs and semantic internal links
+        run: node tools/verify-global-schema-links.mjs
+      - name: Assert representative AEO content and crawlable sibling category links
+        run: |
+          grep -q 'id="sasta-global-qa-linking-v2"' c/global/earphones-and-headphones.html
+          grep -q 'href="https://sastamilaga.com/c/global/' c/global/earphones-and-headphones.html
+          grep -q 'not every product can ship to every country' c/global/earphones-and-headphones.html
+          ! grep -q 'Global items ship worldwide from our supplier network' c/global/earphones-and-headphones.html
+
+      - name: Verify corporate sidebar, semantic product URLs and source-preserving sitemap rules
+        run: |
+          grep -q 'id="sm-global-facets-v1"' c/global/3d-pens.html
+          grep -q 'sm-global-facets-layout' c/global/3d-pens.html
+          grep -q 'global-static-facets.js' c/global/3d-pens.html
+          grep -q 'https://sastamilaga.com/global-shop/p/2011982827504136193/multi-color-3d-printing-pen/' c/global/3d-pens.html
+          ! grep -q 'href="../../#/global/p/' c/global/3d-pens.html
+          ! grep -q 'Global items are prepaid and delivered worldwide' c/global/3d-pens.html
+
+      - name: Verify live sample category pages expose the sidebar and real supplier URLs
+        run: |
+          for slug in 3d-pens earphones-and-headphones; do
+            url="https://sastamilaga.com/c/global/${slug}.html"
+            curl -fsSL --retry 3 --retry-delay 2 --connect-timeout 12 --max-time 35 "$url" -o "/tmp/${slug}.html"
+
+            echo "=== Public category HTTP and HTML diagnostics: $url ==="
+            curl -sSIL --max-time 22 "$url" | grep -iE '^HTTP/|^cf-cache-status:|^cache-control:|^x-sasta-|^content-type:|^age:' || true
+            echo "live_bytes=$(wc -c < /tmp/${slug}.html)"
+            printf 'live_sidebar_count='; (grep -o 'sm-global-facets-v1' "/tmp/${slug}.html" || true) | wc -l
+            printf 'live_hashed_supplier_links='; (grep -o 'href="../../#/global/p/' "/tmp/${slug}.html" || true) | wc -l
+            printf 'live_canonical_supplier_links='; (grep -o 'https://sastamilaga.com/global-shop/p/' "/tmp/${slug}.html" || true) | wc -l
+            ref="https://kosama685.github.io/sastamilaga/c/global/${slug}.html"
+            curl -fsSL --connect-timeout 12 --max-time 35 "$ref" -o "/tmp/${slug}-github.html"
+            echo "github_bytes=$(wc -c < /tmp/${slug}-github.html)"
+            printf 'github_sidebar_count='; (grep -o 'sm-global-facets-v1' "/tmp/${slug}-github.html" || true) | wc -l
+            grep -q 'id="sm-global-facets-v1"' "/tmp/${slug}.html"
+            grep -q 'sm-global-facets-layout' "/tmp/${slug}.html"
+            grep -q 'https://sastamilaga.com/global-shop/p/' "/tmp/${slug}.html"
+            echo "Live category verified: $url"
+          done

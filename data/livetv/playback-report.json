@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-26T21:49:52.168Z",
+  "origin": "https://sastamilaga.com",
+  "channels": 40104,
+  "uniqueSources": 28214,
+  "testedThisRun": 16,
+  "checked": 28214,
+  "remaining": 0,
+  "statuses": {
+    "ok": 6634,
+    "dead": 3018,
+    "needs-player": 9978,
+    "unchecked": 0,
+    "no-source": 20474
+  },
+  "note": "Network observations from one region. Endpoint reachability does not guarantee playback everywhere."
+}

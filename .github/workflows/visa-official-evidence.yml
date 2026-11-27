@@ -1,0 +1,22 @@
+name: Visa official evidence regression
+on:
+  pull_request:
+    paths:
+      - 'tools/build-visa-pages.mjs'
+      - 'tools/build-visa-pages.test.mjs'
+      - 'tools/visa-content.mjs'
+      - 'visa/kenya/index.html'
+      - '.github/workflows/visa-official-evidence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - run: node --test tools/build-visa-pages.test.mjs

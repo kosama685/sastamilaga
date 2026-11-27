@@ -1,0 +1,37 @@
+name: Unified product video UX
+on:
+  pull_request:
+    paths:
+      - 'assets/js/product-video-universal.js'
+      - 'assets/js/chrome.js'
+      - 'assets/js/cj-card-video.js'
+      - 'app.js'
+      - 'index.html'
+      - 'tools/product-video-universal.test.mjs'
+      - '.github/workflows/product-video-unified-ci.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'assets/js/product-video-universal.js'
+      - 'assets/js/chrome.js'
+      - 'assets/js/cj-card-video.js'
+      - 'app.js'
+      - 'index.html'
+      - 'tools/product-video-universal.test.mjs'
+      - '.github/workflows/product-video-unified-ci.yml'
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Syntax and regression tests
+        run: |
+          node --check assets/js/product-video-universal.js
+          node --check app.js
+          node --test tools/product-video-universal.test.mjs tools/cj-video-regression.test.mjs

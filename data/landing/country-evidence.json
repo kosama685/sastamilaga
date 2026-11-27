@@ -1,0 +1,4 @@
+{
+  "_readme": "Add one record per country code ONLY with real evidence. Required keys: carrier, carrierEvidence, shippingQuoteTest, paymentMethod, paymentTestResult, returnsPolicy, refundConditions, taxCustomsResponsibility, reviewerName, verificationDate (YYYY-MM-DD), evidenceSource, approvalStatus ('approved'). Run: node tools/build-evidence-register.mjs. A market qualifies for promotion only when no field is missing.",
+  "records": {}
+}

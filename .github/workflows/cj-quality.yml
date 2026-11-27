@@ -1,0 +1,39 @@
+name: CJ mobile performance and API documentation watch
+on:
+  workflow_dispatch:
+    inputs:
+      base:
+        description: Storefront audit base URL
+        default: https://sastamilaga.com/__cj-preview
+        type: string
+  schedule:
+    - cron: '35 4 * * 1'
+permissions:
+  contents: read
+jobs:
+  mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: node tools/cj-lighthouse.mjs
+        env:
+          CJ_AUDIT_BASE: ${{ inputs.base || 'https://sastamilaga.com' }}
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: cj-mobile-performance
+          path: artifacts/lighthouse/
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: python tools/cj-doc-watch.py
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: cj-documentation-drift
+          path: artifacts/cj-doc-watch.json

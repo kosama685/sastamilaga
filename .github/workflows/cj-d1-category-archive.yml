@@ -1,0 +1,51 @@
+name: CJ D1 category archive - no storefront changes
+on:
+  schedule:
+    # Riyadh: 03:17, 09:17, 15:17, 21:17. No replay of the verified baseline.
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: cj-d1-archive-branch
+  cancel-in-progress: false
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 1
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Validate importer without touching main site files
+        run: |
+          node --check .github/workflows/cj-d1-category-archive.mjs
+          cp .github/workflows/cj-d1-category-archive.mjs "$RUNNER_TEMP/cj-d1-category-archive.mjs"
+      - name: Switch to isolated archive branch
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin refs/heads/cj-import-archive:refs/remotes/origin/cj-import-archive
+          git checkout -B cj-import-archive refs/remotes/origin/cj-import-archive
+          test -f archive/cj/state.json || { echo 'Missing D1 baseline'; exit 1; }
+      - name: Import only new D1 catalog records as category JSONL
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          SASTA_D1_DATABASE_ID: ac28088f-6a54-4d29-8c64-821661efe88f
+        run: node "$RUNNER_TEMP/cj-d1-category-archive.mjs"
+      - name: Push data only to cj-import-archive, never main
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = cj-import-archive
+          git config user.name sasta-cj-archive-bot
+          git config user.email sasta-cj-archive-bot@users.noreply.github.com
+          git add archive/cj
+          if git diff --cached --quiet; then echo 'No delta'; exit 0; fi
+          unexpected=$(git diff --cached --name-only | grep -v '^archive/cj/' || true)
+          test -z "$unexpected" || { echo 'Unsafe staged changes'; exit 1; }
+          git commit -m 'archive: CJ D1 supplier delta only [skip ci]'
+          git push origin HEAD:refs/heads/cj-import-archive

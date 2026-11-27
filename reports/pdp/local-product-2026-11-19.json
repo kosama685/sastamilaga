@@ -1,0 +1,145 @@
+{
+  "audit_date": "2026-11-19",
+  "target": "https://sastamilaga.com/p/electric-super-micro-bubble-beauty-blackhead-remover-pore-vacuum-cleaner-facial-pe-96-00-00-964.html",
+  "environment": "Production Cloudflare and GitHub Pages",
+  "root_causes": [
+    {
+      "issue": "Product click vs refresh renders different media states",
+      "cause": "app.js intercepted canonical static /p/*.html navigation and performed SPA DOM swap",
+      "fix": "Allow native navigation to indexed canonical /p/*.html and route product navigation with location.assign; no browser storage deletion"
+    },
+    {
+      "issue": "Related supplier images incorrectly marked unavailable",
+      "cause": "Related image metadata allowlist omitted supplier host admin.yourmart.pk",
+      "fix": "Allow actual linked same-product YourMart images, retry canonical OG image, keep placeholder only for actual failure"
+    }
+  ],
+  "source_commits": [
+    {
+      "file": "assets/js/related-product-cards.js",
+      "sha": "f37b7b46365975b37ac5f8314986a225ef264c60"
+    },
+    {
+      "file": "app.js",
+      "sha": "1ccddf1dbcb7871fa97f7a16e92da8fc47aa65f6"
+    },
+    {
+      "file": "tools/test-local-pdp-navigation.mjs",
+      "sha": "9cfa6de3d892db51a435085dafc10d483a477fbf"
+    },
+    {
+      "file": ".github/workflows/local-product-journey-quality.yml",
+      "sha": "534a5b294169e554731a56864e69efb122bd650f"
+    }
+  ],
+  "production_verification": [
+    {
+      "case": "Production updated static JS content",
+      "result": "PASS",
+      "facts": {
+        "relatedScriptBytes": 3917,
+        "appScriptBytes": 176143,
+        "updatedGatingPresent": true,
+        "navigationGuardPresent": true
+      }
+    },
+    {
+      "case": "First navigation from homepage to product",
+      "result": "PASS",
+      "facts": {
+        "destinationCanonical": "https://sastamilaga.com/p/electric-super-micro-bubble-beauty-blackhead-remover-pore-vacuum-cleaner-facial-pe-96-00-00-964.html",
+        "http": 200,
+        "staticPdp": true
+      }
+    },
+    {
+      "case": "Cart localStorage persistence across full page navigation",
+      "result": "PASS",
+      "facts": {
+        "ephemeralTestCartQuantity": 3,
+        "observedBadgeAfterNavigation": 3,
+        "note": "Isolated synthetic browser session, no real orders or user cart modified"
+      }
+    },
+    {
+      "case": "Main product image",
+      "result": "PASS",
+      "facts": {
+        "naturalWidth": 800,
+        "sourceHost": "admin.yourmart.pk",
+        "verifiedSupplierMedia": true
+      }
+    },
+    {
+      "case": "Six related product source images",
+      "result": "PASS",
+      "facts": {
+        "sampleCount": 6,
+        "individualSupplierImagesLoaded": 6,
+        "relatedPageHTTP200": 6,
+        "sampleExactProductMetadata": true
+      }
+    },
+    {
+      "case": "Normal desktop related card eager vs lazy state",
+      "result": "PASS",
+      "facts": {
+        "cards": 6,
+        "loadedDuringNormalShortViewportSample": 4,
+        "deferredBelowFold": 2,
+        "brokenPlaceholders": 0
+      }
+    },
+    {
+      "case": "Desktop layout",
+      "result": "PASS",
+      "facts": {
+        "viewportWidth": 1440,
+        "productGridWidthApprox": 1380,
+        "horizontalOverflow": false
+      }
+    },
+    {
+      "case": "Mobile layout",
+      "result": "PASS",
+      "facts": {
+        "viewportWidth": 390,
+        "productGridWidth": 358,
+        "horizontalOverflow": false,
+        "mainImageLoaded": true
+      }
+    },
+    {
+      "case": "Static navigation and source ownership regression assertions",
+      "result": "PASS",
+      "facts": {
+        "assertions": 11,
+        "allPassed": true
+      }
+    },
+    {
+      "case": "GitHub regression workflow initial run",
+      "result": "PASS",
+      "facts": {
+        "runId": 44506124367,
+        "conclusion": "success",
+        "currentRunId": 44506165236,
+        "currentRunStatusAtAudit": "in_progress"
+      }
+    }
+  ],
+  "crawlability": {
+    "previousGSC403": "Googlebot smartphone crawl 2026-11-14 23:07:05 (user supplied)",
+    "productionBrowserHTTP200": true,
+    "wafVerifiedGooglebotSkipEnabled": true,
+    "wafSkipUses": "cf.client.bot and Googlebot/GoogleOther/Google-InspectionTool for GET and HEAD with admin/checkout exclusions",
+    "currentGoogleSideFetch": "NOT VERIFIED: authenticated Search Console or genuine Googlebot logs required",
+    "searchConsoleAccess": "Prior connected authorization invalid_grant; current API resubmission not performed"
+  },
+  "additionalFindings": [
+    "Existing strict internal URL audit workflow failed because of 2 missing static references; not corrected as part of this targeted media/navigation batch",
+    "Product JSON-LD includes a fixed PKR 150 shippingRate while the current visual UI presents PKR 250; WooCommerce actual shipping configuration must be reconciled before updating schema",
+    "Full catalog media coverage and Google indexing are not proved by this focused sample"
+  ],
+  "guardrails": "No localStorage/sessionStorage clear, no cart checkout payment stock pricing Merchant feed or Cloudflare WAF changes. No unrelated product images substituted."
+}

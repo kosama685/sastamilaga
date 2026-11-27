@@ -1,0 +1,79 @@
+# Publish due blog entries without network-heavy Live TV maintenance.
+# 21:17 UTC = 00:17 Asia/Riyadh (due posts); 09:17 UTC = 12:17 Riyadh catch-up.
+# GitHub cron delivery is best-effort. Both runs deduplicate against existing posts.
+name: Publish scheduled blog posts
+
+on:
+  schedule:
+    - cron: '17 21 * * *'
+    - cron: '17 9 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/blog-schedule.yml'
+      - 'tools/build-blog.mjs'
+      - 'tools/verify-blog-publication.mjs'
+      - 'assets/data/blog.js'
+      - 'assets/data/blog-wp.js'
+      - 'data/wp/posts/**'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  issues: write
+  actions: write
+
+# Share the existing Pages deployment lock to avoid simultaneous GitHub Pages releases.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+      - name: Build due posts without duplicates
+        run: node tools/build-blog.mjs
+      - name: Validate every due post locally
+        run: node tools/verify-blog-publication.mjs --local
+      - name: Commit only blog and sitemap changes
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "sasta-milaga-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A b sitemap-blog.xml sitemap.xml sitemap_index.xml b-published.txt
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "Publish due blog posts"
+            git push origin HEAD:main
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      # A push made with GITHUB_TOKEN does not automatically trigger other
+      # push workflows. Explicitly dispatch the central static site deployment.
+      # Never run a second bespoke Pages artifact/deploy pipeline here.
+      - name: Dispatch authoritative Pages workflow
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run static.yml --ref main
+      - name: Verify existing production articles when no new posts were published
+        if: steps.commit.outputs.changed != 'true'
+        run: node tools/verify-blog-publication.mjs --live
+      - name: Report publishing failure without blocking cleanup
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          echo "Blog publish failed: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> "$GITHUB_STEP_SUMMARY"
+          gh issue create --repo "$GITHUB_REPOSITORY" --title "Blog publishing failed: run $GITHUB_RUN_ID" --body "Investigate and retry the failed blog publishing workflow: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" || true

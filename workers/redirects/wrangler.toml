@@ -1,0 +1,8 @@
+# Redirects from the old WordPress addresses to the new pages. Public settings only.
+name = "sastamilaga-redirects"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+SITE_ORIGIN = "https://kosama685.github.io/sastamilaga"   # where data/redirects/*.json is read from
+CANONICAL_BASE = "https://sastamilaga.com"                # redirects point here

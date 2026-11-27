@@ -1,0 +1,44 @@
+name: SEO SXO and critical entrypoint smoke test
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/js/market.js'
+      - 'workers/faq-static/worker.js'
+      - 'tools/seo-sxo-smoke.mjs'
+      - '.github/workflows/seo-sxo-smoke.yml'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Syntax and SEO indexability integrity
+        run: |
+          node --check assets/js/market.js
+          node --check workers/faq-static/worker.js
+          node --check tools/seo-sxo-smoke.mjs
+          node tools/seo-sxo-smoke.mjs
+      - name: Live FAQ and SEO resource status
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in /faq /faq/ /llms.txt /sitemap.xml /; do
+            headers=$(mktemp); body=$(mktemp)
+            status=$(curl --compressed -sSL --max-time 22 --retry 1 --retry-delay 1 -D "$headers" -o "$body" -w '%{http_code}' "https://sastamilaga.com$path") || status=000
+            echo "URL $path = $status, bytes=$(wc -c < "$body"), FAQ-source=$(grep -i '^x-sasta-faq-source:' "$headers" | tail -1 || true)"
+            if [[ "$path" == '/faq/' ]]; then
+              if [[ "$status" != 200 ]] || ! grep -Fq 'Shopping FAQs: Payments' "$body"; then
+                echo "::error::FAQ is not delivering the real content. Do not fake a 200."
+                exit 1
+              fi
+            fi
+            if [[ "$path" == '/llms.txt' ]] && [[ "$status" != 200 ]]; then exit 1; fi
+            rm -f "$headers" "$body"
+          done

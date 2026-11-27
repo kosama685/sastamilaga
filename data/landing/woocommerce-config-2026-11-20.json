@@ -1,0 +1,20 @@
+{
+  "observedOn": "2026-11-20",
+  "source": "Read-only WP-CLI eval over SSH on the live site (get_option, WC()->payment_gateways(), WC_Shipping_Zones, GDCS\\VirtualCheckout::ready()). Nothing was written.",
+  "limits": "Configuration facts only. No order was placed, no payment was taken, no checkout was exercised end to end.",
+  "storeCurrency": "PKR",
+  "baseCountry": "PK:SD",
+  "woocommerceSellingLocations": {"mode": "specific", "countries": ["PK"], "effectiveAllowedCountries": 1, "effectiveShippingCountries": 1,
+    "meaning": "Native WooCommerce checkout only accepts Pakistan. Global (CJ) items use the plugin's separate virtual checkout."},
+  "taxes": {"calcTaxes": "no", "pricesIncludeTax": "no"},
+  "enabledPaymentGateways": [
+    "ppcp-gateway: PayPal", "ppcp-card-button-gateway: Debit & Credit Cards", "ppcp-bancontact: Bancontact", "ppcp-blik: Blik", "ppcp-eps: EPS", "ppcp-ideal: iDeal",
+    "ppcp-mybank: MyBank", "ppcp-p24: Przelewy24", "ppcp-trustly: Trustly", "ppcp-multibanco: Multibanco", "cod: Cash on delivery",
+    "sms_booking_request: Request booking, pay after agency confirmation (travel)"],
+  "disabledPaymentGateways": ["paypro_gateway: PayPro", "bacs: Direct bank transfer", "cheque: Check payments"],
+  "shippingZones": [
+    {"name": "Pakistan", "locations": 1, "methods": ["flat_rate", "free_shipping", "gdcs_cj"]},
+    {"name": "Rest of world (zone 0)", "methods": ["gdcs_cj"]}],
+  "globalCheckout": {"GDCS_VirtualCheckout_ready": true, "direct_feed_mode": true, "cj_videos_enabled": true},
+  "siteJsConfig": {"paypalClientId": "empty", "paypalWorker": "empty", "paypalEmail": "set (payment-link flow for the static storefront)", "orderEndpoint": "Formspree form", "whatsapp": "966510451995", "deliveryFeePkr": 250, "freeDeliveryFromPkr": 5000}
+}

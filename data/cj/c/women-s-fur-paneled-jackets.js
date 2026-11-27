@@ -1,0 +1,1 @@
+SM_CJ_SHARD("women-s-fur-paneled-jackets",[["2089655255087955969","CJWF3072625","Faux Fur Trim Lapel Maxi Coat",11.15,11.15,"https://cf.cjdropshipping.com/87264066-5d64-42c6-a5ed-c1265564affc.jpg",""]]);

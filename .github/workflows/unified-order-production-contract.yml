@@ -1,0 +1,43 @@
+name: Unified request cart and CJ outage fallback contract
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/js/order-cart.js'
+      - 'assets/js/order-page.js'
+      - 'assets/js/request-cart-page.js'
+      - 'assets/js/global-pdp.js'
+      - 'tools/unified-order-request.test.mjs'
+      - '.github/workflows/unified-order-production-contract.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: JavaScript validation
+        run: |
+          node --check assets/js/order-cart.js
+          node --check assets/js/order-page.js
+          node --check assets/js/request-cart-page.js
+          node --check assets/js/global-pdp.js
+          node --check tools/unified-order-request.test.mjs
+      - name: Verify cart, quota fallback, Formspree request safety
+        run: node --test tools/unified-order-request.test.mjs
+      - name: Verify deployed static order-request entry point (read only)
+        run: |
+          node --input-type=module - <<'NODE'
+          for (const path of ['/order/','/request-cart/']){
+            const response=await fetch('https://sastamilaga.com'+path,{signal:AbortSignal.timeout(18000)});
+            if (response.status!==200) throw Error(path+' HTTP '+response.status);
+            const html=await response.text();
+            if (!html.includes('noindex,nofollow')) throw Error(path+' missing noindex for request-only flow');
+            console.log('PASS',path,'HTTP',response.status);
+          }
+          NODE

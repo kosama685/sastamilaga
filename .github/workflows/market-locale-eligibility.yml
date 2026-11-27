@@ -1,0 +1,37 @@
+name: Worldwide language and market eligibility audit
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '55 3 * * 2'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/audit-market-locale-readiness.mjs'
+      - 'tools/audit-public-locales.mjs'
+      - 'assets/js/market.js'
+      - '.github/workflows/market-locale-eligibility.yml'
+permissions:
+  contents: read
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: node --check tools/audit-market-locale-readiness.mjs
+      - run: node --check tools/audit-public-locales.mjs
+      - name: Audit every market chooser destination and distinct display currency
+        run: node tools/audit-market-locale-readiness.mjs
+      - name: Probe real English, Urdu and Arabic public routes
+        run: node tools/audit-public-locales.mjs
+      - name: Retain worldwide readiness and language gaps
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: market-locale-readiness-${{ github.run_id }}
+          path: artifacts/market-readiness/
+          retention-days: 30
+          if-no-files-found: error

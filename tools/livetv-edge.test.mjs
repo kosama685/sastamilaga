@@ -1,0 +1,51 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { sourcePath, handle } from "../workers/live-tv-static/worker.mjs";
+test("static delivery is restricted to TV pages and explicit public dependencies", () => {
+  assert.equal(sourcePath("/wp-admin/"), null);
+  assert.equal(sourcePath("/api/cj/"), null);
+  assert.equal(sourcePath("/assets/js/checkout.js"), null);
+  assert.equal(sourcePath("/data/livetv/%2e%2e/token"), null);
+  assert.equal(
+    sourcePath("/live-tv/country/pakistan/"),
+    "/live-tv/country/pakistan/index.html",
+  );
+  assert.equal(
+    sourcePath("/live-tv/playlist.m3u"),
+    "/data/livetv/playlist.m3u",
+  );
+});
+test("delivery streams the committed asset with the correct MIME and no legacy WP injection", async () => {
+  let url;
+  const r = await handle(
+    new Request("https://sastamilaga.com/assets/js/live-tv-hub.js"),
+    async (u) => {
+      url = u;
+      return new Response("window.test=true");
+    },
+  );
+  assert.match(
+    url,
+    /raw\.githubusercontent\.com\/kosama685\/sastamilaga\/main\/assets/,
+  );
+  assert.match(r.headers.get("Content-Type"), /javascript/);
+  assert.equal(await r.text(), "window.test=true");
+  assert.equal(r.headers.get("X-Sasta-TV-Config"), "static-world-tv");
+});
+test("redirects preserve filters and upstream failure is never reported successful", async () => {
+  const r = await handle(
+    new Request("https://sastamilaga.com/live-tv?country=PK"),
+  );
+  assert.equal(r.status, 308);
+  assert.equal(
+    r.headers.get("location"),
+    "https://sastamilaga.com/live-tv/?country=PK",
+  );
+  const fail = await handle(
+    new Request("https://sastamilaga.com/live-tv/"),
+    async () => {
+      throw Error("network");
+    },
+  );
+  assert.equal(fail.status, 502);
+});

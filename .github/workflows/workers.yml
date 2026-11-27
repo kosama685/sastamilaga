@@ -1,0 +1,127 @@
+# Deploys the Cloudflare Workers (CJ shipping + variants, PayPal, global product pages) and sets their secrets from GitHub Secrets.
+# Nothing runs until the repository secrets below exist; secret values never appear in the repository or in logs.
+#
+# Repository secrets (Settings > Secrets and variables > Actions):
+#   CLOUDFLARE_API_TOKEN     API token with "Edit Cloudflare Workers" permission
+#   CLOUDFLARE_ACCOUNT_ID    the account id shown in the Cloudflare dashboard
+#   CJ_API_KEY               CJ Dropshipping API key (rotate the one that was pasted in chat)
+#   PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID   (optional: PayPal Worker)
+name: Deploy Cloudflare Workers
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths: ["workers/cj-shipping/**", "workers/paypal/**", "workers/product-pages/**", "workers/redirects/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  workers:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CJ_API_KEY: ${{ secrets.CJ_API_KEY }}
+      PAYPAL_CLIENT_ID: ${{ secrets.PAYPAL_CLIENT_ID }}
+      PAYPAL_CLIENT_SECRET: ${{ secrets.PAYPAL_CLIENT_SECRET }}
+      PAYPAL_WEBHOOK_ID: ${{ secrets.PAYPAL_WEBHOOK_ID }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+      - name: Check that the Cloudflare secrets exist
+        id: chk
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID are not set as repository secrets, so no Worker was deployed."
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Stage canonical CJ video-capable shipping provider
+        if: steps.chk.outputs.ok == 'true'
+        run: cp tools/cj-video-provider.mjs workers/cj-shipping/worker.js
+      - name: Deploy CJ shipping and variants Worker
+        if: steps.chk.outputs.ok == 'true'
+        working-directory: workers/cj-shipping
+        run: |
+          npx --yes wrangler@3 deploy
+          if [ -n "$CJ_API_KEY" ]; then printf '%s' "$CJ_API_KEY" | npx --yes wrangler@3 secret put CJ_API_KEY; else echo "::warning::CJ_API_KEY secret is not set: the Worker is deployed but cannot call CJ yet."; fi
+      - name: Deploy PayPal Worker
+        if: steps.chk.outputs.ok == 'true'
+        working-directory: workers/paypal
+        run: |
+          npx --yes wrangler@3 deploy
+          [ -n "$PAYPAL_CLIENT_ID" ]     && printf '%s' "$PAYPAL_CLIENT_ID"     | npx --yes wrangler@3 secret put PAYPAL_CLIENT_ID     || echo "::warning::PAYPAL_CLIENT_ID not set"
+          [ -n "$PAYPAL_CLIENT_SECRET" ] && printf '%s' "$PAYPAL_CLIENT_SECRET" | npx --yes wrangler@3 secret put PAYPAL_CLIENT_SECRET || echo "::warning::PAYPAL_CLIENT_SECRET not set"
+          [ -n "$PAYPAL_WEBHOOK_ID" ]    && printf '%s' "$PAYPAL_WEBHOOK_ID"    | npx --yes wrangler@3 secret put PAYPAL_WEBHOOK_ID    || echo "::warning::PAYPAL_WEBHOOK_ID not set"
+          true
+      - name: Deploy global product pages Worker
+        if: steps.chk.outputs.ok == 'true'
+        working-directory: workers/product-pages
+        run: npx --yes wrangler@3 deploy
+      - name: Attach the feed paths to sastamilaga.com (additive routes; nothing existing is changed)
+        if: steps.chk.outputs.ok == 'true'
+        run: |
+          ZID=$(curl -sS -m 60 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/zones?name=sastamilaga.com" | jq -r '.result[0].id // empty')
+          if [ -z "$ZID" ]; then echo "::warning::zone sastamilaga.com not found for this token; routes not attached"; exit 0; fi
+          for pat in "sastamilaga.com/feeds/global/*" "sastamilaga.com/feeds/google-merchant.xml" "sastamilaga.com/sitemaps/global/*" "sastamilaga.com/sitemap-global-products.xml"; do
+            have=$(curl -sS -m 60 -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/zones/$ZID/workers/routes" | jq -r --arg p "$pat" '[.result[]? | select(.pattern==$p)] | length')
+            if [ "$have" = "0" ]; then
+              curl -sS -m 60 -X POST -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json" --data "{\"pattern\":\"$pat\",\"script\":\"sastamilaga-global-pages\"}" "https://api.cloudflare.com/client/v4/zones/$ZID/workers/routes" | jq -r '"route '"$pat"': success=" + (.success|tostring) + " " + ((.errors // [] | map(.message) | join(";")))'
+            else echo "route $pat already attached"; fi
+          done
+      - name: Deploy the redirects Worker (old WordPress addresses -> new pages)
+        if: steps.chk.outputs.ok == 'true'
+        working-directory: workers/redirects
+        run: npx --yes wrangler@3 deploy
+      - name: Attach the redirect routes and serve /global/p/* from the full-catalogue Worker
+        if: steps.chk.outputs.ok == 'true'
+        run: |
+          API="https://api.cloudflare.com/client/v4"; H="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+          ZID=$(curl -sS -m 60 -H "$H" "$API/zones?name=sastamilaga.com" | jq -r '.result[0].id // empty')
+          if [ -z "$ZID" ]; then echo "::warning::zone sastamilaga.com not found for this token; routes not attached"; exit 0; fi
+          ROUTES=$(curl -sS -m 60 -H "$H" "$API/zones/$ZID/workers/routes")
+          attach() { # pattern script  (adds the route; if the pattern already points at another Worker, switches it and prints the previous one)
+            cur=$(echo "$ROUTES" | jq -c --arg p "$1" '[.result[]? | select(.pattern==$p)][0] // empty')
+            if [ -z "$cur" ]; then
+              curl -sS -m 60 -X POST -H "$H" -H "Content-Type: application/json" --data "{\"pattern\":\"$1\",\"script\":\"$2\"}" "$API/zones/$ZID/workers/routes" | jq -r --arg p "$1" '"added   " + $p + " success=" + (.success|tostring)'
+            else
+              rid=$(echo "$cur" | jq -r '.id'); prev=$(echo "$cur" | jq -r '.script')
+              if [ "$prev" = "$2" ]; then echo "present $1"; else
+                curl -sS -m 60 -X PUT -H "$H" -H "Content-Type: application/json" --data "{\"pattern\":\"$1\",\"script\":\"$2\"}" "$API/zones/$ZID/workers/routes/$rid" | jq -r --arg p "$1" --arg prev "$prev" '"switched " + $p + " (was " + $prev + ") success=" + (.success|tostring)'
+              fi
+            fi
+          }
+          for pat in "sastamilaga.com/ur/product/*" "sastamilaga.com/product-category/*" "sastamilaga.com/ur/product-category/*" \
+                     "sastamilaga.com/product-tag/*" "sastamilaga.com/ur/product-tag/*" "sastamilaga.com/store/*" "sastamilaga.com/ur/store/*" \
+                     "sastamilaga.com/videos/*" "sastamilaga.com/ur/videos/*" "sastamilaga.com/visa/*" "sastamilaga.com/ur/visa/*" \
+                     "sastamilaga.com/privacy-policy*" "sastamilaga.com/terms-conditions*" "sastamilaga.com/returns-refunds*" "sastamilaga.com/shipping-delivery*" \
+                     "sastamilaga.com/track-order*" "sastamilaga.com/sell-with-us*" "sastamilaga.com/rewards-program*" "sastamilaga.com/refer-and-earn*" \
+                     "sastamilaga.com/ur/" "sastamilaga.com/ur/privacy-policy*" "sastamilaga.com/ur/terms-conditions*" "sastamilaga.com/ur/returns-refunds*" \
+                     "sastamilaga.com/ur/shipping-delivery*" "sastamilaga.com/ur/sell-with-us*" "sastamilaga.com/blog/best-bags-to-buy-in-karachi-practical-shopping-guide/" "sastamilaga.com/blog/winter-kitchen-essentials-pakistan/" "sastamilaga.com/blog/best-academic-books-to-buy-in-karachi-practical-shopping-guide/" "sastamilaga.com/blog/best-audio-entertainment-to-buy-in-peshawar-practical-shopping-guide/" "sastamilaga.com/blog/online-earning-pakistan-content-sales-rewards/" "sastamilaga.com/blog/best-art-craft-materials-to-buy-in-rawalpindi-practical-shopping-guide/" "sastamilaga.com/blog/best-abayas-hijabs-to-buy-in-pakistan-practical-shopping-guide/" "sastamilaga.com/ur/travel/" "sastamilaga.com/digital-marketing/" "sastamilaga.com/language-currency/" "sastamilaga.com/live-tv/category/*"; do attach "$pat" sastamilaga-redirects; done
+          # Keep CJ numeric/UUID product URLs on the live CJ storefront; its LEGACY_PRODUCTS binding handles old WordPress slugs.
+          # Without this override future Worker deploys could restore 404s for /product/<id>/<slug>/.
+          product_owner=$(echo "$ROUTES" | jq -r '[.result[]? | select(.pattern=="sastamilaga.com/product/*")][0].script // empty')
+          if [ "$product_owner" = "sasta-product-recovery-v1" ] || [ "$product_owner" = "sasta-product-recovery-v2" ]; then
+            echo "Preserving verified supplier product outage recovery"
+          else
+            attach "sastamilaga.com/product/*" sasta-cj-storefront-v1
+          fi
+          # Restore reviewed/qualified index semantics instead of rewriting to the broad CJ catalogue sitemap.
+          attach "sastamilaga.com/sitemap-global-qualified.xml" sasta-qualified-sitemaps-quota-v2
+          attach "sastamilaga.com/sitemaps/global-qualified/*" sasta-qualified-sitemaps-quota-v2
+          # Blog and contact in the site design: release both from the plain-design Worker (previous script is printed in the log for rollback)
+          attach "sastamilaga.com/blog/*" sastamilaga-redirects
+          attach "sastamilaga.com/contact/*" sastamilaga-redirects
+          # Preserve the recovery Worker currently attached to the legacy CJ path.
+          # This workflow must never roll /global/p/* back to a broken snapshot route.
+          legacy_present=$(echo "$ROUTES" | jq -r '[.result[]? | select(.pattern=="sastamilaga.com/global/p/*")] | length')
+          if [ "$legacy_present" = "0" ]; then
+            attach "sastamilaga.com/global/p/*" sastamilaga-global-pages
+          else
+            echo "Preserving existing /global/p/* Worker route; no overwrite"
+          fi

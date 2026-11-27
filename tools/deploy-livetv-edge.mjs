@@ -1,0 +1,108 @@
+// Existing, dedicated Live TV worker; exact public routes only. No DNS or media proxy.
+import fs from "node:fs";
+import { execFileSync } from "node:child_process";
+const revision = execFileSync("git", ["rev-parse", "HEAD"], {
+  encoding: "utf8",
+}).trim();
+if (!/^[a-f0-9]{40}$/.test(revision)) throw Error("Invalid revision");
+const token = process.env.CLOUDFLARE_API_TOKEN,
+  account = process.env.CLOUDFLARE_ACCOUNT_ID;
+if (!token || !account)
+  throw Error("Configured deployment credentials missing");
+const base = "https://api.cloudflare.com/client/v4",
+  script = "sasta-live-tv-static-v2";
+async function api(path, { method = "GET", body } = {}) {
+  const r = await fetch(base + path, {
+    method,
+    headers: {
+      Authorization: "Bearer " + token,
+      ...(body instanceof FormData
+        ? {}
+        : { "Content-Type": "application/json" }),
+    },
+    body:
+      body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
+    signal: AbortSignal.timeout(30000),
+  });
+  const data = await r.json();
+  if (!r.ok || !data.success)
+    throw Error(
+      "Cloudflare " +
+        method +
+        " " +
+        path +
+        " failed: " +
+        JSON.stringify(data.errors),
+    );
+  return data.result;
+}
+const zones = await api("/zones?name=sastamilaga.com");
+if (zones.length !== 1) throw Error("Exact zone not found");
+const zone = zones[0].id;
+const routes = await api("/zones/" + zone + "/workers/routes");
+if (
+  !routes.some(
+    (r) => r.pattern === "sastamilaga.com/live-tv/*" && r.script === script,
+  )
+)
+  throw Error("Existing TV ownership precondition failed");
+const settings = await api(
+  "/accounts/" + account + "/workers/scripts/" + script + "/settings",
+);
+if (settings.bindings?.some((b) => b.name !== "STATIC_REVISION"))
+  throw Error("Unexpected bindings: preserve existing worker and investigate");
+const metadata = {
+  main_module: "worker.mjs",
+  compatibility_date: settings.compatibility_date || "2026-11-22",
+  compatibility_flags: settings.compatibility_flags || [],
+  bindings: [{ type: "plain_text", name: "STATIC_REVISION", text: revision }],
+  observability: {
+    enabled: true,
+    head_sampling_rate: 0.1,
+    traces: { enabled: true, head_sampling_rate: 0.1 },
+  },
+};
+const form = new FormData();
+form.append(
+  "metadata",
+  new Blob([JSON.stringify(metadata)], { type: "application/json" }),
+);
+form.append(
+  "worker.mjs",
+  new Blob([fs.readFileSync("workers/live-tv-static/worker.mjs", "utf8")], {
+    type: "application/javascript+module",
+  }),
+  "worker.mjs",
+);
+await api("/accounts/" + account + "/workers/scripts/" + script, {
+  method: "PUT",
+  body: form,
+});
+const patterns = [
+  "sastamilaga.com/live-tv/*",
+  "sastamilaga.com/live-tv",
+  "sastamilaga.com/live-tv/category/*",
+  "sastamilaga.com/assets/js/live-tv-*",
+  "sastamilaga.com/assets/js/config.js",
+  "sastamilaga.com/assets/js/local-api.js",
+  "sastamilaga.com/assets/theme/live-tv-hub.css",
+  "sastamilaga.com/assets/theme/live-tv-discovery.css",
+  "sastamilaga.com/assets/images/livetv/*",
+  "sastamilaga.com/assets/vendor/*",
+  "sastamilaga.com/data/livetv/*",
+  "sastamilaga.com/app.js",
+  "sastamilaga.com/sitemap-livetv.xml",
+];
+for (const pattern of patterns) {
+  const old = routes.find((r) => r.pattern === pattern);
+  await api("/zones/" + zone + "/workers/routes" + (old ? "/" + old.id : ""), {
+    method: old ? "PUT" : "POST",
+    body: { pattern, script, request_limit_fail_open: true },
+  });
+  console.log(
+    JSON.stringify({ pattern, previous: old?.script || null, script }),
+  );
+}
+console.log(
+  "Dedicated static World TV delivery deployed. No streaming proxy, DNS, checkout or payment routes changed.",
+);

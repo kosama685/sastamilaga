@@ -1,0 +1,18 @@
+{
+  "receipts": [
+    {
+      "worker": "sasta-canonical-sync-v11",
+      "before_sha256": "2b9f07e05ccf408745345708511a6beea8f53e34bb2b5805d225c08133e69959",
+      "after_sha256": "3602fd1a699444ff9b006827249554f602008dc3a09d820689f320b0c3496c1d",
+      "deployment_id": "f1275426f23642a0b314491df89156e7",
+      "at": "2026-11-14T21:50:14.431Z"
+    },
+    {
+      "worker": "sastamilaga-redirects",
+      "before_sha256": "19599f43ef1ace11a52c2a280ce7ecebe7687c595da52e34388df1e379119416",
+      "after_sha256": "1e2633ad322102e340db2df0e5611f240fe4639da9c35e23fecb254454090221",
+      "deployment_id": "c175be73f9e04009b7f6220a699f8e54",
+      "at": "2026-11-14T21:50:16.744Z"
+    }
+  ]
+}

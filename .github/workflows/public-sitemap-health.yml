@@ -1,0 +1,72 @@
+name: Public sitemap health and crawlability
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+  # Run after Pages has published sitemap XML; immediate push checks race the deployment.
+  workflow_run:
+    workflows: ['Deploy static content to Pages']
+    types: [completed]
+permissions:
+  contents: read
+  issues: write
+  actions: read
+concurrency:
+  group: sitemap-public-health
+  cancel-in-progress: false
+jobs:
+  audit:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Install strict XML streaming parser
+        run: npm install --no-save --ignore-scripts --no-audit --no-fund saxes@6.0.0
+      - name: Validate sitemap audit source
+        run: |
+          node --check scripts/sitemap-audit.js
+          node scripts/sitemap-audit.js --self-test
+      - name: Fetch sitemaps and sample landing pages
+        id: audit
+        run: node scripts/sitemap-audit.js --out reports/sitemaps/live-verification-$(date -u +%F).json
+      - name: Upload raw evidence even if the audit fails
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: sitemap-health-${{ github.run_id }}
+          path: reports/sitemaps/live-verification-*.json
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Report seven consecutive successful scheduled runs
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          result=$(gh api -X GET "repos/$GH_REPO/actions/workflows/public-sitemap-health.yml/runs" -f event=schedule -f per_page=30 --jq '[.workflow_runs[] | select(.status == "completed") | .conclusion] | .[:7]')
+          echo "### Scheduled sitemap monitoring" >> "$GITHUB_STEP_SUMMARY"
+          echo "Last completed scheduled conclusions: $result" >> "$GITHUB_STEP_SUMMARY"
+          if echo "$result" | jq -e 'length == 7 and all(.[]; . == "success")' > /dev/null; then
+            echo 'Seven consecutive scheduled successes: VERIFIED' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Seven consecutive scheduled successes: NOT YET VERIFIED' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Open or update a single GitHub issue on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title='Sitemap health audit failure'
+          existing=$(gh issue list --state open --limit 100 --json title,number --jq '.[] | select(.title=="Sitemap health audit failure") | .number' | head -1)
+          body="Sitemap health failed at $(date -u +%FT%TZ). Review the attached JSON artifact from $RUN_URL. This alert does not establish Googlebot or indexing status."
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body"
+          fi

@@ -1,0 +1,208 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["main"]
+    # Operational checks must not trigger a second full static deployment.
+    # A content commit containing other paths still deploys normally.
+    paths-ignore:
+      - '.github/workflows/**'
+      - 'tools/static-primary-preflight.mjs'
+      - 'tools/repair-cloudflare-public-routes.mjs'
+      - 'tools/repair-cloudflare-public-routes.test.mjs'
+      - 'README.md'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: write
+  actions: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+      - name: Repair exact exported product-ID title suffixes and stage only validated title edits
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s tools -p test_repair_product_titles.py -v
+          python3 tools/repair_product_titles.py --write --report "$RUNNER_TEMP/product-title-repair.csv"
+          python3 tools/repair_product_titles.py --check --report "$RUNNER_TEMP/product-title-remaining.csv"
+          git diff --name-only | python3 -c 'import sys,re; p=[x.strip() for x in sys.stdin if x.strip()]; assert all(re.fullmatch(r"p/[^/]+\.html",x) for x in p); print("validated title-only pages",len(p))'
+          git add -u -- p/
+      - name: Preserve product title audit reports
+        uses: actions/upload-artifact@v7
+        with:
+          name: production-title-integrity-report
+          path: |
+            ${{ runner.temp }}/product-title-repair.csv
+            ${{ runner.temp }}/product-title-remaining.csv
+          retention-days: 30
+      - name: Syntax check of the site scripts (a broken script must never be deployed)
+        run: |
+          for f in app.js assets/js/*.js; do node --check "$f" || exit 1; done
+      - name: Verify the Visa hub closes with its interactive enquiry section
+        run: node --test tools/visa-last-section.test.mjs
+      - name: Validate AI-readable canonical site references
+        run: node tools/validate-ai-site-index.mjs
+      - name: Regenerate all country-order landing pages from the central WhatsApp setting
+        run: node tools/build-landing-pages.mjs
+      - name: Verify destination-specific copy and catalog eligibility
+        run: |
+          npm install --prefix "$RUNNER_TEMP/sasta-dom" linkedom@0.18.15 --no-audit --no-fund
+          SM_DOM_MODULE="$RUNNER_TEMP/sasta-dom/node_modules/linkedom" node --test tools/market-experience.test.mjs
+          SM_DOM_MODULE="$RUNNER_TEMP/sasta-dom/node_modules/linkedom" node --test tools/product-share.test.mjs
+          SM_DOM_MODULE="$RUNNER_TEMP/sasta-dom/node_modules/linkedom" node --test tools/order-reference-qr.test.mjs
+          SM_DOM_MODULE="$RUNNER_TEMP/sasta-dom/node_modules/linkedom" node --test tools/landing-storefront.test.mjs
+          node --test tools/build-landing-pages.test.mjs
+          SM_DOM_MODULE="$RUNNER_TEMP/sasta-dom/node_modules/linkedom" node --test tools/build-campaign-pages.test.mjs
+      - name: Build blog posts that are due (any deploy publishes them, not only the daily schedule)
+        run: node tools/build-blog.mjs
+      - name: Clean URLs (section pages, clean links, sitemap entries)
+        run: node tools/build-sections.mjs
+      - name: Refresh World TV crawlable discovery from the published snapshot
+        run: |
+          node tools/build-livetv-discovery.mjs
+          node tools/verify-livetv-discovery.mjs
+      - name: Verify Clarity and worldwide WhatsApp order links on generated pages
+        run: node tools/verify-clarity-worldwide-orders.mjs
+      - name: Verify Google tag deployment on generated pages
+        run: node tools/verify-google-tag.mjs
+      - name: Verify Meta domain ownership tag survives homepage generation
+        run: node tools/verify-meta-domain-tag.mjs
+      - name: Build lightweight shared header and footer runtime payload
+        run: |
+          node tools/build-chrome-runtime.mjs
+          node tools/build-chrome-runtime.mjs --check
+          node --test tools/build-chrome-runtime.test.mjs
+      - name: Enhance all global category SEO with factual FAQ content and crawlable internal links
+        run: node tools/enhance-global-category-seo.mjs
+      - name: Verify all global category schema links before publishing
+        run: node tools/verify-global-schema-links.mjs
+      - name: Build verified legacy category and article destinations
+        run: |
+          node tools/build-legacy-root-routes.mjs
+          node --test tools/legacy-root-routes.test.mjs
+      - name: Build factual internal links for all indexable static product pages
+        run: node tools/enhance-local-product-links.mjs
+      - name: Build and validate quota-safe CJ product recovery index from all 451812 snapshot rows
+        run: node tools/build-cj-static-lookup.mjs
+      - name: Persist validated supplier categories, storefront entrypoints and CJ lookup for both Pages paths
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # The GitHub native Pages branch build may deploy after the Actions artifact
+          # and otherwise replace our enhanced HTML with the stale tracked files.
+          # Persist exactly the 572 validated category outputs as stable source.
+          test "$(find c/global -maxdepth 1 -name '*.html' | wc -l)" -eq 573
+          grep -q 'id="sm-global-facets-v1"' c/global/3d-pens.html
+          grep -q 'https://sastamilaga.com/global-shop/p/' c/global/3d-pens.html
+          # Both native Pages branch deployments and Actions artifact deployments
+          # must expose identical indexable shop/global and noindex search shells.
+          for file in shop/index.html search/index.html global-shop/index.html global/index.html global/all/index.html; do
+            test -s "$file" || { echo "::error::Missing public storefront entrypoint $file"; exit 1; }
+          done
+          grep -q 'rel="canonical" href="https://sastamilaga.com/shop/"' shop/index.html
+          grep -q 'noindex' search/index.html
+          grep -q 'rel="canonical" href="https://sastamilaga.com/c/global/index.html"' global-shop/index.html
+          git add -f data/cj/lookup/ c/global/ partials/chrome-runtime.json shop/index.html search/index.html global-shop/index.html global/index.html global/all/index.html pakistan/ ur/pakistan/ shipping-to/ data/landing/routes.json sitemap-landing.xml
+          node -e "const fs=require('fs');const r=require('./data/legacy-root-routes.json');fs.writeFileSync('/tmp/sasta-legacy-paths',Object.keys(r).map(p=>p.slice(1)).join(String.fromCharCode(0))+String.fromCharCode(0))"
+          git add data/legacy-root-routes.json
+          git add --pathspec-from-file=/tmp/sasta-legacy-paths --pathspec-file-nul
+          if git diff --cached --quiet; then
+            echo "Verified global category SEO, public storefront shells and CJ lookup unchanged."
+          else
+            git commit -m "data: persist validated product titles, supplier categories and public shop/search shells [skip ci]"
+            # User merges and other Pages jobs can advance main while we build.
+            # Never force-push or overwrite newer changes. Rebase only our
+            # deterministic generated artifact commit; auto-stash uncommitted build files
+            # during rebase, abort on conflict and never force-push.
+            published=0
+            for attempt in 1 2 3; do
+              if git push origin HEAD:main; then
+                published=1
+                break
+              fi
+              if [ "$attempt" -eq 3 ]; then break; fi
+              echo "::warning::main advanced during the Pages build; retrying safely ($attempt/2)"
+              if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+                git fetch --deepen=16 origin main
+              else
+                git fetch origin main
+              fi
+              if ! git -c rebase.autoStash=true rebase origin/main; then
+                git rebase --abort || true
+                echo "::error::Generated artifact conflicts with a newer main commit; manual review required"
+                exit 1
+              fi
+            done
+            if [ "$published" -ne 1 ]; then
+              echo "::error::Could not persist generated source after three non-force push attempts"
+              exit 1
+            fi
+          fi
+      - name: Setup Pages
+        uses: actions/configure-pages@v6
+      - name: Stage the public site within the Pages size budget
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/sasta-pages"
+          rsync -a --exclude '/backup/' --exclude '/.git/' --exclude '/.github/' --exclude '/.tmp/' ./ "$RUNNER_TEMP/sasta-pages/"
+          du -sh "$RUNNER_TEMP/sasta-pages"
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          # Internal backup source stays in Git; every customer-facing site asset is retained.
+          path: ${{ runner.temp }}/sasta-pages
+      # GitHub's artifact metadata list can lag immediately after a large
+      # Pages upload. Verify registration before deploy-pages tries to read it.
+      - name: Wait for Pages artifact registration
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 18); do
+            found=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?per_page=100" --jq '[.artifacts[] | select(.name == "github-pages" and .expired == false)] | length')
+            if [ "$found" -eq 1 ]; then
+              echo "One Pages artifact registered (attempt $attempt); allowing internal deployment API to synchronize"
+              # The public Artifacts API can see uploads before deploy-pages' API.
+              # Avoid a zero-artifact race (seen 2026-11-23), without creating duplicates by re-running the same workflow run.
+              sleep 30
+              confirmed=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?per_page=100" --jq '[.artifacts[] | select(.name == "github-pages" and .expired == false)] | length')
+              if [ "$confirmed" -eq 1 ]; then exit 0; fi
+            fi
+            if [ "$found" -gt 1 ]; then
+              echo "::error::Multiple github-pages artifacts in the same workflow run. Start a fresh run, do not rerun this attempt."
+              exit 1
+            fi
+            echo "Pages artifact metadata not yet ready ($attempt/18); found=$found"
+            sleep 5
+          done
+          echo "::error::The uploaded Pages artifact was not registered in time"
+          exit 1
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

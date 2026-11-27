@@ -1,0 +1,12 @@
+{
+  "at": "2026-11-23T16:23:58.477Z",
+  "source_rows": 451812,
+  "unique_product_ids": 451812,
+  "legacy_paths_verified": 451812,
+  "lowercase_uuid_lookups": 84653,
+  "lookup_buckets": 1024,
+  "rendered_bucket_samples": 1024,
+  "existing_excluded_category_records": 483,
+  "passed": true,
+  "scope": "Every source row and legacy URL mapping validated locally; render sample per bucket. Existing excluded categories remain excluded. Live checks are recorded separately."
+}

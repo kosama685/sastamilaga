@@ -1,0 +1,16 @@
+{
+  "observedOn": "2026-11-20",
+  "source": "Read-only SQL COUNT queries over SSH on the live WordPress/WooCommerce database (tables wp_posts, wp_postmeta, wp_term_taxonomy); no rows were modified.",
+  "scope": "Local WooCommerce catalogue only. The 451,812-row CJ supplier snapshot is measured separately in reports/catalog-snapshot-metrics.json and is not imported into WooCommerce.",
+  "productsByStatus": {"publish": 11763, "draft": 589, "pending": 62, "private": 1, "trash": 731},
+  "publishedVariations": 10690,
+  "publishedWithoutThumbnail": 2889,
+  "publishedWithoutPrice": 19,
+  "publishedWithoutSku": 2175,
+  "publishedOutOfStock": 69,
+  "publishedContentUnder100Chars": 43,
+  "duplicateTitleGroups": 506,
+  "productCategoryTerms": 266,
+  "productCategoryTermsWithProducts": 266,
+  "notMeasured": ["price correctness", "stock accuracy beyond the stock-status flag", "attribute completeness", "image alt text", "schema validity per product", "variants with missing images", "duplicate content beyond identical titles"]
+}

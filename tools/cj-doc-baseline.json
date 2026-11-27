@@ -1,0 +1,42 @@
+[
+  {
+    "url": "https://developers.cjdropshipping.com/en/api/api2/api/auth.html",
+    "sha256": "6d66df883ac5fb97e8c4aad5e7217188b0668414b69bb4f332f18061c6d093ef",
+    "characters": 6587
+  },
+  {
+    "url": "https://developers.cjdropshipping.com/en/api/api2/api/setting.html",
+    "sha256": "0ca538bce279808bc4b8bb09b9167496a8d7d51c5accfa64d7a37002ed898539",
+    "characters": 6860
+  },
+  {
+    "url": "https://developers.cjdropshipping.com/en/api/api2/api/product.html",
+    "sha256": "f5c5b3cbb25b2fe85e91ae1d8fa0f5f48cfbb9cb9c40a2c69e782062df5c04f4",
+    "characters": 113186
+  },
+  {
+    "url": "https://developers.cjdropshipping.com/en/api/api2/api/storage.html",
+    "sha256": "8c0055bd74523155e17ef50c59fa7ae266b3b78302ffa5c2312fcada882b5395",
+    "characters": 20470
+  },
+  {
+    "url": "https://developers.cjdropshipping.com/en/api/api2/api/shopping.html",
+    "sha256": "748268baeac1a59fc0e4216f85ddf17de365f73d6351a4f77395fc893c9b434c",
+    "characters": 254274
+  },
+  {
+    "url": "https://developers.cjdropshipping.com/en/api/api2/api/logistic.html",
+    "sha256": "4cd96445e05d755614a6a229bc34403cef2e0781d9d2a484a4ca877ddee8d915",
+    "characters": 37328
+  },
+  {
+    "url": "https://developers.cjdropshipping.com/en/api/api2/api/dispute.html",
+    "sha256": "02e5804d1466e3af8fc45467e9d5ee3354aeacd4325162525171ffdd7cd2419a",
+    "characters": 32906
+  },
+  {
+    "url": "https://developers.cjdropshipping.com/en/api/api2/api/shop.html",
+    "sha256": "2cca7a40bf08beb1543e4bafc0ba496787042b84db1d4894ad10f679a60f8f10",
+    "characters": 46396
+  }
+]

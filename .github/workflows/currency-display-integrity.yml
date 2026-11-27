@@ -1,0 +1,39 @@
+name: Worldwide display currency integrity
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 3 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'assets/js/market.js'
+      - 'tools/global-product-uuid-and-numeric-worker.mjs'
+      - 'tools/test-currency-system.mjs'
+      - '.github/workflows/currency-display-integrity.yml'
+permissions:
+  contents: read
+jobs:
+  currency-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Check currency JavaScript syntax
+        run: |
+          node --check assets/js/market.js
+          node --check tools/global-product-uuid-and-numeric-worker.mjs
+          node --check tools/test-currency-system.mjs
+      - name: Verify 246-country mapping and display FX contract
+        run: node tools/test-currency-system.mjs
+      - name: Confirm production shared market script
+        run: |
+          node --input-type=module - <<'NODE'
+          const res=await fetch('https://sastamilaga.com/assets/js/market.js',{signal:AbortSignal.timeout(20000)});
+          const body=await res.text();
+          if(res.status!==200)throw Error('market.js HTTP '+res.status);
+          if(!body.includes('sm_fx_pkr_v2')||!body.includes('ready: getRates'))throw Error('Production script has not deployed');
+          console.log('Production shared market rate engine available');
+          NODE

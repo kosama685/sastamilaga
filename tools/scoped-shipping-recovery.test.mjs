@@ -1,0 +1,13 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import vm from 'node:vm';
+const src=readFileSync(new URL('../assets/js/global-pdp.js',import.meta.url),'utf8');
+const a=src.indexOf('  function quoteScope('),b=src.indexOf('  function checkDelivery()',a);
+const helpers=vm.runInNewContext(src.slice(a,b)+'\n({parseScopedQuote,quoteError,scopeKey})');
+const scope={pid:'PRODUCT',vid:'variant-red-m',country:'PK',quantity:1,zip:'54000'};
+const now=1700000000000;
+const valid={...scope,currency:'USD',source:'cj_api',checkedAt:now/1000-1,liveQuoteWithinTTL:true,rates:[{carrier:'Tracked',shippingUsd:3.45,eta:'7-14'},{carrier:'Express',shippingUsd:7.50,eta:'3-5'}]};
+test('exact quote scope, price and ETA preserved',()=>{const r=helpers.parseScopedQuote(valid,scope,now);assert.equal(r.length,2);assert.equal(r[0].cost,3.45);assert.equal(r[0].scope.vid,scope.vid);assert.equal(r[0].expiresAt,now-1000+7200000)});
+for(const [key,value] of Object.entries({pid:'other',vid:'different',country:'US',quantity:2,zip:'12345',currency:'EUR',liveQuoteWithinTTL:false,source:'fallback',checkedAt:now/1000-7201}))test('reject mismatched or expired '+key,()=>assert.equal(helpers.parseScopedQuote({...valid,[key]:value},scope,now).length,0));
+test('reject null and string prices but allow explicit zero',()=>{const x=helpers.parseScopedQuote({...valid,rates:[{carrier:'Null',shippingUsd:null},{carrier:'String',shippingUsd:'5'},{carrier:'Valid zero',shippingUsd:0}]},scope,now);assert.equal(x.length,1);assert.equal(x[0].cost,0)});
+test('all ISO country codes, unknown code excluded',()=>{const m=src.match(/ISO_COUNTRIES = new Set\('([^']+)'/);const codes=m[1].split(' ');assert.equal(codes.length,249);assert.equal(new Set(codes).size,249);assert.ok(!codes.includes('ZZ'));for(const x of ['PK','SA','US','GB','AQ'])assert.ok(codes.includes(x))});
+test('one quote transport only, request cancellation, bounded delay and expiry',()=>{const body=src.slice(src.indexOf('  function checkDelivery()'),src.indexOf('  /* ---- the real cart ---- */'));assert.doesNotMatch(body,/gdcs\/v1\/live\/freight|method:'POST'/);assert.match(body,/dAbort\.abort\(\)/);assert.match(body,/new AbortController/);assert.match(body,/\},400\)/);assert.match(body,/18000/);assert.match(src,/quoteCurrent\(state\.ship\)/);assert.match(src,/state\.ship!==cartShip/);});
+test('no arbitrary shipping total on service failure',()=>{assert.match(src,/Shipping confirmation pending/);assert.match(src,/Request shipping confirmation/);assert.match(helpers.quoteError('daily_budget',429),/daily service limit/);assert.match(helpers.quoteError('no_cj_method',200),/exact option and address/);});

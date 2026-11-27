@@ -1,0 +1,266 @@
+{
+ "checkedOn": "2026-11-21",
+ "ok": 44,
+ "total": 52,
+ "results": {
+  "https://www.nusuk.sa/": {
+   "ok": true,
+   "status": 406,
+   "final": "https://www.nusuk.sa/"
+  },
+  "https://beoe.gov.pk/": {
+   "ok": true,
+   "status": 403,
+   "final": "https://beoe.gov.pk/"
+  },
+  "https://visa.mofa.gov.sa/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://visa.mofa.gov.sa/"
+  },
+  "https://home-affairs.ec.europa.eu/policies/schengen_en": {
+   "ok": true,
+   "status": 200,
+   "final": "https://home-affairs.ec.europa.eu/policies/schengen_en"
+  },
+  "https://u.ae/en/information-and-services/visa-and-emirates-id": {
+   "ok": true,
+   "status": 200,
+   "final": "https://u.ae/en/information-and-services/visa-and-emirates-id"
+  },
+  "https://www.evisa.gov.bh/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.evisa.gov.bh/"
+  },
+  "https://travel.state.gov/content/travel/en/us-visas.html": {
+   "ok": true,
+   "status": 403,
+   "final": "https://travel.state.gov/content/travel/en/us-visas.html"
+  },
+  "https://www.gov.uk/check-uk-visa": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.gov.uk/check-uk-visa"
+  },
+  "https://evisa.rop.gov.om/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://evisa.rop.gov.om/"
+  },
+  "https://www.evisa.gov.tr/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.evisa.gov.tr/"
+  },
+  "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada.html": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada.html"
+  },
+  "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-finder": {
+   "ok": true,
+   "status": 200,
+   "final": "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-finder"
+  },
+  "https://www.irishimmigration.ie/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.irishimmigration.ie/"
+  },
+  "https://www.thaievisa.go.th/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.thaievisa.go.th/"
+  },
+  "https://evisa.gov.az/": {
+   "ok": true,
+   "status": 403,
+   "final": "https://evisa.gov.az/"
+  },
+  "https://www.moi.gov.kw/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.moi.gov.kw/main/"
+  },
+  "https://malaysiavisa.imi.gov.my/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://malaysiavisa.imi.gov.my/"
+  },
+  "https://www.etakenya.go.ke/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://etakenya.go.ke/"
+  },
+  "https://www.ica.gov.sg/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.ica.gov.sg/"
+  },
+  "https://visa2egypt.gov.eg/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://visa2egypt.gov.eg/"
+  },
+  "https://www.immigration.govt.nz/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.immigration.govt.nz/"
+  },
+  "https://www.visa.go.kr/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.visa.go.kr/"
+  },
+  "https://evisa.imigrasi.go.id/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://evisa.imigrasi.go.id/"
+  },
+  "https://www.evisa.gov.ge/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.evisa.gov.ge/GeoVisa/"
+  },
+  "https://evisa.gov.vn/": {
+   "ok": false,
+   "status": 0,
+   "error": "UNABLE_TO_VERIFY_LEAF_SIGNATURE"
+  },
+  "https://evisa.kdmid.ru/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://evisa.kdmid.ru/"
+  },
+  "https://e-visa.gov.uz/": {
+   "ok": false,
+   "status": 0,
+   "error": "UNABLE_TO_VERIFY_LEAF_SIGNATURE"
+  },
+  "https://evisa.mfa.am/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://evisa.mfa.am/"
+  },
+  "https://www.evisa.gov.kh/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.evisa.gov.kh/"
+  },
+  "https://www.dha.gov.za/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.dha.gov.za/"
+  },
+  "https://www.evisa.gov.et/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.evisa.gov.et/"
+  },
+  "https://www.mofa.go.jp/j_info/visit/visa/index.html": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.mofa.go.jp/j_info/visit/visa/index.html"
+  },
+  "https://www.migration.gov.rw/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.migration.gov.rw/"
+  },
+  "https://visas.immigration.go.ug/": {
+   "ok": false,
+   "status": 0,
+   "error": "UNABLE_TO_VERIFY_LEAF_SIGNATURE"
+  },
+  "https://visa.immigration.go.tz/": {
+   "ok": false,
+   "status": 0,
+   "error": "UNABLE_TO_VERIFY_LEAF_SIGNATURE"
+  },
+  "https://www.visa.gov.bd/": {
+   "ok": false,
+   "status": 0,
+   "error": "ECONNRESET"
+  },
+  "https://www.evisa.e-gov.kg/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.evisa.e-gov.kg/"
+  },
+  "https://www.evisa.tj/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.evisa.tj/"
+  },
+  "https://www.acces-maroc.ma/": {
+   "ok": false,
+   "status": 503
+  },
+  "https://nepaliport.immigration.gov.np/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://nepaliport.immigration.gov.np/"
+  },
+  "https://www.vmp.gov.kz/": {
+   "ok": false,
+   "status": 0,
+   "error": "UNABLE_TO_VERIFY_LEAF_SIGNATURE"
+  },
+  "https://www.gov.br/mre/en": {
+   "ok": true,
+   "status": 429,
+   "final": "https://www.gov.br/mre/en"
+  },
+  "https://www.uscis.gov/working-in-the-united-states/permanent-workers/eb-5-immigrant-investor-program": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.uscis.gov/working-in-the-united-states/permanent-workers/eb-5-immigrant-investor-program"
+  },
+  "https://imuga.immigration.gov.mv/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://imuga.immigration.gov.mv/"
+  },
+  "https://u.ae/en/information-and-services/visa-and-emirates-id/residence-visas/golden-visa": {
+   "ok": true,
+   "status": 200,
+   "final": "https://u.ae/en/information-and-services/visa-and-emirates-id/residence-visas/golden-visa"
+  },
+  "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/start-visa.html": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/start-visa.html"
+  },
+  "https://cip.gov.ag/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://cip.gov.ag/"
+  },
+  "https://cbiu.gov.dm/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.cbiu.gov.dm/"
+  },
+  "https://www.visaforchina.cn/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.visaforchina.cn/"
+  },
+  "https://www.eta.gov.lk/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://www.eta.gov.lk/slvisa/"
+  },
+  "https://ciu.gov.kn/": {
+   "ok": true,
+   "status": 200,
+   "final": "https://ciu.gov.kn/"
+  },
+  "https://portal.moi.gov.qa/": {
+   "ok": false,
+   "status": 0,
+   "error": "UND_ERR_CONNECT_TIMEOUT"
+  }
+ }
+}

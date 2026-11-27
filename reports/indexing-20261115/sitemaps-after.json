@@ -1,0 +1,74 @@
+[
+  {
+    "url": "https://sastamilaga.com/sitemap-pages.xml",
+    "status": 200,
+    "root": "urlset",
+    "url_count": 278,
+    "child_sitemap_count": 0,
+    "all_absolute_canonical_host": true,
+    "transaction_urls": []
+  },
+  {
+    "url": "https://sastamilaga.com/sitemap-products-1.xml",
+    "status": 200,
+    "root": "urlset",
+    "url_count": 9955,
+    "child_sitemap_count": 0,
+    "all_absolute_canonical_host": true,
+    "transaction_urls": []
+  },
+  {
+    "url": "https://sastamilaga.com/sitemap-products-2.xml",
+    "status": 200,
+    "root": "urlset",
+    "url_count": 9775,
+    "child_sitemap_count": 0,
+    "all_absolute_canonical_host": true,
+    "transaction_urls": []
+  },
+  {
+    "url": "https://sastamilaga.com/sitemap-products-3.xml",
+    "status": 200,
+    "root": "urlset",
+    "url_count": 157,
+    "child_sitemap_count": 0,
+    "all_absolute_canonical_host": true,
+    "transaction_urls": []
+  },
+  {
+    "url": "https://sastamilaga.com/sitemap-global.xml",
+    "status": 200,
+    "root": "urlset",
+    "url_count": 573,
+    "child_sitemap_count": 0,
+    "all_absolute_canonical_host": true,
+    "transaction_urls": []
+  },
+  {
+    "url": "https://sastamilaga.com/sitemap-blog.xml",
+    "status": 200,
+    "root": "urlset",
+    "url_count": 49,
+    "child_sitemap_count": 0,
+    "all_absolute_canonical_host": true,
+    "transaction_urls": []
+  },
+  {
+    "url": "https://sastamilaga.com/sitemap-global-qualified.xml",
+    "status": 200,
+    "root": "sitemapindex",
+    "url_count": 0,
+    "child_sitemap_count": 1,
+    "all_absolute_canonical_host": true,
+    "transaction_urls": []
+  },
+  {
+    "url": "https://sastamilaga.com/blog/sitemap.xml",
+    "status": 200,
+    "root": "urlset",
+    "url_count": 3,
+    "child_sitemap_count": 0,
+    "all_absolute_canonical_host": true,
+    "transaction_urls": []
+  }
+]

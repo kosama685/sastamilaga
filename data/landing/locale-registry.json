@@ -1,0 +1,4822 @@
+{
+  "generatedFrom": [
+    "assets/js/market.js",
+    "shipping/index.html (translate overlay list)",
+    "data/landing/routes.json"
+  ],
+  "counts": {
+    "countriesInPicker": 246,
+    "languagesInOverlay": 127,
+    "landingLocalesBuilt": 11,
+    "landingLocalesIndexable": 11,
+    "landingLocalesHumanReviewed": 0,
+    "countriesWithLanding": 6
+  },
+  "note": "A locale is not complete because a route or machine translation exists. Statuses: translated, reviewed, marketConfigured, published, indexable, submitted are tracked separately.",
+  "landingLocales": [
+    {
+      "kind": "landing-locale",
+      "code": "en",
+      "market": "germany",
+      "url": "https://sastamilaga.com/shipping-to/germany/",
+      "dir": "ltr",
+      "translation": "source-language",
+      "humanReviewed": false,
+      "currencyDisplay": "USD estimates only; local currency display not verified",
+      "shipping": "not verified (no live quote on the page; handed to WhatsApp)",
+      "payment": "prepaid stated; payment methods not verified",
+      "taxReturns": "general guidance only; country policy not verified",
+      "status": {
+        "translated": "source",
+        "reviewed": false,
+        "marketConfigured": false,
+        "published": true,
+        "indexable": true,
+        "submitted": false
+      },
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
+      "blockers": [
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "not submitted to Search Console"
+      ]
+    },
+    {
+      "kind": "landing-locale",
+      "code": "de-DE",
+      "market": "germany",
+      "url": "https://sastamilaga.com/shipping-to/germany/de/",
+      "dir": "ltr",
+      "translation": "assistant-drafted",
+      "humanReviewed": false,
+      "currencyDisplay": "USD estimates only; local currency display not verified",
+      "shipping": "not verified (no live quote on the page; handed to WhatsApp)",
+      "payment": "prepaid stated; payment methods not verified",
+      "taxReturns": "general guidance only; country policy not verified",
+      "status": {
+        "translated": "drafted",
+        "reviewed": false,
+        "marketConfigured": false,
+        "published": true,
+        "indexable": true,
+        "submitted": false
+      },
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
+      "blockers": [
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "copy drafted by the assistant, no native-speaker review",
+        "not submitted to Search Console"
+      ]
+    },
+    {
+      "kind": "landing-locale",
+      "code": "en-GB",
+      "market": "uk",
+      "url": "https://sastamilaga.com/shipping-to/uk/",
+      "dir": "ltr",
+      "translation": "source-language",
+      "humanReviewed": false,
+      "currencyDisplay": "USD estimates only; local currency display not verified",
+      "shipping": "not verified (no live quote on the page; handed to WhatsApp)",
+      "payment": "prepaid stated; payment methods not verified",
+      "taxReturns": "general guidance only; country policy not verified",
+      "status": {
+        "translated": "source",
+        "reviewed": false,
+        "marketConfigured": false,
+        "published": true,
+        "indexable": true,
+        "submitted": false
+      },
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
+      "blockers": [
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "not submitted to Search Console"
+      ]
+    },
+    {
+      "kind": "landing-locale",
+      "code": "en-US",
+      "market": "usa",
+      "url": "https://sastamilaga.com/shipping-to/usa/",
+      "dir": "ltr",
+      "translation": "source-language",
+      "humanReviewed": false,
+      "currencyDisplay": "USD estimates only; local currency display not verified",
+      "shipping": "not verified (no live quote on the page; handed to WhatsApp)",
+      "payment": "prepaid stated; payment methods not verified",
+      "taxReturns": "general guidance only; country policy not verified",
+      "status": {
+        "translated": "source",
+        "reviewed": false,
+        "marketConfigured": false,
+        "published": true,
+        "indexable": true,
+        "submitted": false
+      },
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
+      "blockers": [
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "not submitted to Search Console"
+      ]
+    },
+    {
+      "kind": "landing-locale",
+      "code": "en",
+      "market": "serbia",
+      "url": "https://sastamilaga.com/shipping-to/serbia/",
+      "dir": "ltr",
+      "translation": "source-language",
+      "humanReviewed": false,
+      "currencyDisplay": "USD estimates only; local currency display not verified",
+      "shipping": "not verified (no live quote on the page; handed to WhatsApp)",
+      "payment": "prepaid stated; payment methods not verified",
+      "taxReturns": "general guidance only; country policy not verified",
+      "status": {
+        "translated": "source",
+        "reviewed": false,
+        "marketConfigured": false,
+        "published": true,
+        "indexable": true,
+        "submitted": false
+      },
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
+      "blockers": [
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "not submitted to Search Console"
+      ]
+    },
+    {
+      "kind": "landing-locale",
+      "code": "sr-Latn-RS",
+      "market": "serbia",
+      "url": "https://sastamilaga.com/shipping-to/serbia/sr-latn/",
+      "dir": "ltr",
+      "translation": "assistant-drafted",
+      "humanReviewed": false,
+      "currencyDisplay": "USD estimates only; local currency display not verified",
+      "shipping": "not verified (no live quote on the page; handed to WhatsApp)",
+      "payment": "prepaid stated; payment methods not verified",
+      "taxReturns": "general guidance only; country policy not verified",
+      "status": {
+        "translated": "drafted",
+        "reviewed": false,
+        "marketConfigured": false,
+        "published": true,
+        "indexable": true,
+        "submitted": false
+      },
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
+      "blockers": [
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "copy drafted by the assistant, no native-speaker review",
+        "not submitted to Search Console"
+      ]
+    },
+    {
+      "kind": "landing-locale",
+      "code": "sr-Cyrl-RS",
+      "market": "serbia",
+      "url": "https://sastamilaga.com/shipping-to/serbia/sr-cyrl/",
+      "dir": "ltr",
+      "translation": "assistant-drafted",
+      "humanReviewed": false,
+      "currencyDisplay": "USD estimates only; local currency display not verified",
+      "shipping": "not verified (no live quote on the page; handed to WhatsApp)",
+      "payment": "prepaid stated; payment methods not verified",
+      "taxReturns": "general guidance only; country policy not verified",
+      "status": {
+        "translated": "drafted",
+        "reviewed": false,
+        "marketConfigured": false,
+        "published": true,
+        "indexable": true,
+        "submitted": false
+      },
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
+      "blockers": [
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "copy drafted by the assistant, no native-speaker review",
+        "not submitted to Search Console"
+      ]
+    },
+    {
+      "kind": "landing-locale",
+      "code": "en-SA",
+      "market": "saudi-arabia",
+      "url": "https://sastamilaga.com/shipping-to/saudi-arabia/",
+      "dir": "ltr",
+      "translation": "source-language",
+      "humanReviewed": false,
+      "currencyDisplay": "USD estimates only; local currency display not verified",
+      "shipping": "not verified (no live quote on the page; handed to WhatsApp)",
+      "payment": "prepaid stated; payment methods not verified",
+      "taxReturns": "general guidance only; country policy not verified",
+      "status": {
+        "translated": "source",
+        "reviewed": false,
+        "marketConfigured": false,
+        "published": true,
+        "indexable": true,
+        "submitted": false
+      },
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
+      "blockers": [
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "not submitted to Search Console"
+      ]
+    },
+    {
+      "kind": "landing-locale",
+      "code": "ar-SA",
+      "market": "saudi-arabia",
+      "url": "https://sastamilaga.com/shipping-to/saudi-arabia/ar/",
+      "dir": "rtl",
+      "translation": "assistant-drafted",
+      "humanReviewed": false,
+      "currencyDisplay": "USD estimates only; local currency display not verified",
+      "shipping": "not verified (no live quote on the page; handed to WhatsApp)",
+      "payment": "prepaid stated; payment methods not verified",
+      "taxReturns": "general guidance only; country policy not verified",
+      "status": {
+        "translated": "drafted",
+        "reviewed": false,
+        "marketConfigured": false,
+        "published": true,
+        "indexable": true,
+        "submitted": false
+      },
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
+      "blockers": [
+        "INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence",
+        "copy drafted by the assistant, no native-speaker review",
+        "not submitted to Search Console"
+      ]
+    },
+    {
+      "kind": "landing-locale",
+      "code": "en",
+      "market": "pakistan",
+      "url": "https://sastamilaga.com/pakistan/",
+      "dir": "ltr",
+      "translation": "source-language",
+      "humanReviewed": false,
+      "currencyDisplay": "PKR (store config)",
+      "shipping": "Pakistan delivery fee and free-delivery threshold match assets/js/config.js",
+      "payment": "cash on delivery for local products (stated in policy pages)",
+      "taxReturns": "see returns/ page",
+      "status": {
+        "translated": "source",
+        "reviewed": false,
+        "marketConfigured": false,
+        "published": true,
+        "indexable": true,
+        "submitted": false
+      },
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
+      "blockers": [
+        "not submitted to Search Console"
+      ]
+    },
+    {
+      "kind": "landing-locale",
+      "code": "ur",
+      "market": "pakistan",
+      "url": "https://sastamilaga.com/ur/pakistan/",
+      "dir": "rtl",
+      "translation": "assistant-drafted",
+      "humanReviewed": false,
+      "currencyDisplay": "PKR (store config)",
+      "shipping": "Pakistan delivery fee and free-delivery threshold match assets/js/config.js",
+      "payment": "cash on delivery for local products (stated in policy pages)",
+      "taxReturns": "see returns/ page",
+      "status": {
+        "translated": "drafted",
+        "reviewed": false,
+        "marketConfigured": false,
+        "published": true,
+        "indexable": true,
+        "submitted": false
+      },
+      "hreflang": "complete reciprocal set emitted",
+      "sitemap": "sitemap-landing.xml",
+      "blockers": [
+        "not submitted to Search Console",
+        "Urdu copy needs native review"
+      ]
+    }
+  ],
+  "countries": [
+    {
+      "kind": "country",
+      "code": "AD",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "AE",
+      "currencyDisplay": "AED",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "AF",
+      "currencyDisplay": "AFN",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "AG",
+      "currencyDisplay": "XCD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "AI",
+      "currencyDisplay": "XCD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "AL",
+      "currencyDisplay": "ALL",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "AM",
+      "currencyDisplay": "AMD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "AO",
+      "currencyDisplay": "AOA",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "AR",
+      "currencyDisplay": "ARS",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "AS",
+      "currencyDisplay": "USD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "AT",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "AU",
+      "currencyDisplay": "AUD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "AW",
+      "currencyDisplay": "AWG",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "AX",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "AZ",
+      "currencyDisplay": "AZN",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BA",
+      "currencyDisplay": "BAM",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BB",
+      "currencyDisplay": "BBD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BD",
+      "currencyDisplay": "BDT",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BE",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BF",
+      "currencyDisplay": "XOF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BG",
+      "currencyDisplay": "BGN",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BH",
+      "currencyDisplay": "BHD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BI",
+      "currencyDisplay": "BIF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BJ",
+      "currencyDisplay": "XOF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BL",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BM",
+      "currencyDisplay": "BMD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BN",
+      "currencyDisplay": "BND",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BO",
+      "currencyDisplay": "BOB",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BQ",
+      "currencyDisplay": "USD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BR",
+      "currencyDisplay": "BRL",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BS",
+      "currencyDisplay": "BSD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BT",
+      "currencyDisplay": "BTN",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BW",
+      "currencyDisplay": "BWP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BY",
+      "currencyDisplay": "BYN",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "BZ",
+      "currencyDisplay": "BZD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CA",
+      "currencyDisplay": "CAD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CC",
+      "currencyDisplay": "AUD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CD",
+      "currencyDisplay": "CDF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CF",
+      "currencyDisplay": "XAF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CG",
+      "currencyDisplay": "XAF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CH",
+      "currencyDisplay": "CHF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CI",
+      "currencyDisplay": "XOF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CK",
+      "currencyDisplay": "NZD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CL",
+      "currencyDisplay": "CLP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CM",
+      "currencyDisplay": "XAF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CN",
+      "currencyDisplay": "CNY",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CO",
+      "currencyDisplay": "COP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CR",
+      "currencyDisplay": "CRC",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CU",
+      "currencyDisplay": "CUP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CV",
+      "currencyDisplay": "CVE",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CW",
+      "currencyDisplay": "ANG",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CX",
+      "currencyDisplay": "AUD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CY",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "CZ",
+      "currencyDisplay": "CZK",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "DE",
+      "currencyDisplay": "EUR",
+      "landingLocales": [
+        "en",
+        "de-DE"
+      ],
+      "status": "landing-live-indexed-by-owner-override",
+      "blockers": [
+        "evidence gate not passed; indexed by owner override 2026-11-20",
+        "not submitted to Search Console"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "DJ",
+      "currencyDisplay": "DJF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "DK",
+      "currencyDisplay": "DKK",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "DM",
+      "currencyDisplay": "XCD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "DO",
+      "currencyDisplay": "DOP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "DZ",
+      "currencyDisplay": "DZD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "EC",
+      "currencyDisplay": "USD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "EE",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "EG",
+      "currencyDisplay": "EGP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "EH",
+      "currencyDisplay": "MAD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "ER",
+      "currencyDisplay": "ERN",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "ES",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "ET",
+      "currencyDisplay": "ETB",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "FI",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "FJ",
+      "currencyDisplay": "FJD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "FK",
+      "currencyDisplay": "FKP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "FM",
+      "currencyDisplay": "USD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "FO",
+      "currencyDisplay": "DKK",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "FR",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GA",
+      "currencyDisplay": "XAF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GB",
+      "currencyDisplay": "GBP",
+      "landingLocales": [
+        "en-GB"
+      ],
+      "status": "landing-live-indexed-by-owner-override",
+      "blockers": [
+        "evidence gate not passed; indexed by owner override 2026-11-20",
+        "not submitted to Search Console"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GD",
+      "currencyDisplay": "XCD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GE",
+      "currencyDisplay": "GEL",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GF",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GG",
+      "currencyDisplay": "GBP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GH",
+      "currencyDisplay": "GHS",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GI",
+      "currencyDisplay": "GIP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GL",
+      "currencyDisplay": "DKK",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GM",
+      "currencyDisplay": "GMD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GN",
+      "currencyDisplay": "GNF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GP",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GQ",
+      "currencyDisplay": "XAF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GR",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GT",
+      "currencyDisplay": "GTQ",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GU",
+      "currencyDisplay": "USD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GW",
+      "currencyDisplay": "XOF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "GY",
+      "currencyDisplay": "GYD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "HK",
+      "currencyDisplay": "HKD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "HN",
+      "currencyDisplay": "HNL",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "HR",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "HT",
+      "currencyDisplay": "HTG",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "HU",
+      "currencyDisplay": "HUF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "ID",
+      "currencyDisplay": "IDR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "IE",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "IL",
+      "currencyDisplay": "ILS",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "IM",
+      "currencyDisplay": "GBP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "IN",
+      "currencyDisplay": "INR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "IO",
+      "currencyDisplay": "USD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "IQ",
+      "currencyDisplay": "IQD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "IR",
+      "currencyDisplay": "IRR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "IS",
+      "currencyDisplay": "ISK",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "IT",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "JE",
+      "currencyDisplay": "GBP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "JM",
+      "currencyDisplay": "JMD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "JO",
+      "currencyDisplay": "JOD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "JP",
+      "currencyDisplay": "JPY",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "KE",
+      "currencyDisplay": "KES",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "KG",
+      "currencyDisplay": "KGS",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "KH",
+      "currencyDisplay": "KHR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "KI",
+      "currencyDisplay": "AUD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "KM",
+      "currencyDisplay": "KMF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "KN",
+      "currencyDisplay": "XCD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "KP",
+      "currencyDisplay": "KPW",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "KR",
+      "currencyDisplay": "KRW",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "KW",
+      "currencyDisplay": "KWD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "KY",
+      "currencyDisplay": "KYD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "KZ",
+      "currencyDisplay": "KZT",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "LA",
+      "currencyDisplay": "LAK",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "LB",
+      "currencyDisplay": "LBP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "LC",
+      "currencyDisplay": "XCD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "LI",
+      "currencyDisplay": "CHF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "LK",
+      "currencyDisplay": "LKR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "LR",
+      "currencyDisplay": "LRD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "LS",
+      "currencyDisplay": "LSL",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "LT",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "LU",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "LV",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "LY",
+      "currencyDisplay": "LYD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MA",
+      "currencyDisplay": "MAD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MC",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MD",
+      "currencyDisplay": "MDL",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "ME",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MF",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MG",
+      "currencyDisplay": "MGA",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MH",
+      "currencyDisplay": "USD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MK",
+      "currencyDisplay": "MKD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "ML",
+      "currencyDisplay": "XOF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MM",
+      "currencyDisplay": "MMK",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MN",
+      "currencyDisplay": "MNT",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MO",
+      "currencyDisplay": "MOP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MP",
+      "currencyDisplay": "USD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MQ",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MR",
+      "currencyDisplay": "MRU",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MS",
+      "currencyDisplay": "XCD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MT",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MU",
+      "currencyDisplay": "MUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MV",
+      "currencyDisplay": "MVR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MW",
+      "currencyDisplay": "MWK",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MX",
+      "currencyDisplay": "MXN",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MY",
+      "currencyDisplay": "MYR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "MZ",
+      "currencyDisplay": "MZN",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "NA",
+      "currencyDisplay": "NAD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "NC",
+      "currencyDisplay": "XPF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "NE",
+      "currencyDisplay": "XOF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "NF",
+      "currencyDisplay": "AUD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "NG",
+      "currencyDisplay": "NGN",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "NI",
+      "currencyDisplay": "NIO",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "NL",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "NO",
+      "currencyDisplay": "NOK",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "NP",
+      "currencyDisplay": "NPR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "NR",
+      "currencyDisplay": "AUD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "NU",
+      "currencyDisplay": "NZD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "NZ",
+      "currencyDisplay": "NZD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "OM",
+      "currencyDisplay": "OMR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "PA",
+      "currencyDisplay": "PAB",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "PE",
+      "currencyDisplay": "PEN",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "PF",
+      "currencyDisplay": "XPF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "PG",
+      "currencyDisplay": "PGK",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "PH",
+      "currencyDisplay": "PHP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "PK",
+      "currencyDisplay": "PKR",
+      "landingLocales": [
+        "en",
+        "ur"
+      ],
+      "status": "landing-live-indexed",
+      "blockers": [
+        "not submitted to Search Console"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "PL",
+      "currencyDisplay": "PLN",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "PM",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "PN",
+      "currencyDisplay": "NZD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "PR",
+      "currencyDisplay": "USD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "PS",
+      "currencyDisplay": "ILS",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "PT",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "PW",
+      "currencyDisplay": "USD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "PY",
+      "currencyDisplay": "PYG",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "QA",
+      "currencyDisplay": "QAR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "RE",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "RO",
+      "currencyDisplay": "RON",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "RS",
+      "currencyDisplay": "RSD",
+      "landingLocales": [
+        "en",
+        "sr-Latn-RS",
+        "sr-Cyrl-RS"
+      ],
+      "status": "landing-live-indexed-by-owner-override",
+      "blockers": [
+        "evidence gate not passed; indexed by owner override 2026-11-20",
+        "not submitted to Search Console"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "RU",
+      "currencyDisplay": "RUB",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "RW",
+      "currencyDisplay": "RWF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SA",
+      "currencyDisplay": "SAR",
+      "landingLocales": [
+        "en-SA",
+        "ar-SA"
+      ],
+      "status": "landing-live-indexed-by-owner-override",
+      "blockers": [
+        "evidence gate not passed; indexed by owner override 2026-11-20",
+        "not submitted to Search Console"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SB",
+      "currencyDisplay": "SBD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SC",
+      "currencyDisplay": "SCR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SD",
+      "currencyDisplay": "SDG",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SE",
+      "currencyDisplay": "SEK",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SG",
+      "currencyDisplay": "SGD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SH",
+      "currencyDisplay": "SHP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SI",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SJ",
+      "currencyDisplay": "NOK",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SK",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SL",
+      "currencyDisplay": "SLE",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SM",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SN",
+      "currencyDisplay": "XOF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SO",
+      "currencyDisplay": "SOS",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SR",
+      "currencyDisplay": "SRD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SS",
+      "currencyDisplay": "SSP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "ST",
+      "currencyDisplay": "STN",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SV",
+      "currencyDisplay": "USD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SX",
+      "currencyDisplay": "ANG",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SY",
+      "currencyDisplay": "SYP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "SZ",
+      "currencyDisplay": "SZL",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "TC",
+      "currencyDisplay": "USD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "TD",
+      "currencyDisplay": "XAF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "TF",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "TG",
+      "currencyDisplay": "XOF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "TH",
+      "currencyDisplay": "THB",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "TJ",
+      "currencyDisplay": "TJS",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "TK",
+      "currencyDisplay": "NZD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "TL",
+      "currencyDisplay": "USD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "TM",
+      "currencyDisplay": "TMT",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "TN",
+      "currencyDisplay": "TND",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "TO",
+      "currencyDisplay": "TOP",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "TR",
+      "currencyDisplay": "TRY",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "TT",
+      "currencyDisplay": "TTD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "TV",
+      "currencyDisplay": "AUD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "TW",
+      "currencyDisplay": "TWD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "TZ",
+      "currencyDisplay": "TZS",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "UA",
+      "currencyDisplay": "UAH",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "UG",
+      "currencyDisplay": "UGX",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "UM",
+      "currencyDisplay": "USD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "US",
+      "currencyDisplay": "USD",
+      "landingLocales": [
+        "en-US"
+      ],
+      "status": "landing-live-indexed-by-owner-override",
+      "blockers": [
+        "evidence gate not passed; indexed by owner override 2026-11-20",
+        "not submitted to Search Console"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "UY",
+      "currencyDisplay": "UYU",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "UZ",
+      "currencyDisplay": "UZS",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "VA",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "VC",
+      "currencyDisplay": "XCD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "VE",
+      "currencyDisplay": "VES",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "VG",
+      "currencyDisplay": "USD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "VI",
+      "currencyDisplay": "USD",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "VN",
+      "currencyDisplay": "VND",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "VU",
+      "currencyDisplay": "VUV",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "WF",
+      "currencyDisplay": "XPF",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "WS",
+      "currencyDisplay": "WST",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "XK",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "YE",
+      "currencyDisplay": "YER",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "YT",
+      "currencyDisplay": "EUR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "ZA",
+      "currencyDisplay": "ZAR",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "ZM",
+      "currencyDisplay": "ZMW",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    },
+    {
+      "kind": "country",
+      "code": "ZW",
+      "currencyDisplay": "ZWL",
+      "landingLocales": [],
+      "status": "not-started",
+      "blockers": [
+        "no landing page",
+        "shipping, payment, tax, returns and translation not verified"
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "kind": "language",
+      "code": "af",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ak",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "am",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ar",
+      "rtl": true,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "as",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ast",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "av",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ay",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "az",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ba",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "be",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "bg",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "bn",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "bo",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "bs",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "bua",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ca",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ce",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ceb",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ch",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ckb",
+      "rtl": true,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "cs",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "cy",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "da",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "de",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "dv",
+      "rtl": true,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "dz",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ee",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "el",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "es",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "et",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "eu",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "fa",
+      "rtl": true,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ff",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "fi",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "fil",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "fr",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "fy",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ga",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "gd",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "gl",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "gu",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "he",
+      "rtl": true,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "hi",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "hr",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ht",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "hu",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "hy",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "id",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ilo",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "is",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "it",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ja",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ka",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "kg",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "kha",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "kk",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "kl",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "km",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "kn",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ko",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "kok",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "kv",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ky",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "lb",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ln",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "lo",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "lt",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "lua",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "lv",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "mai",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "mg",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "mh",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "mi",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "mk",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ml",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "mn",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "mr",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ms",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "mt",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "my",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "nb",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ne",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "nl",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "no",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "nr",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "nso",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ny",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "oc",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "or",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "os",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "pa",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "pag",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "pap",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "pl",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ps",
+      "rtl": true,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "pt",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ro",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ru",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "sd",
+      "rtl": true,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "si",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "sk",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "sl",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "sn",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "so",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "sq",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "sr",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "sr-cyrl",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ss",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "st",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "sv",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "sw",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ta",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "th",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "tn",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "tr",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "uk",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "ur",
+      "rtl": true,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "uz",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "vi",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "war",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "wo",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "xh",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "yo",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "zh",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "zh-hans",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    },
+    {
+      "kind": "language",
+      "code": "zu",
+      "rtl": false,
+      "mechanism": "browser translate overlay (no dedicated URLs)",
+      "urls": 0,
+      "humanReviewed": false,
+      "status": "overlay-only",
+      "blockers": [
+        "no localized URLs",
+        "translation not reviewed",
+        "must not be indexed as doorway pages"
+      ]
+    }
+  ]
+}

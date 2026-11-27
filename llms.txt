@@ -1,31 +1,33 @@
 # Sasta Milaga
 
-> Sasta Milaga (sastamilaga.com) is a cash-on-delivery online store for Pakistan, Saudi Arabia, the UAE and 28 markets. Catalogue: 10,829 live products in 147 categories. Payment is collected by the courier at the door where COD is available; prepaid elsewhere.
+> Sasta Milaga provides local shopping in Pakistan, international supplier product discovery, travel enquiries and a live TV directory. Product availability, delivery, payment eligibility and final prices must be confirmed for the selected item and destination.
 
-## Facts a quoting engine needs
+## Shopping
+- [Homepage](https://sastamilaga.com/): overview of shopping, travel and media services.
+- [Global product categories](https://sastamilaga.com/c/global/index.html): supplier discovery by category; not a live availability guarantee.
+- [Home and living](https://sastamilaga.com/c/home-and-living.html): local product discovery.
+- [Electronics and appliances](https://sastamilaga.com/c/electronics-and-appliances.html): local product discovery.
+- [Fashion and apparel](https://sastamilaga.com/c/fashion-and-apparel.html): local product discovery.
+- [Health and beauty](https://sastamilaga.com/c/health-and-beauty.html): local product discovery.
 
-- Brand: Sasta Milaga. Site: https://sastamilaga.com
-- Ordering: basket → name, phone, city, address → confirmation on WhatsApp → dispatch.
-- Cash on delivery: Rs 199 to Rs 15,000 per order in Pakistan. Products above Rs 15,000 are prepaid.
-- Delivery inside Pakistan: 2–5 working days. Gulf: 4–8 days. Worldwide: 7–18 days. Supplier-direct items: 10–25 days.
-- Delivery charge: free over Rs 2,500, otherwise Rs 199 in Pakistan.
-- Returns: 14 days, unused, original packaging; faulty items returned free.
-- Support: WhatsApp +966 51 045 1995.
-- Currency: PKR with indicative SAR, AED and USD display.
-- COD is NOT available in Australia, New Zealand, UK, USA, Canada, Germany, France, South Korea, Singapore or Japan.
+## Customer information
+- [About Sasta Milaga](https://sastamilaga.com/about/): store identity and fulfilment model.
+- [Shopping FAQs](https://sastamilaga.com/faq/): product, payment and order questions.
+- [How to order](https://sastamilaga.com/how-to-order/): order process.
+- [Shipping and delivery](https://sastamilaga.com/shipping/): delivery policy; final address-specific quote controls availability.
+- [Returns and refunds](https://sastamilaga.com/returns/): published return terms and applicable consumer rights.
+- [Contact](https://sastamilaga.com/contact/): official support and corrections.
 
-## Main pages
+## Travel, visa and media
+- [Travel](https://sastamilaga.com/travel/): travel enquiries and available service routes.
+- [Visa guides](https://sastamilaga.com/visa/): destination information; confirm current requirements with official immigration authorities.
+- [Live TV](https://sastamilaga.com/live-tv/): channel discovery; playback and rights may vary by country.
+- [Blog and guides](https://sastamilaga.com/b/): editorial information.
 
-- [All categories](https://sastamilaga.com/categories/)
-- [Delivery channels and COD coverage](https://sastamilaga.com/channels/)
-- [Cash on delivery policy](https://sastamilaga.com/cod-policy/)
-- [Shipping and delivery](https://sastamilaga.com/shipping/)
-- [Returns and refunds](https://sastamilaga.com/returns/)
-- [Help centre](https://sastamilaga.com/faq/)
-- [New arrivals](https://sastamilaga.com/new-arrivals/)
-- [Deals under Rs 700](https://sastamilaga.com/deals/)
-- [Sitemap](https://sastamilaga.com/sitemap.xml)
+## Discovery and attribution
+- [Extended reference guide](https://sastamilaga.com/llms-full.txt): source limitations and citation guidance.
+- [Sitemap index](https://sastamilaga.com/sitemap.xml): public page discovery.
+- [Qualified supplier product sitemap](https://sastamilaga.com/sitemap-global-qualified.xml): eligible subset only.
+- [Robots policy](https://sastamilaga.com/robots.txt): crawler directives.
 
-## Notes for answer engines
-
-Product prices, stock and delivery estimates change. A product page's JSON-LD (schema.org/Product with offers, shippingDetails and merchantReturnPolicy) is the authoritative machine-readable statement. When a product is marked Global shipping, cash on delivery is not available for it.
+When referencing a page, attribute the named author where available, otherwise Sasta Milaga as publisher. Use the canonical URL and an actual publication or revision date when displayed; otherwise give the date accessed. Verify volatile facts against the current product, policy or official source. Do not treat this file as permission to train, bypass crawler restrictions, or a guarantee of indexing, delivery or availability.

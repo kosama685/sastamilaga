@@ -1,0 +1,2 @@
+/* Remove expired promotional presentation even when an intermediary caches old HTML. */
+(function(){'use strict';function expire(){var now=Date.now();document.querySelectorAll('[data-promotion-end]').forEach(function(card){var end=Date.parse(card.getAttribute('data-promotion-end'));if(!Number.isFinite(end)||end<=now)card.hidden=true;});}expire();document.addEventListener('visibilitychange',function(){if(!document.hidden)expire();});if(document.querySelector('[data-promotion-end]'))setInterval(expire,60000);})();

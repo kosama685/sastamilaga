@@ -1,0 +1,40 @@
+name: Hosted commerce staging adapter contract
+on:
+  push:
+    branches:
+      - feature/hosted-commerce-staging
+      - main
+      - fix/managed-commerce-staging-guards-20261122
+    paths:
+      - 'staging/hosted-commerce/**'
+      - 'tools/hosted-commerce-staging.test.mjs'
+      - '.github/workflows/hosted-commerce-staging.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  staging-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Syntax and test contract
+        run: |
+          node --check staging/hosted-commerce/adapter.js
+          node --check staging/hosted-commerce/staging-ui.js
+          node --check tools/hosted-commerce-staging.test.mjs
+          node --test tools/hosted-commerce-staging.test.mjs
+      - name: Confirm no production payment route was modified
+        run: |
+          node --input-type=module - <<'NODE'
+          import fs from 'node:fs';
+          const s=fs.readFileSync('staging/hosted-commerce/index.html','utf8');
+          const a=fs.readFileSync('staging/hosted-commerce/adapter.js','utf8');
+          if(!s.includes('noindex,nofollow,noarchive'))throw Error('Staging page must not be indexable');
+          if(!a.includes('X-Shopify-Storefront-Access-Token')||!a.includes('cartCreate')||!a.includes('cartLinesAdd'))throw Error('Expected official Storefront Cart API not used');
+          if(/wp-json|woocommerce|paypalWorker|sm_cart\s*=|sm_gcart\s*=/.test(a))throw Error('Staging adapter depends on legacy checkout');
+          console.log('PASS: isolated preview uses managed checkout Cart API without touching live site');
+          NODE

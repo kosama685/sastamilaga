@@ -1,0 +1,36 @@
+name: Recover supplier product pages during API outages
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - workers/product-recovery/**
+      - workers/global-pdp/worker.js
+      - tools/deploy-product-recovery.mjs
+      - .github/workflows/product-url-recovery.yml
+permissions:
+  contents: read
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - run: node --test tools/product-recovery.test.mjs workers/global-pdp/worker.test.mjs
+      - name: Verify every source product and shared URL mapping
+        run: node tools/verify-complete-product-links.mjs
+      - run: node tools/deploy-product-recovery.mjs
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: verified-product-recovery
+          path: |
+            artifacts/product-*.json
+            reports/complete-product-link-mapping-2026-11-23.json
+          if-no-files-found: ignore

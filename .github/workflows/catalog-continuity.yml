@@ -1,0 +1,66 @@
+name: Catalog continuity and browser release gate
+on:
+  pull_request:
+    paths:
+      - 'tools/sync-facet-freight*'
+      - 'tools/catalog-sidebar.browser.mjs'
+      - 'tools/catalog-public-smoke.mjs'
+      - 'tools/legacy-global-category-redirect*'
+      - 'assets/js/global.js'
+      - 'assets/js/catalog-facets.js'
+      - '.github/workflows/catalog-continuity.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '13,43 * * * *'
+permissions:
+  contents: read
+concurrency:
+  group: catalog-continuity
+  cancel-in-progress: false
+jobs:
+  validate:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - run: node --test tools/sync-facet-freight.test.mjs tools/catalog-facets.test.mjs tools/global-static-facets.test.mjs tools/legacy-global-category-redirect.test.mjs
+      - name: Real browser fixture
+        run: |
+          npm install --prefix "$RUNNER_TEMP/catalog-qa" --no-audit --no-fund playwright@1.56.1 axe-core@4.10.3
+          "$RUNNER_TEMP/catalog-qa/node_modules/.bin/playwright" install --with-deps chromium
+          SM_BROWSER_MODULES="$RUNNER_TEMP/catalog-qa" node tools/catalog-sidebar.browser.mjs
+      - name: Independent public smoke
+        if: always()
+        run: node tools/catalog-public-smoke.mjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: catalog-release-qa
+          path: artifacts/
+          if-no-files-found: warn
+          retention-days: 14
+  sync:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Project fresh supplier freight evidence only
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node tools/sync-facet-freight.mjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: catalog-freight-sync
+          path: artifacts/facet-sync.json
+          if-no-files-found: warn
+          retention-days: 14

@@ -1,0 +1,1645 @@
+{
+  "at": "2026-11-26T21:49:43.158Z",
+  "sources": [
+    {
+      "name": "categories",
+      "url": "https://iptv-org.github.io/api/categories.json",
+      "status": "ok",
+      "records": 31
+    },
+    {
+      "name": "countries",
+      "url": "https://iptv-org.github.io/api/countries.json",
+      "status": "ok",
+      "records": 250
+    },
+    {
+      "name": "languages",
+      "url": "https://iptv-org.github.io/api/languages.json",
+      "status": "ok",
+      "records": 7893
+    },
+    {
+      "name": "regions",
+      "url": "https://iptv-org.github.io/api/regions.json",
+      "status": "ok",
+      "records": 42
+    },
+    {
+      "name": "streams",
+      "url": "https://iptv-org.github.io/api/streams.json",
+      "status": "ok",
+      "records": 19300
+    },
+    {
+      "name": "channels",
+      "url": "https://iptv-org.github.io/api/channels.json",
+      "status": "ok",
+      "records": 31899
+    },
+    {
+      "name": "feeds",
+      "url": "https://iptv-org.github.io/api/feeds.json",
+      "status": "ok",
+      "records": 45475
+    },
+    {
+      "name": "nexusHealth",
+      "url": "https://dearbulut.github.io/iptv/api/v1/health.json",
+      "status": "ok",
+      "records": 1
+    },
+    {
+      "name": "nexusIndex",
+      "url": "https://dearbulut.github.io/iptv/api/v1/index.json",
+      "status": "ok",
+      "records": 1
+    },
+    {
+      "name": "nexusCountries",
+      "url": "https://dearbulut.github.io/iptv/api/v1/countries.json",
+      "status": "ok",
+      "records": 250
+    },
+    {
+      "name": "guides",
+      "url": "https://iptv-org.github.io/api/guides.json",
+      "status": "ok",
+      "records": 180680
+    },
+    {
+      "name": "nexusCategories",
+      "url": "https://dearbulut.github.io/iptv/api/v1/categories.json",
+      "status": "ok",
+      "records": 31
+    },
+    {
+      "name": "nexusStreams",
+      "url": "https://dearbulut.github.io/iptv/api/v1/streams.json",
+      "status": "ok",
+      "records": 16044
+    },
+    {
+      "name": "nexusPlaylist",
+      "url": "https://dearbulut.github.io/iptv/playlists/index.m3u",
+      "status": "ok",
+      "records": 16044
+    },
+    {
+      "name": "nexusBest",
+      "url": "https://dearbulut.github.io/iptv/playlists/best.m3u",
+      "status": "ok",
+      "records": 10458
+    },
+    {
+      "name": "nexusLanguages",
+      "url": "https://dearbulut.github.io/iptv/api/v1/languages.json",
+      "status": "ok",
+      "records": 7893
+    },
+    {
+      "name": "nexusChannels",
+      "url": "https://dearbulut.github.io/iptv/api/v1/channels.json",
+      "status": "ok",
+      "records": 31147
+    }
+  ],
+  "quarantinedStreams": [
+    {
+      "channel": "AdvocateBroadcastingNetwork.ng",
+      "url": "srt://102.89.119.176:4001",
+      "reason": "Unsupported or missing stream URL"
+    },
+    {
+      "channel": "AdvocateBroadcastingNetwork.ng",
+      "url": "srt://105.113.54.98:4001",
+      "reason": "Unsupported or missing stream URL"
+    },
+    {
+      "channel": "MaincastSport.ua",
+      "url": "srt://87.245.216.208:5001",
+      "reason": "Unsupported or missing stream URL"
+    },
+    {
+      "channel": "Retroclub.ar",
+      "url": "https://video03.logicahost.com.br/retroclub02/retroclub02/playlist.m3u8",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "channel": "TelePosadas.ar",
+      "url": "https://lbgo.bozztv.com/giatv/giatv-teleposadastv/teleposadastv/playlist.m3u8",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "channel": "TelePosadas.ar",
+      "url": "https://iptv.ixfo.com.ar:30443/live/TelePosadasTv/playlist.m3u8",
+      "reason": "Adult channel requires an age-controlled surface"
+    }
+  ],
+  "missingMetadataIds": [],
+  "metadataRecords": 31899,
+  "streamRows": 35344,
+  "streamRowsRetained": 35338,
+  "invalidStreamRows": 3,
+  "quarantined": [
+    {
+      "id": "21Sextury.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "40Plus.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "A3Bikini.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultChannel.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultChannel1.rs",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultChannel2.rs",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultChannel3.rs",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultChannel4.rs",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultChannel5.rs",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultChannel6.rs",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultChannel7.rs",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetAnal.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetAsian.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetBigAss.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetBigDick.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetBigTits.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetBlonde.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetBlowjob.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetBrunette.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetCompilation.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetCuckold.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetFetish.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetGangbang.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetGay.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetHardcore.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetInterracial.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetLatina.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetLesbian.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetLiveCams.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetMILF.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetPornstar.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetPOV.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetRough.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetRussian.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetTeen.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetThreesome.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AdultIPTVnetWoman.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AlbaXXXHD1.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AlbaXXXHD2.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AlexLegend.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AllAnal.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AllAnalAllTheTime.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Allegro.id",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AlureChannel.th",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AmateurBoxxx.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AmazingTV.tw",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Anal4K.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AnalMom.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AnalOnly.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AnalTeenAngels.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Ananda.id",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Angels.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AOVAdultMovieChannel.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AssholeFever.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AssParade.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "ASTTV1.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "ASTTV2.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "AVKing.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Babenation.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BabesandBrazzers.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Babestation.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Babestation24.ch",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BabesTV.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BalkanErotic.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BananaFever.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BananaTV.tw",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BangBus.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BangPOV.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BangU.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BarelyLegalTV.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BBCPie.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BCUCharmHD.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BeateUhseTV.de",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Bizarre.al",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Bliss.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BlueHustler.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BodySex.pt",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BooB.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BrandNewAmateurs.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BrattySis.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BrazzersTVEurope.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "BungaBunga.al",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "CanalBrasil.br",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Candy3DHD.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "CandyManTV.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "CandyTV.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "CapableHole.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "CentoXCentoTV.it",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "ChannelAdult.hk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "ChannelBlue.hk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "ChannelFire.hk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "CherryBomb.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "CineManExExEx.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "CineManExExExTWO.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Climax.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "ColmaxTV.fr",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Cum4k.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "CumPerfection.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DadCrush.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DaneJones.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DarkRed.es",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DarkX.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DeepLush.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DeepThroatSirens.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Desire.al",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Desire.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DesireTV.kr",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DevilsFilm.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DevilsHome.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DirtyFlix.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DirtyMasseur.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DirtyWivesClub.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DorcelTV.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DorcelTVAfrica.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DorcelTVCanada.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DorcelXXX.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DPFanatics.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DreamPornTV.ba",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DuskTV.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "DynamiteTV.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Enter959.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Eromania4K.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Eropulsde.de",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Erotic.rs",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Erotic2.rs",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Erotic3.rs",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Erotic4.rs",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Erotic5.rs",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Erotic6.rs",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Erotic7.rs",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Erotic8.rs",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "EroticaX.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "EroticSpice.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "EroX.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "EroXXX.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "EuroGirlsonGirls.cz",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "EvilAngelTV.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Exotic4K.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "EXTANSYTV4K.cz",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "EXTASYTV.cz",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Extreme.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Exxxotica.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "ExxxtasyTV.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FamilyStrokes.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FamilySwap.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FAPTV.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FAPTV2.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FAPTV3.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FAPTV4.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FAPTVAmateur.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FAPTVAnal.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FAPTVBBW.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FAPTVCompilation.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FAPTVGay.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FAPTVLesbian.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FAPTVOlder.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FAPTVParody.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FAPTVTeaching.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FAPTVTeens.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FAPTVTrans.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FashionTVMidnightSecrets.fr",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Flamingo.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FoxyDolls.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FrenchLover.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "FrenchLoverTV.fr",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "GLAMHD.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "HappyChannel.tw",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "HiPlay.tw",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "HoneyTV.kr",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "HOT.pt",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "HOT1HD.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "HOT2HD.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "HotChannel.tw",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "HOTMan.pt",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "HotPleasure.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "HOTTaboo.pt",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "HotwifePremium.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "HotXXL.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "HustlerHD.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "HustlerTV.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "HustlerTVEurope.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "IceFire.hk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Iskushenie.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "JacquieMichelTV.fr",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "JasminTV.lu",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "JennyForYou.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "JennyLive.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Kino18Plus.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Kino18PlusInternational.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "KinoshkaAdultHD.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "KinoXXX.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "kmpChannel.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "KSTVErotica.ua",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "KSTVFantasyArt.ua",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "KSTVHotFilms.ua",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "KSTVLesbianLove.ua",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "KSTVSecret18Plus.ua",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Legal.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "LEOTV.cz",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "LEOTVGOLD.cz",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "LibertyErotikaFHD.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "LohasChannel.tw",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "LustPur.de",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MaleflixxxTelevision.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "ManX.be",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MeidenvanHollandHard.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MetArtHD.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MiamiTV.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MiamiTVDJ.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MiamiTVFashion.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MiamiTVGold.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MiamiTVHealth.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MiamiTVLatino.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MiamiTVLife.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MiamiTVMexico.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MiamiTVMusic.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MiamiTVMystery.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Midnight.kr",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MidnightBlue.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MilfTV.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MIxxx.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVAnal.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVArab.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVAsian.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVBigAss.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVBigTits.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVBlonde.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVBlowjob.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVBrunette.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVEbony.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVLatina.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVMedium.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVMILF.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVSkinny.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVSquirt.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVTeen.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVWhite.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyCamTVYoung.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "MyDirtyMobile.de",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Naughty.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "NetXXL.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "NightClub.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "NuartTV.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Olala.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "OSNMoviesPremiere.ae",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "OursHD1.tw",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "OursHD2.tw",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "OursHD3.tw",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "OXAHHD.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PandoraPerfectHD.tw",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PandoraPink.tw",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "ParadiseTV.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PassieXXX.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PassionXXX.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PassionXXX2.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PenthouseAfterMidnight.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PenthouseBlack.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PenthouseGold.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PenthouseHD1.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PenthouseHD2.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PenthouseNaughtyNights.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PenthousePassion.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PenthouseQuickies.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PenthouseRealityTV.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PenthouseTV.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PenthouseTV.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PenthouseTVMonthlyOffer.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PhoenixMarieTV.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Pigoo.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PinkOTV.it",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PinkX.fr",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlayboyChannel.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlayboyTV.br",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlayboyTV.kr",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlayboyTV.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlayboyTV.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlayboyTVAsia.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlayboyTVenEspanol.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlayboyTVEurope.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlayboyTVIberia.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlayboyTVLatinAmerica.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlayboyTVMonthlyOffer.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlayHouse.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlaymenTV.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Plus18.mn",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlutoTVEmmanuelleFilme.de",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlutoTVEros.de",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlutoTVErotica.de",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlutoTVheisseNachte.de",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlutoTVHeisseNachteRetro.de",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PlutoTVSanfteBeruhrungen.de",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PornhubTV.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PPVChoice940.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PPVChoice941.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PrivateSpice.fr",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PrivateTV.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PublicAgent.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "PureBabes.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "QUBEAdultFilms.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "RainbowChannel.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "RainbowChannel.tw",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "RealityKingsHD.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "RealityKingsTV.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "RedCherry.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "RedHotTV.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "RedlightHD.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "RedLips.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "REDxxx.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Retroclub.ar",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "RKPrime.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "RKTV.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Russiannight.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "S66Cams.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SatisfactionHD.lu",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SCT.it",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SexArt.cy",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SexationTV.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Sexprive.br",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Sextosenso.it",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Sextreme.br",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SexWithMuslims.cz",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SexyHot.br",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Shalun.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Silk.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SINematica.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SirinaTV.gr",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SkinemaxHD.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SKYHIGHSEXVR.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SonseeTV1.tw",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SonseeTV2.tw",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SonseeTV3.tw",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SonseeTV4.tw",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Splash.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SunBeachTV.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SuperONE.hu",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "SusunTVInternational.my",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "TelePosadas.ar",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "TelevisionX.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Telkom247.id",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Tiny4K.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "TransAngels.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "TrueAmateurs.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "TrueAmateurs.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "TUSHY.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "TUSHYRAW.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "VanillaSkyChannel.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Venus.ar",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "VENUS.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "VERAPORNGROUPSEX1.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "VERAPORNGROUPSEX2.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Viki.kr",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "VisitXTV.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "VividRedHD.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "VividTouch.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "VividTV.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "VividTVEurope.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "VividTVMonthlyOffer.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "VixenHD.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "VixenTV.ca",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "WeLiveTogether.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "WhiteBoxxx.ro",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Wicked.us",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "X1.al",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "XMO.nl",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "XpandedTV.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "XXL.fr",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "XXXCartoons.de",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "XXXGirlGirl.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "XXXLovesBerryHD.ru",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "XXXTazy.si",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "XYmax.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "XYmix.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "XYplus.uk",
+      "reason": "Adult channel requires an age-controlled surface"
+    },
+    {
+      "id": "Zaptv.jp",
+      "reason": "Adult channel requires an age-controlled surface"
+    }
+  ],
+  "noSourceChannels": 20474,
+  "channels": 40104,
+  "uniqueURLs": 28214
+}

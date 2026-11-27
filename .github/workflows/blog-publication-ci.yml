@@ -1,0 +1,41 @@
+name: Validate scheduled blog publishing
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/blog-schedule.yml'
+      - '.github/workflows/livetv-refresh.yml'
+      - '.github/workflows/blog-publication-ci.yml'
+      - 'tools/build-blog.mjs'
+      - 'tools/verify-blog-publication.mjs'
+      - 'assets/data/blog.js'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/blog-schedule.yml'
+      - 'tools/verify-blog-publication.mjs'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '20'
+      - name: Syntax and separation gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check tools/build-blog.mjs
+          node --check tools/verify-blog-publication.mjs
+          ! grep -q 'build-livetv' .github/workflows/blog-schedule.yml
+          grep -q 'timeout-minutes:' .github/workflows/blog-schedule.yml
+          grep -q 'run: node tools/build-livetv.mjs' .github/workflows/livetv-refresh.yml
+          grep -q 'node tools/check-livetv.mjs' .github/workflows/livetv-refresh.yml
+          grep -q 'run: node tools/verify-livetv-coverage.mjs' .github/workflows/livetv-refresh.yml
+      - name: Verify published pages match due source entries
+        run: |
+          node tools/build-blog.mjs
+          node tools/verify-blog-publication.mjs --local

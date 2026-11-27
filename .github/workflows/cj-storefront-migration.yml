@@ -1,0 +1,42 @@
+name: Verified CJ storefront deployment
+on:
+  workflow_dispatch:
+    inputs:
+      stage:
+        type: choice
+        options: [preview, production, rollback]
+        default: preview
+        description: Isolated preview first, then production routes
+concurrency:
+  group: cj-storefront-deployment
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Build and verify the additive renderer
+        run: |
+          node tools/build-cj-worker-assets.mjs
+          node --check assets/js/cj-storefront.js
+          node --check edge/cj-storefront.mjs
+          node --test tools/cj-storefront.test.mjs
+          php tools/cj-validator-test.php
+          php tools/cj-contract-test.php
+      - name: Deploy without modifying checkout services
+        env:
+          CJ_STAGE: ${{ inputs.stage }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node tools/deploy-cj-worker.mjs
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: cj-deployment-${{ inputs.stage }}
+          path: artifacts/

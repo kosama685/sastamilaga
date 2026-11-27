@@ -1,0 +1,83 @@
+name: Local product images and SKU integrity
+on:
+  workflow_dispatch:
+    inputs:
+      write_images:
+        description: "Write verified related image URLs into all static local product pages (manual only)"
+        type: boolean
+        default: false
+  schedule:
+    - cron: '11 2 * * *' # Daily 05:11 Asia/Riyadh, local static pages read-only
+  push:
+    paths:
+      - 'tools/enrich-static-related-images.mjs'
+      - 'tools/audit-static-local-products.mjs'
+      - '.github/workflows/local-catalog-integrity.yml'
+permissions:
+  contents: write
+  issues: write
+concurrency:
+  group: local-catalog-integrity
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Audit immutable local SKU and static product metadata
+        run: node tools/audit-static-local-products.mjs --out reports/local-catalog-integrity/latest.json
+      - name: Enforce zero local SKU or canonical/meta defects
+        run: |
+          node --input-type=module - <<'NODE'
+          import fs from 'node:fs';
+          const audit=JSON.parse(fs.readFileSync('reports/local-catalog-integrity/latest.json','utf8'));
+          if(audit.files<19000||audit.uniqueSku!==audit.files||
+             audit.missingSku!==0||audit.duplicateSku!==0||audit.issuesCount!==0)
+             throw Error('Local product SEO integrity regression: '+JSON.stringify({files:audit.files,unique:audit.uniqueSku,missing:audit.missingSku,duplicates:audit.duplicateSku,issues:audit.issuesCount}));
+          console.log('PASS: '+audit.files+' local product HTML pages; 0 missing SKU, 0 duplicate SKU, 0 canonical/meta issues');
+          NODE
+      - name: Preview all related-product image enrichments
+        run: node tools/enrich-static-related-images.mjs --check | tee related-images-audit.json
+      - name: Optional confirmed related-image write
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.write_images }}
+        run: |
+          node tools/enrich-static-related-images.mjs --write | tee related-images-write.json
+          node tools/enrich-static-related-images.mjs --check | tee related-images-postcheck.json
+          git status --short | head -30
+      - name: Upload audit reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: local-product-audit
+          path: |
+            reports/local-catalog-integrity/latest.json
+            related-images-audit.json
+            related-images-write.json
+            related-images-postcheck.json
+          if-no-files-found: warn
+      - name: Commit only confirmed image-enrichment changes
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.write_images }}
+        run: |
+          git config user.name 'sastamilaga-audit-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add p/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Enrich verified related images across local static PDPs [skip ci]'
+          git push
+      - name: Open or update local product SEO alert on failure
+        if: failure() && github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Local product SEO integrity failed"
+          existing=$(gh issue list --state open --limit 100 --json title,number --jq '.[] | select(.title=="Local product SEO integrity failed") | .number' | head -1)
+          body="Local static product audit failed. Inspect the uploaded audit artifact: $RUN_URL."
+          if [ -n "$existing" ]; then gh issue comment "$existing" --body "$body"; else gh issue create --title "$title" --body "$body"; fi

@@ -1,0 +1,385 @@
+kind,code,market_or_name,url,direction,translation,human_reviewed,currency_display,shipping,payment,tax_returns,translated,reviewed,market_configured,published,indexable,submitted,hreflang,sitemap,status,blockers
+landing-locale,en,germany,https://sastamilaga.com/shipping-to/germany/,ltr,source-language,false,USD estimates only; local currency display not verified,not verified (no live quote on the page; handed to WhatsApp),prepaid stated; payment methods not verified,general guidance only; country policy not verified,source,false,false,true,true,false,complete reciprocal set emitted,sitemap-landing.xml,,"INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence; not submitted to Search Console"
+landing-locale,de-DE,germany,https://sastamilaga.com/shipping-to/germany/de/,ltr,assistant-drafted,false,USD estimates only; local currency display not verified,not verified (no live quote on the page; handed to WhatsApp),prepaid stated; payment methods not verified,general guidance only; country policy not verified,drafted,false,false,true,true,false,complete reciprocal set emitted,sitemap-landing.xml,,"INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence; copy drafted by the assistant, no native-speaker review; not submitted to Search Console"
+landing-locale,en-GB,uk,https://sastamilaga.com/shipping-to/uk/,ltr,source-language,false,USD estimates only; local currency display not verified,not verified (no live quote on the page; handed to WhatsApp),prepaid stated; payment methods not verified,general guidance only; country policy not verified,source,false,false,true,true,false,complete reciprocal set emitted,sitemap-landing.xml,,"INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence; not submitted to Search Console"
+landing-locale,en-US,usa,https://sastamilaga.com/shipping-to/usa/,ltr,source-language,false,USD estimates only; local currency display not verified,not verified (no live quote on the page; handed to WhatsApp),prepaid stated; payment methods not verified,general guidance only; country policy not verified,source,false,false,true,true,false,complete reciprocal set emitted,sitemap-landing.xml,,"INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence; not submitted to Search Console"
+landing-locale,en,serbia,https://sastamilaga.com/shipping-to/serbia/,ltr,source-language,false,USD estimates only; local currency display not verified,not verified (no live quote on the page; handed to WhatsApp),prepaid stated; payment methods not verified,general guidance only; country policy not verified,source,false,false,true,true,false,complete reciprocal set emitted,sitemap-landing.xml,,"INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence; not submitted to Search Console"
+landing-locale,sr-Latn-RS,serbia,https://sastamilaga.com/shipping-to/serbia/sr-latn/,ltr,assistant-drafted,false,USD estimates only; local currency display not verified,not verified (no live quote on the page; handed to WhatsApp),prepaid stated; payment methods not verified,general guidance only; country policy not verified,drafted,false,false,true,true,false,complete reciprocal set emitted,sitemap-landing.xml,,"INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence; copy drafted by the assistant, no native-speaker review; not submitted to Search Console"
+landing-locale,sr-Cyrl-RS,serbia,https://sastamilaga.com/shipping-to/serbia/sr-cyrl/,ltr,assistant-drafted,false,USD estimates only; local currency display not verified,not verified (no live quote on the page; handed to WhatsApp),prepaid stated; payment methods not verified,general guidance only; country policy not verified,drafted,false,false,true,true,false,complete reciprocal set emitted,sitemap-landing.xml,,"INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence; copy drafted by the assistant, no native-speaker review; not submitted to Search Console"
+landing-locale,en-SA,saudi-arabia,https://sastamilaga.com/shipping-to/saudi-arabia/,ltr,source-language,false,USD estimates only; local currency display not verified,not verified (no live quote on the page; handed to WhatsApp),prepaid stated; payment methods not verified,general guidance only; country policy not verified,source,false,false,true,true,false,complete reciprocal set emitted,sitemap-landing.xml,,"INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence; not submitted to Search Console"
+landing-locale,ar-SA,saudi-arabia,https://sastamilaga.com/shipping-to/saudi-arabia/ar/,rtl,assistant-drafted,false,USD estimates only; local currency display not verified,not verified (no live quote on the page; handed to WhatsApp),prepaid stated; payment methods not verified,general guidance only; country policy not verified,drafted,false,false,true,true,false,complete reciprocal set emitted,sitemap-landing.xml,,"INDEXED BY OWNER OVERRIDE 2026-11-20 without verified shipping, checkout, tax or returns evidence; copy drafted by the assistant, no native-speaker review; not submitted to Search Console"
+landing-locale,en,pakistan,https://sastamilaga.com/pakistan/,ltr,source-language,false,PKR (store config),Pakistan delivery fee and free-delivery threshold match assets/js/config.js,cash on delivery for local products (stated in policy pages),see returns/ page,source,false,false,true,true,false,complete reciprocal set emitted,sitemap-landing.xml,,not submitted to Search Console
+landing-locale,ur,pakistan,https://sastamilaga.com/ur/pakistan/,rtl,assistant-drafted,false,PKR (store config),Pakistan delivery fee and free-delivery threshold match assets/js/config.js,cash on delivery for local products (stated in policy pages),see returns/ page,drafted,false,false,true,true,false,complete reciprocal set emitted,sitemap-landing.xml,,not submitted to Search Console; Urdu copy needs native review
+country,AD,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,AE,,,,,,AED,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,AF,,,,,,AFN,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,AG,,,,,,XCD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,AI,,,,,,XCD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,AL,,,,,,ALL,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,AM,,,,,,AMD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,AO,,,,,,AOA,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,AR,,,,,,ARS,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,AS,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,AT,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,AU,,,,,,AUD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,AW,,,,,,AWG,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,AX,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,AZ,,,,,,AZN,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BA,,,,,,BAM,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BB,,,,,,BBD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BD,,,,,,BDT,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BE,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BF,,,,,,XOF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BG,,,,,,BGN,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BH,,,,,,BHD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BI,,,,,,BIF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BJ,,,,,,XOF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BL,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BM,,,,,,BMD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BN,,,,,,BND,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BO,,,,,,BOB,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BQ,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BR,,,,,,BRL,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BS,,,,,,BSD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BT,,,,,,BTN,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BW,,,,,,BWP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BY,,,,,,BYN,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,BZ,,,,,,BZD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CA,,,,,,CAD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CC,,,,,,AUD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CD,,,,,,CDF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CF,,,,,,XAF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CG,,,,,,XAF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CH,,,,,,CHF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CI,,,,,,XOF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CK,,,,,,NZD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CL,,,,,,CLP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CM,,,,,,XAF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CN,,,,,,CNY,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CO,,,,,,COP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CR,,,,,,CRC,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CU,,,,,,CUP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CV,,,,,,CVE,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CW,,,,,,ANG,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CX,,,,,,AUD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CY,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,CZ,,,,,,CZK,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,DE,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,landing-live-indexed-by-owner-override,evidence gate not passed; indexed by owner override 2026-11-20; not submitted to Search Console
+country,DJ,,,,,,DJF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,DK,,,,,,DKK,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,DM,,,,,,XCD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,DO,,,,,,DOP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,DZ,,,,,,DZD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,EC,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,EE,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,EG,,,,,,EGP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,EH,,,,,,MAD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,ER,,,,,,ERN,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,ES,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,ET,,,,,,ETB,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,FI,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,FJ,,,,,,FJD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,FK,,,,,,FKP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,FM,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,FO,,,,,,DKK,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,FR,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GA,,,,,,XAF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GB,,,,,,GBP,not verified,not verified,not verified,,,,false,false,false,,,landing-live-indexed-by-owner-override,evidence gate not passed; indexed by owner override 2026-11-20; not submitted to Search Console
+country,GD,,,,,,XCD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GE,,,,,,GEL,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GF,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GG,,,,,,GBP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GH,,,,,,GHS,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GI,,,,,,GIP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GL,,,,,,DKK,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GM,,,,,,GMD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GN,,,,,,GNF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GP,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GQ,,,,,,XAF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GR,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GT,,,,,,GTQ,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GU,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GW,,,,,,XOF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,GY,,,,,,GYD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,HK,,,,,,HKD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,HN,,,,,,HNL,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,HR,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,HT,,,,,,HTG,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,HU,,,,,,HUF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,ID,,,,,,IDR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,IE,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,IL,,,,,,ILS,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,IM,,,,,,GBP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,IN,,,,,,INR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,IO,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,IQ,,,,,,IQD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,IR,,,,,,IRR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,IS,,,,,,ISK,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,IT,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,JE,,,,,,GBP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,JM,,,,,,JMD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,JO,,,,,,JOD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,JP,,,,,,JPY,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,KE,,,,,,KES,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,KG,,,,,,KGS,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,KH,,,,,,KHR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,KI,,,,,,AUD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,KM,,,,,,KMF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,KN,,,,,,XCD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,KP,,,,,,KPW,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,KR,,,,,,KRW,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,KW,,,,,,KWD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,KY,,,,,,KYD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,KZ,,,,,,KZT,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,LA,,,,,,LAK,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,LB,,,,,,LBP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,LC,,,,,,XCD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,LI,,,,,,CHF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,LK,,,,,,LKR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,LR,,,,,,LRD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,LS,,,,,,LSL,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,LT,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,LU,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,LV,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,LY,,,,,,LYD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MA,,,,,,MAD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MC,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MD,,,,,,MDL,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,ME,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MF,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MG,,,,,,MGA,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MH,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MK,,,,,,MKD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,ML,,,,,,XOF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MM,,,,,,MMK,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MN,,,,,,MNT,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MO,,,,,,MOP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MP,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MQ,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MR,,,,,,MRU,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MS,,,,,,XCD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MT,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MU,,,,,,MUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MV,,,,,,MVR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MW,,,,,,MWK,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MX,,,,,,MXN,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MY,,,,,,MYR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,MZ,,,,,,MZN,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,NA,,,,,,NAD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,NC,,,,,,XPF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,NE,,,,,,XOF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,NF,,,,,,AUD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,NG,,,,,,NGN,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,NI,,,,,,NIO,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,NL,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,NO,,,,,,NOK,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,NP,,,,,,NPR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,NR,,,,,,AUD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,NU,,,,,,NZD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,NZ,,,,,,NZD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,OM,,,,,,OMR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,PA,,,,,,PAB,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,PE,,,,,,PEN,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,PF,,,,,,XPF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,PG,,,,,,PGK,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,PH,,,,,,PHP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,PK,,,,,,PKR,not verified,not verified,not verified,,,,false,false,false,,,landing-live-indexed,not submitted to Search Console
+country,PL,,,,,,PLN,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,PM,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,PN,,,,,,NZD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,PR,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,PS,,,,,,ILS,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,PT,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,PW,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,PY,,,,,,PYG,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,QA,,,,,,QAR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,RE,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,RO,,,,,,RON,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,RS,,,,,,RSD,not verified,not verified,not verified,,,,false,false,false,,,landing-live-indexed-by-owner-override,evidence gate not passed; indexed by owner override 2026-11-20; not submitted to Search Console
+country,RU,,,,,,RUB,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,RW,,,,,,RWF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SA,,,,,,SAR,not verified,not verified,not verified,,,,false,false,false,,,landing-live-indexed-by-owner-override,evidence gate not passed; indexed by owner override 2026-11-20; not submitted to Search Console
+country,SB,,,,,,SBD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SC,,,,,,SCR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SD,,,,,,SDG,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SE,,,,,,SEK,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SG,,,,,,SGD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SH,,,,,,SHP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SI,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SJ,,,,,,NOK,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SK,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SL,,,,,,SLE,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SM,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SN,,,,,,XOF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SO,,,,,,SOS,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SR,,,,,,SRD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SS,,,,,,SSP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,ST,,,,,,STN,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SV,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SX,,,,,,ANG,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SY,,,,,,SYP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,SZ,,,,,,SZL,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,TC,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,TD,,,,,,XAF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,TF,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,TG,,,,,,XOF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,TH,,,,,,THB,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,TJ,,,,,,TJS,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,TK,,,,,,NZD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,TL,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,TM,,,,,,TMT,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,TN,,,,,,TND,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,TO,,,,,,TOP,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,TR,,,,,,TRY,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,TT,,,,,,TTD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,TV,,,,,,AUD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,TW,,,,,,TWD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,TZ,,,,,,TZS,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,UA,,,,,,UAH,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,UG,,,,,,UGX,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,UM,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,US,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,landing-live-indexed-by-owner-override,evidence gate not passed; indexed by owner override 2026-11-20; not submitted to Search Console
+country,UY,,,,,,UYU,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,UZ,,,,,,UZS,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,VA,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,VC,,,,,,XCD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,VE,,,,,,VES,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,VG,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,VI,,,,,,USD,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,VN,,,,,,VND,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,VU,,,,,,VUV,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,WF,,,,,,XPF,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,WS,,,,,,WST,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,XK,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,YE,,,,,,YER,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,YT,,,,,,EUR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,ZA,,,,,,ZAR,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,ZM,,,,,,ZMW,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+country,ZW,,,,,,ZWL,not verified,not verified,not verified,,,,false,false,false,,,not-started,"no landing page; shipping, payment, tax, returns and translation not verified"
+language,af,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ak,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,am,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ar,rtl,,rtl,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,as,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ast,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,av,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ay,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,az,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ba,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,be,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,bg,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,bn,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,bo,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,bs,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,bua,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ca,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ce,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ceb,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ch,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ckb,rtl,,rtl,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,cs,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,cy,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,da,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,de,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,dv,rtl,,rtl,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,dz,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ee,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,el,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,es,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,et,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,eu,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,fa,rtl,,rtl,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ff,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,fi,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,fil,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,fr,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,fy,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ga,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,gd,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,gl,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,gu,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,he,rtl,,rtl,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,hi,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,hr,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ht,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,hu,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,hy,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,id,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ilo,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,is,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,it,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ja,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ka,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,kg,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,kha,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,kk,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,kl,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,km,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,kn,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ko,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,kok,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,kv,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ky,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,lb,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ln,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,lo,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,lt,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,lua,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,lv,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,mai,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,mg,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,mh,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,mi,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,mk,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ml,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,mn,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,mr,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ms,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,mt,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,my,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,nb,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ne,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,nl,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,no,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,nr,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,nso,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ny,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,oc,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,or,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,os,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,pa,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,pag,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,pap,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,pl,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ps,rtl,,rtl,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,pt,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ro,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ru,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,sd,rtl,,rtl,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,si,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,sk,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,sl,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,sn,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,so,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,sq,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,sr,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,sr-cyrl,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ss,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,st,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,sv,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,sw,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ta,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,th,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,tn,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,tr,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,uk,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,ur,rtl,,rtl,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,uz,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,vi,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,war,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,wo,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,xh,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,yo,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,zh,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,zh-hans,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages
+language,zu,ltr,,ltr,browser translate overlay (no dedicated URLs),false,,,,,overlay,false,false,false,false,false,,,overlay-only,no localized URLs; translation not reviewed; must not be indexed as doorway pages

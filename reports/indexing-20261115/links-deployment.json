@@ -1,0 +1,11 @@
+{
+  "receipts": [
+    {
+      "worker": "sasta-canonical-sync-v11",
+      "before_sha256": "3602fd1a699444ff9b006827249554f602008dc3a09d820689f320b0c3496c1d",
+      "after_sha256": "2843ee1502b85439c979a401f5861a1e800bc305df46b1e9625d657f392513f5",
+      "deployment_id": "d0a19c54f1f5476d9f7679768624f1c6",
+      "at": "2026-11-14T22:00:27.579Z"
+    }
+  ]
+}

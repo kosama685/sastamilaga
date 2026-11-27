@@ -1,0 +1,29 @@
+name: Commerce operations and SEO regression
+on:
+  push:
+    branches: [fix/commerce-operational-20261122]
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - 'flights/**'
+      - 'tools/commerce-ops-recovery.test.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: JavaScript syntax
+        run: node --check tools/commerce-ops-recovery.test.mjs
+      - name: Repository action runtime policy
+        run: node tools/check-github-actions-runtime.mjs
+      - name: Operations regression tests
+        run: node --test tools/commerce-ops-recovery.test.mjs
+      - name: Existing order request regression tests
+        run: node --test tools/unified-order-request.test.mjs tools/github-only-commerce.test.mjs
