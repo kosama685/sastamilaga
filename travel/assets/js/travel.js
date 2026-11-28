@@ -100,13 +100,25 @@
     var trip = form.dataset.trip || "round";
     var type = form.dataset.type || "flights";
 
+    function syncFields() {
+      var service = form.dataset.type;
+      var isFlight = service === "flights";
+      var hasEnd = isFlight || service === "stays" || service === "cars";
+      form.elements.from.disabled = !isFlight;
+      form.elements.cabin.disabled = !isFlight;
+      form.elements.ret.disabled = !hasEnd || (isFlight && form.dataset.trip === "one");
+      form.elements.ret.closest(".field").style.opacity = isFlight && form.dataset.trip === "one" ? ".5" : "";
+    }
+    syncFields();
+
     /* tabs on home */
     $$("[data-tab]").forEach(function (t) {
       t.addEventListener("click", function () {
         $$("[data-tab]").forEach(function (x) { x.classList.toggle("on", x === t); });
         var v = t.getAttribute("data-tab");
         form.dataset.type = v;
-        form.setAttribute("action", BASE + "/" + (v === "ai" ? "ai-planner" : v) + "/");
+        form.elements.type.value = v;
+        form.setAttribute("action", BASE + (v === "visa" || v === "umrah" ? "/" + v + "/" : "/compare/"));
         var flightOnly = ["from", "to", "dep", "ret", "pax", "cabin", "trip"];
         flightOnly.forEach(function (k) {
           var el = form.querySelector('[name="' + k + '"]');
@@ -127,6 +139,7 @@
         if (depLab) depLab.textContent = v === "stays" || v === "cars" ? "Check-in / pick-up" : "Departure date";
         var retField = form.querySelector('[name="ret"]') && form.querySelector('[name="ret"]').closest(".field");
         if (retField) retField.style.display = (v === "tours" || v === "visa" || v === "esim" || v === "umrah") ? "none" : "";
+        syncFields();
       });
     });
 
@@ -137,7 +150,7 @@
         $$("[data-triptype]", form).forEach(function (x) { x.classList.toggle("on", x === b); });
         form.dataset.trip = b.getAttribute("data-triptype");
         var ret = form.querySelector('[name="ret"]');
-        if (ret) ret.closest(".field").style.opacity = form.dataset.trip === "one" ? ".5" : "1";
+        syncFields();
         if (ret && form.dataset.trip === "one") ret.value = "";
       });
     });
@@ -164,13 +177,52 @@
     /* submit */
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      var data = new FormData(form);
-      var q = new URLSearchParams();
-      ["from", "to", "dep", "ret", "pax", "cabin"].forEach(function (k) { if (data.get(k)) q.set(k, data.get(k)); });
-      q.set("type", form.dataset.type || type);
-      q.set("trip", form.dataset.trip || trip);
-      if (form.dataset.type === "ai") { location.href = BASE + "/ai-planner/?" + q.toString(); return; }
-      location.href = BASE + "/results/?" + q.toString();
+      var service = form.dataset.type || type;
+      var flight = service === "flights";
+      var needsReturn = (flight && form.dataset.trip !== "one") || service === "stays" || service === "cars";
+      var origin = form.elements.from;
+      var destination = form.elements.to;
+      var departure = form.elements.dep;
+      var returning = form.elements.ret;
+      function invalid(field, message) {
+        field.setCustomValidity(message);
+        field.reportValidity();
+        field.setCustomValidity("");
+      }
+      function airport(value) {
+        value = value.trim();
+        var code = value.match(/^([A-Za-z]{3})(?:\s*[-\u2013(]|$)/);
+        if (code) return code[1].toUpperCase();
+        var match = AIRPORTS.find(function (a) { return a.city.toLowerCase() === value.toLowerCase(); });
+        return match ? match.code : "";
+      }
+      var from = flight ? airport(origin.value) : "";
+      var to = flight ? airport(destination.value) : destination.value.trim();
+      if (flight && !from) return invalid(origin, "Enter a departure city or a three-letter airport code.");
+      if (!to) return invalid(destination, flight ? "Enter an arrival city or a three-letter airport code." : "Enter a destination.");
+      if (flight && from === to) return invalid(destination, "Choose a different arrival airport.");
+      if (!departure.value) return invalid(departure, "Choose a travel date.");
+      if (needsReturn && (!returning.value || returning.value < departure.value ||
+          (!flight && returning.value === departure.value))) {
+        return invalid(returning, "Choose a valid return or end date.");
+      }
+      var q = new URLSearchParams({type: service, to: to, dep: departure.value});
+      var place = cityOf(flight ? to : airport(to) || to.toUpperCase());
+      q.set("city", place.city === place.code ? destination.value.trim() : place.city);
+      if (place.country) q.set("country", place.country);
+      if (flight) {
+        q.set("from", from);
+        q.set("trip", form.dataset.trip || trip);
+        q.set("cabin", form.elements.cabin.value);
+      }
+      if (needsReturn) q.set("ret", returning.value);
+      if (form.elements.pax.value) q.set("pax", form.elements.pax.value);
+      if (form.elements.cur && form.elements.cur.value) q.set("cur", form.elements.cur.value);
+      if (service === "visa" || service === "umrah") {
+        location.assign(BASE + "/" + service + "/?" + q + "#travel-quote");
+        return;
+      }
+      location.assign(BASE + "/compare/?" + q + "#" + service);
     });
 
     initVoice(form);
@@ -581,7 +633,16 @@
 
   /* ---------- quote forms ---------- */
   function initQuote() {
+    var search = new URLSearchParams(location.search);
     $$("[data-quote]").forEach(function (f) {
+      if (location.hash === "#travel-quote") {
+        f.id = "travel-quote";
+        [["Country", search.get("city")], ["Travel", search.get("dep")],
+          ["Travellers", search.get("pax")], ["Month", (search.get("dep") || "").slice(0, 7)]].forEach(function (entry) {
+          if (f.elements[entry[0]] && entry[1]) f.elements[entry[0]].value = entry[1];
+        });
+        f.scrollIntoView();
+      }
       f.addEventListener("submit", function (e) {
         e.preventDefault();
         var d = new FormData(f);

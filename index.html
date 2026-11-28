@@ -1686,6 +1686,13 @@ if(window.smtpQ){var q=window.smtpQ;window.smtpQ=null;window.smtpOpen(q);}
 	});
 
 	// Cars: partner site in a new tab.
+	var tours = root.querySelector('.smx-pane[data-kind="tours"]');
+	if (tours) tours.addEventListener('submit', function (e) {
+		e.preventDefault();
+		var q = new URLSearchParams({type:'tours',city:tours.elements.s.value.trim()});
+		location.assign('/travel/compare/?' + q + '#tours');
+	});
+
 	var cars = root.querySelector('.smx-pane[data-kind="cars"]');
 	if (cars) {
 		var f = cars.querySelector('[name="from"]'), t = cars.querySelector('[name="to"]');
@@ -1693,7 +1700,8 @@ if(window.smtpQ){var q=window.smtpQ;window.smtpQ=null;window.smtpOpen(q);}
 		f.addEventListener('change', function () { if (t.value <= f.value) { var d = new Date(f.value + 'T12:00:00'); d.setDate(d.getDate() + 1); t.value = d.toISOString().slice(0, 10); } t.min = f.value; });
 		cars.addEventListener('submit', function (e) {
 			e.preventDefault();
-			window.open(cars.getAttribute('data-smx-partner'), '_blank', 'noopener');
+			var q = new URLSearchParams({type:'cars',city:cars.elements.pickup.value.trim(),dep:f.value,ret:t.value});
+			location.assign('/travel/compare/?' + q + '#cars');
 		});
 	}
 

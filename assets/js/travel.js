@@ -143,8 +143,20 @@
       }
       if(form.dataset.kind==='flight'&&!api&&SMTravel.duffel&&SMTravel.duffel.flightsEnabled){const section=root.querySelector('[data-flight-results]');if(section)section.hidden=true;let body=null;try{const response=await travelFetch(`${SMTravel.root}duffel/flights`,{method:'POST',headers,body:JSON.stringify(payload)});body=await response.json();if(!response.ok)body=null;}catch(_){body=null;}if(body){directFlightResults(body.results||[],payload,cfg,api);const fallback=root.querySelector('[data-partner-fallback="flight"]');if(fallback)fallback.hidden=!['economy','business'].includes(payload.cabin);button.disabled=false;button.innerHTML=button.dataset.label;return;}}
       if(form.dataset.kind==='hotel'&&SMTravel.duffel&&SMTravel.duffel.staysEnabled){const section=root.querySelector('[data-stays-results]');if(section)section.hidden=true;let body=null;try{const response=await travelFetch(`${SMTravel.root}duffel/stays`,{method:'POST',headers,body:JSON.stringify(payload)});body=await response.json();if(!response.ok)body=null;}catch(_){body=null;}if(body){directStayResults(body.results||[]);const fallback=root.querySelector('[data-partner-fallback="hotel"]');if(fallback)fallback.hidden=payload.ages.length>0||payload.rooms!==1;button.disabled=false;button.innerHTML=button.dataset.label;return;}}
-      if(api){api.request(form.dataset.kind,payload);button.disabled=false;button.innerHTML=button.dataset.label;return;}   // "Get your best fare" sheet: trip + contact → request number
-      await partnerSearch(form.dataset.kind,payload);   // the sheet could not load: old WhatsApp hand-off
+      const flight = form.dataset.kind === 'flight';
+      const service = flight ? 'flights' : 'stays';
+      const q = new URLSearchParams({type:service,dep:payload.departure,pax:payload.adults,cur:payload.currency});
+      if (payload.return) q.set('ret',payload.return);
+      if (flight) {
+        q.set('from',payload.origin);
+        q.set('to',payload.destination);
+        q.set('trip',payload.oneway?'one':'round');
+        q.set('cabin',payload.cabin);
+      } else {
+        q.set('city',payload.city_label);
+        q.set('rooms',payload.rooms);
+      }
+      location.assign('/travel/compare/?'+q+'#'+service);
     }catch(error){status.textContent=error.message||SMTravel.strings.noOptions;button.disabled=false;button.innerHTML=button.dataset.label;}
   }));
   root.querySelectorAll('[data-partner-fallback]').forEach(button=>button.addEventListener('click',async()=>{const kind=button.dataset.partnerFallback;const form=root.querySelector(`#sm-${kind}-form`);if(!form)return;button.disabled=true;try{const api=await smtb().catch(()=>null);if(api){api.request(kind,payloadFor(form,new FormData(form)));button.disabled=false;return;}await partnerSearch(kind,payloadFor(form,new FormData(form)));}catch(error){button.disabled=false;form.querySelector('.sm-form-status').textContent=error.message||SMTravel.strings.noOptions;}}));
