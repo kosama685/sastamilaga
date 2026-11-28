@@ -25,6 +25,4 @@ Disallow: /staging/
 Disallow: /test/
 Disallow: /.git/
 
-Sitemap: https://sastamilaga.com/sitemap.xml
 Sitemap: https://sastamilaga.com/sitemap_index.xml
-Sitemap: https://sastamilaga.com/sitemap-livetv.xml
