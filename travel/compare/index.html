@@ -118,7 +118,7 @@
 </div></section>
 
 <section class="cmp-sec"><div class="wrap">
-  <h2>Your search, carried into every site</h2>
+  <h2 id="flights">Your search, carried into every site</h2>
   <p class="sub">Open a partner and it arrives with the route, dates and travellers you already chose. No retyping, no lost context. Arrive here from a search and your details follow automatically.</p>
   <p class="cmp-search-note" data-cmp-note>Showing default examples (Karachi → Dubai, 2 adults, 12–18 Dec 2026). Start from <a href="/travel/flights/">the search box</a> to carry your own trip into these links.</p>
   <ul class="cmp-grid">
@@ -150,14 +150,14 @@
 </div></section>
 
 <section class="cmp-sec"><div class="wrap">
-  <h2>Stays: compare before you commit</h2>
+  <h2 id="stays">Stays: compare before you commit</h2>
   <p class="sub">Six hotel sites, same room, same nights. Cancellation terms matter more than a two-dollar difference — every link opens the property list with your dates already set.</p>
   <ul class="cmp-grid">
     <li class="cmp-card">
       <div class="hd"><span class="cmp-logo b" aria-hidden="true">B</span><div><h3>Booking.com</h3><span class="tag">Stays · widest inventory</span></div></div>
       <p>Deepest coverage in the Gulf, Pakistan and Turkey, with free-cancellation filters that actually work.</p>
       <span class="price-note">Price: Booking's own, untouched</span>
-      <a class="go" data-tpl="https://www.booking.com/searchresults.html?ss={city}&amp;checkin={in}&amp;checkout={out}&amp;group_adults={pax}&amp;no_rooms=1&amp;selected_currency=USD" href="https://www.booking.com/searchresults.html?ss=Dubai&amp;checkin=2026-12-12&amp;checkout=2026-12-18&amp;group_adults=2&amp;no_rooms=1&amp;selected_currency=USD" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
+      <a class="go" data-tpl="https://www.booking.com/searchresults.html?ss={city}&amp;checkin={in}&amp;checkout={out}&amp;group_adults={pax}&amp;no_rooms={rooms}&amp;selected_currency={cur}" href="https://www.booking.com/searchresults.html?ss=Dubai&amp;checkin=2026-12-12&amp;checkout=2026-12-18&amp;group_adults=2&amp;no_rooms=1&amp;selected_currency=USD" target="_blank" rel="noopener nofollow">Open live search <span aria-hidden="true">→</span></a>
     </li>
     <li class="cmp-card">
       <div class="hd"><span class="cmp-logo p" aria-hidden="true">A</span><div><h3>Agoda</h3><span class="tag">Stays · Asia strength</span></div></div>
@@ -193,7 +193,7 @@
 </div></section>
 
 <section class="cmp-sec"><div class="wrap">
-  <h2>Cars and tours</h2>
+  <h2 id="cars">Cars and tours</h2>
   <p class="sub">Rental excess and tour cancellation policy are where the real money hides, so both are linked with your dates and pickup point already filled in.</p>
   <ul class="cmp-grid">
     <li class="cmp-card">
@@ -236,7 +236,7 @@
 </div></section>
 
 <section class="cmp-sec"><div class="wrap">
-  <h2>eSIM: three sites, one decision</h2>
+  <h2 id="esim">eSIM: three sites, one decision</h2>
   <p class="sub">Buy before you fly or on landing — the only real variables are per-gigabyte price and whether the plan includes calls.</p>
   <ul class="cmp-grid">
     <li class="cmp-card">
@@ -355,9 +355,12 @@
   "use strict";
   var q = new URLSearchParams(location.search);
   var p = function(k, d){ var v = q.get(k); return v ? v : d; };
-  var from = p("from","KHI").toUpperCase(), to = p("to","DXB").toUpperCase();
-  var dep = p("dep","2026-12-12"), ret = p("ret","2026-12-18");
-  var pax = p("pax","2"), city = p("city","Dubai");
+  var service = q.get("type") || "flights";
+  var searching = q.has("type") || q.has("from") || q.has("city");
+  var from = p("from", searching ? "" : "KHI").toUpperCase(), to = p("to", searching ? "" : "DXB").toUpperCase();
+  var dep = p("dep", searching ? "" : "2026-12-12");
+  var ret = q.get("trip") === "one" ? "" : p("ret", searching ? "" : "2026-12-18");
+  var pax = p("pax","2"), city = p("city", searching ? "" : "Dubai");
   var cityOf = {KHI:"Karachi",LHE:"Lahore",ISB:"Islamabad",PEW:"Peshawar",MUX:"Multan",SKT:"Sialkot",
     DXB:"Dubai",AUH:"Abu Dhabi",SHJ:"Sharjah",RUH:"Riyadh",JED:"Jeddah",DMM:"Dammam",MED:"Madinah",
     DOH:"Doha",KWI:"Kuwait City",BAH:"Manama",MCT:"Muscat",IST:"Istanbul",SAW:"Istanbul",AYT:"Antalya",
@@ -365,21 +368,49 @@
     BKK:"Bangkok",KUL:"Kuala Lumpur",SIN:"Singapore",CGK:"Jakarta",MNL:"Manila",DEL:"Delhi",BOM:"Mumbai",
     DAC:"Dhaka",CMB:"Colombo",KTM:"Kathmandu",CAI:"Cairo",ADD:"Addis Ababa",NBO:"Nairobi",JNB:"Johannesburg",
     JFK:"New York",YYZ:"Toronto",SYD:"Sydney",PEK:"Beijing",CAN:"Guangzhou",HKG:"Hong Kong",NRT:"Tokyo",ICN:"Seoul"};
+  city = city || cityOf[to] || to;
+  var country = p("country", city).toLowerCase();
+  var countrySlugs = {"uae":"united-arab-emirates","uk":"united-kingdom","usa":"united-states","turkiye":"turkey"};
+  var returnPath = ret ? "/" + ret : "";
+  var returnShort = ret ? "/" + ret.replace(/-/g, "").slice(2) : "";
   var vals = {
     from: from, to: to, dep: dep, ret: ret, pax: pax, city: city,
     froml: from.toLowerCase(), tol: to.toLowerCase(),
     fromCity: cityOf[from] || from, toCity: cityOf[to] || to,
     in: dep, out: ret, yymd: dep.slice(2,4) + dep.slice(5,7) + dep.slice(8,10),
-    country: String(city).toLowerCase().replace(/[^a-z]+/g,"-").replace(/^-|-$/g,"")
+    rooms: p("rooms","1"), cur: p("cur","USD"),
+    country: (countrySlugs[country] || country).replace(/[^a-z]+/g,"-").replace(/^-|-$/g,"")
   };
   Array.prototype.forEach.call(document.querySelectorAll("[data-tpl]"), function(a){
     var tpl = a.getAttribute("data-tpl");
-    a.setAttribute("href", tpl.replace(/\{(\w+)\}/g, function(m, k){ return vals[k] != null ? encodeURIComponent(vals[k]) : m; }));
+    if (!ret && tpl.indexOf("kiwi.com") !== -1) tpl = tpl.replace("/{ret}", "");
+    if (tpl.indexOf("skyscanner.net") !== -1) tpl = tpl.replace("{yymd}/", "{yymd}" + returnShort + "/");
+    if (tpl.indexOf("momondo.com") !== -1) tpl = tpl.replace("{dep}?", "{dep}" + returnPath + "?");
+    if (tpl.indexOf("google.com/travel/flights") !== -1 && searching) {
+      var flightSearch = new URL(tpl);
+      flightSearch.searchParams.set("q", "Flights from " + vals.fromCity + " to " + vals.toCity + " on " + dep +
+        (ret ? " returning " + ret : " one way") + " for " + pax + " adults" + (q.has("cabin") ? " in " + q.get("cabin") : ""));
+      tpl = flightSearch.href;
+    }
+    var section = a.closest(".cmp-sec");
+    var heading = section && section.querySelector("h2");
+    var relevant = heading && heading.id === service;
+    if (heading && heading.id === "cars") {
+      var hasDates = tpl.indexOf("{in}") !== -1;
+      relevant = (service === "cars" && hasDates) || (service === "tours" && !hasDates);
+    }
+    if (!searching || !q.has("type") || relevant) {
+      a.setAttribute("href", tpl.replace(/\{(\w+)\}/g, function(m, k){ return vals[k] != null ? encodeURIComponent(vals[k]) : m; }));
+    }
   });
   var note = document.querySelector("[data-cmp-note]");
-  if (note && q.get("from")) {
-    note.textContent = "Your search is loaded: " + (cityOf[from] || from) + " \u2192 " + (cityOf[to] || to) + " on " + dep + (ret ? " to " + ret : "") + ", " + pax + " traveller" + (pax === "1" ? "" : "s") + ". Every link below keeps it.";
+  if (note && searching) {
+    var route = from && service === "flights" ? (cityOf[from] || from) + " \u2192 " + city : city;
+    note.textContent = "Search: " + route + (dep ? " \u00b7 " + dep : "") + (ret ? " to " + ret : "") +
+      (q.has("pax") ? " \u00b7 " + pax + " traveller" + (pax === "1" ? "" : "s") : "") +
+      ". Check current prices and available options on the partner site.";
   }
+  if (location.hash === "#tours") document.getElementById("cars").scrollIntoView();
 })();
 </script>
 </body></html>
