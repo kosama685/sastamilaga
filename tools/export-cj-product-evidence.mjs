@@ -1,14 +1,21 @@
 #!/usr/bin/env node
 /**
  * Category-wise per-product offline CJ evidence exporter.
- * Exports every original supplier ID as its OWN JSON file INSIDE a .tar.gz,
- * grouped by original category. These are NOT public Product offers.
+ *
+ * Exports every original supplier ID from the 451,812-row snapshot as its own
+ * JSON file INSIDE archives, grouped by original category. These are NOT public
+ * Product offers and nothing here is published.
  *
  * Usage: node tools/export-cj-product-evidence.mjs
- * Output: artifacts/cj-seo-evidence/category-product-files.tar.gz (451812 JSON files)
- *         artifacts/cj-seo-evidence/all-products.jsonl.gz (complete manifest)
- *         artifacts/cj-seo-evidence/category-index.json
- *         artifacts/cj-seo-evidence/completeness.json
+ * Output (artifacts/cj-seo-evidence/):
+ *   category-product-files.tar.gz   <category>/<id>.json           (451,812 files)
+ *   per-product-folders.tar.gz      <category>/<id>/{source,normalized,validation,seo}.json
+ *   products.csv                    one row per supplier row, formula-safe
+ *   all-products.jsonl.gz           id -> category/path manifest
+ *   category-index.json             per-category counts
+ *   completeness.json               accounting, rejects and checksums
+ *   manifest.json                   deliverable list + sha256 + counts
+ *
  * Tar can be inspected with: tar -tzf <archive> | head
  * No file is written inside the site's public p/, feeds/, or sitemap folders.
  */
@@ -16,113 +23,207 @@ import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import crypto from 'node:crypto';
-import {once} from 'node:events';
+import { once } from 'node:events';
 
-const ROOT=process.cwd();
-const SOURCE=path.resolve(process.env.CJ_LOOKUP_ROOT||path.join(ROOT,'data/cj/lookup'));
-const OUT=path.resolve(process.env.CJ_EXPORT_OUT||path.join(ROOT,'artifacts/cj-seo-evidence'));
-const META=JSON.parse(fs.readFileSync(path.join(SOURCE,'manifest.json'),'utf8'));
-const paths=fs.readdirSync(SOURCE).filter(s=>/^[0-9a-f]{3}\.json$/.test(s)).sort();
-if(META.allow_indexing!==false)throw Error('Fail closed: source snapshot must remain nonindexable');
-if(paths.length!==META.shards)throw Error('Source shard count mismatch: '+paths.length);
-fs.mkdirSync(OUT,{recursive:true});
-const tarFile=path.join(OUT,'category-product-files.tar.gz');
-const manifestFile=path.join(OUT,'all-products.jsonl.gz');
-const tarFileStream=fs.createWriteStream(tarFile);
-const gz=zlib.createGzip({level:5});
-gz.pipe(tarFileStream);
-const manFileStream=fs.createWriteStream(manifestFile);
-const manGz=zlib.createGzip({level:6});
-manGz.pipe(manFileStream);
-const ids=new Set(),cats=new Map(),samples=[];
-let records=0,invalidId=0,missingSku=0,missingTitle=0,missingImage=0,duplicates=0;
-let tarChunks=[],tarBytes=0;
-const idValid=/^(?:[0-9]{19}|[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12})$/i;
-const slug=s=>String(s||'uncategorized').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,55)||'uncategorized';
-function oct(b,num,pos,len){
- const s=num.toString(8).padStart(len-1,'0')+'\0';
- if(s.length>len)throw Error('Tar number overflow');
- b.write(s,pos,len,'ascii');
+const ROOT = process.cwd();
+const SOURCE = path.resolve(process.env.CJ_LOOKUP_ROOT || path.join(ROOT, 'data/cj/lookup'));
+const OUT = path.resolve(process.env.CJ_EXPORT_OUT || path.join(ROOT, 'artifacts/cj-seo-evidence'));
+const META = JSON.parse(fs.readFileSync(path.join(SOURCE, 'manifest.json'), 'utf8'));
+const paths = fs.readdirSync(SOURCE).filter((s) => /^[0-9a-f]{3}\.json$/.test(s)).sort();
+if (META.allow_indexing !== false) throw Error('Fail closed: source snapshot must remain nonindexable');
+if (paths.length !== META.shards) throw Error('Source shard count mismatch: ' + paths.length);
+fs.mkdirSync(OUT, { recursive: true });
+
+function sink(name) {
+  const file = path.join(OUT, name);
+  const out = fs.createWriteStream(file);
+  const gz = zlib.createGzip({ level: 4 });
+  gz.pipe(out);
+  return { file, out, gz };
 }
-function tarEntry(name,body){
- const data=Buffer.from(body,'utf8'),buf=Buffer.alloc(512);
- const split=name.lastIndexOf('/');
- const filename=name.slice(split+1),prefix=name.slice(0,split);
- if(Buffer.byteLength(filename)>100||Buffer.byteLength(prefix)>155)throw Error('Tar path exceeds USTAR '+name);
- buf.write(filename,0,100,'utf8');buf.write(prefix,345,155,'utf8');
- oct(buf,0o644,100,8);oct(buf,0,108,8);oct(buf,0,116,8);
- oct(buf,data.length,124,12);oct(buf,0,136,12);
- buf.fill(32,148,156);buf.write('0',156);
- buf.write('ustar\0',257,6,'ascii');buf.write('00',263,2,'ascii');
- const sum=buf.reduce((a,v)=>a+v,0);
- buf.write(sum.toString(8).padStart(6,'0')+'\0 ',148,8,'ascii');
- const pad=(512-(data.length%512))%512;
- return Buffer.concat([buf,data,pad?Buffer.alloc(pad):Buffer.alloc(0)]);
+
+const flat = sink('category-product-files.tar.gz');
+const folders = sink('per-product-folders.tar.gz');
+const manifestSink = sink('all-products.jsonl.gz');
+const csvFile = path.join(OUT, 'products.csv');
+const csv = fs.createWriteStream(csvFile);
+
+const ids = new Set(), cats = new Map(), samples = [];
+let records = 0, invalidId = 0, missingSku = 0, missingTitle = 0, missingImage = 0, duplicates = 0;
+const idValid = /^(?:[0-9]{19}|[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12})$/i;
+const slug = (s) => String(s || 'uncategorized').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 55) || 'uncategorized';
+const lf = (s) => s.replace(/\r\n/g, '\n');
+
+function oct(b, num, pos, len) {
+  const s = num.toString(8).padStart(len - 1, '0') + '\0';
+  if (s.length > len) throw Error('Tar number overflow');
+  b.write(s, pos, len, 'ascii');
 }
-async function flushTar(){
- if(!tarChunks.length)return;
- const batch=Buffer.concat(tarChunks,tarBytes);
- tarChunks=[];tarBytes=0;
- if(!gz.write(batch))await once(gz,'drain');
+
+function tarEntry(name, body) {
+  const data = Buffer.from(body, 'utf8'), buf = Buffer.alloc(512);
+  const split = name.lastIndexOf('/');
+  const filename = name.slice(split + 1), prefix = name.slice(0, split);
+  if (Buffer.byteLength(filename) > 100 || Buffer.byteLength(prefix) > 155) throw Error('Tar path exceeds USTAR ' + name);
+  buf.write(filename, 0, 100, 'utf8'); buf.write(prefix, 345, 155, 'utf8');
+  oct(buf, 0o644, 100, 8); oct(buf, 0, 108, 8); oct(buf, 0, 116, 8);
+  oct(buf, data.length, 124, 12); oct(buf, 0, 136, 12);
+  buf.fill(32, 148, 156); buf.write('0', 156);
+  buf.write('ustar\0', 257, 6, 'ascii'); buf.write('00', 263, 2, 'ascii');
+  const sum = buf.reduce((a, v) => a + v, 0);
+  buf.write(sum.toString(8).padStart(6, '0') + '\0 ', 148, 8, 'ascii');
+  const pad = (512 - (data.length % 512)) % 512;
+  return Buffer.concat([buf, data, pad ? Buffer.alloc(pad) : Buffer.alloc(0)]);
 }
-async function tarAppend(name,payload){
- const chunk=tarEntry(name,payload);tarChunks.push(chunk);tarBytes+=chunk.length;
- if(tarBytes>=2*1024*1024)await flushTar();
+
+function tarWriter(stream) {
+  let chunks = [], bytes = 0;
+  const flush = async () => {
+    if (!chunks.length) return;
+    const batch = Buffer.concat(chunks, bytes);
+    chunks = []; bytes = 0;
+    if (!stream.write(batch)) await once(stream, 'drain');
+  };
+  return {
+    async append(entries) {
+      for (const [name, payload] of entries) {
+        const chunk = tarEntry(name, payload);
+        chunks.push(chunk); bytes += chunk.length;
+        if (bytes >= 2 * 1024 * 1024) await flush();
+      }
+    },
+    async end() {
+      await flush();
+      if (!stream.write(Buffer.alloc(1024))) await once(stream, 'drain');
+      stream.end();
+    }
+  };
 }
-async function appendManifest(text){
- if(!manGz.write(text))await once(manGz,'drain');
+
+const flatTar = tarWriter(flat.gz);
+const folderTar = tarWriter(folders.gz);
+
+/* CSV: one row per supplier snapshot row. Every cell is quoted; text that a
+   spreadsheet would treat as a formula is prefixed with an apostrophe. */
+function cell(value) {
+  const s = value == null ? '' : String(value);
+  const safe = /^[=+\-@\t\r]/.test(s) ? `'${s}` : s;
+  return `"${safe.replace(/"/g, '""')}"`;
 }
-for(const file of paths){
- const bucket=JSON.parse(fs.readFileSync(path.join(SOURCE,file),'utf8'));
- const entries=Object.entries(bucket.items||{});
- if(bucket.snapshot!==META.snapshot||entries.length!==bucket.count)throw Error('Corrupt input shard '+file);
- let manifestBatch='';
- for(const [id,raw] of entries){
-  records++;
-  if(ids.has(id)){duplicates++;throw Error('Duplicate CJ ID '+id)}
-  ids.add(id);
-  if(!idValid.test(id))invalidId++;
-  const [supplierSku,title,originalCategory,sourceCategorySlug,image]=Array.isArray(raw)?raw:[];
-  const name=String(title||'').trim(),sku=String(supplierSku||'').trim(),category=String(originalCategory||'Uncategorized').trim();
-  const validImage=/^https:\/\/\S+$/i.test(String(image||''));
-  if(!sku)missingSku++;if(!name)missingTitle++;if(!validImage)missingImage++;
-  const catSlug=slug(sourceCategorySlug||category)+'-'+crypto.createHash('sha1').update(category).digest('hex').slice(0,7);
-  const state=cats.get(catSlug)||{slug:catSlug,originalCategory:category,sourceRows:0,missingSku:0,missingTitle:0,missingImage:0,approvedForIndex:0};
-  state.sourceRows++;if(!sku)state.missingSku++;if(!name)state.missingTitle++;if(!validImage)state.missingImage++;
-  cats.set(catSlug,state);
-  // A source record is not a verified retail offer: never synthesize Product Offers,
-  // reviews, GTIN, brand, shopping dates, inventory status or canonical URLs.
-  const item={supplierId:id,supplierSku:sku||null,name:name||null,originalCategory:category,
-   sourceCategorySlug:sourceCategorySlug||null,imageSource:validImage?image:null,
-   sourceSnapshot:META.snapshot,status:'supplier_snapshot_only',published:false,
-   googleIndexEligible:false,merchantEligible:false,productOffer:null,
-   canonical:null,blockedReasons:['unverified_retail_offer','unverified_current_stock','unverified_destination_shipping','unverified_product_description','unverified_exact_variant_checkout']};
-  if(!idValid.test(id))item.blockedReasons.push('invalid_supplier_id');
-  if(!sku)item.blockedReasons.push('missing_supplier_sku');
-  if(!name)item.blockedReasons.push('missing_title');
-  if(!validImage)item.blockedReasons.push('missing_https_image');
-  const rel='seo-structured-data/cj/'+catSlug+'/'+id+'.json';
-  await tarAppend(rel,JSON.stringify(item)+'\n');
-  manifestBatch+=JSON.stringify({id,category:catSlug,path:rel,indexEligible:false})+'\n';
-  if(manifestBatch.length>=1<<18){await appendManifest(manifestBatch);manifestBatch=''}
-  if(samples.length<5)samples.push({id,category:catSlug,file:rel});
- }
- if(manifestBatch)await appendManifest(manifestBatch);
+async function csvWrite(lines) {
+  const text = lines.join('');
+  if (!csv.write(text)) await once(csv, 'drain');
 }
-if(records!==META.source_catalogue_rows||ids.size!==META.unique_ids||duplicates!==0){
- throw Error('Failed full CJ source accounting: '+JSON.stringify({records,unique:ids.size,expected:META.unique_ids,duplicates}))
+await csvWrite(['id,supplier_sku,name,original_category,source_category_slug,image_url,published,google_index_eligible,blocked_reasons\n']);
+
+async function appendManifest(text) {
+  if (!manifestSink.gz.write(text)) await once(manifestSink.gz, 'drain');
 }
-await flushTar();
-if(!gz.write(Buffer.alloc(1024)))await once(gz,'drain');
-gz.end();manGz.end();
-await Promise.all([once(tarFileStream,'finish'),once(manFileStream,'finish')]);
-const categories=[...cats.values()].sort((a,b)=>b.sourceRows-a.sourceRows);
-const index={sourceSnapshot:META.snapshot,generatedAt:new Date().toISOString(),categories,sourceRows:records};
-const summary={sourceSnapshot:META.snapshot,sourceShards:paths.length,sourceRecords:records,uniqueProductIds:ids.size,
- perProductFilesInsideTar:records,categoryDirectories:categories.length,duplicates,invalidId,missingSku,missingTitle,missingImage,
- indexEligibleFromSource:0,merchantEligibleFromSource:0,
- publishedChanges:0,reason:'No checkout, verified retail price, live stock or country shipping in the 5-field supplier snapshot',
- deliverables:['category-product-files.tar.gz','all-products.jsonl.gz','category-index.json'],samples};
-fs.writeFileSync(path.join(OUT,'category-index.json'),JSON.stringify(index,null,2)+'\n');
-fs.writeFileSync(path.join(OUT,'completeness.json'),JSON.stringify(summary,null,2)+'\n');
-console.log(JSON.stringify(summary));
+
+for (const file of paths) {
+  const bucket = JSON.parse(fs.readFileSync(path.join(SOURCE, file), 'utf8'));
+  const entries = Object.entries(bucket.items || {});
+  if (bucket.snapshot !== META.snapshot || entries.length !== bucket.count) throw Error('Corrupt input shard ' + file);
+  let manifestBatch = '', csvBatch = [];
+  for (const [id, raw] of entries) {
+    records++;
+    if (ids.has(id)) { duplicates++; throw Error('Duplicate CJ ID ' + id); }
+    ids.add(id);
+    if (!idValid.test(id)) invalidId++;
+    const [supplierSku, title, originalCategory, sourceCategorySlug, image] = Array.isArray(raw) ? raw : [];
+    const name = String(title || '').trim(), sku = String(supplierSku || '').trim(), category = String(originalCategory || 'Uncategorized').trim();
+    const validImage = /^https:\/\/\S+$/i.test(String(image || ''));
+    if (!sku) missingSku++; if (!name) missingTitle++; if (!validImage) missingImage++;
+    const catSlug = slug(sourceCategorySlug || category) + '-' + crypto.createHash('sha1').update(category).digest('hex').slice(0, 7);
+    const state = cats.get(catSlug) || { slug: catSlug, originalCategory: category, sourceRows: 0, missingSku: 0, missingTitle: 0, missingImage: 0, approvedForIndex: 0 };
+    state.sourceRows++; if (!sku) state.missingSku++; if (!name) state.missingTitle++; if (!validImage) state.missingImage++;
+    cats.set(catSlug, state);
+
+    // A source record is not a verified retail offer: never synthesize Product Offers,
+    // reviews, GTIN, brand, shopping dates, inventory status, SEO copy or canonical URLs.
+    const blockedReasons = ['unverified_retail_offer', 'unverified_current_stock', 'unverified_destination_shipping', 'unverified_product_description', 'unverified_exact_variant_checkout'];
+    if (!idValid.test(id)) blockedReasons.push('invalid_supplier_id');
+    if (!sku) blockedReasons.push('missing_supplier_sku');
+    if (!name) blockedReasons.push('missing_title');
+    if (!validImage) blockedReasons.push('missing_https_image');
+
+    const item = {
+      supplierId: id, supplierSku: sku || null, name: name || null, originalCategory: category,
+      sourceCategorySlug: sourceCategorySlug || null, imageSource: validImage ? image : null,
+      sourceSnapshot: META.snapshot, status: 'supplier_snapshot_only', published: false,
+      googleIndexEligible: false, merchantEligible: false, productOffer: null,
+      canonical: null, blockedReasons
+    };
+
+    const rel = 'seo-structured-data/cj/' + catSlug + '/' + id + '.json';
+    const dir = catSlug + '/' + id + '/';
+    await flatTar.append([[rel, JSON.stringify(item) + '\n']]);
+    await folderTar.append([
+      [dir + 'source.json', JSON.stringify({ supplierId: id, raw: raw ?? null, sourceSnapshot: META.snapshot }) + '\n'],
+      [dir + 'normalized.json', JSON.stringify({ supplierId: id, supplierSku: sku || null, name: name || null, originalCategory: category, sourceCategorySlug: sourceCategorySlug || null, categorySlug: catSlug, imageSource: validImage ? image : null, normalizedAt: null }) + '\n'],
+      [dir + 'validation.json', JSON.stringify({ supplierId: id, checks: { validId: idValid.test(id), hasSku: !!sku, hasTitle: !!name, httpsImage: validImage }, published: false, googleIndexEligible: false, blockedReasons }) + '\n'],
+      [dir + 'seo.json', JSON.stringify({ supplierId: id, status: 'blocked', indexEligible: false, title: null, metaDescription: null, h1: null, faq: [], canonical: null, reason: 'Supplier snapshot only: no verified price, stock, shipping or publishable page, so no SEO copy is generated' }) + '\n']
+    ]);
+
+    manifestBatch += JSON.stringify({ id, category: catSlug, path: rel, folder: dir, indexEligible: false }) + '\n';
+    if (manifestBatch.length >= 1 << 18) { await appendManifest(manifestBatch); manifestBatch = ''; }
+    csvBatch.push([cell(id), cell(sku), cell(name), cell(category), cell(sourceCategorySlug || ''), cell(validImage ? image : ''), 'false', 'false', cell(blockedReasons.join('|'))].join(',') + '\n');
+    if (csvBatch.length >= 500) { await csvWrite(csvBatch); csvBatch = []; }
+    if (samples.length < 5) samples.push({ id, category: catSlug, file: rel, folder: dir });
+  }
+  if (manifestBatch) await appendManifest(manifestBatch);
+  if (csvBatch.length) await csvWrite(csvBatch);
+}
+
+if (records !== META.source_catalogue_rows || ids.size !== META.unique_ids || duplicates !== 0) {
+  throw Error('Failed full CJ source accounting: ' + JSON.stringify({ records, unique: ids.size, expected: META.unique_ids, duplicates }));
+}
+
+await flatTar.end();
+await folderTar.end();
+manifestSink.gz.end();
+csv.end();
+// A stream may already have flushed before we attach, so check first.
+const finished = (s) => new Promise((resolve) => (s.writableFinished ? resolve() : s.once('finish', resolve)));
+await Promise.all([finished(flat.out), finished(folders.out), finished(manifestSink.out), finished(csv)]);
+
+/* ---------- manifest with checksums ---------- */
+function sha256(file) {
+  const h = crypto.createHash('sha256');
+  const fd = fs.openSync(file, 'r');
+  const buf = Buffer.alloc(1 << 20);
+  let n;
+  while ((n = fs.readSync(fd, buf, 0, buf.length, null)) > 0) h.update(buf.subarray(0, n));
+  fs.closeSync(fd);
+  return h.digest('hex');
+}
+
+const categories = [...cats.values()].sort((a, b) => b.sourceRows - a.sourceRows);
+const index = { sourceSnapshot: META.snapshot, generatedAt: new Date().toISOString(), categories, sourceRows: records };
+const summary = {
+  sourceSnapshot: META.snapshot, sourceShards: paths.length, sourceRecords: records, uniqueProductIds: ids.size,
+  perProductFilesInsideFlatTar: records, perProductFoldersInsideFolderTar: records,
+  categoryDirectories: categories.length, duplicates, invalidId, missingSku, missingTitle, missingImage,
+  indexEligibleFromSource: 0, merchantEligibleFromSource: 0,
+  publishedChanges: 0, reason: 'No checkout, verified retail price, live stock or country shipping in the 5-field supplier snapshot',
+  deliverables: ['category-product-files.tar.gz', 'per-product-folders.tar.gz', 'products.csv', 'all-products.jsonl.gz', 'category-index.json', 'manifest.json'],
+  csvNote: 'All cells quoted. 19-digit supplier IDs are written verbatim inside quotes; import the id column as text. Values starting with = + - @ are prefixed with an apostrophe.',
+  samples
+};
+fs.writeFileSync(path.join(OUT, 'category-index.json'), JSON.stringify(index, null, 2) + '\n');
+fs.writeFileSync(path.join(OUT, 'completeness.json'), JSON.stringify(summary, null, 2) + '\n');
+
+const manifest = {
+  generatedAt: new Date().toISOString(),
+  sourceSnapshot: META.snapshot,
+  sourceRows: records,
+  uniqueIds: ids.size,
+  categories: categories.length,
+  files: {}
+};
+for (const name of ['category-product-files.tar.gz', 'per-product-folders.tar.gz', 'products.csv', 'all-products.jsonl.gz', 'category-index.json', 'completeness.json']) {
+  const file = path.join(OUT, name);
+  manifest.files[name] = { bytes: fs.statSync(file).size, sha256: sha256(file) };
+}
+fs.writeFileSync(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
+console.log(JSON.stringify({ ...manifest.files, rows: records, categories: categories.length }, null, 1));
