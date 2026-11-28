@@ -203,12 +203,12 @@ for (const k of ['shipping', 'returns']) if (WP[k]) fs.writeFileSync(path.join(R
   if (!h.includes('id="sm-recovery"') || !h.includes('content="noindex, follow"')) throw new Error('Generated 404 lost recovery or noindex');
   fs.writeFileSync(path.join(ROOT, '404.html'), emptyDiv(emptyDiv(h, /<div id="home-view"[^>]*>/), /<div id="view-livetv"[^>]*>/));
 }
-// Public section URLs in sitemap-pages.xml (idempotent; global/ is canonicalised to c/global/index.html, so it is left out).
+// Global aliases and the separately published travel sitemap stay outside sitemap-pages.xml.
 const smPath = path.join(ROOT, 'sitemap-pages.xml');
 if (fs.existsSync(smPath)) {
   let sm = fs.readFileSync(smPath, 'utf8'), added = 0;
   const today = new Date().toISOString().slice(0, 10);
-  const urls = pages.map(p => p.key).filter(k => k !== 'global' && k !== 'global-shop' && !PRIVATE.has(k)).map(s => `${SITE}/${s}/`).concat(`${SITE}/b/`, Object.keys(WP).filter(k => k.startsWith('ur/')).map(k => `${SITE}/${k}/`));
+  const urls = pages.map(p => p.key).filter(k => k !== 'global' && k !== 'global-shop' && k !== 'travel' && !PRIVATE.has(k)).map(s => `${SITE}/${s}/`).concat(`${SITE}/b/`, Object.keys(WP).filter(k => k.startsWith('ur/')).map(k => `${SITE}/${k}/`));
   for (const u of urls) if (!sm.includes(`<loc>${u}</loc>`)) { sm = sm.replace('</urlset>', `<url><loc>${u}</loc><lastmod>${today}</lastmod></url>\n</urlset>`); added++; }
   fs.writeFileSync(smPath, sm);
   console.log(`sitemap-pages.xml: ${added} section URLs added`);
