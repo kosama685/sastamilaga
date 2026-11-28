@@ -61,12 +61,32 @@ const EXCLUDE_TOP = new Set([
 const arg = (name) => process.argv.includes(name);
 const verifyAll = arg('--verify-all');
 const checkMode = arg('--check');
+// CI regenerates the feeds after its page generators have run, so it skips the
+// network sample and relies on the in-page eligibility check.
+const skipVerify = arg('--no-verify');
 
+function walkFiles(dir = ROOT, rel = '', out = []) {
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const r = rel ? `${rel}/${e.name}` : e.name;
+    if (e.isDirectory()) {
+      if (e.name === '.git' || e.name === 'node_modules') continue;
+      if (EXCLUDE_PREFIX.some((p) => `${r}/` === p)) continue;
+      walkFiles(path.join(dir, e.name), r, out);
+    } else if (e.name.endsWith('.html')) {
+      out.push(r);
+    }
+  }
+  return out;
+}
+
+/* Everything git knows about plus any page a generator created in this run. */
 function treeFiles() {
   const out = execFileSync('git', ['ls-tree', '-r', '--name-only', 'HEAD'], {
     cwd: ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024
   });
-  return out.split('\n').filter(Boolean);
+  const seen = new Set(out.split('\n').filter(Boolean));
+  for (const f of walkFiles()) seen.add(f);
+  return [...seen];
 }
 
 function toUrl(file) {
@@ -180,15 +200,18 @@ const indexBody = '<?xml version="1.0" encoding="UTF-8"?>\n' +
     .map((u) => `<sitemap><loc>${u}</loc></sitemap>`).join('\n') +
   '\n</sitemapindex>\n';
 
+// A CRLF checkout must compare equal to the LF we write.
+const lf = (s) => s.replace(/\r\n/g, '\n');
+
 if (checkMode) {
   let stale = 0;
   for (const p of plan) {
-    const current = fs.existsSync(p.file) ? fs.readFileSync(p.file, 'utf8') : '';
-    if (current !== p.body) stale++;
+    const current = fs.existsSync(p.file) ? lf(fs.readFileSync(p.file, 'utf8')) : '';
+    if (current !== lf(p.body)) stale++;
   }
   for (const f of ['sitemap_index.xml', 'sitemap.xml']) {
-    const cur = fs.existsSync(path.join(ROOT, f)) ? fs.readFileSync(path.join(ROOT, f), 'utf8') : '';
-    if (cur !== indexBody) stale++;
+    const cur = fs.existsSync(path.join(ROOT, f)) ? lf(fs.readFileSync(path.join(ROOT, f), 'utf8')) : '';
+    if (cur !== lf(indexBody)) stale++;
   }
   const extra = fs.existsSync(OUT_DIR)
     ? fs.readdirSync(OUT_DIR).filter((f) => /^sitemap-static-\d{5}\.xml$/.test(f) && !shards.includes(f))
@@ -198,9 +221,11 @@ if (checkMode) {
   process.exit(0);
 }
 
-const sampleList = sample(sorted, 400);
-await verify(sampleList, `stratified sample (${sampleList.length} of ${sorted.length})`);
-if (verifyAll) await verify(sorted, 'all URLs');
+if (!skipVerify) {
+  const sampleList = sample(sorted, 400);
+  await verify(sampleList, `stratified sample (${sampleList.length} of ${sorted.length})`);
+  if (verifyAll) await verify(sorted, 'all URLs');
+}
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
 for (const f of fs.readdirSync(OUT_DIR)) {

@@ -152,8 +152,10 @@ for (const { key, title, desc } of pages) {
   // The travel hub is authored separately. Keep its URL in the route and sitemap lists.
   if (key === 'travel') {
     const travel = read('travel/index.html');
-    if (!/href="\/travel\/assets\/css\/travel\.css(?:\?[^"]*)?"/.test(travel) || !travel.includes('class="nav-links"') || !travel.includes('class="ftr"')) {
-      throw new Error('travel/index.html is missing the standalone travel header or footer');
+    // Travel shares the storefront header and footer through travel/assets/js/chrome-travel.js.
+    const sharedChrome = travel.includes('id="sm-chrome-header"') && travel.includes('id="sm-chrome-footer"') && /travel\/assets\/js\/chrome-travel\.js(?:\?[^"]*)?"/.test(travel);
+    if (!/href="\/travel\/assets\/css\/travel\.css(?:\?[^"]*)?"/.test(travel) || !sharedChrome) {
+      throw new Error('travel/index.html is missing the travel stylesheet or the shared storefront chrome');
     }
     continue;
   }
