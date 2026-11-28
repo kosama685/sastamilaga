@@ -193,7 +193,12 @@
         value = value.trim();
         var code = value.match(/^([A-Za-z]{3})(?:\s*[-\u2013(]|$)/);
         if (code) return code[1].toUpperCase();
-        var match = AIRPORTS.find(function (a) { return a.city.toLowerCase() === value.toLowerCase(); });
+        var city = value.toLowerCase();
+        var match = AIRPORTS.find(function (a) { return a.city.toLowerCase() === city; });
+        if (!match) {
+          var matches = AIRPORTS.filter(function (a) { return a.city.toLowerCase().indexOf(city + " ") === 0; });
+          if (matches.length === 1) match = matches[0];
+        }
         return match ? match.code : "";
       }
       var from = flight ? airport(origin.value) : "";
