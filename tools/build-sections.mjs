@@ -152,7 +152,7 @@ for (const { key, title, desc } of pages) {
   // The travel hub is authored separately. Keep its URL in the route and sitemap lists.
   if (key === 'travel') {
     const travel = read('travel/index.html');
-    if (!travel.includes('href="/travel/assets/css/travel.css"') || !travel.includes('class="nav-links"') || !travel.includes('class="ftr"')) {
+    if (!/href="\/travel\/assets\/css\/travel\.css(?:\?[^"]*)?"/.test(travel) || !travel.includes('class="nav-links"') || !travel.includes('class="ftr"')) {
       throw new Error('travel/index.html is missing the standalone travel header or footer');
     }
     continue;
